@@ -294,11 +294,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterWriteNodeLogic()
         {
-            if( null != RelationalNodeTypeProp )
-            {
-                ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
-                RelationalRule.onSetFk( RelationalNodeTypeProp, this );
-            }
+            ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+            RelationalRule.onSetFk( this );
         }//afterWriteNode()
 
 

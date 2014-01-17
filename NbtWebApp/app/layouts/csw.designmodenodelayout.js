@@ -11,7 +11,8 @@
             nodeKey: '',
             nodeTypeId: '',
             identityTabId: '',
-            Layout: 'Edit'
+            Layout: 'Edit',
+            onClose: function () { }
         };
         if (options) {
             Csw.extend(cswPrivate, options);
@@ -26,6 +27,13 @@
 
             var init = function () {
                 Csw.main.clear({ right: true });
+                var closeBtnDiv = cswParent.div().css('float', 'right');
+                closeBtnDiv.buttonExt({
+                    enabledText: 'Close Design Mode',
+                    onClick: function () {
+                        cswPrivate.onClose();
+                    }
+                });
                 var layoutSelectDiv = cswParent.div().css('float', 'right');
                 layoutSelectDiv.setLabelText('Select Layout:', false, false);
                 layoutSelectDiv.select({
@@ -176,7 +184,7 @@
         };
 
         cswPrivate.howManyCols = function (properties) {
-            var cols = 0;
+            var cols = 0; //We always need a col
             Csw.iterate(properties, function (prop) {
                 if (prop.displaycol > cols) {
                     cols = prop.displaycol;
@@ -235,65 +243,167 @@
             return fieldOpt;
         };
 
+        cswPrivate.renderPropDiv = function (tabid, node, prop, div) {
+            var propTbl = div.table();
+            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+            var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
+
+            labelDiv.setLabelText(prop.name, prop.required, false); //in design mode, readonly better always be true, but we want required props to have the "*"
+
+            var fieldOpt = cswPrivate.makePropOpt(tabid, node, prop, propDiv);
+            Csw.nbt.property(fieldOpt, {});
+        };
+
         cswPrivate.renderProps = function (node, properties, extid, tabid) {
             var cols = cswPrivate.howManyCols(properties);
-            var identityTabDiv = cswPrivate.makeDiv(extid);
+            var propsDiv = cswPrivate.makeDiv(extid);
 
-            var dragPanel = Csw.composites.draggablepanel(identityTabDiv, {
+            var dragPanel = Csw.composites.draggablepanel(propsDiv, {
                 columns: cols,
                 border: 0
             });
+            dragPanel.allowDrag(false);
 
             var seenProps = {};
-            for (var propIdx in properties) {
-                var prop = properties[propIdx];
+            Csw.iterate(properties, function (prop) {
+                //for (var propIdx in properties) {
+                //var prop = properties[propIdx];
                 if (!seenProps[prop.id]) {
                     seenProps[prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
+                    var subDragPanel;
                     dragPanel.addItemToCol(realCol, {
+                        id: prop.id,
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
-                            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
-                            var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
-                            var subPropsDiv = propTbl.cell(2, 2).div();
+                            var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+                            var subPropsDiv = propTbl.cell(2, 2).div().css({
+                                'border': '1px solid #ccc'
+                            });
 
-                            labelDiv.setLabelText(prop.name, prop.required, true); //in design mode, readonly better always be true OR ELSE!!
-
-                            var fieldOpt = cswPrivate.makePropOpt(tabid, node, prop, propDiv);
-                            Csw.nbt.property(fieldOpt, {});
+                            cswPrivate.renderPropDiv(tabid, node, prop, propDiv);
 
                             if (prop.hassubprops) {
-                                var subPropTbl = subPropsDiv.table().css('border', '1px solid #ccc');
-                                var idx = 1;
+                                var subCols = cswPrivate.howManyCols(prop.subprops);
+                                subDragPanel = Csw.composites.draggablepanel(subPropsDiv, {
+                                    columns: subCols
+                                });
+
                                 for (var subPropIdx in prop.subprops) {
                                     var subProp = prop.subprops[subPropIdx];
                                     seenProps[subProp.id] = subProp;
 
-                                    var subLabelDiv = subPropTbl.cell(idx, 1).div().css({ 'padding': '5px 10px' });
-                                    var subPropDiv = subPropTbl.cell(idx, 2).div().css({ 'padding': '5px 10px' });
-                                    idx++;
-
-                                    subLabelDiv.setLabelText(subProp.name, subProp.required, true);
-                                    var subFieldOpt = cswPrivate.makePropOpt(tabid, node, subProp, subPropDiv);
-                                    Csw.nbt.property(subFieldOpt, {});
-                                }
+                                    var subRealCol = subProp.displaycol - 1;
+                                    subDragPanel.addItemToCol(subRealCol, {
+                                        render: function (extRenderTo, cswRenderTo) {
+                                            seenProps[subProp.id] = subProp;
+                                            cswPrivate.renderPropDiv(tabid, node, subProp, cswRenderTo);
+                                        },
+                                        onDrop: function (el, col, row) {
+                                            subDragPanel.doLayout();
+                                            dragPanel.doLayout();
+                                            //TODO: update subprops position in layout
+                                        }
+                                    });
+                                } //for subProp in subProps
+                                subDragPanel.doLayout();
                             }
                         },
-                        onDrop: function (col, row) {
-                            //TODO: save prop in new layout
+                        onDrop: function (ext, col, row) {
+                            cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
+                        },
+                        onClose: function (draggable) {
+                            var doomedProp = seenProps[draggable.id];
+                            if ((false === doomedProp.required && 'Add' === cswPrivate.Layout) || 'Add' !== cswPrivate.Layout) {
+                                var confirm = Csw.dialogs.confirmDialog({
+                                    title: 'Remove Property From Layout',
+                                    message: 'Are you sure you want to remove this property from the layout?',
+                                    height: 200,
+                                    width: 300,
+                                    onYes: function () {
+                                        var doomedPropsCollection = [{
+                                            nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
+                                            displaycol: Csw.int32MinVal,
+                                            displayrow: Csw.int32MinVal
+                                        }];
+                                        dragPanel.removeDraggableFromCol(realCol, draggable.id);
+                                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
+                                            cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
+                                        });
+                                        confirm.close();
+                                    },
+                                    onNo: function () {
+                                        confirm.close();
+                                    }
+                                });
+                            } else {
+                                var alert = Csw.dialogs.alert({
+                                    title: 'Error removing property',
+                                    message: 'Cannot remove required properties from the Add layout'
+                                });
+                                alert.open();
+                            }
                         }
                     });
-                }
-            }
+                } //if (!seenProps[prop.id)
+            }); //for prop in properties
 
-            //trigger the prop render events:
+
+            dragPanel.allowDrag(true);
+            //trigger the prop render events
             Csw.publish('render_' + node.nodeid + '_' + tabid);
 
-            //TODO: fix this hack - we need to wait for all property ajax requests to finish before calling doLayout()
+            //TODO: fix this hack - we need to wait for all property ajax requests (like grid) to finish before calling doLayout()
             Csw.defer(function () {
                 dragPanel.doLayout(); //fix our layout
             }, 2000);
+        };
+
+        cswPrivate.saveLayout = function (dragPanel, node, props, tabid) {
+            var propsReq = [];
+            var numCols = dragPanel.getNumCols();
+            for (var i = 0; i < numCols; i++) {
+                var propPanels = dragPanel.getItemsInCol(i);
+                var thisCol = i + 1;
+                var thisRow = 1;
+                Csw.iterate(propPanels, function (panel) {
+                    var panelProp = props[panel.id];
+                    propsReq.push({
+                        nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
+                        displaycol: thisCol,
+                        displayrow: thisRow
+                    });
+                    thisRow++;
+                });
+            }
+            Csw.ajaxWcf.post({
+                urlMethod: 'Design/updateLayout',
+                data: {
+                    layout: cswPrivate.Layout,
+                    nodetypeid: node.nodetypeid,
+                    tabid: tabid,
+                    props: propsReq
+                },
+                success: function (response) {
+                    //nothing to do here
+                }
+            });
+        };
+
+        cswPrivate.removePropsFromLayout = function (node, props, tabid, onSuccess) {
+            Csw.ajaxWcf.post({
+                urlMethod: 'Design/removePropsFromLayout',
+                data: {
+                    layout: cswPrivate.Layout,
+                    nodetypeid: node.nodetypeid,
+                    tabid: tabid,
+                    props: props
+                },
+                success: function (response) {
+                    Csw.tryExec(onSuccess);
+                }
+            });
         };
 
         cswPublic.tearDown = function () {

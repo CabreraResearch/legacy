@@ -1,5 +1,5 @@
 ﻿(function () {
-    
+
     var isDesignModeVisible = false;
     Csw.designmode.isDesignModeVisible = Csw.designmode.isDesignModeVisible ||
         Csw.designmode.register('isDesignModeVisible', function () {
@@ -16,23 +16,15 @@
             sidebarDiv: Csw.main.sidebarDiv,
             sidebarOptions: {},
             nodeLayoutDiv: Csw.main.rightDiv,
-            nodelayoutOptions: {}
+            nodelayoutOptions: {},
+            onClose: function () { }
         };
         if (options) {
             Csw.extend(cswPrivate, options);
         }
-        
+
         var cswPublic = {};
         var sidebar, nodelayout;
-
-        (function _pre() {
-
-            var sidebarDiv = Csw.designmode.factory(cswPrivate.sidebarDiv, 'sidebar');
-            sidebar = sidebarDiv.sidebar(cswPrivate.sidebarOptions);
-
-            nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
-
-        })();
 
         cswPublic.tearDown = function () {
             if (sidebar) {
@@ -44,11 +36,25 @@
             isDesignModeVisible = false;
         };
 
+        (function _pre() {
+
+            var sidebarDiv = Csw.designmode.factory(cswPrivate.sidebarDiv, 'sidebar');
+            sidebar = sidebarDiv.sidebar(cswPrivate.sidebarOptions);
+
+            cswPrivate.nodelayoutOptions.onClose = function () {
+                cswPublic.tearDown();
+                cswPrivate.onClose();
+            };
+
+            nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
+
+        })();
+
         (function _post() {
 
             isDesignModeVisible = true;
             Csw.subscribe('designModeTearDown', cswPublic.tearDown);
-            
+
         })();
 
         return cswPublic;

@@ -1418,10 +1418,14 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 CswNbtObjClassDesignSequence ret = null;
-                Int32 SequenceId = CswConvert.ToInt32( _NodeTypePropRow["sequenceid"] );
-                if( Int32.MinValue != SequenceId )
+                if( null != this.DesignNode &&
+                    this.DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
                 {
-                    ret = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "sequences", SequenceId ) );
+                    CswPrimaryKey SequenceId = this.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Sequence].AsRelationship.RelatedNodeId;
+                    if( CswTools.IsPrimaryKey( SequenceId ) )
+                    {
+                        ret = _CswNbtMetaDataResources.CswNbtResources.Nodes[SequenceId];
+                    }
                 }
                 return ret;
             }

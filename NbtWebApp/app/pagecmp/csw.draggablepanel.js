@@ -21,7 +21,7 @@
             var colId = _colIdPrefix + colNo;
             var extComponent = window.Ext.getCmp(colId);
             if (!extComponent) { //Did we get a real column?
-                Csw.error.throwException('Cannot render to drag column', 'csw.draggablepanel.js');
+                Csw.error.throwException('Could not find column: ' + colNo, 'csw.draggablepanel.js');
             }
             return extComponent;
         };
@@ -53,6 +53,15 @@
                 renderTo: myDiv.getId(),
                 border: 1,
                 items: [{
+                    xtype: 'toolbar',
+                    items: [{
+                        xtype: 'button',
+                        text: 'Add Column (+)',
+                        onClick: function () {
+                            cswPublic.addCol();
+                        }
+                    }]
+                }, {
                     id: dragPanelCmpId,
                     xtype: 'dragpanel',
                     items: _columns
@@ -62,9 +71,12 @@
 
             cswPublic.addItemToCol = function (colNo, paramsIn) {
                 var params = {
+                    id: window.Ext.id(),
                     style: {},
                     render: function () { },
-                    onDrop: function (extCmp, col, row) { }
+                    onDrop: function (extCmp, col, row) { },
+                    onClose: function () { },
+                    onConfigure: function () { }
                 };
                 if (paramsIn) {
                     Csw.extend(params, paramsIn);
@@ -74,7 +86,31 @@
 
                 //Add our drag panel
                 var extRenderTo = extCol.add({
-                    id: window.Ext.id(),
+                    id: params.id,
+                    tools: [{
+                        type: 'gear',
+                        handler: function () {
+                            params.onConfigure();
+                        }
+                    }, {
+                        type: 'close',
+                        handler: function () {
+                            params.onClose(extRenderTo);
+                        }
+                    }],
+                    listeners: {
+                        render: function (c) {
+                            c.body.on('click', function () {
+                                Csw.iterate(_draggables, function (draggable) {
+                                    draggable.header.hide();
+                                });
+                                extRenderTo.header.show();
+                            });
+                        },
+                        afterrender: function () {
+                            this.header.hide();
+                        }
+                    },
                     onDrop: params.onDrop
                 });
                 _draggables.push(extRenderTo);
@@ -93,18 +129,11 @@
                 }
             };
 
-            cswPublic.allowDrag = function (allow) {
-                for (var idx in _draggables) {
-                    var draggableItem = _draggables[idx];
-                    draggableItem.allowDrag(allow);
-                }
-            };
-
             cswPublic.addCol = function () {
                 //figure out how many columns we have
                 var existingCols = dragPanelCmp.items.items.length;
 
-                dragPanelCmp.add(makeCol(existingCols + 1));
+                dragPanelCmp.add(makeCol(existingCols));
             };
 
             cswPublic.removeCol = function (colNo) {
@@ -126,6 +155,44 @@
                 /* When rendering Csw content to ExtJS controls, the layout is already calculated. Calling doLayout()
                    after rendering arbitrary csw content will cause the Ext controls to fix their width/height/ect */
                 dragPanelCmp.doLayout();
+            };
+
+            cswPublic.lockPanels = function (lock) {
+                /* Lock/Unlock all the child draggables in this drag panel. 
+                   This prevents the draggables from being moved, but other items can be dragged into the panel */
+                for (var idx in _draggables) {
+                    var draggableItem = _draggables[idx];
+                    draggableItem.allowDrag(lock);
+                }
+            };
+
+            cswPublic.allowDrag = function (allow) {
+                /* Lock/unlock all child draggables inside this drag panel and then register/unregister the DropTarget*/
+                cswPublic.lockPanels(allow);
+                dragPanelCmp.allowDrag(allow);
+            };
+
+            cswPublic.getItemsInCol = function (colNo) {
+                /* Gets all draggables in the specified column */
+                var extComponent = getCol(colNo);
+                return extComponent.items.items;
+            };
+
+            cswPublic.getNumCols = function () {
+                /* How many columns does this panel have? */
+                return dragPanelCmp.items.items.length;
+            };
+
+            cswPublic.removeDraggableFromCol = function (colNo, draggableId) {
+                var newDraggables = [];
+                Csw.iterate(_draggables, function(draggable) {
+                    if (draggable.getId() !== draggableId) {
+                        newDraggables.push(draggable);
+                    }
+                });
+                _draggables = newDraggables;
+                var extCol = getCol(colNo);
+                extCol.remove(window.Ext.getCmp(draggableId));
             };
 
         }());

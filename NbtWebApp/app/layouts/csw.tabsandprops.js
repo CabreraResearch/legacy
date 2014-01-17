@@ -976,6 +976,13 @@
                     nodeKey: cswPrivate.tabState.nodekey,
                     nodeTypeId: cswPrivate.tabState.nodetypeid,
                     tabs: cswPrivate.tabs
+                },
+                onClose: function () {
+                    Csw.main.refreshSelected({
+                        nodeid:  cswPrivate.tabState.nodeid,
+                        nodekey: cswPrivate.tabState.nodekey,
+                        viewid: cswPrivate.tabState.viewid
+                    });
                 }
             });
         };

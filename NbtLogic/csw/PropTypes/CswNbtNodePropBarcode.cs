@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool setBarcodeValue( bool OverrideExisting = false )
         {
             bool Succeeded = false;
-            if( Barcode.Trim() == string.Empty || OverrideExisting )
+            if( ( Barcode.Trim() == string.Empty || OverrideExisting ) && null != _Sequence )
             {
                 string value = _Sequence.getNext();
                 Succeeded = setBarcodeValueOverride( value, false );
@@ -84,8 +84,11 @@ namespace ChemSW.Nbt.PropTypes
         public void resetSequenceNumber()
         {
             // Fix missing sequence number
-            Int32 ThisSeqValue = _Sequence.deformatSequence( Barcode );
-            SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
+            if( null != _Sequence )
+            {
+                Int32 ThisSeqValue = _Sequence.deformatSequence( Barcode );
+                SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
+            }
         }
 
         /// <summary>
@@ -98,14 +101,16 @@ namespace ChemSW.Nbt.PropTypes
         public bool setBarcodeValueOverride( string SeqValue, bool ResetSequence )
         {
             bool Succeeded = SetPropRowValue( _BarcodeSubField, SeqValue );
-            Int32 ThisSeqValue = _Sequence.deformatSequence( SeqValue );
-            Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField, ThisSeqValue ) );
-            Gestalt = SeqValue;
-
-            if( ResetSequence )
+            if( null != _Sequence )
             {
-                // Keep the sequence up to date
-                _Sequence.reSync( CswNbtFieldTypeRuleBarCode.SequenceNumberColumn, ThisSeqValue );
+                Int32 ThisSeqValue = _Sequence.deformatSequence( SeqValue );
+                Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField, ThisSeqValue ) );
+                Gestalt = SeqValue;
+                if( ResetSequence )
+                {
+                    // Keep the sequence up to date
+                    _Sequence.reSync( CswNbtFieldTypeRuleBarCode.SequenceNumberColumn, ThisSeqValue );
+                }
             }
             return Succeeded;
         }

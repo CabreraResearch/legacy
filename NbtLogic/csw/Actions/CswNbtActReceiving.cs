@@ -111,7 +111,10 @@ namespace ChemSW.Nbt.Actions
                         }
                         else
                         {
-                            quantity.Barcodes.Add( BarcodeProp.Sequence.getNext() );
+                            if( null != BarcodeProp.Sequence )
+                            {
+                                quantity.Barcodes.Add( BarcodeProp.Sequence.getNext() );
+                            }
                         }
                     }
                 }
