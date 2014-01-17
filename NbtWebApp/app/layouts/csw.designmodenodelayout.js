@@ -11,7 +11,8 @@
             nodeKey: '',
             nodeTypeId: '',
             identityTabId: '',
-            Layout: 'Edit'
+            Layout: 'Edit',
+            onClose: function () { }
         };
         if (options) {
             Csw.extend(cswPrivate, options);
@@ -26,6 +27,13 @@
 
             var init = function () {
                 Csw.main.clear({ right: true });
+                var closeBtnDiv = cswParent.div().css('float', 'right');
+                closeBtnDiv.buttonExt({
+                    enabledText: 'Close Design Mode',
+                    onClick: function () {
+                        cswPrivate.onClose();
+                    }
+                });
                 var layoutSelectDiv = cswParent.div().css('float', 'right');
                 layoutSelectDiv.setLabelText('Select Layout:', false, false);
                 layoutSelectDiv.select({
@@ -307,7 +315,7 @@
                         },
                         onClose: function (draggable) {
                             var doomedProp = seenProps[draggable.id];
-                            if (false === doomedProp.required && 'Add' === cswPrivate.Layout) {
+                            if ((false === doomedProp.required && 'Add' === cswPrivate.Layout) || 'Add' !== cswPrivate.Layout) {
                                 var confirm = Csw.dialogs.confirmDialog({
                                     title: 'Remove Property From Layout',
                                     message: 'Are you sure you want to remove this property from the layout?',

@@ -11,7 +11,7 @@
         collapsed: true,
         expandOnShow: false,
         //hideCollapseTool: false,
-        closable: true,
+        closable: false,
         items: [
             { //This is the empty component that you can attach outside elements to
                 xtype: 'component',
