@@ -35,18 +35,18 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // For ChildContents properties, set 'child relationship' options to be all relationships that point to the owner's relational nodetype
-            CswNbtMetaDataObjectClass DesignNtpOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-            //CswNbtFieldTypeRuleChildContents ChildContentsRule = (CswNbtFieldTypeRuleChildContents) _CswNbtSchemaModTrnsctn.MetaData.getFieldTypeRule( CswEnumNbtFieldType.ChildContents );
-            CswNbtMetaDataNodeType ChildContentsPropNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( CswEnumNbtFieldType.ChildContents ) );
-            CswNbtMetaDataNodeTypeProp ChildRelationshipNTP = ChildContentsPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ChildRelationship );
+            //// For ChildContents properties, set 'child relationship' options to be all relationships that point to the owner's relational nodetype
+            //CswNbtMetaDataObjectClass DesignNtpOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+            ////CswNbtFieldTypeRuleChildContents ChildContentsRule = (CswNbtFieldTypeRuleChildContents) _CswNbtSchemaModTrnsctn.MetaData.getFieldTypeRule( CswEnumNbtFieldType.ChildContents );
+            //CswNbtMetaDataNodeType ChildContentsPropNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( CswEnumNbtFieldType.ChildContents ) );
+            //CswNbtMetaDataNodeTypeProp ChildRelationshipNTP = ChildContentsPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ChildRelationship );
 
-            // Target is DesignNodeTypeProp nodes
-            CswNbtObjClassDesignNodeTypeProp ChildRelationshipNode = _CswNbtSchemaModTrnsctn.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", ChildRelationshipNTP.PropId ) );
-            CswNbtMetaDataNodeTypeProp TargetNTP = ChildRelationshipNode.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target );
-            ChildRelationshipNode.Node.Properties[TargetNTP].AsMetaDataList.setValue( CswNbtNodePropMetaDataList.ObjectClassPrefix + DesignNtpOC.ObjectClassId );
+            //// Target is DesignNodeTypeProp nodes
+            //CswNbtObjClassDesignNodeTypeProp ChildRelationshipNode = _CswNbtSchemaModTrnsctn.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", ChildRelationshipNTP.PropId ) );
+            //CswNbtMetaDataNodeTypeProp TargetNTP = ChildRelationshipNode.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target );
+            //ChildRelationshipNode.Node.Properties[TargetNTP].AsMetaDataList.setValue( CswNbtNodePropMetaDataList.ObjectClassPrefix + DesignNtpOC.ObjectClassId );
 
-            ChildRelationshipNode.postChanges( false );
+            //ChildRelationshipNode.postChanges( false );
         }
 
         // update()

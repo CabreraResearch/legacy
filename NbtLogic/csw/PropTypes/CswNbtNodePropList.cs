@@ -77,7 +77,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _TextSubField );
+                string ret = string.Empty;
+                CswNbtNodeTypePropListOption SelectedOption = Options.FindByValue( Value );
+                if( null != SelectedOption )
+                {
+                    ret = SelectedOption.Text;
+                }
+                else
+                {
+                    ret = GetPropRowValue( _TextSubField );
+                }
+                return ret;
             }
             set
             {
