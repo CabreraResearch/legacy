@@ -11,7 +11,7 @@
         collapsed: true,
         expandOnShow: false,
         //hideCollapseTool: false,
-        closable: true,
+        closable: false,
         items: [
             { //This is the empty component that you can attach outside elements to
                 xtype: 'component',
@@ -65,7 +65,8 @@
 
                 },
                 existingPropIdToAdd: '',
-                fieldTypeIdToAdd: ''
+                fieldTypeIdToAdd: '',
+                nodeLayout: {}
             };
             var cswPublic = {};
 
@@ -347,20 +348,6 @@
                 Csw.main.leftDiv.show();
             };
 
-            cswPublic.tearDown = function () {
-                cswPrivate.onTearDown();
-            };
-
-            cswPublic.close = function () {
-                cswParent.$.animate({ "left": "-=320px" }, "slow");
-                cswParent.data('hidden', true);
-            };
-
-            cswPublic.open = function () {
-                cswParent.$.animate({ "left": "+=320px" }, "slow");
-                cswParent.data('hidden', false);
-            };
-
             cswPrivate.makeButton = function (btnName, div) {
                 cswPrivate.buttons[btnName] = div.buttonExt({
                     enabledText: btnName,
@@ -509,6 +496,7 @@
 
                         //TODO - get nodelayout's active tabid, add property to bottom of column 1 for that tabid, then refresh nodelayout
                         //or (bonus) - implement drag and drop from the existing props list to the nodelayout
+                        var tabId = cswPrivate.nodeLayout.getActiveTabId();
 
                         break;
                     case buttons.addNewBtn:
@@ -589,6 +577,28 @@
                     }
                 });
             };
+            
+            //#region Public
+            
+            cswPublic.tearDown = function () {
+                cswPrivate.onTearDown();
+            };
+
+            cswPublic.close = function () {
+                cswParent.$.animate({ "left": "-=320px" }, "slow");
+                cswParent.data('hidden', true);
+            };
+
+            cswPublic.open = function () {
+                cswParent.$.animate({ "left": "+=320px" }, "slow");
+                cswParent.data('hidden', false);
+            };
+
+            cswPublic.setNodeLayout = function(nodeLayout) {
+                cswPrivate.nodeLayout = nodeLayout;
+            };
+
+            //#endregion Public
 
             //constructor
             (function _postCtor() {

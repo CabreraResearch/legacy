@@ -26,12 +26,11 @@
         var sidebar, nodelayout;
 
         (function _pre() {
-
             var sidebarDiv = Csw.designmode.factory(cswPrivate.sidebarDiv, 'sidebar');
             sidebar = sidebarDiv.sidebar(cswPrivate.sidebarOptions);
-
             nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
-
+            nodelayout.setSidebar(sidebar);
+            sidebar.setNodeLayout(nodelayout);
         })();
 
         cswPublic.tearDown = function () {

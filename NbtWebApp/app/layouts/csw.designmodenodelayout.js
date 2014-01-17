@@ -11,7 +11,9 @@
             nodeKey: '',
             nodeTypeId: '',
             identityTabId: '',
-            Layout: 'Edit'
+            Layout: 'Edit',
+            sidebar: {},
+            activeTabId: ''
         };
         if (options) {
             Csw.extend(cswPrivate, options);
@@ -77,6 +79,7 @@
                                 title: tabData.name,
                                 listeners: {
                                     activate: function (tab) {
+                                        cswPrivate.activeTabId = tab.id;
                                         if (!renderedTabs[tab.id]) {
                                             renderedTabs[tab.id] = tab;
                                             cswPrivate.renderTab(tab.id, tab.id);
@@ -203,7 +206,7 @@
                     ForceReadOnly: false
                 },
                 success: function (data) {
-
+                    
                     cswPrivate.renderProps(data.node, data.properties, extid, tabid);
 
                 } // success{}
@@ -397,10 +400,22 @@
                 }
             });
         };
+        
+        //#region Public
 
         cswPublic.tearDown = function () {
             cswParent.empty();
         };
+
+        cswPublic.setSidebar = function (sidebar) {
+            cswPrivate.sidebar = sidebar;
+        };
+        
+        cswPublic.getActiveTabId = function () {
+            return cswPrivate.activeTabId;
+        };
+
+        //#endregion Public
 
         (function _post() {
 
