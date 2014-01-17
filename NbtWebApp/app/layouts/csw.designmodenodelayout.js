@@ -32,13 +32,13 @@
         cswPrivate.init = function () {
             cswParent.empty();
 
-                var closeBtnDiv = cswParent.div().css('float', 'right');
-                closeBtnDiv.buttonExt({
-                    enabledText: 'Close Design Mode',
-                    onClick: function () {
-                        cswPrivate.onClose();
-                    }
-                });
+            var closeBtnDiv = cswParent.div().css('float', 'right');
+            closeBtnDiv.buttonExt({
+                enabledText: 'Close Design Mode',
+                onClick: function () {
+                    cswPrivate.onClose();
+                }
+            });
             var layoutSelectDiv = cswParent.div().css('float', 'right');
             layoutSelectDiv.setLabelText('Select Layout:', false, false);
             layoutSelectDiv.select({

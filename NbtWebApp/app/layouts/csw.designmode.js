@@ -26,8 +26,6 @@
         var cswPublic = {};
         var sidebar, nodelayout;
 
-            nodelayout.setSidebar(sidebar);
-            sidebar.setNodeLayout(nodelayout);
         cswPublic.tearDown = function () {
             if (sidebar) {
                 sidebar.tearDown();
@@ -49,7 +47,8 @@
             };
 
             nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
-
+            nodelayout.setSidebar(sidebar);
+            sidebar.setNodeLayout(nodelayout);
         })();
 
         (function _post() {
