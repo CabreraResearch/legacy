@@ -485,7 +485,19 @@
                                         },
                                         ReloadTabOnSave: false,
                                         onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                                            //TODO - add property to active layout (and refresh)
+                                            /*Csw.ajaxWcf.post({
+                                                urlMethod: 'Design/updateLayout',
+                                                data: {
+                                                    layout: cswPrivate.nodeLayout.getActiveLayout(),
+                                                    nodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
+                                                    tabid: cswPrivate.nodeLayout.getActiveTabId(),
+                                                    props: propsReq//TODO - use nodeid to get related ntp
+                                                },
+                                                success: function (response) {
+                                                    //nothing to do here
+                                                }
+                                            });*/
+                                            cswPrivate.nodeLayout.refresh();
                                             cswPrivate.extWindowNew.close();
                                         },
                                         onInitFinish: function () { }
