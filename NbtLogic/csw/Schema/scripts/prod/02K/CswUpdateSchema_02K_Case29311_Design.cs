@@ -417,6 +417,16 @@ namespace ChemSW.Nbt.Schema
                             barcodeSequenceNTP._DataRow["isrequired"] = CswConvert.ToDbVal( true );
                             break;
 
+                        case CswEnumNbtFieldType.ChildContents:
+                            CswNbtMetaDataNodeTypeProp ccisFkNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleChildContents.AttributeName.IsFK.ToString() );
+                            ccisFkNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                            ccisFkNTP.removeFromAllLayouts();
+
+                            CswNbtMetaDataNodeTypeProp ccfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleChildContents.AttributeName.FKType.ToString() );
+                            ccfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                            ccfktypeNTP.removeFromAllLayouts();
+                            break;
+
                         case CswEnumNbtFieldType.Composite:
                             CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, "Add To Template", "" );
                             addTemplateNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
