@@ -46,6 +46,7 @@
                         } else if (val === 'Preview') {
                             cswPrivate.makePreviewNodeLayout();
                         }
+                        cswPrivate.sidebar.refreshExistingProperties(val, cswPrivate.activeTabId);
                     }
                 });
                 cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
@@ -80,6 +81,7 @@
                                 listeners: {
                                     activate: function (tab) {
                                         cswPrivate.activeTabId = tab.id;
+                                        cswPrivate.sidebar.refreshExistingProperties('Edit',tab.id);
                                         if (!renderedTabs[tab.id]) {
                                             renderedTabs[tab.id] = tab;
                                             cswPrivate.renderTab(tab.id, tab.id);

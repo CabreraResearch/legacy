@@ -78,6 +78,12 @@
                 addNewBtn: 'Add New Prop'
             };
 
+            var existingProperties = {
+                div: {},
+                dataStore: {},
+                control: {}
+            };
+
             //Constructor
             (function () {
                 if (options) {
@@ -135,7 +141,7 @@
 
                 cswPublic.componentItem.br({ number: 2 });
 
-                //#region Edit NodeType Form - Version 2
+                //#region Edit NodeType Form
 
                 var nodeTypePropsDiv = cswPublic.componentItem.div({
                     width: '100%',
@@ -190,80 +196,17 @@
 
                 cswPublic.componentItem.br();
 
-                //#endregion Edit NodeType Form - Version 2
+                //#endregion Edit NodeType Form
 
                 //#region Add Properties
-                var ajaxdata = {
+                existingProperties.div = cswPublic.componentItem.div({ align: 'center' });
+                /*cswPrivate.loadExistingProperties({
                     NodeId: Csw.string(cswPrivate.tabState.nodeid),
                     NodeKey: Csw.string(cswPrivate.tabState.nodekey),
                     NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                     TabId: Csw.string(cswPrivate.tabState.tabid),
-                    LayoutType: 'Edit' //always be edit? how will the user choose to add to the add-layout??
-                };
-
-                cswPrivate.ajax.addLayoutProps = Csw.ajax.deprecatedWsNbt({
-                    urlMethod: 'getPropertiesForLayoutAdd',
-                    data: ajaxdata,
-                    success: function (data) {
-                        var propOpts = [];
-                        Csw.each(data.add, function (p) {
-                            var display = p.propname;
-                            if (Csw.bool(p.hidden)) {
-                                display += ' (hidden)';
-                            }
-                            propOpts.push([
-                                p.propid,
-                               display
-                            ]);
-                        });
-                        propsDataStore.loadData(propOpts);
-                    } // success
-                }); // Csw.ajax
-
-                var existingPropertiesDiv = cswPublic.componentItem.div({ align: 'center' });
-
-                var propsDataStore = Ext.create('Ext.data.ArrayStore', {
-                    fields: ['value', 'display'],
-                    data: [],
-                    autoLoad: false
-                });
-
-                //TODO - this needs to be updated whenever the layout or tab changes on the nodelayout
-                cswPrivate.existingPropertiesForm = window.Ext.widget('form', {
-                    title: 'Add Existing Property',
-                    width: 275,
-                    height: 150,
-                    renderTo: existingPropertiesDiv.getId(),
-                    layout: 'fit',
-                    items: [{
-                        anchor: '100%',
-                        xtype: 'multiselect',
-                        msgTarget: 'bottom',
-                        name: 'addexistingprop',
-                        id: 'add-existing-prop',
-                        store: propsDataStore,
-                        valueField: 'value',
-                        displayField: 'display',
-                        ddReorder: true,
-                        maxSelections: 1, //NOT WORKING FOR SOME REASON
-                        listeners: {
-                            change: function (thisList, newVal, oldVal, eOpts) {
-                                if (newVal.length === 1) {
-                                    cswPrivate.existingPropIdToAdd = newVal[0];
-                                    cswPrivate.buttons[buttons.addExistingBtn].enable();
-                                } else {
-                                    cswPrivate.buttons[buttons.addExistingBtn].disable();
-                                }
-                            }
-                        }
-                    }]
-                });
-                existingPropertiesDiv.br();
-                
-                cswPrivate.makeButton(buttons.addExistingBtn, existingPropertiesDiv);
-                cswPrivate.buttons[buttons.addExistingBtn].disable();
-
-                existingPropertiesDiv.br({ number: 2 });
+                    LayoutType: 'Edit'
+                });*/
 
                 var fieldTypesDiv = cswPublic.componentItem.div({ align: 'center' });
 
@@ -577,6 +520,77 @@
                     }
                 });
             };
+
+            cswPrivate.loadExistingProperties = function (ajaxdata) {
+                existingProperties.dataStore = Ext.create('Ext.data.ArrayStore', {
+                    fields: ['value', 'display'],
+                    data: [],
+                    autoLoad: false
+                });
+
+                var ajaxdata = {
+                    NodeId: Csw.string(cswPrivate.tabState.nodeid),
+                    NodeKey: Csw.string(cswPrivate.tabState.nodekey),
+                    NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                    TabId: Csw.string(cswPrivate.tabState.tabid),
+                    LayoutType: 'Edit'
+                };
+
+                cswPrivate.ajax.addLayoutProps = Csw.ajax.deprecatedWsNbt({
+                    urlMethod: 'getPropertiesForLayoutAdd',
+                    data: ajaxdata,
+                    success: function (data) {
+                        var propOpts = [];
+                        Csw.each(data.add, function (p) {
+                            var display = p.propname;
+                            if (Csw.bool(p.hidden)) {
+                                display += ' (hidden)';
+                            }
+                            propOpts.push([
+                                p.propid,
+                               display
+                            ]);
+                        });
+                        existingProperties.dataStore.loadData(propOpts);
+                    } // success
+                }); // Csw.ajax
+
+                existingProperties.control = window.Ext.widget('form', {
+                    title: 'Add Existing Property',
+                    width: 275,
+                    height: 150,
+                    renderTo: existingProperties.div.getId(),
+                    layout: 'fit',
+                    items: [{
+                        anchor: '100%',
+                        xtype: 'multiselect',
+                        msgTarget: 'bottom',
+                        name: 'addexistingprop',
+                        id: 'add-existing-prop',
+                        store: existingProperties.dataStore,
+                        valueField: 'value',
+                        displayField: 'display',
+                        ddReorder: true,
+                        maxSelections: 1, //NOT WORKING FOR SOME REASON
+                        listeners: {
+                            change: function (thisList, newVal, oldVal, eOpts) {
+                                if (newVal.length === 1) {
+                                    cswPrivate.existingPropIdToAdd = newVal[0];
+                                    cswPrivate.buttons[buttons.addExistingBtn].enable();
+                                } else {
+                                    cswPrivate.buttons[buttons.addExistingBtn].disable();
+                                }
+                            }
+                        }
+                    }]
+                });
+                existingProperties.div.br();
+
+                cswPrivate.makeButton(buttons.addExistingBtn, existingProperties.div);
+                cswPrivate.buttons[buttons.addExistingBtn].disable();
+                
+                existingProperties.div.br({ number: 2 });
+            };
             
             //#region Public
             
@@ -596,6 +610,23 @@
 
             cswPublic.setNodeLayout = function(nodeLayout) {
                 cswPrivate.nodeLayout = nodeLayout;
+            };
+            
+            cswPublic.refreshExistingProperties = function (layoutMode, tabid) {
+                if (Csw.isNullOrEmpty(layoutMode)) {
+                    layoutMode = 'Edit';
+                }
+                if (tabid) {
+                    cswPrivate.tabState.tabid = tabid;
+                }
+                existingProperties.div.empty();
+                cswPrivate.loadExistingProperties({
+                    NodeId: Csw.string(cswPrivate.tabState.nodeid),
+                    NodeKey: Csw.string(cswPrivate.tabState.nodekey),
+                    NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                    TabId: Csw.string(tabid),
+                    LayoutType: layoutMode
+                });
             };
 
             //#endregion Public
