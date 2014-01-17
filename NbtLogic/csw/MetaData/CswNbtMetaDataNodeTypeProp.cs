@@ -428,7 +428,9 @@ namespace ChemSW.Nbt.MetaData
 
                 if( value )
                 {
-                    _NodeTypePropRow["filter"] = string.Empty;
+                    _NodeTypePropRow["filtersubfield"] = string.Empty;
+                    _NodeTypePropRow["filtermode"] = string.Empty;
+                    _NodeTypePropRow["filtervalue"] = string.Empty;
                     _NodeTypePropRow["filterpropid"] = CswConvert.ToDbVal( Int32.MinValue );
                     if( this.DefaultValue.Empty )
                     {
@@ -1182,32 +1184,13 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _NodeTypePropRow["filterpropid"] ); }
         }
 
-        private char FilterDelimiter = CswNbtMetaDataObjectClassProp.FilterDelimiter;
         public void setFilterDeprecated( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
-            string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
             CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
-            _setFilter( FilterProp, FilterString );
+            setFilterDeprecated( FilterProp, SubField, FilterMode, FilterValue );
         }
 
         public void setFilterDeprecated( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        {
-            string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
-            _setFilter( FilterProp, FilterString );
-        }
-
-        public void setFilterDeprecated( CswNbtMetaDataNodeTypeProp FilterProp, string FilterString )
-        {
-            _setFilter( FilterProp, FilterString );
-        }
-
-        public void setFilterDeprecated( Int32 FilterNodeTypePropId, string FilterString )
-        {
-            CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
-            _setFilter( FilterProp, FilterString );
-        }
-
-        private void _setFilter( CswNbtMetaDataNodeTypeProp FilterProp, string FilterString )
         {
             if( IsRequired )
             {
@@ -1215,56 +1198,50 @@ namespace ChemSW.Nbt.MetaData
             }
 
             bool changed = false;
-
             if( FilterProp != null )
             {
                 changed = _setAttribute( "filterpropid", FilterProp.FirstPropVersionId, true );
+                changed = _setAttribute( "filtersubfield", SubField.Name.ToString(), true ) || changed;
+                changed = _setAttribute( "filtermode", FilterMode.ToString(), true ) || changed;
+                changed = _setAttribute( "filtervalue", FilterValue.ToString(), true ) || changed;
             }
             else
             {
-                FilterString = "";
                 _CswNbtMetaDataResources.CswNbtResources.logMessage( "Attempted to create a conditional property filter with based upon a null NodeTypeProperty." );
             }
-
-            changed = _setAttribute( "filter", FilterString, true ) || changed;
-
             if( changed )
             {
                 _CswNbtMetaDataResources.RecalculateQuestionNumbersDeprecated( getNodeType() );
             }
-        }
+        } // setFilterDeprecated()
 
         public void clearFilterDeprecated()
         {
-            bool changed = _setAttribute( "filter", string.Empty, true );
-            changed = _setAttribute( "filterpropid", Int32.MinValue, true ) || changed;
+            bool changed = _setAttribute( "filterpropid", Int32.MinValue, true );
+            changed = _setAttribute( "filtersubfield", string.Empty, true ) || changed;
+            changed = _setAttribute( "filtermode", string.Empty, true ) || changed;
+            changed = _setAttribute( "filtervalue", string.Empty, true ) || changed;
             if( changed )
+            {
                 _CswNbtMetaDataResources.RecalculateQuestionNumbersDeprecated( getNodeType() );
-        }
+            }
+        } // clearFilterDeprecated()
 
         public void getFilter( ref CswNbtSubField SubField, ref CswEnumNbtFilterMode FilterMode, ref string FilterValue )
         {
-            if( _NodeTypePropRow["filter"].ToString() != string.Empty )
+            CswNbtMetaDataNodeTypeProp FilterNodeTypeProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
+            if( FilterNodeTypeProp != null )
             {
-                string[] filter = _NodeTypePropRow["filter"].ToString().Split( FilterDelimiter );
-                CswNbtMetaDataNodeTypeProp FilterNodeTypeProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
-                if( FilterNodeTypeProp != null )
-                {
-                    CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) filter[0];
-                    SubField = FilterNodeTypeProp.getFieldTypeRule().SubFields[Column];
-                    FilterMode = (CswEnumNbtFilterMode) filter[1];
-                    if( filter.GetUpperBound( 0 ) > 1 )
-                        FilterValue = filter[2];
-                }
+                SubField = FilterNodeTypeProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) _NodeTypePropRow["filtersubfield"].ToString()];
+                FilterMode = (CswEnumNbtFilterMode) _NodeTypePropRow["filtermode"].ToString();
+                FilterValue = _NodeTypePropRow["filtervalue"].ToString();
             }
         }
-        public string getFilterString()
-        {
-            return _NodeTypePropRow["filter"].ToString();
-        }
+
         public bool hasFilter()
         {
-            return ( _NodeTypePropRow["filter"].ToString() != string.Empty &&
+            return ( _NodeTypePropRow["filtersubfield"].ToString() != string.Empty &&
+                     _NodeTypePropRow["filtermode"].ToString() != string.Empty &&
                      _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId ) != null );
         }
 
@@ -1430,7 +1407,7 @@ namespace ChemSW.Nbt.MetaData
                 return ret;
             }
         } // Sequence
-        
+
         //public static string _Element_MetaDataNodeTypeProp = "MetaDataNodeTypeProp";
         //public static string _Element_DefaultValue = "DefaultValue";
         //public static string _Element_SubFieldMap = "SubFieldMap";

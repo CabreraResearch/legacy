@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 29833
     /// </summary>
-    public class CswUpdateMetaData_02K_Case29311: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02K_Case29311 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -294,9 +294,12 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, DisplayConditionPropertyOCP.ObjectClassPropId );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionFilterOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, DisplayConditionPropertyOCP.ObjectClassPropId );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionValueOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, DisplayConditionPropertyOCP.ObjectClassPropId );
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filter, "Field1_Fk|NotNull" );
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionFilterOCP, CswEnumNbtObjectClassPropAttributes.filter, "Field1_Fk|NotNull" );
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionValueOCP, CswEnumNbtObjectClassPropAttributes.filter, "Field1_Fk|NotNull" );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filtersubfield, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionFilterOCP, CswEnumNbtObjectClassPropAttributes.filtersubfield, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionValueOCP, CswEnumNbtObjectClassPropAttributes.filtersubfield, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.NotNull.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionFilterOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.NotNull.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionValueOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.NotNull.ToString() );
                 }
 
                 // DesignNodeTypeTab

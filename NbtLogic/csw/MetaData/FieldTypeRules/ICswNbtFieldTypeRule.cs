@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     {
         public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;
         public const string CompoundUnique = CswEnumNbtPropertyAttributeName.CompoundUnique;
-        public const string DisplayConditionFilter = CswEnumNbtPropertyAttributeName.DisplayConditionFilter;
+        public const string DisplayConditionFilterMode = CswEnumNbtPropertyAttributeName.DisplayConditionFilterMode;
         public const string DisplayConditionProperty = CswEnumNbtPropertyAttributeName.DisplayConditionProperty;
         public const string DisplayConditionSubfield = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield;
         public const string DisplayConditionValue = CswEnumNbtPropertyAttributeName.DisplayConditionValue;

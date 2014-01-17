@@ -1229,7 +1229,9 @@ namespace ChemSW.Nbt.Schema
             OCPRow["numberminvalue"] = CswConvert.ToDbVal( Int32.MinValue );
             OCPRow["numbermaxvalue"] = CswConvert.ToDbVal( Int32.MinValue );
             OCPRow["statictext"] = "";
-            OCPRow["filter"] = "";
+            OCPRow["filtersubfield"] = "";
+            OCPRow["filtermode"] = "";
+            OCPRow["filtervalue"] = "";
             OCPRow["filterpropid"] = CswConvert.ToDbVal( Int32.MinValue );
             ObjectClassPropsTable.Rows.Add( OCPRow );
             return OCPRow;
@@ -1306,7 +1308,9 @@ namespace ChemSW.Nbt.Schema
             OCPRow["numberminvalue"] = CswConvert.ToDbVal( Int32.MinValue );
             OCPRow["numbermaxvalue"] = CswConvert.ToDbVal( Int32.MinValue );
             OCPRow["statictext"] = "";
-            OCPRow["filter"] = "";
+            OCPRow["filtersubfield"] = "";
+            OCPRow["filtermode"] = "";
+            OCPRow["filtervalue"] = "";
             OCPRow["filterpropid"] = CswConvert.ToDbVal( Int32.MinValue );
             ObjectClassPropsTable.Rows.Add( OCPRow );
             return OCPRow;
@@ -1365,20 +1369,23 @@ namespace ChemSW.Nbt.Schema
             OCPRow[CswEnumNbtObjectClassPropAttributes.valuefieldid.ToString()] = CswConvert.ToDbVal( OcpModel.ValueFieldId );
             if( OcpModel.FieldType == CswEnumNbtFieldType.Number )
             {
-                OCPRow[CswEnumNbtObjectClassPropAttributes.numberprecision.ToString()] =
-                    CswConvert.ToDbVal( OcpModel.NumberPrecision );
-                OCPRow[CswEnumNbtObjectClassPropAttributes.numberminvalue.ToString()] =
-                    CswConvert.ToDbVal( OcpModel.NumberMinValue );
-                OCPRow[CswEnumNbtObjectClassPropAttributes.numbermaxvalue.ToString()] =
-                    CswConvert.ToDbVal( OcpModel.NumberMaxValue );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numberprecision.ToString()] = CswConvert.ToDbVal( OcpModel.NumberPrecision );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numberminvalue.ToString()] = CswConvert.ToDbVal( OcpModel.NumberMinValue );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numbermaxvalue.ToString()] = CswConvert.ToDbVal( OcpModel.NumberMaxValue );
             }
             OCPRow[CswEnumNbtObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
             OCPRow[CswEnumNbtObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
             OCPRow[CswEnumNbtObjectClassPropAttributes.textareacols.ToString()] = CswConvert.ToDbVal( OcpModel.TextAreaColumns );
             OCPRow[CswEnumNbtObjectClassPropAttributes.textarearows.ToString()] = CswConvert.ToDbVal( OcpModel.TextAreaRows );
 
-            OCPRow[CswEnumNbtObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
-            OCPRow[CswEnumNbtObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
+            if( Int32.MinValue != OcpModel.FilterPropId &&
+                OcpModel.FilterSubfield != CswEnumNbtSubFieldName.Unknown )
+            {
+                OCPRow[CswEnumNbtObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.filtersubfield.ToString()] = OcpModel.FilterSubfield;
+                OCPRow[CswEnumNbtObjectClassPropAttributes.filtermode.ToString()] = OcpModel.FilterMode;
+                OCPRow[CswEnumNbtObjectClassPropAttributes.filtervalue.ToString()] = OcpModel.FilterValue;
+            }
             OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
 
             OCPRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( OcpModel.PropName );
@@ -1813,7 +1820,7 @@ namespace ChemSW.Nbt.Schema
 
         //}//doSearch()
 
-        public Dictionary<string, int> createImportDefinitionEntries(string ImportDefinitionName, DataTable DefDataTable)
+        public Dictionary<string, int> createImportDefinitionEntries( string ImportDefinitionName, DataTable DefDataTable )
         {
             return CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, DefDataTable );
         }

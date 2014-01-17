@@ -1604,8 +1604,13 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp OldFilter = OldNodeType.getNodeTypeProp( NewProp.FilterNodeTypePropId );
                     if( OldFilter != null )
                     {
+                        CswNbtSubField SubField = null;
+                        CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+                        string FilterValue = string.Empty;
+                        OldFilter.getFilter( ref SubField, ref FilterMode, ref FilterValue );
+
                         CswNbtMetaDataNodeTypeProp NewFilter = NewNodeType.getNodeTypeProp( OldFilter.PropName );
-                        NewProp.setFilterDeprecated( NewFilter.PropId, NewProp.getFilterString() );
+                        NewProp.setFilterDeprecated( NewFilter.PropId, SubField, FilterMode, FilterValue );
                     }
                 }
             }

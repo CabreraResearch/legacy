@@ -194,8 +194,8 @@ namespace ChemSW.NbtWebControls
                         SelectedNodeType = SelectedTab.getNodeType();
                         SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
                         SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
-                        if( SelectedProperty.hasFilter() )
-                            SelectedPropFilter = SelectedNodeType.getNodeTypePropByFirstVersionId( SelectedProperty.FilterNodeTypePropId ).PropId.ToString() + "_" + SelectedProperty.FilterNodeTypePropId + "_" + SelectedProperty.getFilterString();
+                        //if( SelectedProperty.hasFilter() )
+                        //    SelectedPropFilter = SelectedNodeType.getNodeTypePropByFirstVersionId( SelectedProperty.FilterNodeTypePropId ).PropId.ToString() + "_" + SelectedProperty.FilterNodeTypePropId + "_" + SelectedProperty.getFilterString();
                     }
                     CategoryXmlNode = _makeCategories( XmlDoc, SelectedCategory, Root );
                     if( CategoryXmlNode != null )
@@ -424,11 +424,11 @@ namespace ChemSW.NbtWebControls
                                         PropParentNode = null;
                                         foreach( XmlNode OtherPropChildNode in OtherPropNode.ChildNodes )
                                         {
-                                            if( OtherPropChildNode.Attributes["Value"].Value == NodeTypePropFilterPrefix + OtherPropId.ToString() + "_" + ConditionalProp.FilterNodeTypePropId + "_" + ConditionalProp.getFilterString() ) 
-                                            {
-                                                PropParentNode = OtherPropChildNode;
-                                                PropParentNodeValue = OtherPropId.ToString() + "_" + ConditionalProp.FilterNodeTypePropId + "_" + ConditionalProp.getFilterString();
-                                            }
+                                            //if( OtherPropChildNode.Attributes["Value"].Value == NodeTypePropFilterPrefix + OtherPropId.ToString() + "_" + ConditionalProp.FilterNodeTypePropId + "_" + ConditionalProp.getFilterString() ) 
+                                            //{
+                                            //    PropParentNode = OtherPropChildNode;
+                                            //    PropParentNodeValue = OtherPropId.ToString() + "_" + ConditionalProp.FilterNodeTypePropId + "_" + ConditionalProp.getFilterString();
+                                            //}
                                         }
                                         if( PropParentNode == null )
                                         {
@@ -437,7 +437,7 @@ namespace ChemSW.NbtWebControls
                                             string FilterValue = null;
                                             ConditionalProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
-                                            PropParentNodeValue = OtherPropId.ToString() + "_" + ConditionalProp.FilterNodeTypePropId + "_" + ConditionalProp.getFilterString();
+                                            //PropParentNodeValue = OtherPropId.ToString() + "_" + ConditionalProp.FilterNodeTypePropId + "_" + ConditionalProp.getFilterString();
                                             PropParentNode = _makeTreeViewXmlNode( XmlDoc,
                                                                                    NodeTypePropFilterPrefix + PropParentNodeValue,
                                                                                    NodeTypePropFilterPrefix + PropParentNodeValue,

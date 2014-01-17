@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.MetaData
                 get { return _IsRequired; }
                 set
                 {
-                    if( false == string.IsNullOrEmpty( Filter ) && value )
+                    if( Int32.MinValue != FilterPropId && value )
                     {
                         throw new CswDniException( CswEnumErrorType.Error, "Conditional properties cannot be required", "Attempted to require a conditional property " + PropName );
                     }
@@ -109,23 +109,14 @@ namespace ChemSW.Nbt.MetaData
             public Int32 NumberMaxValue = Int32.MinValue;
             [DataMember]
             public string StaticText = string.Empty;
-
-            [DataMember]
-            public string Filter
-            {
-                get { return _filter; }
-                set
-                {
-                    if( false == string.IsNullOrEmpty( value ) && IsRequired )
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error, "Required properties cannot be conditional", "Attempted to assign a filter to required property " + PropName );
-                    }
-                    _filter = value;
-                }
-            }
-
             [DataMember]
             public Int32 FilterPropId = Int32.MinValue;
+            [DataMember]
+            public CswEnumNbtSubFieldName FilterSubfield = CswEnumNbtSubFieldName.Unknown;
+            [DataMember]
+            public CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+            [DataMember]
+            public string FilterValue = string.Empty;
             [DataMember]
             public bool UseNumbering;
             [DataMember]
@@ -139,7 +130,6 @@ namespace ChemSW.Nbt.MetaData
             [DataMember]
             public Int32 TextAreaRows = Int32.MinValue;
 
-            private string _filter;
             private bool _IsRequired;
         }
 
