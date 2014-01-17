@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -232,10 +233,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
             {
-                CswNbtNodePropList FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsList;
-                CswNbtNodePropRelationship FkValueProp = DesignNTPNode.AttributeProperty[FkValueAttr.Name].AsRelationship;
-                CswNbtNodePropList ValuePropTypeProp = DesignNTPNode.AttributeProperty[ValuePropTypeAttr.Name].AsList;
-                CswNbtNodePropRelationship ValuePropIdProp = DesignNTPNode.AttributeProperty[ValuePropIdAttr.Name].AsRelationship;
+                CswNbtNodePropText FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsText;
+                CswNbtNodePropList FkValueProp = DesignNTPNode.AttributeProperty[FkValueAttr.Name].AsList;
+                CswNbtNodePropText ValuePropTypeProp = DesignNTPNode.AttributeProperty[ValuePropTypeAttr.Name].AsText;
+                CswNbtNodePropList ValuePropIdProp = DesignNTPNode.AttributeProperty[ValuePropIdAttr.Name].AsList;
 
                 if( FkTypeProp.wasSubFieldModified( CswNbtFieldTypeRuleList.SubFieldName.Value ) ||
                     FkValueProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) ||
@@ -243,13 +244,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ValuePropIdProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
                 {
                     //We're changing the relationship
-                    if( _isInvalidFkTarget( FkTypeProp.Value,
-                                            FkValueProp.RelatedNodeId != null ? FkValueProp.RelatedNodeId.PrimaryKey : Int32.MinValue,
-                                            ValuePropTypeProp.Value,
-                                            ValuePropIdProp.RelatedNodeId != null ? ValuePropIdProp.RelatedNodeId.PrimaryKey : Int32.MinValue ) )
+                    if( _isInvalidFkTarget( FkTypeProp.Text,
+                                            CswConvert.ToInt32( FkValueProp.Value ),
+                                            ValuePropTypeProp.Text,
+                                            CswConvert.ToInt32( ValuePropIdProp.Value ) ) )
                     {
-                        ValuePropTypeProp.Value = "";
-                        ValuePropIdProp.RelatedNodeId = null;
+                        ValuePropTypeProp.Text = "";
+                        ValuePropIdProp.Value = "";
                     }
                 }
             }

@@ -285,38 +285,43 @@ namespace ChemSW.Nbt.ObjClasses
                 // Set values for FKType and RelatedPropType
                 CswNbtNodePropText FKTypeWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.FKType].AsText;
                 CswNbtNodePropList RelationshipWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship].AsList;
-                if( false == RelationshipWrapper.Empty )
+                if( false == FKTypeWrapper.wasAnySubFieldModified( false ) )
                 {
-                    if( RelationshipWrapper.Text.EndsWith( PropRefValue_OCP_Suffix ) )
+                    if( false == RelationshipWrapper.Empty )
                     {
-                        FKTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                        if( RelationshipWrapper.Text.EndsWith( PropRefValue_OCP_Suffix ) )
+                        {
+                            FKTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                        }
+                        else
+                        {
+                            FKTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                        }
                     }
                     else
                     {
-                        FKTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                        FKTypeWrapper.Text = string.Empty;
                     }
                 }
-                else
-                {
-                    FKTypeWrapper.Text = string.Empty;
-                }
-
                 CswNbtNodePropText RelatedPropTypeWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedPropType].AsText;
                 CswNbtNodePropList RelatedPropWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty].AsList;
-                if( false == RelatedPropWrapper.Empty )
+                if( false == RelatedPropTypeWrapper.wasAnySubFieldModified( false ) )
                 {
-                    if( RelatedPropWrapper.Text.EndsWith( PropRefValue_OCP_Suffix ) )
+                    if( false == RelatedPropWrapper.Empty )
                     {
-                        RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                        if( RelatedPropWrapper.Text.EndsWith( PropRefValue_OCP_Suffix ) )
+                        {
+                            RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                        }
+                        else
+                        {
+                            RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                        }
                     }
                     else
                     {
-                        RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                        RelatedPropTypeWrapper.Text = string.Empty;
                     }
-                }
-                else
-                {
-                    RelatedPropTypeWrapper.Text = string.Empty;
                 }
             } // if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
 
@@ -639,30 +644,44 @@ namespace ChemSW.Nbt.ObjClasses
                     };
 
                 // Choices for Related Property derive from all properties on the selected Relationship
-                if( false == FKTypeWrapper.Empty && false == RelationshipWrapper.Empty )
-                {
-                    RelatedPropWrapper.InitOptions = delegate
+                RelatedPropWrapper.InitOptions = delegate
+                    {
+                        CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, false );
+                        if( false == FKTypeWrapper.Empty && false == RelationshipWrapper.Empty )
                         {
-                            CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, false );
                             if( FKTypeWrapper.Text == CswEnumNbtViewPropIdType.NodeTypePropId.ToString() )
                             {
-                                CswNbtMetaDataNodeType SelectedNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( RelationshipWrapper.Value ) );
-                                foreach( CswNbtMetaDataNodeTypeProp OtherNTP in SelectedNT.getNodeTypeProps() )
+                                CswNbtMetaDataNodeTypeProp SelectedNTP = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( RelationshipWrapper.Value ) );
+                                CswNbtNodePropMetaDataList SelectedNTPTarget = SelectedNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList;
+                                if( SelectedNTPTarget.Type == CswEnumNbtViewRelatedIdType.NodeTypeId )
                                 {
-                                    ret.Options.Add( new CswNbtNodeTypePropListOption( OtherNTP.PropName, OtherNTP.PropId.ToString() ) );
+                                    CswNbtMetaDataNodeType SelectedTargetNT = (CswNbtMetaDataNodeType) SelectedNTPTarget.MetaDataValue;
+                                    foreach( CswNbtMetaDataNodeTypeProp OtherNTP in SelectedTargetNT.getNodeTypeProps() )
+                                    {
+                                        ret.Options.Add( new CswNbtNodeTypePropListOption( OtherNTP.PropName, OtherNTP.PropId.ToString() ) );
+                                    }
+                                }
+                                if( SelectedNTPTarget.Type == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                                {
+                                    CswNbtMetaDataObjectClass SelectedTargetOC = (CswNbtMetaDataObjectClass) SelectedNTPTarget.MetaDataValue;
+                                    foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedTargetOC.getObjectClassProps() )
+                                    {
+                                        ret.Options.Add( new CswNbtNodeTypePropListOption( OtherOCP.PropName + PropRefValue_OCP_Suffix, OtherOCP.PropId.ToString() ) );
+                                    }
                                 }
                             }
                             else if( FKTypeWrapper.Text == CswEnumNbtViewPropIdType.ObjectClassPropId.ToString() )
                             {
-                                CswNbtMetaDataObjectClass SelectedOC = _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( RelationshipWrapper.Value ) );
-                                foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedOC.getObjectClassProps() )
+                                CswNbtMetaDataObjectClassProp SelectedOCP = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( RelationshipWrapper.Value ) );
+                                CswNbtMetaDataObjectClass SelectedTarget = _CswNbtResources.MetaData.getObjectClass( SelectedOCP.FKValue );
+                                foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedTarget.getObjectClassProps() )
                                 {
                                     ret.Options.Add( new CswNbtNodeTypePropListOption( OtherOCP.PropName + PropRefValue_OCP_Suffix, OtherOCP.PropId.ToString() ) );
                                 }
                             }
-                            return ret;
-                        };
-                } // if( false == FKTypeWrapper.Empty && false == RelationshipWrapper.Empty )
+                        } // if( false == FKTypeWrapper.Empty && false == RelationshipWrapper.Empty )
+                        return ret;
+                    };
 
             } // if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
 
@@ -683,14 +702,14 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 if( RelationshipNTP.FkMatchesNew( RelationalNodeType ) )
                                 {
-                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipNTP.PropName, RelationshipNTP.PropId.ToString() ) );
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipNTP.getNodeType().NodeTypeName +": "+ RelationshipNTP.PropName, RelationshipNTP.PropId.ToString() ) );
                                 }
                             }
-                            foreach( CswNbtMetaDataObjectClassProp RelationshipOCP in RelationalNodeType.getObjectClass().getObjectClassProps( CswEnumNbtFieldType.Relationship ) )
+                            foreach( CswNbtMetaDataObjectClassProp RelationshipOCP in _CswNbtResources.MetaData.getObjectClassProps( CswEnumNbtFieldType.Relationship ) )
                             {
                                 if( RelationshipOCP.FkMatches( RelationalNodeType ) )
                                 {
-                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipOCP.PropName + PropRefValue_OCP_Suffix, RelationshipOCP.PropId.ToString() ) );
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipOCP.getObjectClass().ObjectClass + ": " + RelationshipOCP.PropName + PropRefValue_OCP_Suffix, RelationshipOCP.PropId.ToString() ) );
                                 }
                             }
                         }

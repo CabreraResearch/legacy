@@ -544,7 +544,7 @@ namespace ChemSW.Nbt.Schema
                             //relView.save();
 
                             CswNbtMetaDataNodeTypeProp propNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.RelatedProperty.ToString() );
-                            propNTP.setFilterDeprecated( relNTP, relNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID], CswEnumNbtFilterMode.NotNull, null );
+                            propNTP.setFilterDeprecated( relNTP, relNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleList.SubFieldName.Value], CswEnumNbtFilterMode.NotNull, null );
                             //propNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
 
                             CswNbtMetaDataNodeTypeProp propTypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.RelatedPropType.ToString() );
