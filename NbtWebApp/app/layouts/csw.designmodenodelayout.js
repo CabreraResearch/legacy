@@ -12,7 +12,9 @@
             nodeTypeId: '',
             identityTabId: '',
             Layout: 'Edit',
-            onClose: function () { }
+            onClose: function () { },
+            sidebar: {},
+            activeTabId: ''
         };
         if (options) {
             Csw.extend(cswPrivate, options);
@@ -25,41 +27,42 @@
 
             cswParent = cswParent || Csw.main.rightDiv;
 
-            var init = function () {
-                Csw.main.clear({ right: true });
-                var closeBtnDiv = cswParent.div().css('float', 'right');
-                closeBtnDiv.buttonExt({
-                    enabledText: 'Close Design Mode',
-                    onClick: function () {
-                        cswPrivate.onClose();
-                    }
-                });
-                var layoutSelectDiv = cswParent.div().css('float', 'right');
-                layoutSelectDiv.setLabelText('Select Layout:', false, false);
-                layoutSelectDiv.select({
-                    values: ['Edit', 'Add', 'Search', 'Preview'],
-                    selected: cswPrivate.Layout,
-                    onChange: function (val) {
-                        cswPrivate.Layout = val;
-                        init();
-                        if (val === 'Edit') {
-                            cswPrivate.makeEditNodeLayout();
-                        } else if (val === 'Add') {
-                            cswPrivate.makeAddNodeLayout();
-                        } else if (val === 'Search') {
-                            cswPrivate.Layout = 'Table'; //TODO: rename Table layout to Search
-                            cswPrivate.makeSearchNodeLayout();
-                        } else if (val === 'Preview') {
-                            cswPrivate.makePreviewNodeLayout();
-                        }
-                    }
-                });
-                cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
-                cswPrivate.contentDiv = cswParent.div();
-            };
-            init();
-
         })();
+        
+        cswPrivate.init = function () {
+            cswParent.empty();
+
+            var closeBtnDiv = cswParent.div().css('float', 'right');
+            closeBtnDiv.buttonExt({
+                enabledText: 'Close Design Mode',
+                onClick: function () {
+                    cswPrivate.onClose();
+                }
+            });
+            var layoutSelectDiv = cswParent.div().css('float', 'right');
+            layoutSelectDiv.setLabelText('Select Layout:', false, false);
+            layoutSelectDiv.select({
+                values: ['Edit', 'Add', 'Search', 'Preview'],
+                selected: cswPrivate.Layout,
+                onChange: function (val) {
+                    cswPrivate.Layout = val;
+                    cswPrivate.init();
+                    cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
+                }
+            });
+            cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
+            cswPrivate.contentDiv = cswParent.div();
+            if (cswPrivate.Layout === 'Edit') {
+                cswPrivate.makeEditNodeLayout();
+            } else if (cswPrivate.Layout === 'Add') {
+                cswPrivate.makeAddNodeLayout();
+            } else if (cswPrivate.Layout === 'Search') {
+                cswPrivate.Layout = 'Table'; //TODO: rename Table layout to Search
+                cswPrivate.makeSearchNodeLayout();
+            } else if (cswPrivate.Layout === 'Preview') {
+                cswPrivate.makePreviewNodeLayout();
+            }
+        };
 
         cswPrivate.makeEditNodeLayout = function () {
             cswPrivate.getTabsAjax = Csw.ajax.deprecatedWsNbt({
@@ -85,6 +88,8 @@
                                 title: tabData.name,
                                 listeners: {
                                     activate: function (tab) {
+                                        cswPrivate.activeTabId = tab.id;
+                                        cswPrivate.sidebar.refreshExistingProperties('Edit',tab.id);
                                         if (!renderedTabs[tab.id]) {
                                             renderedTabs[tab.id] = tab;
                                             cswPrivate.renderTab(tab.id, tab.id);
@@ -211,7 +216,7 @@
                     ForceReadOnly: false
                 },
                 success: function (data) {
-
+                    
                     cswPrivate.renderProps(data.node, data.properties, extid, tabid);
 
                 } // success{}
@@ -405,23 +410,33 @@
                 }
             });
         };
+        
+        //#region Public
 
         cswPublic.tearDown = function () {
             cswParent.empty();
         };
 
-        (function _post() {
+        cswPublic.setSidebar = function (sidebar) {
+            cswPrivate.sidebar = sidebar;
+        };
+        
+        cswPublic.getActiveTabId = function () {
+            return cswPrivate.activeTabId;
+        };
+        
+        cswPublic.getActiveLayout = function () {
+            return cswPrivate.Layout;
+        };
 
-            if (cswPrivate.Layout === 'Edit') {
-                cswPrivate.makeEditNodeLayout();
-            } else if (cswPrivate.Layout === 'Add') {
-                cswPrivate.makeAddNodeLayout();
-            } else if (cswPrivate.Layout === 'Preview') {
-                cswPrivate.makePreviewNodeLayout();
-            } else if (cswPrivate.Layout === 'Search') {
-                cswPrivate.Layout = 'Table';
-                cswPrivate.makeSearchNodeLayout();
-            }
+        cswPublic.refresh = function() {
+            cswPrivate.init();
+        };
+
+        //#endregion Public
+
+        (function _post() {
+            cswPrivate.init();
         })();
 
         return cswPublic;
