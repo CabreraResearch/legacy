@@ -1201,9 +1201,18 @@ namespace ChemSW.Nbt.MetaData
             if( FilterProp != null )
             {
                 changed = _setAttribute( "filterpropid", FilterProp.FirstPropVersionId, true );
-                changed = _setAttribute( "filtersubfield", SubField.Name.ToString(), true ) || changed;
-                changed = _setAttribute( "filtermode", FilterMode.ToString(), true ) || changed;
-                changed = _setAttribute( "filtervalue", FilterValue.ToString(), true ) || changed;
+                if( null != SubField && SubField.Name != CswEnumNbtSubFieldName.Unknown )
+                {
+                    changed = _setAttribute( "filtersubfield", SubField.Name.ToString(), true ) || changed;
+                }
+                if( null != FilterMode && FilterMode != CswEnumNbtFilterMode.Unknown )
+                {
+                    changed = _setAttribute( "filtermode", FilterMode.ToString(), true ) || changed;
+                }
+                if( null != FilterValue )
+                {
+                    changed = _setAttribute( "filtervalue", FilterValue.ToString(), true ) || changed;
+                }
             }
             else
             {
