@@ -10,7 +10,8 @@
             width: 400,
             border: 1,
 
-            columns: 2
+            columns: 2,
+            showAddColumnButton: true
         };
         var cswPublic = {};
 
@@ -55,21 +56,29 @@
                 items: _columns
             });
             var dragPanelCmp = window.Ext.getCmp(dragPanelCmpId);
-            myDiv.div().buttonExt({
+            var addColBtn = myDiv.div().buttonExt({
                 enabledText: 'Add Column',
-                onClick: function() {
+                onClick: function () {
                     cswPublic.addCol();
                 }
             });
+            if (false === cswPrivate.showAddColumnButton) {
+                addColBtn.hide();
+            }
+
 
             cswPublic.addItemToCol = function (colNo, paramsIn) {
                 var params = {
                     id: window.Ext.id(),
                     style: {},
+                    showRearrangeButton: true,
+                    showConfigureButton: true,
+                    showCloseButton: true,
                     render: function () { },
                     onDrop: function (extCmp, col, row) { },
                     onClose: function () { },
-                    onConfigure: function () { }
+                    onConfigure: function () { },
+                    onRearrange: function () { }
                 };
                 if (paramsIn) {
                     Csw.extend(params, paramsIn);
@@ -77,20 +86,35 @@
 
                 var extCol = getCol(colNo);
 
-                //Add our drag panel
-                var extRenderTo = extCol.add({
-                    id: params.id,
-                    tools: [{
+                var tools = [];
+                if (params.showRearrangeButton) {
+                    tools.push({
+                        type: 'restore',
+                        tooltip: 'Rearrange sub properties',
+                        handler: params.onRearrange
+                    });
+                }
+                if (params.showConfigureButton) {
+                    tools.push({
                         type: 'gear',
-                        handler: function () {
-                            params.onConfigure();
-                        }
-                    }, {
+                        tooltip: 'Configure property',
+                        handler: params.onConfigure
+                    });
+                }
+                if (params.showCloseButton) {
+                    tools.push({
                         type: 'close',
+                        tooltip: 'Remove from layout',
                         handler: function () {
                             params.onClose(extRenderTo);
                         }
-                    }],
+                    });
+                }
+
+                //Add our drag panel
+                var extRenderTo = extCol.add({
+                    id: params.id,
+                    tools: tools,
                     listeners: {
                         render: function (c) {
                             c.body.on('click', function () {
@@ -101,7 +125,9 @@
                             });
                         },
                         afterrender: function () {
-                            this.header.hide();
+                            if (this.header) {
+                                this.header.hide();
+                            }
                         }
                     },
                     onDrop: params.onDrop
@@ -120,6 +146,7 @@
                 for (var name in params.style) {
                     window.Ext.get(extRenderTo.getId()).setStyle(name, params.style[name]);
                 }
+                dragPanelCmp.doLayout();
             };
 
             cswPublic.addCol = function () {

@@ -263,7 +263,6 @@
                 if (!seenProps[prop.id]) {
                     seenProps[prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
-                    var subDragPanel;
                     dragPanel.addItemToCol(realCol, {
                         id: prop.id,
                         render: function (extEl, cswEl) {
@@ -277,30 +276,71 @@
                             cswPrivate.renderPropDiv(tabid, node, prop, propDiv);
 
                             if (prop.hassubprops) {
-                                var subCols = cswPrivate.howManyCols(prop.subprops);
-                                subDragPanel = Csw.composites.draggablepanel(subPropsDiv, {
-                                    columns: subCols
-                                });
-
                                 for (var subPropIdx in prop.subprops) {
                                     var subProp = prop.subprops[subPropIdx];
                                     seenProps[subProp.id] = subProp;
-
-                                    var subRealCol = subProp.displaycol - 1;
-                                    subDragPanel.addItemToCol(subRealCol, {
-                                        render: function (extRenderTo, cswRenderTo) {
-                                            seenProps[subProp.id] = subProp;
-                                            cswPrivate.renderPropDiv(tabid, node, subProp, cswRenderTo);
-                                        },
-                                        onDrop: function (el, col, row) {
-                                            subDragPanel.doLayout();
-                                            dragPanel.doLayout();
-                                            //TODO: update subprops position in layout
-                                        }
-                                    });
+                                    cswPrivate.renderPropDiv(tabid, node, subProp, subPropsDiv);
                                 } //for subProp in subProps
-                                subDragPanel.doLayout();
+                                //subDragPanel.doLayout();
                             }
+                        },
+                        onRearrange: function () {
+
+                            if (prop.hassubprops) { //we render the sub properties in a re-arrangable dialog
+                                cswPrivate.arrangeDialog(node, prop.subprops, tabid, 'Configure ' + prop.name + ' Subprops');
+
+                                //var rearrangeSubpropsDialog = Csw.layouts.dialog({
+                                //    title: 'Configure ' + prop.name + ' Subprops',
+                                //    width: 800,
+                                //    height: 400,
+                                //    onOpen: function () {
+                                //        var subDragPanel = Csw.composites.draggablepanel(rearrangeSubpropsDialog.div, {
+                                //            columns: 1, //We force all sub props to be in a single column
+                                //            showAddColumnButton: false,
+                                //        });
+                                //
+                                //        var keys = Object.keys(prop.subprops).sort(function (a, b) { //sort subprops by row
+                                //            var prop1 = prop.subprops[a];
+                                //            var prop2 = prop.subprops[b];
+                                //            if (prop1.displayrow > prop2.displayrow) return -1;
+                                //            if (prop1.displayrow < prop2.displayrow) return 1;
+                                //            return 0;
+                                //        });
+                                //        for (var i = 0; i < keys.length; i++) {
+                                //            var subProp = prop.subprops[keys[i]];
+                                //            seenProps['sub_' + subProp.id] = subProp;
+                                //
+                                //            subDragPanel.addItemToCol(0, {
+                                //                id: 'sub_' + subProp.id,
+                                //                showRearrangeButton: false,
+                                //                showConfigureButton: true,
+                                //                showCloseButton: false,
+                                //                render: function (subExtEl, subCswEl) {
+                                //                    var propTbl = subCswEl.table();
+                                //                    var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+                                //
+                                //                    cswPrivate.renderPropDiv(tabid, node, subProp, propDiv);
+                                //                },
+                                //                onDrop: function () {
+                                //                    cswPrivate.saveLayout(subDragPanel, node, seenProps, tabid);
+                                //                }
+                                //            });
+                                //        } //for subProp in subProps
+                                //        Csw.publish('render_' + node.nodeid + '_' + tabid);
+                                //    }
+                                //});
+                                //rearrangeSubpropsDialog.open();
+                            } else if (false === Csw.isNullOrEmpty(prop.tabgroup)) { //render all the grouped properties in a re-arrangable dialog
+                                var groupProps = {};
+                                for (var propIdx in properties) {
+                                    if (prop.tabgroup === properties[propIdx].tabgroup) {
+                                        groupProps[propIdx] = properties[propIdx];
+                                    }
+                                }
+
+                                cswPrivate.arrangeDialog(node, groupProps, tabid, 'Configure ' + prop.tabgroup + ' Props');
+                            }
+
                         },
                         onDrop: function (ext, col, row) {
                             window.Ext.getCmp(extid).doLayout();
@@ -352,6 +392,47 @@
                 dragPanel.doLayout(); //fix our layout
                 window.Ext.getCmp(extid).doLayout();
             }, 2000);
+        };
+
+        cswPrivate.arrangeDialog = function (node, props, tabid, title) {
+            var seenProps = {};
+
+            var rearrangeGroupPropDialog = Csw.layouts.dialog({
+                title: title,
+                width: 800,
+                height: 400,
+                onOpen: function () {
+                    var groupDragPanel = Csw.composites.draggablepanel(rearrangeGroupPropDialog.div, {
+                        columns: 1, //We force all grouped props to be in a single column
+                        showAddColumnButton: false,
+                    });
+
+                    groupDragPanel.allowDrag(false); //TODO: enable drag for sub/tabgroup props
+
+                    for (var groupIdx in props) {
+                        var groupProp = props[groupIdx];
+                        seenProps['group_' + groupProp.id] = groupProp;
+
+                        groupDragPanel.addItemToCol(0, {
+                            id: 'group_' + groupProp.id,
+                            showRearrangeButton: false,
+                            showConfigureButton: true,
+                            showCloseButton: false,
+                            render: function (subExtEl, subCswEl) {
+                                var propTbl = subCswEl.table();
+                                var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+
+                                cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
+                            },
+                            onDrop: function () {
+                                cswPrivate.saveLayout(groupDragPanel, node, seenProps, tabid);
+                            }
+                        });
+                    } //for subProp in subProps
+                    Csw.publish('render_' + node.nodeid + '_' + tabid);
+                }
+            });
+            rearrangeGroupPropDialog.open();
         };
 
         cswPrivate.saveLayout = function (dragPanel, node, props, tabid) {
