@@ -15,6 +15,7 @@
             cswPrivate.c3dataservice = '';
             cswPrivate.clearview = options.clearview; //is this a function?
             cswPrivate.loadView = null; // function() { }
+            cswPrivate.preferredSuppliers = '';
         }());
 
         return (function () {
@@ -165,7 +166,8 @@
                                 Field: cswPrivate.searchTypeSelect.selectedVal(),
                                 Query: $.trim(searchTermField.val()),
                                 SearchOperator: cswPrivate.searchOperatorSelect.selectedVal(),
-                                SourceName: cswPrivate.vendorOptions.selectedVal()
+                                SourceName: cswPrivate.vendorOptions.selectedVal(),
+                                ACDCompanyIds: cswPrivate.vendorOptions.selectedVal()
                             };
 
                             if (cswPrivate.searchTypeSelect.selectedText() == "Structure") {
@@ -193,7 +195,17 @@
                             text: 'Set Preferred Suppliers',
                             onClick: function() {
                                 //open the 'set preferred suppliers' dialog
-                                Csw.dialogs.c3PrefSuppliersDialog({});
+                                Csw.dialogs.c3PrefSuppliersDialog({
+                                    onSave: function(selected) {
+                                        //reload the source select
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'ChemCatCentral/GetVendorOptions',
+                                            success: function (data) {
+                                                cswPrivate.vendorOptions.setOptions(cswPrivate.vendorOptions.makeOptions(data.VendorListOptions));
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         });
                     }

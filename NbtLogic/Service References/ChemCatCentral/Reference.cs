@@ -3170,6 +3170,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ACDCompanyIdsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string AccessIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -3230,6 +3233,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ACDCompanyIds {
+            get {
+                return this.ACDCompanyIdsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ACDCompanyIdsField, value) != true)) {
+                    this.ACDCompanyIdsField = value;
+                    this.RaisePropertyChanged("ACDCompanyIds");
+                }
             }
         }
         

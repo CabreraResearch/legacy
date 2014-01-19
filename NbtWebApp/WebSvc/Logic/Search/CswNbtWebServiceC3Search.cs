@@ -76,6 +76,9 @@ namespace ChemSW.Nbt.WebServices
             public Collection<ACDSupplier> ACDSuppliers = new Collection<ACDSupplier>();
 
             [DataMember]
+            public string ACDPreferredSuppliers = string.Empty;
+
+            [DataMember]
             public List<string> SearchProperties = new List<string>();
 
             [DataMember]
@@ -324,22 +327,25 @@ namespace ChemSW.Nbt.WebServices
 
             // We want the 'Preferred' option to default to selected _if_ there are preferred suppliers set on the User
             bool PreferredOptionSelected = false;
+            string PreferredSuppliers = "";
             CswNbtObjClassUser CurrentUser = CswNbtResources.Nodes.GetNode( CswNbtResources.CurrentNbtUser.UserId );
             if( false == CurrentUser.C3ACDPreferredSuppliers.Empty )
             {
                 PreferredOptionSelected = true;
+                PreferredSuppliers = CurrentUser.C3ACDPreferredSuppliers.Text;
             }
 
             ACDVendorOptions.Add( new VendorOption
                 {
-                    value = "Any Suppliers",
-                    display = "Any Suppliers"
+                    value = "",
+                    display = "Any Suppliers",
+                    isSelected = !PreferredOptionSelected
                 } );
 
             ACDVendorOptions.Add( new VendorOption
                 {
-                    value = "Preferred Vendors",
-                    display = "Preferred Vendors",
+                    value = PreferredSuppliers,
+                    display = "Preferred Suppliers",
                     isSelected = PreferredOptionSelected
                 } );
 
@@ -403,10 +409,10 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != Results )
                 {
-                    for( int i = 0; i < 51; i++ )
-                    //foreach( CswC3ACDResponseACDSupplier ACDSupplier in Results.ACDSuppliers )
+                    //for( int i = 0; i < 51; i++ )
+                    foreach( CswC3ACDResponseACDSupplier ACDSupplier in Results.ACDSuppliers )
                     {
-                        CswC3ACDResponseACDSupplier ACDSupplier = Results.ACDSuppliers[i];
+                        //CswC3ACDResponseACDSupplier ACDSupplier = Results.ACDSuppliers[i];
                         ACDSupplier NewSupplier = new ACDSupplier();
                         NewSupplier.Name = ACDSupplier.Name + ": " + ACDSupplier.Country;
                         NewSupplier.Id = CswConvert.ToString( ACDSupplier.Id );
@@ -421,13 +427,16 @@ namespace ChemSW.Nbt.WebServices
 
         public static void UpdateACDPrefSuppliers( ICswResources CswResources, CswNbtC3SearchReturn Return, string PrefSupplierIds )
         {
-            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-
-            CswNbtObjClassUser CurrentUser = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.UserId );
-            if( null != CurrentUser )
+            if( null != PrefSupplierIds )
             {
-                CurrentUser.C3ACDPreferredSuppliers.Text = PrefSupplierIds;
-                CurrentUser.postChanges( false );
+                CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+                CswNbtObjClassUser CurrentUser = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.UserId );
+                if( null != CurrentUser )
+                {
+                    CurrentUser.C3ACDPreferredSuppliers.Text = PrefSupplierIds;
+                    CurrentUser.postChanges( false );
+                }
             }
         }//UpdateACDPrefSuppliers()
 
@@ -476,8 +485,6 @@ namespace ChemSW.Nbt.WebServices
             if( null != C3SearchClient )
             {
                 CswRetObjSearchResults SearchResults;
-
-                // For now, the only option here is C3
                 CswC3SearchParams.DataService = CswNbtC3ClientManager.DataService;
 
                 try

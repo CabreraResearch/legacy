@@ -10,6 +10,7 @@
             cswPrivate.height = 600;
             cswPrivate.width = 550;
             cswPrivate.selected = '';
+            cswPrivate.onSave = cswPrivate.onSave || null;
         }());
 
         function onOpen() {
@@ -23,18 +24,19 @@
                         title: 'c3acd_setPrefSuppliers',
                         required: false,
                         inDialog: false,
-                        parent: cswPrivate.table.cell(1,1).div(),
+                        parent: cswPrivate.table.cell(1, 1).div(),
                         height: 400,
                         width: 500,
-                        onChange: function(selected) {
+                        onChange: function (selected) {
                             cswPrivate.selected = selected;
-                        }
+                        },
+                        usePaging: true
                     });
                 }
             });
         }//onOpen()
 
-        cswPrivate.onSave = function () {
+        function onSave() {
             // Get all of the selected options from the control,
             // return them to the server,
             // and save them on the User
@@ -42,6 +44,8 @@
                 urlMethod: 'ChemCatCentral/UpdateACDPrefSuppliers',
                 data: cswPrivate.selected.toString(),
                 success: function (data) {
+                    cswPrivate.onSave(cswPrivate.selected);
+                    Csw.clientChanges.unsetChanged();
                     cswPrivate.prefSuppliersDialog.close();
                 }
             });
@@ -61,10 +65,10 @@
 
             cswPrivate.table = cswPrivate.prefSuppliersDialog.div.table();
 
-            cswPrivate.table.cell(2,1).button({
+            cswPrivate.table.cell(2, 1).button({
                 enabledText: 'Save',
                 onClick: function () {
-                    cswPrivate.onSave();
+                    onSave();
                 },
             });
 
