@@ -46,8 +46,8 @@
                 table = parentDiv.table({ name: 'tbl' }),
                 moreDivCell = table.cell(1, 1),
                 editBtnCell = table.cell(1, 2),
-                multiSelectCell = table.cell(2, 1)
-            valStr = cswPrivate.valStr;
+                multiSelectCell = table.cell(2, 1),
+                valStr = cswPrivate.valStr;
             cswPrivate.morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' });
 
             delete cswPrivate.values;

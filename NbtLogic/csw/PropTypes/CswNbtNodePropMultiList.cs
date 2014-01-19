@@ -305,15 +305,16 @@ namespace ChemSW.Nbt.PropTypes
 
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
 
-            JObject OptionsObj = new JObject();
-            ParentObject["options"] = OptionsObj;
+            JArray OptionsArray = new JArray();
+            ParentObject["options"] = OptionsArray;
 
             foreach( string Key in Options.Keys )
             {
-                OptionsObj[Key] = new JObject();
-                OptionsObj[Key]["text"] = Options[Key];
-                OptionsObj[Key]["value"] = Key;
-                OptionsObj[Key]["selected"] = Value.Contains( Key ).ToString().ToLower();
+                JObject NewOption = new JObject();
+                NewOption["text"] = Options[Key];
+                NewOption["value"] = Key;
+                NewOption["selected"] = Value.Contains( Key ).ToString().ToLower();
+                OptionsArray.Add( NewOption );
             }
             ParentObject["readonlyless"] = CollapsedReadOnlyValue;
             ParentObject["readonlymore"] = ExpandedReadOnlyValue;
