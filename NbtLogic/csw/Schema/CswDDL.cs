@@ -15,8 +15,6 @@ namespace ChemSW.Nbt.Schema
     public class CswDDL
     {
         Dictionary<string, CswTableDdlOp> _DdlOps = new Dictionary<string, CswTableDdlOp>();
-        List<CswSequenceDdlOp> _SequenceOps = new List<CswSequenceDdlOp>();
-        private CswNbtSequenceManager _CswNbtSequenceManager;
         private CswConstraintDdlOps _CswConstraintDdlOps = null;
         private CswNbtResources _CswNbtResources;
 
@@ -27,14 +25,12 @@ namespace ChemSW.Nbt.Schema
         {
             _CswNbtResources = CswNbtResources;
             _CswConstraintDdlOps = new CswConstraintDdlOps( _CswNbtResources );
-            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
         }//ctor
 
 
         public void clear()
         {
             _DdlOps.Clear();
-            _SequenceOps.Clear();
             _CswConstraintDdlOps.clear();
         }//_clear()
 
@@ -197,31 +193,6 @@ namespace ChemSW.Nbt.Schema
 
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null )
         {
-        }//
-
-        public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Postpend, Int32 Pad, Int32 InitialValue )
-        {
-
-            CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
-            CswSequenceDdlOp.DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Add;
-            _SequenceOps.Add( CswSequenceDdlOp );
-
-            return _CswNbtSequenceManager.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
-
-        }//makeSequence() 
-
-        public DataTable getSequence( CswSequenceName SequenceName )
-        {
-            return _CswNbtSequenceManager.getSequence( SequenceName );
-        }
-        public DataTable getAllSequences()
-        {
-            return _CswNbtSequenceManager.getAllSequences();
-        }
-
-        public bool doesSequenceExist( CswSequenceName SequenceName )
-        {
-            return ( _CswNbtSequenceManager.doesSequenceExist( SequenceName ) );
         }
 
         public bool doesS4Exist( string S4Name )
@@ -235,26 +206,6 @@ namespace ChemSW.Nbt.Schema
                 Ret = true;
             }
             return Ret;
-        }
-
-        public void removeSequence( CswSequenceName SequenceName )
-        {
-            DataTable SequenceTable = _CswNbtSequenceManager.getSequence( SequenceName );
-
-            string Prepend = SequenceTable.Rows[0]["prep"].ToString();
-            string Postpend = SequenceTable.Rows[0]["post"].ToString();
-            Int32 Pad = CswConvert.ToInt32( SequenceTable.Rows[0]["pad"] );
-            Int32 InitialValue = _CswNbtSequenceManager.getSequenceValue( SequenceName );
-            CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
-            CswSequenceDdlOp.DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Remove;
-            _SequenceOps.Add( CswSequenceDdlOp );
-
-            _CswNbtSequenceManager.removeSequence( SequenceName );
-        }
-
-        public Int32 getSequenceValue( CswSequenceName SequenceName )
-        {
-            return ( _CswNbtSequenceManager.getSequenceValue( SequenceName ) );
         }
 
         struct Constraint
@@ -342,21 +293,6 @@ namespace ChemSW.Nbt.Schema
                 CurrentTableDdlOp.revert();
             }//iterate ops
 
-            foreach( CswSequenceDdlOp CurrentSequenceDdlOp in _SequenceOps )
-            {
-                if( CswEnumNbtDdlSequenceOpType.Add == CurrentSequenceDdlOp.DdlSequenceOpType )
-                {
-                    _CswNbtSequenceManager.removeDbSequence( CurrentSequenceDdlOp.SequenceName );
-                }
-                else if( CswEnumNbtDdlSequenceOpType.Remove == CurrentSequenceDdlOp.DdlSequenceOpType )
-                {
-                    _CswNbtSequenceManager.makeDbSequence( CurrentSequenceDdlOp.SequenceName, CurrentSequenceDdlOp.InitialValue );
-                }
-                else
-                {
-                    throw ( new CswDniException( "Unknown SequenceDdlOpType " + CurrentSequenceDdlOp.DdlSequenceOpType.ToString() ) );
-                }
-            }//
         }//revert() 
 
 

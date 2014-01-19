@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             _setChemicalsPendingUpdate();
         }//afterDeleteNode()        

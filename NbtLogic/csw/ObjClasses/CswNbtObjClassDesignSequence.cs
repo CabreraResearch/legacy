@@ -1,4 +1,7 @@
+using System;
+using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -16,13 +19,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string NextValue = "Next Value";
         }
 
-
-        //private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
         public CswNbtObjClassDesignSequence( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
-            //_CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }
 
         //ctor()
@@ -55,14 +54,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswTools.IsPrimaryKey( RelationalId ) )
             {
-                CswNbtSequenceValue NextSequenceValue = new CswNbtSequenceValue( _CswNbtResources, RelationalId.PrimaryKey );
-                if( null != NextSequenceValue )
-                {
-                    NextValue.Text = NextSequenceValue.getCurrent();
-                }
+                NextValue.SetOnBeforeRender( delegate( CswNbtNodeProp prop )
+                    {
+                        NextValue.Text = getCurrent();
+                    } );
             }
-
-            //_CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
@@ -86,6 +82,119 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-    }//CswNbtObjClassDesignSequence
+        #region Sequence Functions
+
+        public Int32 SequenceId
+        {
+            get
+            {
+                Int32 ret = Int32.MinValue;
+                if( CswTools.IsPrimaryKey( RelationalId ) )
+                {
+                    ret = RelationalId.PrimaryKey;
+                }
+                return ret;
+            }
+        }
+
+        public string getDbName()
+        {
+            string DbName = Name.Text.Replace( " ", string.Empty );
+            if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
+            {
+                _CswNbtResources.makeUniqueSequence( DbName, 1 );
+            }
+            return DbName;
+        }
+
+        public string formatSequence( Int32 RawSequenceVal )
+        {
+            string ret = "";
+            ret = RawSequenceVal.ToString();
+            if( Pad.Value > 0 )
+            {
+                while( ret.Length < Pad.Value )
+                {
+                    ret = "0" + ret;
+                }
+            }
+            ret = Pre.Text + ret + Post.Text;
+            return ret;
+        } // formatSequence()
+
+
+        public Int32 deformatSequence( string FormattedSequenceVal )
+        {
+            Int32 ret = Int32.MinValue;
+            string PrepVal = Pre.Text;
+            string PostVal = Post.Text;
+            if( FormattedSequenceVal.Length > ( PrepVal.Length + PostVal.Length ) )
+            {
+                if( FormattedSequenceVal.Substring( 0, PrepVal.Length ) == PrepVal &&
+                    FormattedSequenceVal.Substring( FormattedSequenceVal.Length - PostVal.Length, PostVal.Length ) == PostVal )
+                {
+                    string RawSequenceVal = FormattedSequenceVal.Substring( PrepVal.Length, ( FormattedSequenceVal.Length - PrepVal.Length - PostVal.Length ) );
+                    if( CswTools.IsInteger( RawSequenceVal ) )
+                    {
+                        ret = CswConvert.ToInt32( RawSequenceVal );
+                    }
+                }
+            }
+            return ret;
+        } // deformatSequence()
+
+
+        public string getNext()
+        {
+            string DbName = getDbName();
+            Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal( DbName );
+            return formatSequence( RawSequenceVal );
+        }
+
+        public string getCurrent()
+        {
+            string DbName = getDbName();
+            Int32 RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal( DbName );
+            return formatSequence( RawSequenceVal );
+        }
+
+        /// <summary>
+        /// Resets next sequence value based on maximum existing value in the database.
+        /// </summary>
+        public void reSync( CswEnumNbtPropColumn Column )
+        {
+            reSync( Column, Int32.MinValue );
+        }
+
+        /// <summary>
+        /// Resets next sequence value based on newest entry and existing values in the database.
+        /// </summary>
+        public void reSync( CswEnumNbtPropColumn Column, Int32 NewSeqVal )
+        {
+            string SelectText = @"select j." + Column.ToString() + @"
+                                    from sequences s
+                                    join nodetype_props p on ( p.sequenceid = s.sequenceid ) 
+                                    join jct_nodes_props j on ( p.nodetypepropid = j.nodetypepropid and j.nodeid is not null )
+                                   where s.sequenceid = :sequenceid ";
+
+            CswArbitrarySelect SeqValueSelect = _CswNbtResources.makeCswArbitrarySelect( "syncSequence_maxvalue_select", SelectText );
+            SeqValueSelect.addParameter( "sequenceid", SequenceId.ToString() );
+            DataTable SeqValueTable = SeqValueSelect.getTable();
+
+            Int32 MaxSeqVal = NewSeqVal;
+            foreach( DataRow SeqValueRow in SeqValueTable.Rows )
+            {
+                Int32 ThisSeqVal = CswConvert.ToInt32( SeqValueRow[Column.ToString()] );
+                if( ThisSeqVal > MaxSeqVal )
+                {
+                    MaxSeqVal = ThisSeqVal;
+                }
+            } // foreach( DataRow SeqValueRow in SeqValueTable.Rows )
+            _CswNbtResources.resetUniqueSequenceVal( getDbName(), MaxSeqVal + 1 );
+        } // reSync()
+
+        #endregion Sequence Functions
+
+    } // CswNbtObjClassDesignSequence
 
 }//namespace ChemSW.Nbt.ObjClasses

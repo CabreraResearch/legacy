@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.WebSvc.Returns;
 
@@ -8,16 +10,6 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceDesign
     {
-        #region Ctor
-
-        private static CswNbtResources _CswNbtResources;
-
-        public CswNbtWebServiceDesign( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-        }
-
-        #endregion Ctor
 
         #region DataContracts
 
@@ -87,5 +79,21 @@ namespace ChemSW.Nbt.WebServices
             }
 
         }// getDesignNodeType()
+
+        public static void getDesignNodeTypePropDefinition( ICswResources CswResources, CswNbtDesignReturn Return, string FieldTypeId )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+            Int32 FieldTypePk = CswConvert.ToInt32( FieldTypeId );
+            CswNbtMetaDataFieldType FT = _CswNbtResources.MetaData.getFieldType( FieldTypePk );
+            CswNbtMetaDataNodeType FieldTypeNT = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FT.FieldType ) );
+            if( null != FieldTypeNT )
+            {
+                DesignResponse DesignResponse = new DesignResponse();
+                DesignResponse.NodeTypeId = FieldTypeNT.NodeTypeId;
+                DesignResponse.ObjectClassId = FieldTypeNT.ObjectClassId;
+                Return.Data = DesignResponse;
+            }
+        }
+
     }//CswNbtWebServiceDesign class
 }//namespace

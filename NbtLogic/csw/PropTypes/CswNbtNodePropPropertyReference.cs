@@ -14,9 +14,10 @@ namespace ChemSW.Nbt.PropTypes
     {
         private CswNbtSubField _CachedValueSubField;
 
-        private CswNbtSequenceValue _SequenceValue;
+        //private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _SequenceSubField;
         private CswNbtSubField _SequenceNumberSubField;
+        private CswNbtObjClassDesignSequence _Sequence;
 
         public static implicit operator CswNbtNodePropPropertyReference( CswNbtNodePropWrapper PropWrapper )
         {
@@ -29,8 +30,7 @@ namespace ChemSW.Nbt.PropTypes
             _CachedValueSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).CachedValueSubField;
             _SequenceSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceSubField;
             _SequenceNumberSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceNumberSubField;
-
-            _SequenceValue = new CswNbtSequenceValue( NodeTypePropId, _CswNbtResources );
+            _Sequence = CswNbtMetaDataNodeTypeProp.Sequence;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
@@ -205,9 +205,9 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void setSequenceValue()
         {
-            if( UseSequence && Sequence.Trim() == string.Empty )
+            if( UseSequence && Sequence.Trim() == string.Empty && null != _Sequence )
             {
-                string value = _SequenceValue.getNext();
+                string value = _Sequence.getNext();
                 setSequenceValueOverride( value, false );
             }
         }
@@ -221,17 +221,17 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
-            if( UseSequence )
+            if( UseSequence && null != _Sequence )
             {
                 SetPropRowValue( _SequenceSubField, SeqValue );
-                Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
+                Int32 ThisSeqValue = _Sequence.deformatSequence( SeqValue );
                 SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
                 _setGestalt( CachedValue, SeqValue );
 
                 if( ResetSequence )
                 {
                     // Keep the sequence up to date
-                    _SequenceValue.reSync( ThisSeqValue );
+                    _Sequence.reSync( CswNbtFieldTypeRulePropertyReference.SequenceNumberColumn, ThisSeqValue );
                 }
             }
         }

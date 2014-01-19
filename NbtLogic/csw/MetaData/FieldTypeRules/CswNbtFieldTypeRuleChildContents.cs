@@ -48,9 +48,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        public void onSetFk( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+            _CswNbtFieldTypeRuleDefault.onSetFk( DesignNTPNode );
         }
 
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
@@ -71,18 +71,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Column = CswEnumNbtPropertyAttributeColumn.Isfk
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-            {
-                OwnerFieldType = CswEnumNbtFieldType.ChildContents,
-                Name = AttributeName.ChildRelationship,
-                AttributeFieldType = CswEnumNbtFieldType.Relationship,
-                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
-                SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
-            } );
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.ChildContents,
+                    Name = AttributeName.ChildRelationship,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                    SubFieldName = CswNbtFieldTypeRuleList.SubFieldName.Value
+                } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ChildContents,
                     Name = AttributeName.FKType,
-                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );
             return ret;

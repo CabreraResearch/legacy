@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool InternalCreate = false;
 
-        public override void beforePromoteNode( bool OverrideUniqueValidation )
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             if( false == OverrideUniqueValidation &&
                 null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             // ------------------------------------------------------------
             // This logic from makeNewNodeType in CswNbtMetaData.cs
@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        public override void beforeWriteNode( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
         {
             if( null != RelationalNodeType )
             {
@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } //beforeWriteNode()
 
-        public override void beforeDeleteNode() // bool DeleteAllRequiredRelatedNodes = false )
+        protected override void beforeDeleteNodeLogic() // bool DeleteAllRequiredRelatedNodes = false )
         {
             if( false == IsTemp )
             {
@@ -342,7 +342,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         } //beforeDeleteNode()
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             if( false == IsTemp )
             {

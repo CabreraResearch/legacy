@@ -5,6 +5,7 @@ using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Layout;
 
 namespace NbtWebApp.Services
 {
@@ -34,6 +35,63 @@ namespace NbtWebApp.Services
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceDesign.getDesignNodeType,
                 ParamObj: NodeTypeId
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "" )]
+        public CswNbtLayoutDataReturn updateLayout( CswNbtNodeTypeLayout LayoutData )
+        {
+            CswNbtLayoutDataReturn Ret = new CswNbtLayoutDataReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, CswNbtNodeTypeLayout>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.UpdateLayout,
+                ParamObj : LayoutData
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "" )]
+        public CswNbtLayoutDataReturn removePropsFromLayout( CswNbtNodeTypeLayout LayoutData )
+        {
+            CswNbtLayoutDataReturn Ret = new CswNbtLayoutDataReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, CswNbtNodeTypeLayout>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.RemovePropsFromLayout,
+                ParamObj : LayoutData
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Gets the Design NodeType definition for the given FieldTypeId" )]
+        public CswNbtWebServiceDesign.CswNbtDesignReturn getDesignNodeTypePropDefinition( string FieldTypeId )
+        {
+            CswNbtWebServiceDesign.CswNbtDesignReturn Ret = new CswNbtWebServiceDesign.CswNbtDesignReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceDesign.CswNbtDesignReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceDesign.getDesignNodeTypePropDefinition,
+                ParamObj: FieldTypeId
                 );
 
             GetViewDriverType.run();

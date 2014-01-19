@@ -102,6 +102,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByPropertySetId( PropertySetId );
         }
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getPropertySetProps( CswEnumNbtFieldType FieldType )
+        {
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByPropertySetId( PropertySetId, FieldType );
+        }
 
     }//CswNbtMetaDataPropertySet
 

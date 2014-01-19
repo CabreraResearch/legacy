@@ -9,49 +9,51 @@ namespace ChemSW.Nbt.MetaData
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                                                                 {
-                                                                    {        auditlevel, auditlevel},
-                                                                    {        fieldtypeid, fieldtypeid},
-                                                                    {        isbatchentry,isbatchentry },
-                                                                    {        isrequired, isrequired},
-                                                                    {        isglobalunique, isglobalunique},
-                                                                    {        isunique,isunique},
-                                                                    {        iscompoundunique,iscompoundunique },
-                                                                    {        isfk,isfk },
-                                                                    {        fktype, fktype},
-                                                                    {        fkvalue,fkvalue },
-                                                                    {        servermanaged, servermanaged},
-                                                                    {        textareacols, textareacols},
-                                                                    {        textarearows,textarearows },
-                                                                    {        textlength,textlength },
-                                                                    {        url,url },
-                                                                    {        valuepropid, valuepropid},
-                                                                    {        width,width },
-                                                                    {        sequenceid, sequenceid},
-                                                                    {        numberprecision,numberprecision },
-                                                                    {        listoptions,listoptions },
-                                                                    {        compositetemplate,compositetemplate },
-                                                                    {        valueproptype,valueproptype },
-                                                                    {        statictext, statictext},
-                                                                    {        multi,multi },
-                                                                    {        nodeviewid,nodeviewid },
-                                                                    {        readOnly,readOnly },
-                                                                    {        numberminvalue,numberminvalue },
-                                                                    {        numbermaxvalue, numbermaxvalue},
-                                                                    {        usenumbering,usenumbering },
-                                                                    {        questionno,questionno },
-                                                                    {        subquestionno,subquestionno },
-                                                                    {        filter, filter},
-                                                                    {        filterpropid,filterpropid },
-                                                                    {        valueoptions,valueoptions},
-                                                                    {        helptext,helptext },
-                                                                    {        propname, propname},
-                                                                    {        isquicksearch,isquicksearch },
-                                                                    {        extended,extended },
-                                                                    {        display_col_add, display_col_add },
-                                                                    {        display_row_add, display_row_add },
-                                                                    {        viewxml, viewxml },
-                                                                    {        valuefieldid, valuefieldid },
-                                                                    {        setvalonadd, setvalonadd }
+                                                                    { auditlevel, auditlevel},
+                                                                    { fieldtypeid, fieldtypeid},
+                                                                    { isbatchentry,isbatchentry },
+                                                                    { isrequired, isrequired},
+                                                                    { isglobalunique, isglobalunique},
+                                                                    { isunique,isunique},
+                                                                    { iscompoundunique,iscompoundunique },
+                                                                    { isfk,isfk },
+                                                                    { fktype, fktype},
+                                                                    { fkvalue,fkvalue },
+                                                                    { servermanaged, servermanaged},
+                                                                    { textareacols, textareacols},
+                                                                    { textarearows,textarearows },
+                                                                    { textlength,textlength },
+                                                                    { url,url },
+                                                                    { valuepropid, valuepropid},
+                                                                    { width,width },
+                                                                    { sequenceid, sequenceid},
+                                                                    { numberprecision,numberprecision },
+                                                                    { listoptions,listoptions },
+                                                                    { compositetemplate,compositetemplate },
+                                                                    { valueproptype,valueproptype },
+                                                                    { statictext, statictext},
+                                                                    { multi,multi },
+                                                                    { nodeviewid,nodeviewid },
+                                                                    { readOnly,readOnly },
+                                                                    { numberminvalue,numberminvalue },
+                                                                    { numbermaxvalue, numbermaxvalue},
+                                                                    { usenumbering,usenumbering },
+                                                                    { questionno,questionno },
+                                                                    { subquestionno,subquestionno },
+                                                                    { filtersubfield, filtersubfield },
+                                                                    { filtermode, filtermode },
+                                                                    { filtervalue, filtervalue },
+                                                                    { filterpropid,filterpropid },
+                                                                    { valueoptions,valueoptions },
+                                                                    { helptext,helptext },
+                                                                    { propname, propname},
+                                                                    { isquicksearch,isquicksearch },
+                                                                    { extended,extended },
+                                                                    { display_col_add, display_col_add },
+                                                                    { display_row_add, display_row_add },
+                                                                    { viewxml, viewxml },
+                                                                    { valuefieldid, valuefieldid },
+                                                                    { setvalonadd, setvalonadd }
                                                                 };
         /// <summary>
         /// The string value of the current instance
@@ -135,8 +137,10 @@ namespace ChemSW.Nbt.MetaData
         public const string usenumbering = "usenumbering";
         public const string questionno = "questionno";
         public const string subquestionno = "subquestionno";
-        public const string filter = "filter";
         public const string filterpropid = "filterpropid";
+        public const string filtersubfield = "filtersubfield";
+        public const string filtermode = "filtermode";
+        public const string filtervalue = "filtervalue";
         public const string valueoptions = "valueoptions";
         public const string helptext = "helptext";
         public const string propname = "propname";

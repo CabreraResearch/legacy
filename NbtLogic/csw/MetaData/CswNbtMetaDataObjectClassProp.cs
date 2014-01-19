@@ -226,58 +226,32 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Default filter delimiter
         /// </summary>
-        public const char FilterDelimiter = '|';
+        //public const char FilterDelimiter = '|';
         public void getFilter( ref CswNbtSubField SubField, ref CswEnumNbtFilterMode FilterMode, ref string FilterValue )
         {
-            if( _ObjectClassPropRow["filter"].ToString() != string.Empty )
+            CswNbtMetaDataObjectClassProp FilterOCP = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
+            if( FilterOCP != null )
             {
-                string[] filter = _ObjectClassPropRow["filter"].ToString().Split( FilterDelimiter );
-                CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) filter[0];
-                SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).getFieldTypeRule().SubFields[Column];
-                FilterMode = (CswEnumNbtFilterMode) filter[1];
-                if( filter.GetUpperBound( 0 ) > 1 )
-                    FilterValue = filter[2];
+                SubField = FilterOCP.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) _ObjectClassPropRow["filtersubfield"].ToString()];
+                FilterMode = (CswEnumNbtFilterMode) _ObjectClassPropRow["filtermode"].ToString();
+                FilterValue = _ObjectClassPropRow["filtervalue"].ToString();
             }
         }
-        public string getFilterString()
-        {
-            return _ObjectClassPropRow["filter"].ToString();
-        }
+
         public bool hasFilter()
         {
-            return ( _ObjectClassPropRow["filter"].ToString() != string.Empty );
-        }
-
-        public static string makeFilter( CswNbtMetaDataObjectClassProp Prop, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        {
-            return makeFilter( Prop.getFieldTypeRule().SubFields.Default, FilterMode, FilterValue );
-        }
-
-        public static string makeFilter( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        {
-            return SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
+            return ( _ObjectClassPropRow["filtersubfield"].ToString() != string.Empty &&
+                     _ObjectClassPropRow["filtermode"].ToString() != string.Empty &&
+                     _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterObjectClassPropId ) != null );
         }
 
         public void setFilterDeprecated( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
-            string FilterString = makeFilter( SubField, FilterMode, FilterValue );
             CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            _setFilterDeprecated( FilterProp, FilterString );
+            setFilterDeprecated( FilterProp, SubField, FilterMode, FilterValue );
         }
 
         public void setFilterDeprecated( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        {
-            string FilterString = makeFilter( SubField, FilterMode, FilterValue );
-            _setFilterDeprecated( FilterProp, FilterString );
-        }
-
-        public void setFilterDeprecated( Int32 FilterObjectClassPropId, string FilterString )
-        {
-            CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            _setFilterDeprecated( FilterProp, FilterString );
-        }
-
-        private void _setFilterDeprecated( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
         {
             if( IsRequired )
             {
@@ -289,37 +263,39 @@ namespace ChemSW.Nbt.MetaData
             if( FilterProp != null )
             {
                 Int32 CurrentFilterId = CswConvert.ToInt32( _ObjectClassPropRow["filterpropid"] );
-                changed = CurrentFilterId != FilterProp.FirstPropVersionId;
+                changed = ( CurrentFilterId != FilterProp.FirstPropVersionId ||
+                            SubField.Name.ToString() != _ObjectClassPropRow["filtersubfield"].ToString() ||
+                            FilterMode.ToString() != _ObjectClassPropRow["filtermode"].ToString() ||
+                            FilterValue.ToString() != _ObjectClassPropRow["filtervalue"].ToString() );
                 if( changed )
                 {
                     _ObjectClassPropRow["filterpropid"] = CswConvert.ToDbVal( FilterProp.FirstPropVersionId );
+                    _ObjectClassPropRow["filtersubfield"] = SubField.Name.ToString();
+                    _ObjectClassPropRow["filtermode"] = FilterMode.ToString();
+                    _ObjectClassPropRow["filtervalue"] = FilterValue;
                 }
             }
             else
             {
-                FilterString = "";
                 _CswNbtMetaDataResources.CswNbtResources.logMessage( "Attempted to create a conditional property filter with based upon a null ObjectClassProperty." );
             }
-            string CurrentFilter = CswConvert.ToString( _ObjectClassPropRow["filter"] );
-            if( CurrentFilter != FilterString )
-            {
-                changed = true;
-                _ObjectClassPropRow["filter"] = CswConvert.ToDbVal( FilterString );
-            }
-
             if( changed )
             {
-                _setNodeTypePropFiltersDeprecated( FilterProp, FilterString );
+                _setNodeTypePropFiltersDeprecated( FilterProp, SubField, FilterMode, FilterValue );
             }
         }
 
         public void setNodeTypePropFiltersDeprecated()
         {
             CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            _setNodeTypePropFiltersDeprecated( FilterProp, getFilterString() );
+            CswNbtSubField SubField = null;
+            CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+            string FilterValue = string.Empty;
+            getFilter( ref SubField, ref FilterMode, ref FilterValue );
+            _setNodeTypePropFiltersDeprecated( FilterProp, SubField, FilterMode, FilterValue );
         }
 
-        private void _setNodeTypePropFiltersDeprecated( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
+        private void _setNodeTypePropFiltersDeprecated( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
             {
@@ -329,7 +305,7 @@ namespace ChemSW.Nbt.MetaData
                     {
                         if( FilterPropNodeTypeProp.NodeTypeId == NodeTypeProp.NodeTypeId )
                         {
-                            NodeTypeProp.setFilterDeprecated( FilterPropNodeTypeProp, FilterString );
+                            NodeTypeProp.setFilterDeprecated( FilterPropNodeTypeProp, SubField, FilterMode, FilterValue );
                         }
                     }
                 }

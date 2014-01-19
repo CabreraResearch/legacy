@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.Schema
 
                 // DeferSearchTo is conditional on Searchable
                 NTDeferSearchToNTP.setFilterDeprecated( NTSearchableNTP, NTSearchableNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleLogical.SubFieldName.Checked], CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
-                
+
                 // Set view for DeferSearchToNTP
                 CswNbtView DeferView = _CswNbtSchemaModTrnsctn.restoreView( NTDeferSearchToNTP.ViewId );
                 DeferView.Root.ChildRelationships.Clear();
@@ -412,6 +412,21 @@ namespace ChemSW.Nbt.Schema
                     // Handle special configurations
                     switch( FieldType.FieldType )
                     {
+                        case CswEnumNbtFieldType.Barcode:
+                            CswNbtMetaDataNodeTypeProp barcodeSequenceNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleBarCode.AttributeName.Sequence.ToString() );
+                            barcodeSequenceNTP._DataRow["isrequired"] = CswConvert.ToDbVal( true );
+                            break;
+
+                        case CswEnumNbtFieldType.ChildContents:
+                            CswNbtMetaDataNodeTypeProp ccisFkNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleChildContents.AttributeName.IsFK.ToString() );
+                            ccisFkNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                            ccisFkNTP.removeFromAllLayouts();
+
+                            CswNbtMetaDataNodeTypeProp ccfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleChildContents.AttributeName.FKType.ToString() );
+                            ccfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                            ccfktypeNTP.removeFromAllLayouts();
+                            break;
+
                         case CswEnumNbtFieldType.Composite:
                             CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, "Add To Template", "" );
                             addTemplateNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
@@ -508,33 +523,33 @@ namespace ChemSW.Nbt.Schema
                         case CswEnumNbtFieldType.PropertyReference:
                             CswNbtMetaDataNodeTypeProp prfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKType.ToString() );
                             prfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                            prfktypeNTP.DefaultValue.AsList.Value = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                            //prfktypeNTP.DefaultValue.AsList.Value = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
                             prfktypeNTP.removeFromAllLayouts();
 
                             CswNbtMetaDataNodeTypeProp relNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Relationship.ToString() );
-                            relNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
+                            //relNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
 
-                            CswNbtView relView = _CswNbtSchemaModTrnsctn.restoreView( relNTP.ViewId );
-                            relView.Root.ChildRelationships.Clear();
-                            CswNbtViewRelationship prrel1 = relView.AddViewRelationship( NodeTypePropNT, false );
-                            CswNbtViewRelationship prrel2 = relView.AddViewRelationship( prrel1, CswEnumNbtViewPropOwnerType.First, NTPNodeTypeOCP, false );
-                            CswNbtViewRelationship prrel3 = relView.AddViewRelationship( prrel2, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
-                            relView.AddViewPropertyAndFilter( prrel3,
-                                                              NTPFieldTypeOCP,
-                                                              Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
-                            relView.AddViewPropertyAndFilter( prrel3,
-                                                              NTPFieldTypeOCP,
-                                                              Conjunction: CswEnumNbtFilterConjunction.Or,
-                                                              Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
-                            relView.save();
+                            //CswNbtView relView = _CswNbtSchemaModTrnsctn.restoreView( relNTP.ViewId );
+                            //relView.Root.ChildRelationships.Clear();
+                            //CswNbtViewRelationship prrel1 = relView.AddViewRelationship( NodeTypePropNT, false );
+                            //CswNbtViewRelationship prrel2 = relView.AddViewRelationship( prrel1, CswEnumNbtViewPropOwnerType.First, NTPNodeTypeOCP, false );
+                            //CswNbtViewRelationship prrel3 = relView.AddViewRelationship( prrel2, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
+                            //relView.AddViewPropertyAndFilter( prrel3,
+                            //                                  NTPFieldTypeOCP,
+                            //                                  Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
+                            //relView.AddViewPropertyAndFilter( prrel3,
+                            //                                  NTPFieldTypeOCP,
+                            //                                  Conjunction: CswEnumNbtFilterConjunction.Or,
+                            //                                  Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
+                            //relView.save();
 
                             CswNbtMetaDataNodeTypeProp propNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.RelatedProperty.ToString() );
-                            propNTP.setFilterDeprecated( relNTP, relNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID], CswEnumNbtFilterMode.NotNull, null );
-                            propNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
+                            propNTP.setFilterDeprecated( relNTP, relNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleList.SubFieldName.Value], CswEnumNbtFilterMode.NotNull, null );
+                            //propNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
 
                             CswNbtMetaDataNodeTypeProp propTypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.RelatedPropType.ToString() );
                             propTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                            prfktypeNTP.DefaultValue.AsList.Value = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                            //prfktypeNTP.DefaultValue.AsList.Value = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
                             prfktypeNTP.removeFromAllLayouts();
 
                             CswNbtMetaDataNodeTypeProp useseqNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.UseSequence.ToString() );
@@ -548,6 +563,11 @@ namespace ChemSW.Nbt.Schema
                             CswNbtMetaDataNodeTypeProp reltargetNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
                             CswNbtMetaDataNodeTypeProp relviewNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.View.ToString() );
                             relviewNTP.setFilterDeprecated( reltargetNTP, reltargetNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.NotNull, string.Empty );
+                            break;
+
+                        case CswEnumNbtFieldType.Sequence:
+                            CswNbtMetaDataNodeTypeProp seqSequenceNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleSequence.AttributeName.Sequence.ToString() );
+                            seqSequenceNTP._DataRow["isrequired"] = CswConvert.ToDbVal( true );
                             break;
 
                         case CswEnumNbtFieldType.ViewPickList:

@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
 
 namespace ChemSW.Nbt.Sched
@@ -40,16 +41,19 @@ namespace ChemSW.Nbt.Sched
 
                 CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query",
                     "select count(*) as cnt from sessionlist" + _SessionListWhere( CswResources.AccessId ) );
-
+                
                 DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
                 Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
                 Int32 OrhpanSessionDataCount = _getOrphanRowCount( (CswNbtResources) CswResources );
-                if( ExpiredSessionRecordCount > 0 || OrhpanSessionDataCount > 0 )
-                {
 
-                    ReturnVal = ExpiredSessionRecordCount + OrhpanSessionDataCount;
-                    _StaleDataExists = true;
-                }
+
+                CswArbitrarySelect ArbitrarySelectOrphanedNodes = _MasterSchemaResources.makeCswArbitrarySelect( "orphaned_temp_nodes",
+                  "select count(*) as cnt from nodes n left outer join sessionlist s on n.sessionid=s.sessionid where istemp=1 and s.sessionid is null" );
+                Int32 OrphanTempNodeCount = CswConvert.ToInt32( ArbitrarySelectOrphanedNodes.getTable().Rows[0]["cnt"] );
+
+                ReturnVal = ExpiredSessionRecordCount + OrhpanSessionDataCount + OrphanTempNodeCount;
+                _StaleDataExists = ( ExpiredSessionRecordCount > 0 || OrhpanSessionDataCount > 0 || OrphanTempNodeCount > 0);
+
             }
             else
             {
@@ -208,6 +212,22 @@ namespace ChemSW.Nbt.Sched
                                 DoomedRow.Delete();
                             }
                             DoomedSessionDataTU.update( DoomedSessionDataDT );
+
+                            //case 31415 - there are still temp nodes hanging around, this should kill anything with a sessionid that has previously expired
+                            CswArbitrarySelect SelectOrphanedNodes = CurrentSchemaResources.makeCswArbitrarySelect( "orphaned_nodeids",
+                                "select nodeid from nodes n left outer join sessionlist s on n.sessionid=s.sessionid where istemp=1 and s.sessionid is null" );
+                            foreach( DataRow Row in SelectOrphanedNodes.getTable().Rows )
+                            {
+                                CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                                if( CswTools.IsPrimaryKey( NodeId ) )
+                                {
+                                    CswNbtNode TempNode = CurrentSchemaResources.Nodes[NodeId];
+                                    if( null != TempNode )
+                                    {
+                                        TempNode.delete( true, true );
+                                    }
+                                }
+                            }//for each node with an inactive sessionid
 
                         } //_StaleDataExists
 

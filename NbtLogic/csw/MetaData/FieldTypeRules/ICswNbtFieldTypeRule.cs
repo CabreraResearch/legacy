@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp );
         //void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
         string getHelpText();
-        void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode );
+        void onSetFk( CswNbtObjClassDesignNodeTypeProp DesignNTPNode );
         Collection<CswNbtFieldTypeAttribute> getAttributes();
     }//ICswNbtFieldTypeRule
 
@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     {
         public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;
         public const string CompoundUnique = CswEnumNbtPropertyAttributeName.CompoundUnique;
-        public const string DisplayConditionFilter = CswEnumNbtPropertyAttributeName.DisplayConditionFilter;
+        public const string DisplayConditionFilterMode = CswEnumNbtPropertyAttributeName.DisplayConditionFilterMode;
         public const string DisplayConditionProperty = CswEnumNbtPropertyAttributeName.DisplayConditionProperty;
         public const string DisplayConditionSubfield = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield;
         public const string DisplayConditionValue = CswEnumNbtPropertyAttributeName.DisplayConditionValue;

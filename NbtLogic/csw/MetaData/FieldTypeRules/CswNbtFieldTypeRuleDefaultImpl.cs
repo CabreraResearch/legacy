@@ -24,12 +24,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtSubFieldColl SubFields { get { return ( _SubFields ); } }
         public bool SearchAllowed { get { return ( true ); } }
 
-        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        public void onSetFk( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
             //doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser,CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string,string> ParameterCollection, int FilterNumber,  bool UseNumericHack = false )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber, bool UseNumericHack = false )
         {
 
             CswNbtSubField CswNbtSubField = null;
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             string StringValueToCheck = PropertyValueToCheck.GetSubFieldValue( SubField );
             // case 31292 - Kludge fix for NodeID filters
-            if( SubField.Name == CswEnumNbtSubFieldName.NodeID && false == string.IsNullOrEmpty(StringValueToCheck) )
+            if( SubField.Name == CswEnumNbtSubFieldName.NodeID && false == string.IsNullOrEmpty( StringValueToCheck ) )
             {
                 CswPrimaryKey pkValue = new CswPrimaryKey();
                 pkValue.FromString( StringValueToCheck );
@@ -105,9 +105,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = OwnerFieldType,
-                Name = CswEnumNbtPropertyAttributeName.DisplayConditionFilter,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionFilterMode,
                 AttributeFieldType = CswEnumNbtFieldType.List,
-                Column = CswEnumNbtPropertyAttributeColumn.Filter
+                Column = CswEnumNbtPropertyAttributeColumn.Filtermode
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
@@ -117,20 +117,20 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Column = CswEnumNbtPropertyAttributeColumn.Filterpropid,
                 SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
             } );
-            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-            //{
-            //    OwnerFieldType = OwnerFieldType,
-            //    Name = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield,
-            //    AttributeFieldType = CswEnumNbtFieldType.List,
-            //    Column = CswEnumNbtPropertyAttributeColumn.Filter
-            //} );
-            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-            //{
-            //    OwnerFieldType = OwnerFieldType,
-            //    Name = CswEnumNbtPropertyAttributeName.DisplayConditionValue,
-            //    AttributeFieldType = CswEnumNbtFieldType.Text,
-            //    Column = CswEnumNbtPropertyAttributeColumn.Filter
-            //} );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Filtersubfield
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionValue,
+                AttributeFieldType = CswEnumNbtFieldType.Text,
+                Column = CswEnumNbtPropertyAttributeColumn.Filtervalue
+            } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = OwnerFieldType,
@@ -206,6 +206,38 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ret;
         } // getAttributes()
 
+        public static CswNbtView setDefaultView( CswNbtMetaData MetaData, CswNbtObjClassDesignNodeTypeProp DesignNTPNode, CswNbtView View, CswEnumNbtViewRelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
+        {
+            if( RelatedIdType != CswEnumNbtViewRelatedIdType.Unknown &&
+                ( null == View ||
+                  View.Root.ChildRelationships.Count == 0 ||
+                  false == OnlyCreateIfNull ) )
+            {
+
+                if( null != View )
+                {
+                    View.Root.ChildRelationships.Clear();
+                }
+
+                ICswNbtMetaDataDefinitionObject targetObj = MetaData.getDefinitionObject( RelatedIdType, inFKValue );
+                if( null != targetObj )
+                {
+                    CswNbtViewId OldViewId = View.ViewId;
+                    View = targetObj.CreateDefaultView();
+                    View.ViewId = OldViewId;
+                }
+                else
+                {
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a relationship without a valid target.", "setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
+                }
+
+                View.Visibility = CswEnumNbtViewVisibility.Property;
+                View.ViewMode = CswEnumNbtViewRenderingMode.Tree;
+                View.ViewName = DesignNTPNode.PropName.Text;
+                View.save();
+            }
+            return View;
+        }
 
     }//CswNbtFieldTypeRuleDefaultImpl
 

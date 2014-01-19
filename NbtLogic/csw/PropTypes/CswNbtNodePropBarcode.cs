@@ -24,17 +24,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             _BarcodeSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).BarcodeSubField;
             _SequenceNumberSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).SequenceNumberSubField;
-            _SequenceValue = new CswNbtSequenceValue( NodeTypePropId, _CswNbtResources );
-
+            _Sequence = CswNbtMetaDataNodeTypeProp.Sequence;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _BarcodeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Barcode, x => setBarcodeValueOverride( CswConvert.ToString( x ), true ) ) );
             _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
         } //CswNbtNodePropBarcode()
 
-        private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _BarcodeSubField;
         private CswNbtSubField _SequenceNumberSubField;
+        private CswNbtObjClassDesignSequence _Sequence;
 
         override public bool Empty
         {
@@ -71,9 +70,9 @@ namespace ChemSW.Nbt.PropTypes
         public bool setBarcodeValue( bool OverrideExisting = false )
         {
             bool Succeeded = false;
-            if( Barcode.Trim() == string.Empty || OverrideExisting )
+            if( ( Barcode.Trim() == string.Empty || OverrideExisting ) && null != _Sequence )
             {
-                string value = _SequenceValue.getNext();
+                string value = _Sequence.getNext();
                 Succeeded = setBarcodeValueOverride( value, false );
             }
             return Succeeded;
@@ -85,8 +84,11 @@ namespace ChemSW.Nbt.PropTypes
         public void resetSequenceNumber()
         {
             // Fix missing sequence number
-            Int32 ThisSeqValue = _SequenceValue.deformatSequence( Barcode );
-            SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
+            if( null != _Sequence )
+            {
+                Int32 ThisSeqValue = _Sequence.deformatSequence( Barcode );
+                SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
+            }
         }
 
         /// <summary>
@@ -99,14 +101,16 @@ namespace ChemSW.Nbt.PropTypes
         public bool setBarcodeValueOverride( string SeqValue, bool ResetSequence )
         {
             bool Succeeded = SetPropRowValue( _BarcodeSubField, SeqValue );
-            Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-            Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField, ThisSeqValue ) );
-            Gestalt = SeqValue;
-
-            if( ResetSequence )
+            if( null != _Sequence )
             {
-                // Keep the sequence up to date
-                _SequenceValue.reSync( ThisSeqValue );
+                Int32 ThisSeqValue = _Sequence.deformatSequence( SeqValue );
+                Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField, ThisSeqValue ) );
+                Gestalt = SeqValue;
+                if( ResetSequence )
+                {
+                    // Keep the sequence up to date
+                    _Sequence.reSync( CswNbtFieldTypeRuleBarCode.SequenceNumberColumn, ThisSeqValue );
+                }
             }
             return Succeeded;
         }

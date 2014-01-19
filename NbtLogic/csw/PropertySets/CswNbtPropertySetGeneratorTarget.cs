@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public virtual void beforePropertySetWriteNode() {}
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             beforePropertySetWriteNode();
 
@@ -68,14 +68,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         public virtual void afterPropertySetWriteNode() {}
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             afterPropertySetWriteNode();
         }//afterWriteNode()
 
         public virtual void beforePropertySetDeleteNode() {}
 
-        public override void beforeDeleteNode()
+        protected override void beforeDeleteNodeLogic()
         {
             beforePropertySetDeleteNode();
         }//beforeDeleteNode()     

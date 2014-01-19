@@ -13,7 +13,8 @@ namespace ChemSW.Nbt.Schema
                 {
                     // new CswUpdateDDL_02K_CaseXXXXX()
                     new CswUpdateDDL_02K_Case29311_AddRelationalColumn(),
-                    new CswUpdateDDL_02K_Case31616()
+                    new CswUpdateDDL_02K_Case31616(),
+                    new CswUpdateDDL_02K_Case31517()
                 };
         } // _DDLScripts()
 
@@ -27,7 +28,9 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateMetaData_02K_Case10480(),
                     new CswUpdateMetaData_02K_Case31542A(),
                     new CswUpdateMetaData_02K_Case31542B(),
-                    new CswUpdateMetaData_02K_Case31545()
+                    new CswUpdateMetaData_02K_Case31672(),
+                    new CswUpdateMetaData_02K_Case31545(),
+                    new CswUpdateMetaData_02K_Case31517B()
                 };
         } // _MetaDataScripts()
 
@@ -42,7 +45,8 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02K_Case29311_DefaultValue(),
                     new CswUpdateSchema_02K_Case29311_MoreFixes(),
                     new CswUpdateSchema_02K_Case29314(),
-                    new CswUpdateSchema_02K_Case31396()
+                    new CswUpdateSchema_02K_Case31396(),
+                    new CswUpdateSchema_02K_Case6780()
                 };
         } // _SchemaScripts()
 

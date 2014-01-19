@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             CswNbtObjClassRequestItem RequestItemNode = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];
             if( null != RequestItemNode )
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             ViewCofA.State = PropertyName.ViewCofA;
             ViewCofA.MenuOptions = PropertyName.ViewCofA + ",View All";
