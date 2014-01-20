@@ -135,20 +135,20 @@ namespace ChemSW.Nbt.Schema
                 NTDeferSearchToNTP.setFilterDeprecated( NTSearchableNTP, NTSearchableNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleLogical.SubFieldName.Checked], CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
 
                 // Set view for DeferSearchToNTP
-                CswNbtView DeferView = _CswNbtSchemaModTrnsctn.restoreView( NTDeferSearchToNTP.ViewId );
-                DeferView.Root.ChildRelationships.Clear();
-                CswNbtViewRelationship DeferViewRel1 = DeferView.AddViewRelationship( NodeTypeNT, false );
-                CswNbtViewRelationship DeferViewRel2 = DeferView.AddViewRelationship( DeferViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
-                DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
-                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
-                DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
-                                                    Conjunction: CswEnumNbtFilterConjunction.Or,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
-                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
-                DeferView.save();
+                //CswNbtView DeferView = _CswNbtSchemaModTrnsctn.restoreView( NTDeferSearchToNTP.ViewId );
+                //DeferView.Root.ChildRelationships.Clear();
+                //CswNbtViewRelationship DeferViewRel1 = DeferView.AddViewRelationship( NodeTypeNT, false );
+                //CswNbtViewRelationship DeferViewRel2 = DeferView.AddViewRelationship( DeferViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
+                //DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
+                //                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                //                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                //                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
+                //DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
+                //                                    Conjunction: CswEnumNbtFilterConjunction.Or,
+                //                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                //                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                //                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
+                //DeferView.save();
 
                 // Add Properties and Tabs grids
                 CswNbtMetaDataFieldType GridFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Grid );

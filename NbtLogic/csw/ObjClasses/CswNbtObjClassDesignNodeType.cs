@@ -408,6 +408,35 @@ namespace ChemSW.Nbt.ObjClasses
                 IconFileName.ImagePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
                 IconFileName.Options = IconOptions;
             }
+
+            // Options for 'DeferSearchTo' - all my Relationships or Locations
+            CswNbtMetaDataObjectClass NodeTypePropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+            CswNbtMetaDataObjectClassProp NTPNodeTypeOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+            CswNbtMetaDataObjectClassProp NTPFieldTypeOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType );
+
+            CswNbtView DeferView = new CswNbtView( _CswNbtResources );
+            DeferView.ViewName = "Defer Search To Options";
+            // my nodetype (me)
+            CswNbtViewRelationship DeferViewRel1 = DeferView.AddViewRelationship( this.ObjectClass, false );
+            DeferViewRel1.NodeIdsToFilterIn.Add( this.NodeId );
+            // and all my properties
+            CswNbtViewRelationship DeferViewRel2 = DeferView.AddViewRelationship( DeferViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
+            // ... that are relationships
+            DeferView.AddViewPropertyAndFilter( DeferViewRel2,
+                                                NTPFieldTypeOCP,
+                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                Value: _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
+            // ... or locations
+            DeferView.AddViewPropertyAndFilter( DeferViewRel2,
+                                                NTPFieldTypeOCP,
+                                                Conjunction: CswEnumNbtFilterConjunction.Or,
+                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                Value: _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
+            DeferSearchTo.OverrideView( DeferView );
+
         } //afterPopulateProps()
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
