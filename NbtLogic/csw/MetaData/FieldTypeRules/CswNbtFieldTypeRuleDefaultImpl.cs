@@ -105,9 +105,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = OwnerFieldType,
-                Name = CswEnumNbtPropertyAttributeName.DisplayConditionFilter,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionFilterMode,
                 AttributeFieldType = CswEnumNbtFieldType.List,
-                Column = CswEnumNbtPropertyAttributeColumn.Filter
+                Column = CswEnumNbtPropertyAttributeColumn.Filtermode
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
@@ -117,20 +117,20 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Column = CswEnumNbtPropertyAttributeColumn.Filterpropid,
                 SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
             } );
-            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-            //{
-            //    OwnerFieldType = OwnerFieldType,
-            //    Name = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield,
-            //    AttributeFieldType = CswEnumNbtFieldType.List,
-            //    Column = CswEnumNbtPropertyAttributeColumn.Filter
-            //} );
-            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-            //{
-            //    OwnerFieldType = OwnerFieldType,
-            //    Name = CswEnumNbtPropertyAttributeName.DisplayConditionValue,
-            //    AttributeFieldType = CswEnumNbtFieldType.Text,
-            //    Column = CswEnumNbtPropertyAttributeColumn.Filter
-            //} );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Filtersubfield
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionValue,
+                AttributeFieldType = CswEnumNbtFieldType.Text,
+                Column = CswEnumNbtPropertyAttributeColumn.Filtervalue
+            } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = OwnerFieldType,

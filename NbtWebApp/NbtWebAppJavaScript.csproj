@@ -96,6 +96,8 @@
     <Content Include="app\db\csw.dbSelect.js" />
     <Content Include="app\db\csw.dbTable.js" />
     <Content Include="app\db\csw.dbInsert.js" />
+    <Content Include="app\dialogs\csw.c3prefsuppliersdialog.js" />
+    <Content Include="app\dialogs\csw.c3searchdialog.js" />
     <Content Include="app\dialogs\csw.confirmdialog.js" />
     <Content Include="app\dialogs\csw.goToCart.js" />
     <Content Include="app\dialogs\csw.inputdialog.js" />

@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.MetaData
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _ObjectClassRow;
         private CswDateTime _Date;
-        public CswNbtMetaDataObjectClass( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null)
+        public CswNbtMetaDataObjectClass( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
             _Date = Date;
@@ -124,7 +124,7 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public Dictionary<Int32,string> getNodeTypeIds()
+        public Dictionary<Int32, string> getNodeTypeIds()
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds( ObjectClassId );
         }
@@ -173,6 +173,10 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps()
         {
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId );
+        }
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps( CswEnumNbtFieldType FieldType )
+        {
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId, FieldType );
         }
 
         public CswNbtMetaDataObjectClassProp getObjectClassProp( string ObjectClassPropName )

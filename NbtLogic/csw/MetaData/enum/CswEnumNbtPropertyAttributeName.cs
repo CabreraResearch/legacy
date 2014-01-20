@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.MetaData
             {
               { AuditLevel                    , AuditLevel                   },
               { CompoundUnique                , CompoundUnique               },
-              { DisplayConditionFilter        , DisplayConditionFilter       },
+              { DisplayConditionFilterMode    , DisplayConditionFilterMode   },
               { DisplayConditionProperty      , DisplayConditionProperty     },
               { DisplayConditionSubfield      , DisplayConditionSubfield     },
               { DisplayConditionValue         , DisplayConditionValue        },
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.MetaData
 
         public const string AuditLevel = "Audit Level";
         public const string CompoundUnique = "Compound Unique";
-        public const string DisplayConditionFilter = "Display Condition Filter";
+        public const string DisplayConditionFilterMode = "Display Condition Filter Mode";
         public const string DisplayConditionProperty = "Display Condition Property";
         public const string DisplayConditionSubfield = "Display Condition Subfield";
         public const string DisplayConditionValue = "Display Condition Value";

@@ -46,7 +46,9 @@ namespace ChemSW.Nbt.MetaData
             { Usenumbering       , Usenumbering       },
             { Questionno         , Questionno         },
             { Subquestionno      , Subquestionno      },
-            { Filter             , Filter             },
+            { Filtersubfield     , Filtersubfield     },
+            { Filtermode         , Filtermode         },
+            { Filtervalue        , Filtervalue        },
             { Filterpropid       , Filterpropid       },
             { Firstpropversionid , Firstpropversionid },
             { Priorpropversionid , Priorpropversionid },
@@ -159,8 +161,10 @@ namespace ChemSW.Nbt.MetaData
         public const string Usenumbering       = "usenumbering"             ;
         public const string Questionno         = "questionno"               ;
         public const string Subquestionno      = "subquestionno"            ;
-        public const string Filter             = "filter"                   ;
         public const string Filterpropid       = "filterpropid"             ;
+        public const string Filtersubfield     = "Filtersubfield"           ;
+        public const string Filtermode         = "Filtermode"               ;
+        public const string Filtervalue        = "Filtervalue"              ;
         public const string Firstpropversionid = "firstpropversionid"       ;
         public const string Priorpropversionid = "priorpropversionid"       ;
         public const string Valueoptions       = "valueoptions"             ;

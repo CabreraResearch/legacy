@@ -247,6 +247,41 @@
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtPurgeSessionData.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExtChemDataSync.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseStatus.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ChemCatCentral\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ChemCatCentral\configuration.svcinfo" />
+    <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
+    <None Include="Service References\ChemCatCentral\Search.disco" />
+    <None Include="Service References\ChemCatCentral\Search.wsdl" />
+    <None Include="Service References\ChemCatCentral\Search.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search6.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ChemWatchMaterialServices\ChemSW.Nbt.ChemWatchMaterialServices.AutoCompleteData.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -403,19 +438,7 @@
     <None Include="Service References\ChemWatchAuthServices\configuration.svcinfo" />
     <None Include="Service References\ChemWatchAuthServices\configuration91.svcinfo" />
     <None Include="Service References\ChemWatchAuthServices\soap.disco" />
-    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseStatus.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search.disco" />
     <None Include="packages.config" />
-    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search.wsdl" />
-    <None Include="Service References\ChemCatCentral\Search.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search1.disco" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28968.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28717.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28843.cs" />
@@ -484,7 +507,12 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29812.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29773.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29798.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateDDL_02K_Case31517.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31517B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31545.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateSchema_02K_Case31545.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateSchema_02K_Case6780.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31672.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31542B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31542A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case10480.cs" />
@@ -911,6 +939,11 @@
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28355.cs" />
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28927_01.cs" />
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_CaseXXXXX.cs" />
+    <Compile Include="Service References\ChemCatCentral\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\ChemWatchAuthServices\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -964,21 +997,10 @@
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case24647.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_TreeGrouping_Case27882.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Recurring_Case28340.cs" />
-    <Compile Include="Service References\ChemCatCentral\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Service References\ChemCatCentral\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\ChemCatCentral\configuration.svcinfo" />
-    <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
     <None Include="app.config" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28254.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28260.cs" />
@@ -1549,37 +1571,6 @@
       <SubType>Component</SubType>
     </Compile>
     <None Include="Properties\DataSources\ChemSW.MtSched.Core.CswSchedSvcReturn.datasource" />
-    <None Include="Service References\ChemCatCentral\Search1.wsdl" />
-    <None Include="Service References\ChemCatCentral\Search1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search43.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search44.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search45.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search6.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search7.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\ChemWatchAuthServices\AuthenticateService.wsdl" />
     <None Include="Service References\ChemWatchAuthServices\soap.wsdl" />
     <None Include="Service References\ChemWatchAuthServices\soap.xsd">
@@ -1701,12 +1692,12 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ChemCatCentral\" />
     <WCFMetadataStorage Include="Service References\ChemWatchAuthServices\" />
     <WCFMetadataStorage Include="Service References\ChemWatchCommonServices\" />
     <WCFMetadataStorage Include="Service References\ChemWatchDocumentServices\" />
     <WCFMetadataStorage Include="Service References\ChemWatchMaterialServices\" />
     <WCFMetadataStorage Include="Service References\NbtSchedSvcRef\" />
-    <WCFMetadataStorage Include="Service References\ChemCatCentral\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
