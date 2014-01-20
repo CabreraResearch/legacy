@@ -28,7 +28,7 @@
             cswParent = cswParent || Csw.main.rightDiv;
 
         })();
-        
+
         cswPrivate.init = function () {
             cswParent.empty();
 
@@ -89,7 +89,7 @@
                                 listeners: {
                                     activate: function (tab) {
                                         cswPrivate.activeTabId = tab.id;
-                                        cswPrivate.sidebar.refreshExistingProperties('Edit',tab.id);
+                                        cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
                                         if (!renderedTabs[tab.id]) {
                                             renderedTabs[tab.id] = tab;
                                             cswPrivate.renderTab(tab.id, tab.id);
@@ -159,15 +159,87 @@
 
         //TODO: fix search (aka Table) layouts then make this layout
         cswPrivate.makeSearchNodeLayout = function () {
-            cswPrivate.nameDiv.append('Search Node Layout');
-            var addPanel = window.Ext.create('Ext.panel.Panel', {
-                renderTo: cswPrivate.contentDiv.getId(),
+            var searchTbl = cswPrivate.contentDiv.table().css({ 'height': '400px' });
+
+            var imageCell = searchTbl.cell(1, 1).div().css('width', '200px');
+            var propsCell = searchTbl.cell(1, 2).div().css('width', '400px');
+            var buttonsCell = searchTbl.cell(1, 3).div().css('width', '400px');
+            var disabledButtonsCell = searchTbl.cell(1, 4).div().css('width', '400px');
+
+            Csw.ajaxWcf.post({
+                urlMethod: 'Design/GetSearchImageLink',
+                data: cswPrivate.nodeId,
+                success: function(ret) {
+                    imageCell.img({
+                        src: ret.imagelink
+                    });
+                }
+            });
+
+            var propsPanel = window.Ext.create('Ext.panel.Panel', {
+                renderTo: propsCell.getId(),
+                border: 0,
                 layout: {
                     align: 'stretch',
                     padding: 1
                 }
             });
-            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
+
+            var buttonsPanel = window.Ext.create('Ext.panel.Panel', {
+                renderTo: buttonsCell.getId(),
+                border: 0,
+                layout: {
+                    align: 'stretch',
+                    padding: 1
+                }
+            });
+
+            Csw.ajax.deprecatedWsNbt({
+                urlMethod: 'getProps',
+                data: {
+                    EditMode: cswPrivate.Layout,
+                    NodeId: cswPrivate.nodeId,
+                    TabId: Csw.int32MinVal,
+                    SafeNodeKey: cswPrivate.nodeKey,
+                    NodeTypeId: cswPrivate.nodeTypeId,
+                    Date: new Date().toDateString(),
+                    Multi: false,
+                    filterToPropId: '',
+                    ConfigMode: true,
+                    RelatedNodeId: '',
+                    GetIdentityTab: false,
+                    ForceReadOnly: false
+                },
+                success: function (data) {
+                    //split buttons and every other prop
+                    var buttonProps = [];
+                    var otherProps = [];
+                    Csw.iterate(data.properties, function (prop) {
+                        if ('Button' === prop.fieldtype) {
+                            buttonProps.push(prop);
+                        } else {
+                            otherProps.push(prop);
+                        }
+                    });
+
+                    cswPrivate.renderProps(data.node, otherProps, propsPanel.id, '');
+                    cswPrivate.renderProps(data.node, buttonProps, buttonsPanel.id, '');
+
+                } // success
+            }); // ajax
+
+            var disabledBtnsTbl = disabledButtonsCell.table();
+            disabledBtnsTbl.cell(1, 1).buttonExt({
+                isEnabled: false,
+                enabledText: 'Details',
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil)
+            }).disable();
+
+            disabledBtnsTbl.cell(1, 2).buttonExt({
+                isEnabled: false,
+                enabledText: 'Delete',
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash)
+            }).disable();
         };
 
         cswPrivate.makeDiv = function (extId) {
@@ -208,7 +280,7 @@
                     ForceReadOnly: false
                 },
                 success: function (data) {
-                    
+
                     cswPrivate.renderProps(data.node, data.properties, extid, tabid);
 
                 } // success{}
@@ -289,7 +361,7 @@
                                 fieldSet.legend({ value: prop.tabgroup });
                                 propDiv = fieldSet.div();
                                 var groupProps = cswPrivate.getPropsInGroup(prop.tabgroup, properties);
-                                
+
                                 for (var groupIdx in groupProps) {
                                     var groupProp = groupProps[groupIdx];
                                     seenProps[groupProp.id] = groupProp;
@@ -322,7 +394,7 @@
                         onClose: function (draggable) {
                             var canRemove = true;
                             var doomedPropsCollection = [];
-                            Csw.iterate(draggable.data, function(doomedProp) {
+                            Csw.iterate(draggable.data, function (doomedProp) {
                                 doomedPropsCollection.push({
                                     nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
                                     displaycol: Csw.int32MinVal,
@@ -433,7 +505,7 @@
                 var thisCol = i + 1;
                 var thisRow = 1;
                 Csw.iterate(propPanels, function (panel) {
-                    Csw.iterate(panel.data, function(panelProp) {
+                    Csw.iterate(panel.data, function (panelProp) {
                         propsReq.push({
                             nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
                             tabgroup: panelProp.tabgroup,
@@ -472,7 +544,7 @@
                 }
             });
         };
-        
+
         //#region Public
 
         cswPublic.tearDown = function () {
@@ -482,16 +554,16 @@
         cswPublic.setSidebar = function (sidebar) {
             cswPrivate.sidebar = sidebar;
         };
-        
+
         cswPublic.getActiveTabId = function () {
             return cswPrivate.activeTabId;
         };
-        
+
         cswPublic.getActiveLayout = function () {
             return cswPrivate.Layout;
         };
 
-        cswPublic.refresh = function() {
+        cswPublic.refresh = function () {
             cswPrivate.init();
         };
 
