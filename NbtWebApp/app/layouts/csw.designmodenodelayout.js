@@ -320,19 +320,26 @@
                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                         },
                         onClose: function (draggable) {
-                            var doomedProp = seenProps[draggable.id];
-                            if ((false === doomedProp.required && 'Add' === cswPrivate.Layout) || 'Add' !== cswPrivate.Layout) {
+                            var canRemove = true;
+                            var doomedPropsCollection = [];
+                            Csw.iterate(draggable.data, function(doomedProp) {
+                                doomedPropsCollection.push({
+                                    nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
+                                    displaycol: Csw.int32MinVal,
+                                    displayrow: Csw.int32MinVal
+                                });
+                                if (doomedProp.required && 'Add' === cswPrivate.Layout) {
+                                    canRemove = false;
+                                }
+                            });
+
+                            if (canRemove) {
                                 var confirm = Csw.dialogs.confirmDialog({
                                     title: 'Remove Property From Layout',
                                     message: 'Are you sure you want to remove this property from the layout?',
                                     height: 200,
                                     width: 300,
                                     onYes: function () {
-                                        var doomedPropsCollection = [{
-                                            nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
-                                            displaycol: Csw.int32MinVal,
-                                            displayrow: Csw.int32MinVal
-                                        }];
                                         dragPanel.removeDraggableFromCol(realCol, draggable.id);
                                         cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
                                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
