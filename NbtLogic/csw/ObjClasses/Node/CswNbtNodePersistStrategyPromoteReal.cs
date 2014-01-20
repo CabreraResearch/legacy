@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
             OverrideUniqueValidation = false;
             SkipEvents = false;
             AllowAuditing = true;
-            Creating = true;
+            Creating = false;
         }
 
         public bool ForceUpdate { get; set; }
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Node.ObjClass )
             {
                 Node.ObjClass.afterPromoteNode();
-                Node.ObjClass.afterWriteNode( Creating );
+                Node.ObjClass.afterWriteNode();
             }
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );

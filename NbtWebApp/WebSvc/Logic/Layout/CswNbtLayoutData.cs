@@ -21,7 +21,7 @@ namespace NbtWebApp.WebSvc.Logic.Layout
     [DataContract]
     public class CswNbtNodeTypeLayout
     {
-        [DataMember (Name = "props")]
+        [DataMember( Name = "props" )]
         public Collection<CswNbtLayoutProp> Props = new Collection<CswNbtLayoutProp>();
 
         private CswEnumNbtLayoutType _layout = null;
@@ -78,6 +78,9 @@ namespace NbtWebApp.WebSvc.Logic.Layout
                 _nodeTypePropId = value;
             }
         }
+
+        [DataMember( Name = "tabgroup" )]
+        public string TabGroup { get; set; }
 
         [DataMember( Name = "displaycol" )]
         public int DisplayColumn { get; set; }

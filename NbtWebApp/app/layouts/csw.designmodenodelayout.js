@@ -114,20 +114,15 @@
                     window.Ext.create('Ext.panel.Panel', {
                         renderTo: cswPrivate.contentDiv.getId(),
                         layout: {
-                            align: 'stretch',    // Each takes up full width
-                            padding: 1
+                            type: 'vbox',
+                            align: 'stretch'    // Each takes up full width
                         },
-                        height: 700,
                         items: [{
                             id: identityTabId,
-                            xtype: 'panel',
-                            height: 200,
-                            border: 1
+                            xtype: 'panel'
                         }, {
                             id: tabPanelId,
                             xtype: 'tabpanel',
-                            height: 500,
-                            border: 1,
                             items: tabs
                         }]
                     });
@@ -142,7 +137,6 @@
             cswPrivate.nameDiv.append('Add Node Layout');
             var addPanel = window.Ext.create('Ext.panel.Panel', {
                 renderTo: cswPrivate.contentDiv.getId(),
-                height: 700,
                 layout: {
                     align: 'stretch',
                     padding: 1
@@ -155,7 +149,6 @@
             cswPrivate.nameDiv.append('Preview Node Layout');
             var addPanel = window.Ext.create('Ext.panel.Panel', {
                 renderTo: cswPrivate.contentDiv.getId(),
-                height: 700,
                 layout: {
                     align: 'stretch',
                     padding: 1
@@ -169,7 +162,6 @@
             cswPrivate.nameDiv.append('Search Node Layout');
             var addPanel = window.Ext.create('Ext.panel.Panel', {
                 renderTo: cswPrivate.contentDiv.getId(),
-                height: 700,
                 layout: {
                     align: 'stretch',
                     padding: 1
@@ -250,7 +242,7 @@
 
         cswPrivate.renderPropDiv = function (tabid, node, prop, div) {
             var propTbl = div.table();
-            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px', 'width': '150px', 'text-align': 'right' });
             var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
 
             labelDiv.setLabelText(prop.name, prop.required, false); //in design mode, readonly better always be true, but we want required props to have the "*"
@@ -276,9 +268,10 @@
                 if (!seenProps[prop.id]) {
                     seenProps[prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
-                    var subDragPanel;
                     dragPanel.addItemToCol(realCol, {
                         id: prop.id,
+                        showRearrangeButton: (prop.hassubprops || false === Csw.isNullOrEmpty(prop.tabgroup)),
+                        showConfigureButton: false,//TODO: when we want to edit NTPs in the layout editor, show this button
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
@@ -287,51 +280,66 @@
                                 'border': '1px solid #ccc'
                             });
 
-                            cswPrivate.renderPropDiv(tabid, node, prop, propDiv);
+                            extEl.data = [];
+                            if (Csw.isNullOrEmpty(prop.tabgroup)) {
+                                cswPrivate.renderPropDiv(tabid, node, prop, propDiv);
+                                extEl.data.push(prop);
+                            } else {
+                                var fieldSet = propDiv.fieldSet();
+                                fieldSet.legend({ value: prop.tabgroup });
+                                propDiv = fieldSet.div();
+                                var groupProps = cswPrivate.getPropsInGroup(prop.tabgroup, properties);
+                                
+                                for (var groupIdx in groupProps) {
+                                    var groupProp = groupProps[groupIdx];
+                                    seenProps[groupProp.id] = groupProp;
+                                    cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
+                                    extEl.data.push(groupProp);
+                                }
+                            }
 
                             if (prop.hassubprops) {
-                                var subCols = cswPrivate.howManyCols(prop.subprops);
-                                subDragPanel = Csw.composites.draggablepanel(subPropsDiv, {
-                                    columns: subCols
-                                });
-
                                 for (var subPropIdx in prop.subprops) {
                                     var subProp = prop.subprops[subPropIdx];
                                     seenProps[subProp.id] = subProp;
-
-                                    var subRealCol = subProp.displaycol - 1;
-                                    subDragPanel.addItemToCol(subRealCol, {
-                                        render: function (extRenderTo, cswRenderTo) {
-                                            seenProps[subProp.id] = subProp;
-                                            cswPrivate.renderPropDiv(tabid, node, subProp, cswRenderTo);
-                                        },
-                                        onDrop: function (el, col, row) {
-                                            subDragPanel.doLayout();
-                                            dragPanel.doLayout();
-                                            //TODO: update subprops position in layout
-                                        }
-                                    });
+                                    cswPrivate.renderPropDiv(tabid, node, subProp, subPropsDiv);
                                 } //for subProp in subProps
-                                subDragPanel.doLayout();
+                                //subDragPanel.doLayout();
+                            }
+                        },
+                        onRearrange: function () {
+                            if (prop.hassubprops) { //we render the sub properties in a re-arrangable dialog
+                                cswPrivate.arrangeDialog(node, prop.subprops, tabid, 'Configure ' + prop.name + ' Subprops');
+                            } else if (false === Csw.isNullOrEmpty(prop.tabgroup)) { //render all the grouped properties in a re-arrangable dialog
+                                var groupProps = cswPrivate.getPropsInGroup(prop.tabgroup, properties);
+                                cswPrivate.arrangeDialog(node, groupProps, tabid, 'Configure ' + prop.tabgroup + ' Props');
                             }
                         },
                         onDrop: function (ext, col, row) {
+                            window.Ext.getCmp(extid).doLayout();
                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                         },
                         onClose: function (draggable) {
-                            var doomedProp = seenProps[draggable.id];
-                            if ((false === doomedProp.required && 'Add' === cswPrivate.Layout) || 'Add' !== cswPrivate.Layout) {
+                            var canRemove = true;
+                            var doomedPropsCollection = [];
+                            Csw.iterate(draggable.data, function(doomedProp) {
+                                doomedPropsCollection.push({
+                                    nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
+                                    displaycol: Csw.int32MinVal,
+                                    displayrow: Csw.int32MinVal
+                                });
+                                if (doomedProp.required && 'Add' === cswPrivate.Layout) {
+                                    canRemove = false;
+                                }
+                            });
+
+                            if (canRemove) {
                                 var confirm = Csw.dialogs.confirmDialog({
                                     title: 'Remove Property From Layout',
                                     message: 'Are you sure you want to remove this property from the layout?',
                                     height: 200,
                                     width: 300,
                                     onYes: function () {
-                                        var doomedPropsCollection = [{
-                                            nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
-                                            displaycol: Csw.int32MinVal,
-                                            displayrow: Csw.int32MinVal
-                                        }];
                                         dragPanel.removeDraggableFromCol(realCol, draggable.id);
                                         cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
                                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
@@ -362,7 +370,59 @@
             //TODO: fix this hack - we need to wait for all property ajax requests (like grid) to finish before calling doLayout()
             Csw.defer(function () {
                 dragPanel.doLayout(); //fix our layout
+                window.Ext.getCmp(extid).doLayout();
             }, 2000);
+        };
+
+        cswPrivate.getPropsInGroup = function (group, properties) {
+            var groupProps = {};
+            for (var propIdx in properties) {
+                if (group === properties[propIdx].tabgroup) {
+                    groupProps[propIdx] = properties[propIdx];
+                }
+            }
+            return groupProps;
+        };
+
+        cswPrivate.arrangeDialog = function (node, props, tabid, title) {
+            var seenProps = {};
+
+            var rearrangeGroupPropDialog = Csw.layouts.dialog({
+                title: title,
+                width: 800,
+                height: 400,
+                onOpen: function () {
+                    var groupDragPanel = Csw.composites.draggablepanel(rearrangeGroupPropDialog.div, {
+                        columns: 1, //We force all grouped props to be in a single column
+                        showAddColumnButton: false,
+                    });
+
+                    groupDragPanel.allowDrag(false); //TODO: enable drag for sub/tabgroup props
+
+                    for (var groupIdx in props) {
+                        var groupProp = props[groupIdx];
+                        seenProps['group_' + groupProp.id] = groupProp;
+
+                        groupDragPanel.addItemToCol(0, {
+                            id: 'group_' + groupProp.id,
+                            showRearrangeButton: false,
+                            showConfigureButton: false, //TODO: when we want to edit NTPs in the layout editor, show this button
+                            showCloseButton: false,
+                            render: function (subExtEl, subCswEl) {
+                                var propTbl = subCswEl.table();
+                                var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+
+                                cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
+                            },
+                            onDrop: function () {
+                                cswPrivate.saveLayout(groupDragPanel, node, seenProps, tabid);
+                            }
+                        });
+                    } //for subProp in subProps
+                    Csw.publish('render_' + node.nodeid + '_' + tabid);
+                }
+            });
+            rearrangeGroupPropDialog.open();
         };
 
         cswPrivate.saveLayout = function (dragPanel, node, props, tabid) {
@@ -373,11 +433,13 @@
                 var thisCol = i + 1;
                 var thisRow = 1;
                 Csw.iterate(propPanels, function (panel) {
-                    var panelProp = props[panel.id];
-                    propsReq.push({
-                        nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
-                        displaycol: thisCol,
-                        displayrow: thisRow
+                    Csw.iterate(panel.data, function(panelProp) {
+                        propsReq.push({
+                            nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
+                            tabgroup: panelProp.tabgroup,
+                            displaycol: thisCol,
+                            displayrow: thisRow
+                        });
                     });
                     thisRow++;
                 });
