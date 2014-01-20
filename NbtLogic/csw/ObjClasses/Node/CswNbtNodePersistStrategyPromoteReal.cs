@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
             OverrideUniqueValidation = false;
             SkipEvents = false;
             AllowAuditing = true;
-            Creating = true;
+            Creating = false;
         }
 
         public bool ForceUpdate { get; set; }

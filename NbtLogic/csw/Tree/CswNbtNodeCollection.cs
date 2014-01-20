@@ -433,6 +433,7 @@ namespace ChemSW.Nbt
             if( false == IsTemp )
             {
                 NodePersistStrategy = new CswNbtNodePersistStrategyPromoteReal( _CswNbtResources );
+                NodePersistStrategy.Creating = true;
             }
             else
             {
