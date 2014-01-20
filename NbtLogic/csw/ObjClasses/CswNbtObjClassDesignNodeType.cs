@@ -167,8 +167,9 @@ namespace ChemSW.Nbt.ObjClasses
                         } // if( null != DesignNodeTypeTabNT )
 
 
-                        // Make initial props
-                        _setPropertyValuesFromObjectClass();
+                        // case 31678 - _ObjectClassProperty_Change does this for us
+                        //// Make initial props
+                        //_setPropertyValuesFromObjectClass();
 
                     } // if( false == InternalCreate )
 
