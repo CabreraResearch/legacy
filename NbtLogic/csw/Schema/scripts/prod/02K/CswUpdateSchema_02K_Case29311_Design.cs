@@ -813,19 +813,22 @@ namespace ChemSW.Nbt.Schema
 
         private void _addJctRow( DataTable JctTable, CswNbtMetaDataNodeTypeProp Prop, string TableName, string ColumnName, CswEnumNbtSubFieldName SubFieldName = null )
         {
-            _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( TableName, ColumnName );
-            DataRow NodeTypeNameRow = JctTable.NewRow();
-            NodeTypeNameRow["nodetypepropid"] = Prop.PropId;
-            NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-            if( null != SubFieldName )
+            if( false == string.IsNullOrEmpty( ColumnName ) )
             {
-                NodeTypeNameRow["subfieldname"] = SubFieldName.ToString();
+                _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( TableName, ColumnName );
+                DataRow NodeTypeNameRow = JctTable.NewRow();
+                NodeTypeNameRow["nodetypepropid"] = Prop.PropId;
+                NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
+                if( null != SubFieldName )
+                {
+                    NodeTypeNameRow["subfieldname"] = SubFieldName.ToString();
+                }
+                else if( null != Prop.getFieldTypeRule().SubFields.Default )
+                {
+                    NodeTypeNameRow["subfieldname"] = Prop.getFieldTypeRule().SubFields.Default.Name;
+                }
+                JctTable.Rows.Add( NodeTypeNameRow );
             }
-            else if( null != Prop.getFieldTypeRule().SubFields.Default )
-            {
-                NodeTypeNameRow["subfieldname"] = Prop.getFieldTypeRule().SubFields.Default.Name;
-            }
-            JctTable.Rows.Add( NodeTypeNameRow );
         }
 
         private CswNbtMetaDataNodeTypeProp _makePropNTP( CswNbtMetaDataNodeType NodeTypePropNT, Int32 TabId, CswNbtFieldTypeAttribute Attribute )
