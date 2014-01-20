@@ -359,6 +359,33 @@ namespace ChemSW.Nbt.ObjClasses
                     FKTypeWrapper.Text = string.Empty;
                 }
             } // if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
+
+
+            if( FieldTypeValue == CswEnumNbtFieldType.Composite )
+            {
+                // Copy value of 'Add To Template' to the Template
+                CswNbtNodePropText TemplateProp = AttributeProperty[CswNbtFieldTypeRuleComposite.AttributeName.Template].AsText;
+                CswNbtNodePropRelationship AddToTemplateProp = AttributeProperty[CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate].AsRelationship;
+                if( CswTools.IsPrimaryKey( AddToTemplateProp.RelatedNodeId ) )
+                {
+                    CswNbtObjClassDesignNodeTypeProp SelectedProp = _CswNbtResources.Nodes[AddToTemplateProp.RelatedNodeId];
+                    if( null != SelectedProp )
+                    {
+                        string newTemplate = TemplateProp.Text;
+                        if( false == string.IsNullOrEmpty( newTemplate ) )
+                        {
+                            newTemplate += " ";
+                        }
+                        newTemplate += CswNbtMetaData.MakeTemplateEntry( SelectedProp.RelationalNodeTypeProp.FirstPropVersionId.ToString() );
+                        TemplateProp.Text = newTemplate;
+
+                        // Clear the selected value
+                        AddToTemplateProp.RelatedNodeId = null;
+                        AddToTemplateProp.CachedNodeName = string.Empty;
+                        AddToTemplateProp.PendingUpdate = false;
+                    } // if( null != SelectedProp )
+                } // if( CswTools.IsPrimaryKey( AddToTemplateProp.RelatedNodeId ) )
+            } // if( FieldTypeValue == CswEnumNbtFieldType.Composite )
         }//beforeWriteNode()
 
         protected override void afterWriteNodeLogic()
@@ -729,6 +756,21 @@ namespace ChemSW.Nbt.ObjClasses
                     };
             } // if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
 
+            if( FieldTypeValue == CswEnumNbtFieldType.Composite )
+            {
+                // Options for 'Add To Template' are all properties in this nodetype
+                CswNbtView addTemplateView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship PropRel1 = addTemplateView.AddViewRelationship( this.ObjectClass, false );
+                addTemplateView.AddViewPropertyAndFilter( PropRel1,
+                                                          NodeTypeValue.NodeTypeProp,
+                                                          CswEnumNbtFilterConjunction.And,
+                                                          FilterMode: CswEnumNbtFilterMode.Equals,
+                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                          Value: this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
+                CswNbtNodePropRelationship AddToTemplateProp = AttributeProperty[CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate].AsRelationship;
+                AddToTemplateProp.OverrideView( addTemplateView );
+            }
+
             // Default value
             CswNbtMetaDataNodeTypeProp DefaultValueNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultValue );
             if( null != DefaultValueNTP )
@@ -1073,25 +1115,27 @@ namespace ChemSW.Nbt.ObjClasses
 
 
                     // Layout
-                    //CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeType.getFirstNodeTypeTab();
-                    //if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
-                    //{
-                    //    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
-                    //    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
-                    //}
-                    //else
-                    //{
-                    //    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
-                    //    if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&
-                    //        ( ( OCProp.IsRequired && false == OCProp.HasDefaultValue() ) ||
-                    //          ( OCProp.SetValueOnAdd ||
-                    //            ( Int32.MinValue != OCProp.DisplayColAdd &&
-                    //              Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
-                    //    {
-                    //        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
-                    //    }
-                    //}
-
+                    if( null != RelationalNodeType )
+                    {
+                        CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeType.getFirstNodeTypeTab();
+                        if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
+                        {
+                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                        }
+                        else
+                        {
+                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
+                            if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&
+                                ( ( OCProp.IsRequired && false == OCProp.HasDefaultValue() ) ||
+                                  ( OCProp.SetValueOnAdd ||
+                                    ( Int32.MinValue != OCProp.DisplayColAdd &&
+                                      Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
+                            {
+                                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                            }
+                        }
+                    } // if( null != RelationalNodeType )
 
                     // Handle default values from ObjectClassProp
                     _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp );
