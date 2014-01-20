@@ -422,7 +422,7 @@ namespace ChemSW.Nbt
             }
 
             //Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: ( false == IsTemp ) );
-            Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation );
+            //Node.postChanges( true, IsCopy: IsCopy, OverrideUniqueValidation: OverrideUniqueValidation );
 
             // We need to hash the Int32.MinValue keys for the Add form to work
             // But we can simply override what's in the hash if we make another new node

@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.afterWriteNode( Creating );
+                Node.ObjClass.afterWriteNode();
             }
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );
