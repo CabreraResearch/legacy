@@ -38,12 +38,24 @@ namespace ChemSW.Nbt.Test
         {
             CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), delegate( CswNbtNode NewNode )
             {
-                CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, "Name" );
+                CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, CswNbtObjClassControlZone.PropertyName.Name );
                 NewNode.Properties[NameNTP].AsText.Text = "TempNode";
             }, true );
             _finalize();
 
             return ControlZoneNode;
+        }
+
+        internal CswNbtNode createVendorNode( bool IsTemp = false )
+        {
+            CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Vendor" ), delegate( CswNbtNode NewNode )
+            {
+                CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, CswNbtObjClassVendor.PropertyName.VendorName );
+                NewNode.Properties[NameNTP].AsText.Text = "TempVendor";
+            }, IsTemp );
+            _finalize();
+
+            return VendorNode.Node;
         }
 
         internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null, CswPrimaryKey ControlZoneId = null, bool AllowInventory = true )

@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswNbtNode TestNode = TestData.Nodes.createControlZoneNode();
             //TestNode.postChanges( false );
             Assert.AreEqual( CswEnumNbtNodeModificationState.Modified, TestNode.ModificationState.ToString() );
-    }
+        }
 
         #endregion postChanges
 
@@ -93,8 +93,35 @@ namespace ChemSW.Nbt.Test.ObjClasses
             Assert.IsTrue( TestNode.IsTemp );
             TestNode.PromoteTempToReal();
             Assert.IsFalse( TestNode.IsTemp );
-}
+        }
+
+        /// <summary>
+        /// Given a newly created temp node with compoundunique properties
+        /// given that a pre-existing node has the same compoundunique values,
+        /// when the temp node is promoted to real,
+        /// assert that a counpoununique violation error is thrown.
+        /// Prior to resolving Case 31214, this test failed.
+        /// </summary>
+        [Test]
+        public void promoteTempToRealTestCompoundUniqueViolation()
+        {
+            TestData.Nodes.createVendorNode();
+            CswNbtNode InvalidVendor = TestData.Nodes.createVendorNode( true );
+            Assert.IsTrue( InvalidVendor.IsTemp );
+            bool posted = false;
+            try
+            {
+                InvalidVendor.PromoteTempToReal();
+                posted = true;
+            }
+            catch( Exception e )
+            {
+                Assert.IsTrue( e.Message.Contains( "The following properties must have unique values" ) );
+            }
+
+            Assert.IsFalse( posted, "No Compound-Unique validation occurred." );
+        }
 
         #endregion promoteTempToReal
-}
+    }
 }
