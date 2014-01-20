@@ -18,21 +18,21 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;
-            public const string CompoundUnique = "Compound Unique";
-            public const string DisplayConditionFilter = "Display Condition Filter";
-            public const string DisplayConditionProperty = "Display Condition Property";
-            public const string DisplayConditionSubfield = "Display Condition Subfield";
-            public const string DisplayConditionValue = "Display Condition Value";
-            public const string FieldType = "Field Type";
-            public const string HelpText = "Help Text";
-            public const string NodeTypeValue = "NodeType";
-            public const string ObjectClassPropName = "Original Name";
-            public const string PropName = "Prop Name";
-            public const string ReadOnly = "Read Only";
-            public const string Required = "Required";
-            public const string ServerManaged = "Server Managed";
-            public const string Unique = "Unique";
-            public const string UseNumbering = "Use Numbering";
+            public const string CompoundUnique = CswEnumNbtPropertyAttributeName.CompoundUnique; //"Compound Unique";
+            public const string DisplayConditionFilterMode = CswEnumNbtPropertyAttributeName.DisplayConditionFilterMode; //"Display Condition Filter Mode";
+            public const string DisplayConditionProperty = CswEnumNbtPropertyAttributeName.DisplayConditionProperty; //"Display Condition Property";
+            public const string DisplayConditionSubfield = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield; //"Display Condition Subfield";
+            public const string DisplayConditionValue = CswEnumNbtPropertyAttributeName.DisplayConditionValue; // "Display Condition Value";
+            public const string FieldType = CswEnumNbtPropertyAttributeName.FieldType; // "Field Type";
+            public const string HelpText = CswEnumNbtPropertyAttributeName.HelpText; // "Help Text";
+            public const string NodeTypeValue = CswEnumNbtPropertyAttributeName.NodeTypeValue; // "NodeType";
+            public const string ObjectClassPropName = CswEnumNbtPropertyAttributeName.ObjectClassPropName; //"Original Name";
+            public const string PropName = CswEnumNbtPropertyAttributeName.PropName; //"Prop Name";
+            public const string ReadOnly = CswEnumNbtPropertyAttributeName.ReadOnly; //"Read Only";
+            public const string Required = CswEnumNbtPropertyAttributeName.Required; //"Required";
+            public const string ServerManaged = CswEnumNbtPropertyAttributeName.ServerManaged; // "Server Managed";
+            public const string Unique = CswEnumNbtPropertyAttributeName.Unique; // "Unique";
+            public const string UseNumbering = CswEnumNbtPropertyAttributeName.UseNumbering; // "Use Numbering";
         }
 
         private const string PropRefValue_OCP_Suffix = " (by Object Class)";
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
                     //NOTE: this does not keep the oraviewcolname up to date with updates after original post
                     if( UseNumbering.Checked != CswEnumTristate.True )
                     {
-                        string OraViewColName  = PropName.Text;
+                        string OraViewColName = PropName.Text;
                         if( null == ObjectClass ) //Case 31160 - all NTPs with no ObjClass get a special prefix
                         {
                             OraViewColName = "cu_" + OraViewColName;
@@ -714,7 +714,7 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 if( RelationshipNTP.FkMatchesNew( RelationalNodeType ) )
                                 {
-                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipNTP.getNodeType().NodeTypeName +": "+ RelationshipNTP.PropName, RelationshipNTP.PropId.ToString() ) );
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipNTP.getNodeType().NodeTypeName + ": " + RelationshipNTP.PropName, RelationshipNTP.PropId.ToString() ) );
                                 }
                             }
                             foreach( CswNbtMetaDataObjectClassProp RelationshipOCP in _CswNbtResources.MetaData.getObjectClassProps( CswEnumNbtFieldType.Relationship ) )
@@ -785,7 +785,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropList AuditLevel { get { return ( _CswNbtNode.Properties[PropertyName.AuditLevel] ); } }
         public CswNbtNodePropLogical CompoundUnique { get { return ( _CswNbtNode.Properties[PropertyName.CompoundUnique] ); } }
-        public CswNbtNodePropList DisplayConditionFilter { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionFilter] ); } }
+        public CswNbtNodePropList DisplayConditionFilterMode { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionFilterMode] ); } }
 
         public CswNbtNodePropRelationship DisplayConditionProperty { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionProperty] ); } }
         public void _DisplayConditionProperty_Change( CswNbtNodeProp Prop, bool Creating )
@@ -829,42 +829,57 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         /// <summary>
-        /// Options for DisplayConditionFilter
+        /// Options for DisplayCondition* properties
         /// </summary>
         private void _setDisplayConditionOptions()
         {
-            Collection<CswNbtNodeTypePropListOption> FilterOptions = new Collection<CswNbtNodeTypePropListOption>();
-            Collection<CswNbtNodeTypePropListOption> SubfieldOptions = new Collection<CswNbtNodeTypePropListOption>();
-
-            // Options for DisplayConditionFilter
-            if( CswTools.IsPrimaryKey( DisplayConditionProperty.RelatedNodeId ) )
+            // Options for DisplayConditionProperty - all properties on the same nodetype
+            if( CswTools.IsPrimaryKey( this.NodeTypeValue.RelatedNodeId ) )
             {
-                CswNbtObjClassDesignNodeTypeProp dispCondPropDesignNode = _CswNbtResources.Nodes[DisplayConditionProperty.RelatedNodeId];
-                if( null != dispCondPropDesignNode )
+                CswNbtView DispCondView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship PropRel1 = DispCondView.AddViewRelationship( this.ObjectClass, false );
+                DispCondView.AddViewPropertyAndFilter( PropRel1,
+                                                       NodeTypeValue.NodeTypeProp,
+                                                       CswEnumNbtFilterConjunction.And,
+                                                       FilterMode: CswEnumNbtFilterMode.Equals,
+                                                       SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                       Value: this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
+                DisplayConditionProperty.OverrideView( DispCondView );
+
+
+                Collection<CswNbtNodeTypePropListOption> FilterOptions = new Collection<CswNbtNodeTypePropListOption>();
+                Collection<CswNbtNodeTypePropListOption> SubfieldOptions = new Collection<CswNbtNodeTypePropListOption>();
+
+                if( CswTools.IsPrimaryKey( DisplayConditionProperty.RelatedNodeId ) )
                 {
-                    CswPrimaryKey dispCondPropId = dispCondPropDesignNode.RelationalId;
-                    CswNbtMetaDataNodeTypeProp dispCondProp = _CswNbtResources.MetaData.getNodeTypeProp( dispCondPropId.PrimaryKey );
-                    ICswNbtFieldTypeRule dispCondRule = dispCondProp.getFieldTypeRule();
-
-                    FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Equals.ToString() ) );
-                    FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotEquals.ToString() ) );
-                    if( dispCondProp.getFieldTypeValue() != CswEnumNbtFieldType.Logical )
+                    CswNbtObjClassDesignNodeTypeProp dispCondPropDesignNode = _CswNbtResources.Nodes[DisplayConditionProperty.RelatedNodeId];
+                    if( null != dispCondPropDesignNode )
                     {
-                        FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Null.ToString() ) );
-                        FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotNull.ToString() ) );
+                        CswPrimaryKey dispCondPropId = dispCondPropDesignNode.RelationalId;
+                        CswNbtMetaDataNodeTypeProp dispCondProp = _CswNbtResources.MetaData.getNodeTypeProp( dispCondPropId.PrimaryKey );
+                        ICswNbtFieldTypeRule dispCondRule = dispCondProp.getFieldTypeRule();
+
+                        // Options for DisplayConditionFilterMode
+                        FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Equals.ToString() ) );
+                        FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotEquals.ToString() ) );
+                        if( dispCondProp.getFieldTypeValue() != CswEnumNbtFieldType.Logical )
+                        {
+                            FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Null.ToString() ) );
+                            FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotNull.ToString() ) );
+                        }
+
+                        // Options for DisplayConditionSubfield
+                        foreach( CswNbtSubField subField in dispCondRule.SubFields )
+                        {
+                            SubfieldOptions.Add( new CswNbtNodeTypePropListOption( subField.Name.ToString() ) );
+                        }
                     }
 
-                    // Options for DisplayConditionSubfield
-                    foreach( CswNbtSubField subField in dispCondRule.SubFields )
-                    {
-                        SubfieldOptions.Add( new CswNbtNodeTypePropListOption( subField.Name.ToString() ) );
-                    }
-                }
+                } // if( CswTools.IsPrimaryKey( DisplayConditionProperty.RelatedNodeId ) )
 
-            } // if( CswTools.IsPrimaryKey( DisplayConditionProperty.RelatedNodeId ) )
-
-            DisplayConditionFilter.Options.Override( FilterOptions );
-            DisplayConditionSubfield.Options.Override( SubfieldOptions );
+                DisplayConditionFilterMode.Options.Override( FilterOptions );
+                DisplayConditionSubfield.Options.Override( SubfieldOptions );
+            }
         } // _setDisplayConditionOptions()
 
         public Dictionary<string, string> _initCompliantAnswerOptions()

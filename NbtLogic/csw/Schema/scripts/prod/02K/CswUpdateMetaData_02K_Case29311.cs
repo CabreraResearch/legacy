@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Schema
                     } );
                     CswNbtMetaDataObjectClassProp DisplayConditionFilterOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter,
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilterMode,
                         FieldType = CswEnumNbtFieldType.List
                     } );
                     CswNbtMetaDataObjectClassProp DisplayConditionPropertyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
@@ -283,12 +283,12 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ServerManagedOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UniqueOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
 
-                    // Display condition view includes all properties on the same nodetype
-                    CswNbtView DispCondView = _CswNbtSchemaModTrnsctn.makeView();
-                    CswNbtViewRelationship PropRel1 = DispCondView.AddViewRelationship( PropOC, false );
-                    CswNbtViewRelationship TypeRel2 = DispCondView.AddViewRelationship( PropRel1, CswEnumNbtViewPropOwnerType.First, NodeTypeOCP, false );
-                    CswNbtViewRelationship PropRel3 = DispCondView.AddViewRelationship( TypeRel2, CswEnumNbtViewPropOwnerType.Second, NodeTypeOCP, false );
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionPropertyOCP, CswEnumNbtObjectClassPropAttributes.viewxml, DispCondView.ToXml().InnerXml );
+                    //// Display condition view includes all properties on the same nodetype
+                    //CswNbtView DispCondView = _CswNbtSchemaModTrnsctn.makeView();
+                    //CswNbtViewRelationship PropRel1 = DispCondView.AddViewRelationship( PropOC, false );
+                    //CswNbtViewRelationship TypeRel2 = DispCondView.AddViewRelationship( PropRel1, CswEnumNbtViewPropOwnerType.First, NodeTypeOCP, false );
+                    //CswNbtViewRelationship PropRel3 = DispCondView.AddViewRelationship( TypeRel2, CswEnumNbtViewPropOwnerType.Second, NodeTypeOCP, false );
+                    //_CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionPropertyOCP, CswEnumNbtObjectClassPropAttributes.viewxml, DispCondView.ToXml().InnerXml );
 
                     // Display condition filters rely on a property being selected
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, DisplayConditionPropertyOCP.ObjectClassPropId );
