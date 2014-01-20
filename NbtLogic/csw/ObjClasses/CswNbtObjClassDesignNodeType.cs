@@ -707,7 +707,7 @@ namespace ChemSW.Nbt.ObjClasses
                             // We don't have to worry about versioning in this function
                             NTProp.DisplayConditionProperty.RelatedNodeId = TargetOfFilter.NodeId;
                             NTProp.DisplayConditionSubfield.Value = SubField.Name.ToString();
-                            NTProp.DisplayConditionFilter.Value = FilterMode.ToString();
+                            NTProp.DisplayConditionFilterMode.Value = FilterMode.ToString();
                             NTProp.DisplayConditionValue.Text = FilterValue;
 
                         } // if( TargetOfFilter != null )
