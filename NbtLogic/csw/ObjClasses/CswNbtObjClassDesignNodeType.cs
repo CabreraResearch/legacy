@@ -167,9 +167,8 @@ namespace ChemSW.Nbt.ObjClasses
                         } // if( null != DesignNodeTypeTabNT )
 
 
-                        // case 31678 - _ObjectClassProperty_Change does this for us
-                        //// Make initial props
-                        //_setPropertyValuesFromObjectClass();
+                        // Make initial props
+                        _setPropertyValuesFromObjectClass();
 
                     } // if( false == InternalCreate )
 
@@ -622,8 +621,11 @@ namespace ChemSW.Nbt.ObjClasses
 
                     IconFileName.Value.FromString( ObjectClassPropertyValue.IconFileName );
 
-                    // Sync properties with new object class
-                    _setPropertyValuesFromObjectClass();
+                    if( false == Creating ) // see case 31678
+                    {
+                        // Sync properties with new object class
+                        _setPropertyValuesFromObjectClass();
+                    }
 
                     ObjectClassProperty.ServerManaged = true;
                 }
