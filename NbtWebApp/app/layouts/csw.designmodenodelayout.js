@@ -237,7 +237,7 @@
 
         cswPrivate.renderPropDiv = function (tabid, node, prop, div) {
             var propTbl = div.table();
-            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px', 'width': '150px', 'text-align': 'right' });
             var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
 
             labelDiv.setLabelText(prop.name, prop.required, false); //in design mode, readonly better always be true, but we want required props to have the "*"
@@ -265,6 +265,8 @@
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
                     dragPanel.addItemToCol(realCol, {
                         id: prop.id,
+                        showRearrangeButton: (prop.hassubprops || false === Csw.isNullOrEmpty(prop.tabgroup)),
+                        showConfigureButton: false,//TODO: when we want to edit NTPs in the layout editor, show this button
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
@@ -273,7 +275,23 @@
                                 'border': '1px solid #ccc'
                             });
 
-                            cswPrivate.renderPropDiv(tabid, node, prop, propDiv);
+                            extEl.data = [];
+                            if (Csw.isNullOrEmpty(prop.tabgroup)) {
+                                cswPrivate.renderPropDiv(tabid, node, prop, propDiv);
+                                extEl.data.push(prop);
+                            } else {
+                                var fieldSet = propDiv.fieldSet();
+                                fieldSet.legend({ value: prop.tabgroup });
+                                propDiv = fieldSet.div();
+                                var groupProps = cswPrivate.getPropsInGroup(prop.tabgroup, properties);
+                                
+                                for (var groupIdx in groupProps) {
+                                    var groupProp = groupProps[groupIdx];
+                                    seenProps[groupProp.id] = groupProp;
+                                    cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
+                                    extEl.data.push(groupProp);
+                                }
+                            }
 
                             if (prop.hassubprops) {
                                 for (var subPropIdx in prop.subprops) {
@@ -285,62 +303,12 @@
                             }
                         },
                         onRearrange: function () {
-
                             if (prop.hassubprops) { //we render the sub properties in a re-arrangable dialog
                                 cswPrivate.arrangeDialog(node, prop.subprops, tabid, 'Configure ' + prop.name + ' Subprops');
-
-                                //var rearrangeSubpropsDialog = Csw.layouts.dialog({
-                                //    title: 'Configure ' + prop.name + ' Subprops',
-                                //    width: 800,
-                                //    height: 400,
-                                //    onOpen: function () {
-                                //        var subDragPanel = Csw.composites.draggablepanel(rearrangeSubpropsDialog.div, {
-                                //            columns: 1, //We force all sub props to be in a single column
-                                //            showAddColumnButton: false,
-                                //        });
-                                //
-                                //        var keys = Object.keys(prop.subprops).sort(function (a, b) { //sort subprops by row
-                                //            var prop1 = prop.subprops[a];
-                                //            var prop2 = prop.subprops[b];
-                                //            if (prop1.displayrow > prop2.displayrow) return -1;
-                                //            if (prop1.displayrow < prop2.displayrow) return 1;
-                                //            return 0;
-                                //        });
-                                //        for (var i = 0; i < keys.length; i++) {
-                                //            var subProp = prop.subprops[keys[i]];
-                                //            seenProps['sub_' + subProp.id] = subProp;
-                                //
-                                //            subDragPanel.addItemToCol(0, {
-                                //                id: 'sub_' + subProp.id,
-                                //                showRearrangeButton: false,
-                                //                showConfigureButton: true,
-                                //                showCloseButton: false,
-                                //                render: function (subExtEl, subCswEl) {
-                                //                    var propTbl = subCswEl.table();
-                                //                    var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
-                                //
-                                //                    cswPrivate.renderPropDiv(tabid, node, subProp, propDiv);
-                                //                },
-                                //                onDrop: function () {
-                                //                    cswPrivate.saveLayout(subDragPanel, node, seenProps, tabid);
-                                //                }
-                                //            });
-                                //        } //for subProp in subProps
-                                //        Csw.publish('render_' + node.nodeid + '_' + tabid);
-                                //    }
-                                //});
-                                //rearrangeSubpropsDialog.open();
                             } else if (false === Csw.isNullOrEmpty(prop.tabgroup)) { //render all the grouped properties in a re-arrangable dialog
-                                var groupProps = {};
-                                for (var propIdx in properties) {
-                                    if (prop.tabgroup === properties[propIdx].tabgroup) {
-                                        groupProps[propIdx] = properties[propIdx];
-                                    }
-                                }
-
+                                var groupProps = cswPrivate.getPropsInGroup(prop.tabgroup, properties);
                                 cswPrivate.arrangeDialog(node, groupProps, tabid, 'Configure ' + prop.tabgroup + ' Props');
                             }
-
                         },
                         onDrop: function (ext, col, row) {
                             window.Ext.getCmp(extid).doLayout();
@@ -394,6 +362,16 @@
             }, 2000);
         };
 
+        cswPrivate.getPropsInGroup = function (group, properties) {
+            var groupProps = {};
+            for (var propIdx in properties) {
+                if (group === properties[propIdx].tabgroup) {
+                    groupProps[propIdx] = properties[propIdx];
+                }
+            }
+            return groupProps;
+        };
+
         cswPrivate.arrangeDialog = function (node, props, tabid, title) {
             var seenProps = {};
 
@@ -416,7 +394,7 @@
                         groupDragPanel.addItemToCol(0, {
                             id: 'group_' + groupProp.id,
                             showRearrangeButton: false,
-                            showConfigureButton: true,
+                            showConfigureButton: false, //TODO: when we want to edit NTPs in the layout editor, show this button
                             showCloseButton: false,
                             render: function (subExtEl, subCswEl) {
                                 var propTbl = subCswEl.table();
@@ -443,11 +421,13 @@
                 var thisCol = i + 1;
                 var thisRow = 1;
                 Csw.iterate(propPanels, function (panel) {
-                    var panelProp = props[panel.id];
-                    propsReq.push({
-                        nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
-                        displaycol: thisCol,
-                        displayrow: thisRow
+                    Csw.iterate(panel.data, function(panelProp) {
+                        propsReq.push({
+                            nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
+                            tabgroup: panelProp.tabgroup,
+                            displaycol: thisCol,
+                            displayrow: thisRow
+                        });
                     });
                     thisRow++;
                 });
