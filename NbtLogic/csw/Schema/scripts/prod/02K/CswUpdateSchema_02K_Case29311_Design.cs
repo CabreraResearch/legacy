@@ -239,9 +239,12 @@ namespace ChemSW.Nbt.Schema
                         } );
                     node.RelationalId = new CswPrimaryKey( "nodetypes", thisNodeType.NodeTypeId );
                     //node.postChanges( false );
-                    ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
-                    NodePersistStrategy.OverrideUniqueValidation = true;
-                    NodePersistStrategy.OverrideMailReportEvents = true;
+                    ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+                    {
+                        OverrideUniqueValidation = true,
+                        OverrideMailReportEvents = true,
+                        Creating = true
+                    };
                     NodePersistStrategy.postChanges( node.Node );
 
                     NTNodes.Add( thisNodeType.NodeTypeId, node );
@@ -307,9 +310,12 @@ namespace ChemSW.Nbt.Schema
                             } );
                         node.RelationalId = new CswPrimaryKey( "nodetype_tabset", thisTab.TabId );
                         //node.postChanges( false );
-                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
-                        NodePersistStrategy.OverrideUniqueValidation = true;
-                        NodePersistStrategy.OverrideMailReportEvents = true;
+                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+                        {
+                            OverrideUniqueValidation = true,
+                            OverrideMailReportEvents = true,
+                            Creating = true
+                        };
                         NodePersistStrategy.postChanges( node.Node );
                     }
                 }
@@ -693,9 +699,12 @@ namespace ChemSW.Nbt.Schema
                             } );
                         ntpNode.RelationalId = new CswPrimaryKey( "nodetype_props", thisProp.PropId );
                         //ntpNode.postChanges( false );
-                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
-                        NodePersistStrategy.OverrideUniqueValidation = true;
-                        NodePersistStrategy.OverrideMailReportEvents = true;
+                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+                        {
+                            OverrideUniqueValidation = true,
+                            OverrideMailReportEvents = true,
+                            Creating = true
+                        };
                         NodePersistStrategy.postChanges( ntpNode.Node );
 
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
