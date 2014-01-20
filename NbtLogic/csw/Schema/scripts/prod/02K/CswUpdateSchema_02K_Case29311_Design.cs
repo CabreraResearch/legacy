@@ -428,14 +428,9 @@ namespace ChemSW.Nbt.Schema
                             break;
 
                         case CswEnumNbtFieldType.Composite:
-                            CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, "Add To Template", "" );
+                            //CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate, "" );
+                            CswNbtMetaDataNodeTypeProp addTemplateNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate.ToString() );
                             addTemplateNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
-
-                            CswNbtView addTemplateView = _CswNbtSchemaModTrnsctn.restoreView( addTemplateNTP.ViewId );
-                            addTemplateView.Root.ChildRelationships.Clear();
-                            CswNbtViewRelationship rel1 = addTemplateView.AddViewRelationship( NodeTypePropNT, false );
-                            CswNbtViewRelationship rel2 = addTemplateView.AddViewRelationship( rel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
-                            addTemplateView.save();
                             break;
 
                         case CswEnumNbtFieldType.DateTime:
