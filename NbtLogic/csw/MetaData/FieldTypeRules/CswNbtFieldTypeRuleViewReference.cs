@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            return new Collection<CswNbtFieldTypeAttribute>();
+            return _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ViewReference );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

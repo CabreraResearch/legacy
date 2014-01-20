@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.Schema
 
                     CswNbtMetaDataNodeTypeProp NTPAuditLevelNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel );
                     CswNbtMetaDataNodeTypeProp NTPCompoundUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique );
-                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionFilterNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter );
+                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionFilterNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilterMode );
                     CswNbtMetaDataNodeTypeProp NTPDisplayConditionPropertyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty );
                     CswNbtMetaDataNodeTypeProp NTPDisplayConditionSubfieldNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield );
                     CswNbtMetaDataNodeTypeProp NTPDisplayConditionValueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue );
@@ -701,7 +701,7 @@ namespace ChemSW.Nbt.Schema
                             thisProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
                             node.DisplayConditionProperty.RelatedNodeId = propsDict[thisProp.FilterNodeTypePropId].NodeId;
                             node.DisplayConditionSubfield.Value = SubField.Name.ToString();
-                            node.DisplayConditionFilter.Value = FilterValue;
+                            node.DisplayConditionFilterMode.Value = FilterValue;
                             node.DisplayConditionValue.Text = FilterValue;
                         }
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
@@ -715,7 +715,7 @@ namespace ChemSW.Nbt.Schema
 
                     CswNbtMetaDataNodeTypeProp NTPAuditLevelNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel );
                     CswNbtMetaDataNodeTypeProp NTPCompoundUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique );
-                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionFilterNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter );
+                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionFilterNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilterMode );
                     CswNbtMetaDataNodeTypeProp NTPDisplayConditionPropertyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty );
                     CswNbtMetaDataNodeTypeProp NTPDisplayConditionSubfieldNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield );
                     CswNbtMetaDataNodeTypeProp NTPDisplayConditionValueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue );
@@ -732,44 +732,45 @@ namespace ChemSW.Nbt.Schema
 
                     NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
 
-                    _addJctRow( jctTable, NTPAuditLevelNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Auditlevel );
-                    _addJctRow( jctTable, NTPCompoundUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Iscompoundunique );
-                    //_addJctRow( jctTable, NTPDisplayConditionFilterNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionfilter );
-                    _addJctRow( jctTable, NTPDisplayConditionPropertyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Filterpropid, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
-                    //_addJctRow( jctTable, NTPDisplayConditionSubfieldNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionsubfield );
-                    //_addJctRow( jctTable, NTPDisplayConditionValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionvalue );
-                    _addJctRow( jctTable, NTPFieldTypeNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Fieldtypeid );
-                    _addJctRow( jctTable, NTPHelpTextNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Helptext );
-                    _addJctRow( jctTable, NTPNodeTypeValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Nodetypeid, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
-                    _addJctRow( jctTable, NTPObjectClassPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Objectclasspropid );
-                    _addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Propname );
-                    _addJctRow( jctTable, NTPReadOnlyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Readonly );
-                    _addJctRow( jctTable, NTPRequiredNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isrequired );
-                    _addJctRow( jctTable, NTPServerManagedNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Servermanaged );
-                    _addJctRow( jctTable, NTPUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isunique );
-                    _addJctRow( jctTable, NTPUseNumberingNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Usenumbering );
+                    //_addJctRow( jctTable, NTPAuditLevelNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Auditlevel );
+                    //_addJctRow( jctTable, NTPCompoundUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Iscompoundunique );
+                    ////_addJctRow( jctTable, NTPDisplayConditionFilterNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionfilter );
+                    //_addJctRow( jctTable, NTPDisplayConditionPropertyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Filterpropid, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
+                    ////_addJctRow( jctTable, NTPDisplayConditionSubfieldNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionsubfield );
+                    ////_addJctRow( jctTable, NTPDisplayConditionValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionvalue );
+                    //_addJctRow( jctTable, NTPFieldTypeNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Fieldtypeid );
+                    //_addJctRow( jctTable, NTPHelpTextNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Helptext );
+                    //_addJctRow( jctTable, NTPNodeTypeValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Nodetypeid, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
+                    //_addJctRow( jctTable, NTPObjectClassPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Objectclasspropid );
+                    //_addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Propname );
+                    //_addJctRow( jctTable, NTPReadOnlyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Readonly );
+                    //_addJctRow( jctTable, NTPRequiredNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isrequired );
+                    //_addJctRow( jctTable, NTPServerManagedNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Servermanaged );
+                    //_addJctRow( jctTable, NTPUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isunique );
+                    //_addJctRow( jctTable, NTPUseNumberingNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Usenumbering );
 
                     ICswNbtFieldTypeRule Rule = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( FieldType ).getFieldTypeRule();
                     foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
                     {
                         if( string.Empty != Attr.Column &&
-                            CswNbtResources.UnknownEnum != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Auditlevel != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Iscompoundunique != Attr.Column &&
-                            //CswEnumNbtPropertyAttributeColumn.Displayconditionfilter != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Filterpropid != Attr.Column &&
-                            //CswEnumNbtPropertyAttributeColumn.Displayconditionsubfield != Attr.Column &&
-                            //CswEnumNbtPropertyAttributeColumn.Displayconditionvalue != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Fieldtypeid != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Helptext != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Nodetypeid != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Objectclasspropid != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Propname != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Readonly != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Isrequired != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Servermanaged != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Isunique != Attr.Column &&
-                            CswEnumNbtPropertyAttributeColumn.Usenumbering != Attr.Column )
+                            CswNbtResources.UnknownEnum != Attr.Column // &&
+                            //CswEnumNbtPropertyAttributeColumn.Auditlevel != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Iscompoundunique != Attr.Column &&
+                            ////CswEnumNbtPropertyAttributeColumn.Displayconditionfilter != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Filterpropid != Attr.Column &&
+                            ////CswEnumNbtPropertyAttributeColumn.Displayconditionsubfield != Attr.Column &&
+                            ////CswEnumNbtPropertyAttributeColumn.Displayconditionvalue != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Fieldtypeid != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Helptext != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Nodetypeid != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Objectclasspropid != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Propname != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Readonly != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Isrequired != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Servermanaged != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Isunique != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Usenumbering != Attr.Column 
+                            )
                         {
                             CswNbtMetaDataNodeTypeProp thisNTP = NodeTypePropNT.getNodeTypeProp( Attr.Name );
                             _addJctRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column, Attr.SubFieldName );
