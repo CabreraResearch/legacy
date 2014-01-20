@@ -813,7 +813,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _addJctRow( DataTable JctTable, CswNbtMetaDataNodeTypeProp Prop, string TableName, string ColumnName, CswEnumNbtSubFieldName SubFieldName = null )
         {
-            if( false == string.IsNullOrEmpty( ColumnName ) )
+            if( false == string.IsNullOrEmpty( ColumnName ) && ColumnName != "Unknown" )
             {
                 _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( TableName, ColumnName );
                 DataRow NodeTypeNameRow = JctTable.NewRow();
