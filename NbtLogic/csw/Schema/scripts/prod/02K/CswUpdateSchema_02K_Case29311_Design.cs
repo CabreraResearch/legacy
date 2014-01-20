@@ -238,7 +238,10 @@ namespace ChemSW.Nbt.Schema
                             NewNTNode.Searchable.Checked = thisNodeType.Searchable;  //CswNbtMetaDataObjectClass.NotSearchableValue
                         } );
                     node.RelationalId = new CswPrimaryKey( "nodetypes", thisNodeType.NodeTypeId );
-                    node.postChanges( false );
+                    //node.postChanges( false );
+                    ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
+                    NodePersistStrategy.OverrideUniqueValidation = true;
+                    NodePersistStrategy.postChanges( node.Node );
 
                     NTNodes.Add( thisNodeType.NodeTypeId, node );
                 }
@@ -302,7 +305,10 @@ namespace ChemSW.Nbt.Schema
                                 NewNTTNode.ServerManaged.Checked = CswConvert.ToTristate( thisTab.ServerManaged );
                             } );
                         node.RelationalId = new CswPrimaryKey( "nodetype_tabset", thisTab.TabId );
-                        node.postChanges( false );
+                        //node.postChanges( false );
+                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
+                        NodePersistStrategy.OverrideUniqueValidation = true;
+                        NodePersistStrategy.postChanges( node.Node );
                     }
                 }
 
@@ -684,7 +690,10 @@ namespace ChemSW.Nbt.Schema
                                 propsDict.Add( thisProp.PropId, node );
                             } );
                         ntpNode.RelationalId = new CswPrimaryKey( "nodetype_props", thisProp.PropId );
-                        ntpNode.postChanges( false );
+                        //ntpNode.postChanges( false );
+                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
+                        NodePersistStrategy.OverrideUniqueValidation = true;
+                        NodePersistStrategy.postChanges( ntpNode.Node );
 
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
 
