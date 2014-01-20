@@ -241,6 +241,7 @@ namespace ChemSW.Nbt.Schema
                     //node.postChanges( false );
                     ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
                     NodePersistStrategy.OverrideUniqueValidation = true;
+                    NodePersistStrategy.OverrideMailReportEvents = true;
                     NodePersistStrategy.postChanges( node.Node );
 
                     NTNodes.Add( thisNodeType.NodeTypeId, node );
@@ -308,6 +309,7 @@ namespace ChemSW.Nbt.Schema
                         //node.postChanges( false );
                         ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
                         NodePersistStrategy.OverrideUniqueValidation = true;
+                        NodePersistStrategy.OverrideMailReportEvents = true;
                         NodePersistStrategy.postChanges( node.Node );
                     }
                 }
@@ -693,6 +695,7 @@ namespace ChemSW.Nbt.Schema
                         //ntpNode.postChanges( false );
                         ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate();
                         NodePersistStrategy.OverrideUniqueValidation = true;
+                        NodePersistStrategy.OverrideMailReportEvents = true;
                         NodePersistStrategy.postChanges( ntpNode.Node );
 
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
