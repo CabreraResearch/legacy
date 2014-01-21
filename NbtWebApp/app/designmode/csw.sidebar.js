@@ -200,13 +200,6 @@
 
                 //#region Add Properties
                 existingProperties.div = cswPublic.componentItem.div({ align: 'center' });
-                /*cswPrivate.loadExistingProperties({
-                    NodeId: Csw.string(cswPrivate.tabState.nodeid),
-                    NodeKey: Csw.string(cswPrivate.tabState.nodekey),
-                    NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
-                    TabId: Csw.string(cswPrivate.tabState.tabid),
-                    LayoutType: 'Edit'
-                });*/
 
                 var fieldTypesDiv = cswPublic.componentItem.div({ align: 'center' });
 
@@ -265,8 +258,8 @@
 
                 fieldTypesDiv.br();
 
-                cswPrivate.makeButton(buttons.addExistingBtn, fieldTypesDiv);
-                cswPrivate.buttons[buttons.addExistingBtn].disable();
+                cswPrivate.makeButton(buttons.addNewBtn, fieldTypesDiv);
+                cswPrivate.buttons[buttons.addNewBtn].disable();
                 
                 //#endregion Add Properties
             };
