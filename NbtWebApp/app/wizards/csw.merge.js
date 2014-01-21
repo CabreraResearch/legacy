@@ -19,8 +19,6 @@
             onCancel: function() {},
             node1: null,
             node2: null,
-//            node1: { nodeid: 'nodes_43746', nodename: 'isopropylguacamolate Sigma 123', nodetypeid: 1014 },      // TODO: REMOVE ME
-//            node2: { nodeid: 'nodes_43747', nodename: 'iso-propyl-guacamolate Sigma 123.1', nodetypeid: 1014 },  // TODO: REMOVE ME
             mergeData: null,
             searchSource: null,
             searchDest: null,
@@ -120,16 +118,16 @@
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
+                    cswPrivate.toggleStepButtons(StepNo);
+                    if (null === cswPrivate.node1) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    }
+
                     if (false === cswPrivate.wizardStepMergeSource_init) {
                         cswPrivate.wizardStepMergeSource_init = true;
                         
                         cswPrivate.setStepHeader(StepNo, 'What do you want to merge?  This choice will be deleted as a result of the merge.');
                         var div = cswPrivate['divStep' + StepNo];
-
-                        cswPrivate.toggleStepButtons(StepNo);
-                        if (null === cswPrivate.node1) {
-                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                        }
 
                         if (null !== cswPrivate.node1) {
                             div.nodeLink({
@@ -184,16 +182,16 @@
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
+                    cswPrivate.toggleStepButtons(StepNo);
+                    if (null === cswPrivate.node2) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    }
+
                     if (false === cswPrivate.wizardStepMergeDest_init) {
                         cswPrivate.wizardStepMergeDest_init = true;
 
                         cswPrivate.setStepHeader(StepNo, 'What do you want to merge with "' + cswPrivate.node1.nodename + '"?  This choice will hold the merge result.');
                         var div = cswPrivate['divStep' + StepNo];
-
-                        cswPrivate.toggleStepButtons(StepNo);
-                        if (null === cswPrivate.node2) {
-                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                        }
 
                         if (null !== cswPrivate.node2) {
                             div.nodeLink({
