@@ -64,7 +64,13 @@
             } else {
                 ret = { value: opt, display: opt };
             }
-            ret.isSelected = opt.isSelected || opt.value === cswPrivate.selected;
+
+            if (false == Csw.isNullOrEmpty(cswPrivate.selected)) {
+                ret.isSelected = opt.isSelected || opt.value === cswPrivate.selected;
+            } else {
+                ret.isSelected = opt.isSelected;
+            }
+            
             return ret;
         };
 

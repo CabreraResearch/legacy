@@ -124,11 +124,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     else
                     {
                         //Make sure a default view is set
-                        CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode,
-                                                                       View,
-                                                                       DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList.Type,
-                                                                       DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList.Id,
-                                                                       true );
+                        CswEnumNbtViewRelatedIdType TargetType = DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList.Type;
+                        Int32 TargetId = DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList.Id;
+                        if( CswEnumNbtViewRelatedIdType.Unknown != TargetType && Int32.MinValue != TargetId )
+                        {
+                            CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode, View, TargetType, TargetId, true );
+                        }
                     }
                 }
             } // if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )

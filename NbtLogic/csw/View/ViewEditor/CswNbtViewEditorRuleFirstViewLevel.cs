@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ViewEditor
 {
-    public class CswNbtViewEditorRuleFirstViewLevel: CswNbtViewEditorRule
+    public class CswNbtViewEditorRuleFirstViewLevel : CswNbtViewEditorRule
     {
         public CswNbtViewEditorRuleFirstViewLevel( CswNbtResources CswNbtResources, CswNbtViewEditorData IncomingRequest )
             : base( CswNbtResources, IncomingRequest )
@@ -175,33 +177,40 @@ namespace ChemSW.Nbt.ViewEditor
 
         private void _getViewProps( CswNbtView TempView, CswNbtViewEditorData Return )
         {
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes()
+                                                                                 .Where( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) )
             {
                 CswNbtViewRelationship Relationship = TempView.AddViewRelationship( NodeType, true );
-                CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
+                //CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
                 Return.Step2.Relationships.Add( Relationship );
                 _addNameTemplateProps( TempView, Relationship, NodeType );
             }
 
-            foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses().OrderBy( ObjClass => ObjClass.ObjectClass.Value ) )
+            foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses()
+                                                                                    .Where( oc => false == oc.IsDesign() || _CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) )   // case 31533
+                                                                                    .OrderBy( ObjClass => ObjClass.ObjectClass.Value ) )
             {
                 CswNbtViewRelationship Relationship = TempView.AddViewRelationship( ObjClass, true );
-                CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
+                //CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
                 Return.Step2.Relationships.Add( Relationship );
-                foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes()
+                                                                    .Where( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) )
                 {
                     _addNameTemplateProps( TempView, Relationship, NodeType );
                 }
             }
 
-            foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets().OrderBy( PropSet => PropSet.Name ) )
+            foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets()
+                                                                                   .OrderBy( PropSet => PropSet.Name ) )
             {
                 CswNbtViewRelationship Relationship = TempView.AddViewRelationship( PropSet, true );
-                CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
+                //CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
                 Return.Step2.Relationships.Add( Relationship );
-                foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
+                foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses()
+                                                                      .Where( oc => false == oc.IsDesign() || _CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) ) )   // case 31533
                 {
-                    foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                    foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes()
+                                                                        .Where( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) )
                     {
                         _addNameTemplateProps( TempView, Relationship, NodeType );
                     }
