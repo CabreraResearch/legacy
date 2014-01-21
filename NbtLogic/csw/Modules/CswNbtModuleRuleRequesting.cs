@@ -10,7 +10,7 @@ namespace ChemSW.Nbt
     public class CswNbtModuleRuleRequesting: CswNbtModuleRule
     {
         public CswNbtModuleRuleRequesting( CswNbtResources CswNbtResources ) :
-            base( CswNbtResources ){}
+            base( CswNbtResources ) { }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Requesting; } }
         protected override void OnEnable()
         {
@@ -45,6 +45,12 @@ namespace ChemSW.Nbt
 
             // Case 28930 - Enable Scheduled Rules
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : false );
+
+            //Case 31546 - If we're enabling Requesting AFTER MLM, we need to show the MLM props
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+            {
+                CswNbtObjClassRequestItem.ToggleMLMProps( _CswNbtResources, true );
+            }
         }
 
         protected override void OnDisable()

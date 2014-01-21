@@ -21,6 +21,14 @@ namespace NbtWebApp.WebSvc.Logic.Layout
     [DataContract]
     public class CswNbtNodeTypeLayout
     {
+        private string _imgLink = string.Empty;
+        [DataMember( Name = "imagelink" )]
+        public string ImageLink
+        {
+            get { return _imgLink; }
+            set { _imgLink = value; }
+        }
+
         [DataMember( Name = "props" )]
         public Collection<CswNbtLayoutProp> Props = new Collection<CswNbtLayoutProp>();
 
