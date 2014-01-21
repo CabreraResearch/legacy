@@ -95,75 +95,39 @@ namespace ChemSW.Nbt.Batch
                                 JObject update = (JObject) BatchData.Operations[0]["update"];
                                 string barcode = BatchData.Operations[0]["barcode"].ToString();
 
-                                switch( operation )
+                                if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNT, RoleNode ) )
                                 {
-                                    case "Dispose":
-                                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete, ContainerNT, RoleNode ) )
-                                        {
+                                    switch( operation )
+                                    {
+                                        case "Dispose":
                                             _dispose( operation, barcode, BatchNode );
-                                        }
-                                        else
-                                        {
-                                            BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to " + operation + " a Container." );
-                                        }
-                                        break;
-                                    case "Move":
-                                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNT, RoleNode ) )
-                                        {
+                                            break;
+                                        case "Move":
                                             _move( operation, barcode, update, BatchNode );
-                                        }
-                                        else
-                                        {
-                                            BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to " + operation + " a Container." );
-                                        }
-                                        break;
-                                    case "Owner":
-                                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNT, RoleNode ) )
-                                        {
+                                            break;
+                                        case "Owner":
                                             _updateOwner( operation, barcode, update, BatchNode );
-
-                                        }
-                                        else
-                                        {
-                                            BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to " + "edit" + " a Container." );
-                                        }
-                                        break;
-                                    case "Transfer":
-                                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNT, RoleNode ) )
-                                        {
+                                            break;
+                                        case "Transfer":
                                             _transfer( operation, barcode, update, BatchNode );
-                                        }
-                                        else
-                                        {
-                                            BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to " + operation + " a Container." );
-                                        }
-                                        break;
-                                    case "Dispense":
-                                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNT, RoleNode ) )
-                                        {
+                                            break;
+                                        case "Dispense":
                                             _dispense( operation, barcode, update, BatchNode );
-                                        }
-                                        else
-                                        {
-                                            BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to " + operation + " a Container." );
-                                        }
-                                        break;
-                                    case "Reconcile":
-                                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNT, RoleNode ) )
-                                        {
+                                            break;
+                                        case "Reconcile":
                                             _reconcile( operation, barcode, update, BatchNode );
-                                        }
-                                        else
-                                        {
-                                            BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to " + operation + " a Container." );
-                                        }
-                                        break;
-                                    default:
-                                        BatchNode.appendToLog( "The operation " + operation + "doesn't exist." );
-                                        break;
-                                }
+                                            break;
+                                        default:
+                                            BatchNode.appendToLog( "The operation " + operation + "doesn't exist." );
+                                            break;
+                                    } //switch (operation)
 
-                                BatchData.Operations.RemoveAt( 0 );
+                                    BatchData.Operations.RemoveAt( 0 );
+                                }
+                                else
+                                {
+                                    BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to edit a Container." );
+                                }
 
                             } //forloop
 
