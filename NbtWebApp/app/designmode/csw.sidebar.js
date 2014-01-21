@@ -269,14 +269,6 @@
                 cswPrivate.buttons[buttons.addNewBtn].disable();
                 
                 //#endregion Add Properties
-
-                //Ext.create('Ext.Button', {
-                //    text: 'Click me',
-                //    renderTo: cswPublic.componentItem.div().getId(),
-                //    handler: function () {
-                //        alert('You clicked the button!');
-                //    }
-                //});
             };
 
 
@@ -440,6 +432,7 @@
                         //TODO - get nodelayout's active tabid, add property to bottom of column 1 for that tabid, then refresh nodelayout
                         //or (bonus) - implement drag and drop from the existing props list to the nodelayout
                         var tabId = cswPrivate.nodeLayout.getActiveTabId();
+                        var layoutType = cswPrivate.nodeLayout.getActiveLayout();
 
                         break;
                     case buttons.addNewBtn:
@@ -477,8 +470,8 @@
                                         tabState: {
                                             ShowAsReport: false,
                                             nodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
-                                            relatednodeid: cswPrivate.designNodeType.nodeid,//is this right?
-                                            relatednodename: cswPrivate.tabState.nodetypename,//is this right?
+                                            relatednodeid: cswPrivate.designNodeType.nodeid,
+                                            relatednodename: cswPrivate.tabState.nodetypename,
                                             relatednodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
                                             relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                                             EditMode: Csw.enums.editMode.Add
@@ -533,7 +526,7 @@
                 });
             };
 
-            cswPrivate.loadExistingProperties = function (ajaxdata) {
+            cswPrivate.loadExistingProperties = function (data) {
                 existingProperties.dataStore = Ext.create('Ext.data.ArrayStore', {
                     fields: ['value', 'display'],
                     data: [],
@@ -547,6 +540,10 @@
                     TabId: Csw.string(cswPrivate.tabState.tabid),
                     LayoutType: 'Edit'
                 };
+                
+                if (data) {
+                    Csw.extend(ajaxdata, data);
+                }
 
                 cswPrivate.ajax.addLayoutProps = Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getPropertiesForLayoutAdd',
@@ -564,8 +561,8 @@
                             ]);
                         });
                         existingProperties.dataStore.loadData(propOpts);
-                    } // success
-                }); // Csw.ajax
+                    }
+                });
 
                 existingProperties.control = window.Ext.widget('form', {
                     title: 'Add Existing Property',
