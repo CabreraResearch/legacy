@@ -130,11 +130,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         //We have valid values that are different that what is currently set
                         CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode, View, FkProp.Type, FkProp.Id, false );
                     }
-                    //else
-                    //{
-                    //    //Make sure a default view is set
-                    //    _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
-                    //}
+                    else
+                    {
+                        //Make sure a default view is set
+                        CswEnumNbtViewRelatedIdType TargetType = DesignNTPNode.AttributeProperty[AttributeName.UnitTarget].AsMetaDataList.Type;
+                        Int32 TargetId = DesignNTPNode.AttributeProperty[AttributeName.UnitTarget].AsMetaDataList.Id;
+                        if( CswEnumNbtViewRelatedIdType.Unknown != TargetType && Int32.MinValue != TargetId )
+                        {
+                            CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode, View, TargetType, TargetId, true );
+                        }
+                    }
                 }
             } // if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
         } // onSetFk()

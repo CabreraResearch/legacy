@@ -62,18 +62,29 @@ namespace ChemSW.Nbt.ChemCatCentral
         private string _DataService;
         public string DataService
         {
-            get { return _DataService; }
+            get
+            {
+                return _DataService;
+            }
+            set
+            {
+                _DataService = value;
+                if( null != _CswC3SearchParams )
+                {
+                    _CswC3SearchParams.DataService = _DataService;
+                }
+            }
         }
 
         private void _setDataService()
         {
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3Products ) )
             {
-                _DataService = "C3";
+                DataService = "C3";
             }
             else if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
             {
-                _DataService = "ACD";
+                DataService = "ACD";
             }
             else
             {
