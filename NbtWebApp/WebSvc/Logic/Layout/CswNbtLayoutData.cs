@@ -88,4 +88,17 @@ namespace NbtWebApp.WebSvc.Logic.Layout
         [DataMember( Name = "displayrow" )]
         public int DisplayRow { get; set; }
     }
+
+    [DataContract]
+    public class CswNbtTabMoveRequest
+    {
+        [DataMember]
+        public int TabId { get; set; }
+
+        [DataMember]
+        public int OldPosition { get; set; }
+
+        [DataMember]
+        public int NewPosition { get; set; }
+    }
 }

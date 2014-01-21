@@ -6,6 +6,7 @@ using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Layout;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.Services
 {
@@ -54,6 +55,25 @@ namespace NbtWebApp.Services
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceLayout.UpdateLayout,
                 ParamObj : LayoutData
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Update the position of a tab on a layout" )]
+        public CswWebSvcReturn updateTabOrder( CswNbtTabMoveRequest Request )
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswNbtTabMoveRequest>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.UpdateTabOrder,
+                ParamObj : Request
                 );
 
             GetViewDriverType.run();
