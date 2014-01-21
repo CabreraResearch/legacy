@@ -103,7 +103,7 @@
                     },
                     startingStep: o.ActionOptions.startingStep
                 };
-                Csw.main.clear({ 'all': true });
+                Csw.dialogs.closeAll();
                 return Csw.nbt.createMaterialWizard(Csw.main.centerTopDiv, createOpt);
             });
             actionHandler.add('dispensecontainer', function (o) {
