@@ -628,7 +628,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( false == CswTools.IsValidName( NodeTypeName.Text ) )
             {
-                throw new CswDniException( CswEnumErrorType.Warning, "NodeType Name cannot contain special characters.  Only alphanumeric characters and spaces are allowed.", "" );
+                throw new CswDniException( CswEnumErrorType.Warning, "NodeType Name must start with a letter, and can only contain alphanumeric characters and spaces.", "Attempted to name the NodeType '" + NodeTypeName.Text + "'" );
             }
         } // _NodeTypeName_Change()
 
