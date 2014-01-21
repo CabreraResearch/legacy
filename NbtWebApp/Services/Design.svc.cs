@@ -102,6 +102,25 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
+        [Description( "" )]
+        public CswNbtLayoutDataReturn getSearchImageLink( string NodeId )
+        {
+            CswNbtLayoutDataReturn Ret = new CswNbtLayoutDataReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.GetSearchImageLink,
+                ParamObj : NodeId
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
         [Description( "Gets the Design NodeType definition for the given FieldTypeId" )]
         public CswNbtWebServiceDesign.CswNbtDesignReturn getDesignNodeTypePropDefinition( string FieldTypeId )
         {

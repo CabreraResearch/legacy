@@ -104,7 +104,11 @@
     <Content Include="app\dialogs\csw.multiselect.edit.js" />
     <Content Include="app\dialogs\csw.alert.js" />
     <Content Include="app\dialogs\csw.viewbindings.js" />
+    <Content Include="app\layouts\csw.designmodelayout.search.js" />
+    <Content Include="app\layouts\csw.designmodelayout.preview.js" />
+    <Content Include="app\layouts\csw.designmodelayout.add.js" />
     <Content Include="app\layouts\csw.designmode.js" />
+    <Content Include="app\layouts\csw.designmodelayout.edit.js" />
     <Content Include="app\layouts\csw.dialog.js" />
     <Content Include="app\dialogs\csw.copynode.js" />
     <Content Include="app\dialogs\csw.addnode.js" />

@@ -4,20 +4,19 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Requesting;
 using ChemSW.Nbt.ServiceDrivers;
-using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassRequestItem : CswNbtObjClass
+    public class CswNbtObjClassRequestItem: CswNbtObjClass
     {
         #region Properties
 
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             #region Core Properties
             /// <summary>
@@ -375,7 +374,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        public CswNbtObjClassRequestItem( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassRequestItem( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -463,24 +462,24 @@ namespace ChemSW.Nbt.ObjClasses
             //Only show legitimate requests the current user created
             CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp,
-                                                                FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                Value: "me",
-                                                                ShowInGrid: false );
+                                                                FilterMode : CswEnumNbtFilterMode.Equals,
+                                                                Value : "me",
+                                                                ShowInGrid : false );
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp,
-                                                                FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                                Value: CswNbtNodePropLogical.toLogicalGestalt( CswEnumTristate.True ),
-                                                                ShowInGrid: false );
+                                                                FilterMode : CswEnumNbtFilterMode.NotEquals,
+                                                                Value : CswNbtNodePropLogical.toLogicalGestalt( CswEnumTristate.True ),
+                                                                ShowInGrid : false );
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp,
-                                                                FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                                Value: CswEnumTristate.True,
-                                                                ShowInGrid: false );
+                                                                FilterMode : CswEnumNbtFilterMode.NotEquals,
+                                                                Value : CswEnumTristate.True,
+                                                                ShowInGrid : false );
             CswNbtMetaDataObjectClassProp StatusOcp = ObjectClass.getObjectClassProp( PropertyName.Status );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, StatusOcp,
-                                                                FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                                Value: Statuses.NonRequestableStatus,
-                                                                ShowInGrid: false );
+                                                                FilterMode : CswEnumNbtFilterMode.NotEquals,
+                                                                Value : Statuses.NonRequestableStatus,
+                                                                ShowInGrid : false );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
@@ -510,7 +509,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
                                 // Create the temporary material node
                                 Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
-                                CswNbtPropertySetMaterial NewMaterial = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SelectedNodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                                CswNbtPropertySetMaterial NewMaterial = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SelectedNodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                                 {
                                     ( (CswNbtPropertySetMaterial) NewNode ).TradeName.Text = NewMaterialTradename.Text;
                                     ( (CswNbtPropertySetMaterial) NewNode ).PartNumber.Text = NewMaterialPartNo.Text;
@@ -619,7 +618,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             ButtonData.Data["state"]["requestitem"] = ButtonData.Data["requestitem"];
                         }
-                        postChanges( ForceUpdate: false );
+                        postChanges( ForceUpdate : false );
                         break; //case PropertyName.Fulfill:
                 }
             }
@@ -644,7 +643,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Status.Value == Statuses.Completed ||
                 Status.Value == Statuses.Cancelled )
             {
-                Fulfill.setHidden( true, SaveToDb: false );
+                Fulfill.setHidden( true, SaveToDb : false );
                 Fulfill.MenuOptions = "";
             }
             else
@@ -655,7 +654,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _hideRecurringProps( CswNbtNodeProp Prop )
         {
-            Prop.setHidden( IsRecurring.Checked != CswEnumTristate.True, SaveToDb: false );
+            Prop.setHidden( IsRecurring.Checked != CswEnumTristate.True, SaveToDb : false );
         }
 
         #endregion UI Logic
@@ -688,8 +687,8 @@ namespace ChemSW.Nbt.ObjClasses
                     // In sched rule(s), no Current Cart will exist
                     Request.RelatedNodeId = CurrentRequest.NodeId;
                 }
-                Request.setReadOnly( value: true, SaveToDb: true );
-                Request.setHidden( value: true, SaveToDb: false );
+                Request.setReadOnly( value : true, SaveToDb : true );
+                Request.setHidden( value : true, SaveToDb : false );
             }
             //Set Requestor and RequestedFor to current user
             if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
@@ -825,7 +824,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtView EPMatsView = new CswNbtView( _CswNbtResources );
                 EPMatsView.ViewName = "Materials under " + EnterprisePart.RelatedNodeId;
                 CswNbtViewRelationship MEPVR = EPMatsView.AddViewRelationship( ManufacturerEquivalentPartOC, false );
-                EPMatsView.AddViewPropertyAndFilter( MEPVR, EPOCP, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: EnterprisePart.RelatedNodeId.PrimaryKey.ToString() );
+                EPMatsView.AddViewPropertyAndFilter( MEPVR, EPOCP, SubFieldName : CswEnumNbtSubFieldName.NodeID, Value : EnterprisePart.RelatedNodeId.PrimaryKey.ToString() );
                 CswNbtViewRelationship MatVR = EPMatsView.AddViewRelationship( MEPVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, false );
 
                 ICswNbtTree EPMatsTree = _CswNbtResources.Trees.getTreeFromView( EPMatsView, false, true, true );
@@ -880,6 +879,39 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
 
         #endregion ObjectClass-specific properties
+
+        #region Static Methods
+
+        /// <summary>
+        /// Togggle Request Item properties that are specific to MLM
+        /// </summary>
+        public static void ToggleMLMProps( CswNbtResources NbtResources, bool Hide )
+        {
+            CswNbtMetaDataObjectClass RequestItemOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
+            {
+                if( Hide )
+                {
+                    NbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
+                    NbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
+                    NbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
+                    NbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
+                    NbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
+                    NbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
+                }
+                else
+                {
+                    NbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
+                    NbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
+                    NbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
+                    NbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
+                    NbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
+                    NbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
+                }
+            }
+        }
+
+        #endregion
 
     }//CswNbtObjClassRequestItem
 
