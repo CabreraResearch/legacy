@@ -28,55 +28,7 @@
             cswParent = cswParent || Csw.main.rightDiv;
 
         })();
-
-        cswPrivate.init = function () {
-            cswParent.empty();
-
-            var closeBtnDiv = cswParent.div().css('float', 'right');
-            closeBtnDiv.buttonExt({
-                enabledText: 'Close Design Mode',
-                onClick: function () {
-                    cswPrivate.onClose();
-                }
-            });
-            var layoutSelectDiv = cswParent.div().css('float', 'right');
-            layoutSelectDiv.setLabelText('Select Layout:', false, false);
-            layoutSelectDiv.select({
-                values: ['Edit', 'Add', 'Search', 'Preview'],
-                selected: cswPrivate.Layout,
-                onChange: function (val) {
-                    cswPrivate.Layout = val;
-                    cswPrivate.init();
-                    cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
-                }
-            });
-            cswPrivate.contentDiv = cswParent.div();
-
-            var layout = null;
-            if (cswPrivate.Layout === 'Edit') {
-                layout = Csw.layouts.editNode(cswPrivate);
-            } else if (cswPrivate.Layout === 'Add') {
-                layout = Csw.layouts.addNode(cswPrivate);
-            } else if (cswPrivate.Layout === 'Search') {
-                cswPrivate.Layout = 'Table'; //"Search" layout is really just a table layout
-                layout = Csw.layouts.searchNode(cswPrivate);
-            } else if (cswPrivate.Layout === 'Preview') {
-                layout = Csw.layouts.previewNode(cswPrivate);
-            }
-
-            if (null !== layout) {
-                layout.render(cswPrivate.contentDiv);
-            } else {
-                Csw.error.showError({
-                    name: 'Layout error',
-                    type: 'js',
-                    message: 'Error rendering ' + cswPrivate.Layout + ' layout',
-                    detail: "'" + cswPrivate.Layout + "' is not a valid layout"
-                });
-            }
-
-        };
-
+        
         cswPrivate.makeDiv = function (extId) {
             var tabPanel = window.Ext.getCmp(extId);
             var cswEl = Csw.domNode({
@@ -290,7 +242,7 @@
                 title: 'Edit Property: ' + propToConfigure.name,
                 onEditNode: function () {
                     Csw.tryExec(onSave);
-                    cswPrivate.init();
+                    cswPublic.init();
                 }
             });
         };
@@ -417,13 +369,61 @@
         };
 
         cswPublic.refresh = function () {
-            cswPrivate.init();
+            cswPublic.init();
+        };
+
+        cswPublic.init = function () {
+            cswParent.empty();
+
+            var closeBtnDiv = cswParent.div().css('float', 'right');
+            closeBtnDiv.buttonExt({
+                enabledText: 'Close Design Mode',
+                onClick: function () {
+                    cswPrivate.onClose();
+                }
+            });
+            var layoutSelectDiv = cswParent.div().css('float', 'right');
+            layoutSelectDiv.setLabelText('Select Layout:', false, false);
+            layoutSelectDiv.select({
+                values: ['Edit', 'Add', 'Search', 'Preview'],
+                selected: cswPrivate.Layout,
+                onChange: function (val) {
+                    cswPrivate.Layout = val;
+                    cswPublic.init();
+                    cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
+                }
+            });
+            cswPrivate.contentDiv = cswParent.div();
+
+            var layout = null;
+            if (cswPrivate.Layout === 'Edit') {
+                layout = Csw.layouts.editNode(cswPrivate);
+            } else if (cswPrivate.Layout === 'Add') {
+                layout = Csw.layouts.addNode(cswPrivate);
+            } else if (cswPrivate.Layout === 'Search') {
+                cswPrivate.Layout = 'Table'; //"Search" layout is really just a table layout
+                layout = Csw.layouts.searchNode(cswPrivate);
+            } else if (cswPrivate.Layout === 'Preview') {
+                layout = Csw.layouts.previewNode(cswPrivate);
+            }
+
+            if (null !== layout) {
+                layout.render(cswPrivate.contentDiv);
+            } else {
+                Csw.error.showError({
+                    name: 'Layout error',
+                    type: 'js',
+                    message: 'Error rendering ' + cswPrivate.Layout + ' layout',
+                    detail: "'" + cswPrivate.Layout + "' is not a valid layout"
+                });
+            }
+
         };
 
         //#endregion Public
 
         (function _post() {
-            cswPrivate.init();
+            
         })();
 
         return cswPublic;

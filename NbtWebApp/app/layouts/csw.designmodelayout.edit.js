@@ -38,7 +38,7 @@
                                 listeners: {
                                     activate: function (tab) {
                                         cswPrivate.activeTabId = tab.id;
-                                        //cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
+                                        cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
                                         if (!cswPrivate.renderedTabs[tab.id]) {
                                             cswPrivate.renderedTabs[tab.id] = tab;
                                             cswPrivate.renderTab(tab.id, tab.id);

@@ -59,6 +59,8 @@
                 nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
                 nodelayout.setSidebar(sidebar);
                 sidebar.setNodeLayout(nodelayout);
+                nodelayout.init();
+
             }
         })();
 
