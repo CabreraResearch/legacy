@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.Actions
 
                 int TotalContainersToMake = ReceiptDefinition.CountNumberContainersToMake();
                 int Threshhold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "batchthreshold" ) );
-                bool UseBatchOp = TotalContainersToMake > Threshhold;
+                bool UseBatchOp = TotalContainersToMake >= Threshhold;
                 Collection<CswPrimaryKey> ContainerIds = null;
                 if( UseBatchOp )
                 {
