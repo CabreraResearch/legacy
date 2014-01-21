@@ -200,13 +200,6 @@
 
                 //#region Add Properties
                 existingProperties.div = cswPublic.componentItem.div({ align: 'center' });
-                /*cswPrivate.loadExistingProperties({
-                    NodeId: Csw.string(cswPrivate.tabState.nodeid),
-                    NodeKey: Csw.string(cswPrivate.tabState.nodekey),
-                    NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
-                    TabId: Csw.string(cswPrivate.tabState.tabid),
-                    LayoutType: 'Edit'
-                });*/
 
                 var fieldTypesDiv = cswPublic.componentItem.div({ align: 'center' });
 
@@ -350,20 +343,14 @@
                                     text: 'Delete', handler: function () {
                                         var nodeids = [];
                                         nodeids.push(cswPrivate.designNodeType.nodeid);
-
                                         Csw.deleteNodes({
                                             nodeids: nodeids,
-                                            //nodekeys: cswDlgPrivate.cswnbtnodekeys,
                                             onSuccess: function (nodeid, nodekey) {
-                                                //To do:
-                                                //  1. Delete the nodetype
-                                                //  2. Close design mode
                                                 cswPrivate.extWindowDelete.close();
                                                 cswPublic.close();
-                                                //NOTE: DO WE NEED THE FOLLOWING:
-                                                //Csw.publish(Csw.enums.events.CswNodeDelete,
-                                                //    { nodeids: nodeids, cswnbtnodekeys: [] 
-                                                //    });
+                                                Csw.main.clear({ 'all': true });
+                                                //TODO - Case 31657 - maybe look into reopening a blank design mode after delete?
+                                                Csw.main.refreshWelcomeLandingPage();
                                             },
                                             onError: function () { }
                                         });
@@ -429,10 +416,20 @@
                         break;
                     case buttons.addExistingBtn:
 
-                        //TODO - get nodelayout's active tabid, add property to bottom of column 1 for that tabid, then refresh nodelayout
-                        //or (bonus) - implement drag and drop from the existing props list to the nodelayout
-                        var tabId = cswPrivate.nodeLayout.getActiveTabId();
-                        var layoutType = cswPrivate.nodeLayout.getActiveLayout();
+                        //TODO (bonus) - implement drag and drop from the existing props list to the nodelayout
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Design/updateLayout',
+                            data: {
+                                layout: cswPrivate.nodeLayout.getActiveLayout(),
+                                nodetypeid: cswPrivate.tabState.nodetypeid,
+                                tabid: cswPrivate.nodeLayout.getActiveTabId(),
+                                props: [{
+                                    nodetypepropid: cswPrivate.existingPropIdToAdd,
+                                    domove: false
+                                }]
+                            }
+                        });
+                        cswPrivate.nodeLayout.refresh();
 
                         break;
                     case buttons.addNewBtn:
@@ -477,29 +474,24 @@
                                             EditMode: Csw.enums.editMode.Add
                                         },
                                         ReloadTabOnSave: false,
-                                        onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                                            /*Csw.ajaxWcf.post({
+                                        onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
+                                            Csw.ajaxWcf.post({
                                                 urlMethod: 'Design/updateLayout',
                                                 data: {
                                                     layout: cswPrivate.nodeLayout.getActiveLayout(),
-                                                    nodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
+                                                    nodetypeid: cswPrivate.tabState.nodetypeid,
                                                     tabid: cswPrivate.nodeLayout.getActiveTabId(),
-                                                    props: propsReq//TODO - use nodeid to get related ntp
-                                                },
-                                                success: function (response) {
-                                                    //nothing to do here
+                                                    props: [{
+                                                        nodetypepropid: relationalid
+                                                    }]
                                                 }
-                                            });*/
+                                            });
                                             cswPrivate.nodeLayout.refresh();
                                             cswPrivate.extWindowNew.close();
                                         },
                                         onInitFinish: function () { }
                                     });
                                 }
-                            },
-                            error: function () {
-                                //ERRRRRRRRRRRRROR
-                                var test = 0;
                             }
                         });
 
@@ -640,7 +632,7 @@
 
             //#endregion Public
 
-            //constructor
+            //#region constructor
             (function _postCtor() {
                 cswPrivate.init();
             }());

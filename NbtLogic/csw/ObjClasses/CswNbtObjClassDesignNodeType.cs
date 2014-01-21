@@ -316,6 +316,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // Delete Tabs
                 foreach( CswNbtObjClassDesignNodeTypeTab TabNode in getTabNodes() )
                 {
+                    TabNode.InternalDelete = true;
                     TabNode.Node.delete( true, true );
                 }
 
@@ -624,7 +625,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( false == CswTools.IsValidName( NodeTypeName.Text ) )
             {
-                throw new CswDniException( CswEnumErrorType.Warning, "NodeType Name cannot contain special characters.  Only alphanumeric characters and spaces are allowed.", "" );
+                throw new CswDniException( CswEnumErrorType.Warning, "NodeType Name must start with a letter, and can only contain alphanumeric characters and spaces.", "Attempted to name the NodeType '" + NodeTypeName.Text + "'" );
             }
         } // _NodeTypeName_Change()
 
@@ -823,7 +824,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView NodesView = new CswNbtView( _CswNbtResources );
             NodesView.AddViewRelationship( this.RelationalNodeType, false );
 
-            ICswNbtTree NodesTree = _CswNbtResources.Trees.getTreeFromView( NodesView, false, true, true );
+            ICswNbtTree NodesTree = _CswNbtResources.Trees.getTreeFromView( NodesView, false, true, true, true );
             for( Int32 n = 0; n < NodesTree.getChildNodeCount(); n++ )
             {
                 NodesTree.goToNthChild( n );
