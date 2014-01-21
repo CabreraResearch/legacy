@@ -76,7 +76,7 @@
             }
 
         };
-        
+
         cswPrivate.makeDiv = function (extId) {
             var tabPanel = window.Ext.getCmp(extId);
             var cswEl = Csw.domNode({
@@ -179,7 +179,7 @@
                     dragPanel.addItemToCol(realCol, {
                         id: prop.id,
                         showRearrangeButton: (prop.hassubprops || false === Csw.isNullOrEmpty(prop.tabgroup)),
-                        showConfigureButton: false,//TODO: when we want to edit NTPs in the layout editor, show this button
+                        showConfigureButton: Csw.isNullOrEmpty(prop.tabgroup),
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
@@ -223,6 +223,7 @@
                                 cswPrivate.arrangeDialog(node, groupProps, tabid, 'Configure ' + prop.tabgroup + ' Props');
                             }
                         },
+                        onConfigure: cswPrivate.onConfigure,
                         onDrop: function (ext, col, row) {
                             window.Ext.getCmp(extid).doLayout();
                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
@@ -282,6 +283,18 @@
             }, 2000);
         };
 
+        cswPrivate.onConfigure = function (draggable, onSave) {
+            var propToConfigure = draggable.data[0];
+            $.CswDialog('EditNodeDialog', {
+                currentNodeId: propToConfigure.propnodeid,
+                title: 'Edit Property: ' + propToConfigure.name,
+                onEditNode: function () {
+                    Csw.tryExec(onSave);
+                    cswPrivate.init();
+                }
+            });
+        };
+
         cswPrivate.getPropsInGroup = function (group, properties) {
             var groupProps = {};
             for (var propIdx in properties) {
@@ -314,13 +327,17 @@
                         groupDragPanel.addItemToCol(0, {
                             id: 'group_' + groupProp.id,
                             showRearrangeButton: false,
-                            showConfigureButton: false, //TODO: when we want to edit NTPs in the layout editor, show this button
+                            showConfigureButton: true,
                             showCloseButton: false,
                             render: function (subExtEl, subCswEl) {
                                 var propTbl = subCswEl.table();
                                 var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
 
+                                subExtEl.data = [groupProp];
                                 cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
+                            },
+                            onConfigure: function(draggable) {
+                                cswPrivate.onConfigure(draggable, rearrangeGroupPropDialog.close);
                             },
                             onDrop: function () {
                                 cswPrivate.saveLayout(groupDragPanel, node, seenProps, tabid);
