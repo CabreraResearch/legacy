@@ -147,12 +147,9 @@ namespace ChemSW.Nbt.ObjClasses
             beforeWriteNodeLogic( Creating );
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CurrentProp.wasAnySubFieldModified() )
+                if( false == Creating && CurrentProp.wasAnySubFieldModified() )
                 {
-                    if( false == Creating )
-                    {
-                        _updateExternalRelatedProps( CurrentProp );
-                    }
+                    _updateExternalRelatedProps( CurrentProp );
                 }
             }
             if( false == OverrideUniqueValidation )
@@ -307,10 +304,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region AfterWriteNode
 
-        public void afterWriteNode()
+        public void afterWriteNode( bool OverrideMailReportEvents )
         {
             afterWriteNodeLogic();
-            _runMailReportEvents();
+            if( false == OverrideMailReportEvents )
+            {
+                _runMailReportEvents();
+            }
         }//afterWriteNode()
 
         private void _runMailReportEvents()

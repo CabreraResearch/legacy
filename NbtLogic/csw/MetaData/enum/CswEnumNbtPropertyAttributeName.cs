@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.MetaData
               { Unique                        , Unique                       },
               { UseNumbering                  , UseNumbering                 },
             
+              { AddToTemplate                 , AddToTemplate                 }, 
               { AllowHourly                   , AllowHourly                   }, 
               { AllowMultipleValues           , AllowMultipleValues           }, 
               { ButtonText                    , ButtonText                    }, 
@@ -163,6 +164,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Unique = "Unique";
         public const string UseNumbering = "Use Numbering";
 
+        public const string AddToTemplate = "Add To Template";
         public const string AllowHourly = "Allow Hourly";
         public const string AllowMultipleValues = "Allow Multiple Values";
         public const string ButtonText = "Button Text";

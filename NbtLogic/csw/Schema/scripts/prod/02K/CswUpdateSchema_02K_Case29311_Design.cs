@@ -135,20 +135,20 @@ namespace ChemSW.Nbt.Schema
                 NTDeferSearchToNTP.setFilterDeprecated( NTSearchableNTP, NTSearchableNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleLogical.SubFieldName.Checked], CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
 
                 // Set view for DeferSearchToNTP
-                CswNbtView DeferView = _CswNbtSchemaModTrnsctn.restoreView( NTDeferSearchToNTP.ViewId );
-                DeferView.Root.ChildRelationships.Clear();
-                CswNbtViewRelationship DeferViewRel1 = DeferView.AddViewRelationship( NodeTypeNT, false );
-                CswNbtViewRelationship DeferViewRel2 = DeferView.AddViewRelationship( DeferViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
-                DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
-                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
-                DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
-                                                    Conjunction: CswEnumNbtFilterConjunction.Or,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
-                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
-                DeferView.save();
+                //CswNbtView DeferView = _CswNbtSchemaModTrnsctn.restoreView( NTDeferSearchToNTP.ViewId );
+                //DeferView.Root.ChildRelationships.Clear();
+                //CswNbtViewRelationship DeferViewRel1 = DeferView.AddViewRelationship( NodeTypeNT, false );
+                //CswNbtViewRelationship DeferViewRel2 = DeferView.AddViewRelationship( DeferViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
+                //DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
+                //                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                //                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                //                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
+                //DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
+                //                                    Conjunction: CswEnumNbtFilterConjunction.Or,
+                //                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                //                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                //                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
+                //DeferView.save();
 
                 // Add Properties and Tabs grids
                 CswNbtMetaDataFieldType GridFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Grid );
@@ -238,7 +238,14 @@ namespace ChemSW.Nbt.Schema
                             NewNTNode.Searchable.Checked = thisNodeType.Searchable;  //CswNbtMetaDataObjectClass.NotSearchableValue
                         } );
                     node.RelationalId = new CswPrimaryKey( "nodetypes", thisNodeType.NodeTypeId );
-                    node.postChanges( false );
+                    //node.postChanges( false );
+                    ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+                    {
+                        OverrideUniqueValidation = true,
+                        OverrideMailReportEvents = true,
+                        Creating = true
+                    };
+                    NodePersistStrategy.postChanges( node.Node );
 
                     NTNodes.Add( thisNodeType.NodeTypeId, node );
                 }
@@ -302,7 +309,14 @@ namespace ChemSW.Nbt.Schema
                                 NewNTTNode.ServerManaged.Checked = CswConvert.ToTristate( thisTab.ServerManaged );
                             } );
                         node.RelationalId = new CswPrimaryKey( "nodetype_tabset", thisTab.TabId );
-                        node.postChanges( false );
+                        //node.postChanges( false );
+                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+                        {
+                            OverrideUniqueValidation = true,
+                            OverrideMailReportEvents = true,
+                            Creating = true
+                        };
+                        NodePersistStrategy.postChanges( node.Node );
                     }
                 }
 
@@ -428,14 +442,9 @@ namespace ChemSW.Nbt.Schema
                             break;
 
                         case CswEnumNbtFieldType.Composite:
-                            CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, "Add To Template", "" );
+                            //CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate, "" );
+                            CswNbtMetaDataNodeTypeProp addTemplateNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate.ToString() );
                             addTemplateNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
-
-                            CswNbtView addTemplateView = _CswNbtSchemaModTrnsctn.restoreView( addTemplateNTP.ViewId );
-                            addTemplateView.Root.ChildRelationships.Clear();
-                            CswNbtViewRelationship rel1 = addTemplateView.AddViewRelationship( NodeTypePropNT, false );
-                            CswNbtViewRelationship rel2 = addTemplateView.AddViewRelationship( rel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
-                            addTemplateView.save();
                             break;
 
                         case CswEnumNbtFieldType.DateTime:
@@ -684,7 +693,14 @@ namespace ChemSW.Nbt.Schema
                                 propsDict.Add( thisProp.PropId, node );
                             } );
                         ntpNode.RelationalId = new CswPrimaryKey( "nodetype_props", thisProp.PropId );
-                        ntpNode.postChanges( false );
+                        //ntpNode.postChanges( false );
+                        ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+                        {
+                            OverrideUniqueValidation = true,
+                            OverrideMailReportEvents = true,
+                            Creating = true
+                        };
+                        NodePersistStrategy.postChanges( ntpNode.Node );
 
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
 
@@ -797,19 +813,22 @@ namespace ChemSW.Nbt.Schema
 
         private void _addJctRow( DataTable JctTable, CswNbtMetaDataNodeTypeProp Prop, string TableName, string ColumnName, CswEnumNbtSubFieldName SubFieldName = null )
         {
-            _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( TableName, ColumnName );
-            DataRow NodeTypeNameRow = JctTable.NewRow();
-            NodeTypeNameRow["nodetypepropid"] = Prop.PropId;
-            NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-            if( null != SubFieldName )
+            if( false == string.IsNullOrEmpty( ColumnName ) && ColumnName != "Unknown" )
             {
-                NodeTypeNameRow["subfieldname"] = SubFieldName.ToString();
+                _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( TableName, ColumnName );
+                DataRow NodeTypeNameRow = JctTable.NewRow();
+                NodeTypeNameRow["nodetypepropid"] = Prop.PropId;
+                NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
+                if( null != SubFieldName )
+                {
+                    NodeTypeNameRow["subfieldname"] = SubFieldName.ToString();
+                }
+                else if( null != Prop.getFieldTypeRule().SubFields.Default )
+                {
+                    NodeTypeNameRow["subfieldname"] = Prop.getFieldTypeRule().SubFields.Default.Name;
+                }
+                JctTable.Rows.Add( NodeTypeNameRow );
             }
-            else if( null != Prop.getFieldTypeRule().SubFields.Default )
-            {
-                NodeTypeNameRow["subfieldname"] = Prop.getFieldTypeRule().SubFields.Default.Name;
-            }
-            JctTable.Rows.Add( NodeTypeNameRow );
         }
 
         private CswNbtMetaDataNodeTypeProp _makePropNTP( CswNbtMetaDataNodeType NodeTypePropNT, Int32 TabId, CswNbtFieldTypeAttribute Attribute )

@@ -8,6 +8,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Strategy used to promote pre-existing temp nodes to real nodes.  Also used to create and copy new real nodes.
         /// </summary>
+        public CswNbtNodePersistStrategyPromoteReal(){}
+
+        /// <summary>
+        /// Strategy used to promote pre-existing temp nodes to real nodes.  Also used to create and copy new real nodes.
+        /// </summary>
         public CswNbtNodePersistStrategyPromoteReal( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -18,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             SkipEvents = false;
             AllowAuditing = true;
             Creating = false;
+            OverrideMailReportEvents = false;
         }
 
         public bool ForceUpdate { get; set; }
@@ -26,7 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
         public bool SkipEvents { get; set; }
         public bool AllowAuditing { get; set; }
         public bool Creating { get; set; }
-
+        public bool OverrideMailReportEvents { get; set; }
 
         public void postChanges( CswNbtNode Node )
         {
@@ -44,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Node.ObjClass )
             {
                 Node.ObjClass.afterPromoteNode();
-                Node.ObjClass.afterWriteNode();
+                Node.ObjClass.afterWriteNode( OverrideMailReportEvents );
             }
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );

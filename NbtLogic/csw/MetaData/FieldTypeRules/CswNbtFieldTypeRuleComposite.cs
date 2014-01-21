@@ -75,6 +75,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
             public const string Template = CswEnumNbtPropertyAttributeName.Template;
+            public const string AddToTemplate = CswEnumNbtPropertyAttributeName.AddToTemplate;
         }
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
@@ -86,6 +87,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = AttributeName.Template,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Compositetemplate
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Composite,
+                    Name = AttributeName.AddToTemplate,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    Column = null
                 } );
             return ret;
         }
