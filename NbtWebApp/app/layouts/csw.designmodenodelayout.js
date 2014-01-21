@@ -50,10 +50,12 @@
                     cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
                 }
             });
-            cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
+            //cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
             cswPrivate.contentDiv = cswParent.div();
+
+            var layout = null;
             if (cswPrivate.Layout === 'Edit') {
-                cswPrivate.makeEditNodeLayout();
+                layout = Csw.layouts.editNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Add') {
                 cswPrivate.makeAddNodeLayout();
             } else if (cswPrivate.Layout === 'Search') {
@@ -62,77 +64,15 @@
             } else if (cswPrivate.Layout === 'Preview') {
                 cswPrivate.makePreviewNodeLayout();
             }
+
+            if (null !== layout) {
+                layout.render(cswPrivate.contentDiv);
+            } else {
+                //BZZZZZZZZT - throw error
+            }
+
         };
-
-        cswPrivate.makeEditNodeLayout = function () {
-            cswPrivate.getTabsAjax = Csw.ajax.deprecatedWsNbt({
-                urlMethod: 'getTabs',
-                data: {
-                    EditMode: cswPrivate.Layout,
-                    NodeId: cswPrivate.nodeId,
-                    SafeNodeKey: cswPrivate.nodeKey,
-                    Date: new Date().toDateString(),
-                    filterToPropId: '',
-                    Multi: false,
-                    ConfigMode: true
-                },
-                success: function (data) {
-                    cswPrivate.nameDiv.append(data.node.nodename);
-
-                    var tabs = [];
-                    for (var tabIdx in data.tabs) {
-                        var tabData = data.tabs[tabIdx];
-                        if (tabData.name !== 'Identity') {
-                            tabs.push({
-                                id: tabData.id,
-                                title: tabData.name,
-                                listeners: {
-                                    activate: function (tab) {
-                                        cswPrivate.activeTabId = tab.id;
-                                        cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
-                                        if (!renderedTabs[tab.id]) {
-                                            renderedTabs[tab.id] = tab;
-                                            cswPrivate.renderTab(tab.id, tab.id);
-                                        }
-                                    }
-                                }
-                            });
-                        } else {
-                            cswPrivate.identityTabId = tabData.id;
-                        }
-                    }
-                    tabs.push({
-                        id: window.Ext.id(),
-                        title: "New Tab (+)",
-                        listeners: {
-                            activate: function () {
-                                //TODO: add new tab to NodeType edit layout
-                            }
-                        }
-                    });
-
-                    window.Ext.create('Ext.panel.Panel', {
-                        renderTo: cswPrivate.contentDiv.getId(),
-                        layout: {
-                            type: 'vbox',
-                            align: 'stretch'    // Each takes up full width
-                        },
-                        items: [{
-                            id: identityTabId,
-                            xtype: 'panel'
-                        }, {
-                            id: tabPanelId,
-                            xtype: 'tabpanel',
-                            items: tabs
-                        }]
-                    });
-
-                    cswPrivate.renderTab(identityTabId, cswPrivate.identityTabId);
-
-                }
-            });
-        };
-
+        
         cswPrivate.makeAddNodeLayout = function () {
             cswPrivate.nameDiv.append('Add Node Layout');
             var addPanel = window.Ext.create('Ext.panel.Panel', {
@@ -575,6 +515,9 @@
         //#endregion Public
 
         (function _post() {
+            
+
+
             cswPrivate.init();
         })();
 
