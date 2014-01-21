@@ -79,6 +79,8 @@ namespace ChemSW.Nbt.Test.Security
                 _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
                 _ServerManagedNtp.DesignNode.postChanges( false );
+                _ReadOnlyNtp.DesignNode.postChanges( false );
+                _RequiredReadOnlyNtp.DesignNode.postChanges( false );
             }
         }
 
