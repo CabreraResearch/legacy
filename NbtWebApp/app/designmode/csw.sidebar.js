@@ -265,8 +265,8 @@
 
                 fieldTypesDiv.br();
 
-                cswPrivate.makeButton(buttons.addNewBtn, fieldTypesDiv);
-                cswPrivate.buttons[buttons.addNewBtn].disable();
+                cswPrivate.makeButton(buttons.addExistingBtn, fieldTypesDiv);
+                cswPrivate.buttons[buttons.addExistingBtn].disable();
                 
                 //#endregion Add Properties
             };
@@ -429,10 +429,20 @@
                         break;
                     case buttons.addExistingBtn:
 
-                        //TODO - get nodelayout's active tabid, add property to bottom of column 1 for that tabid, then refresh nodelayout
-                        //or (bonus) - implement drag and drop from the existing props list to the nodelayout
-                        var tabId = cswPrivate.nodeLayout.getActiveTabId();
-                        var layoutType = cswPrivate.nodeLayout.getActiveLayout();
+                        //TODO (bonus) - implement drag and drop from the existing props list to the nodelayout
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Design/updateLayout',
+                            data: {
+                                layout: cswPrivate.nodeLayout.getActiveLayout(),
+                                nodetypeid: cswPrivate.tabState.nodetypeid,
+                                tabid: cswPrivate.nodeLayout.getActiveTabId(),
+                                props: [{
+                                    nodetypepropid: cswPrivate.existingPropIdToAdd,
+                                    domove: false
+                                }]
+                            }
+                        });
+                        cswPrivate.nodeLayout.refresh();
 
                         break;
                     case buttons.addNewBtn:
@@ -487,22 +497,14 @@
                                                     props: [{
                                                         nodetypepropid: relationalid
                                                     }]
-                                                },
-                                                success: function (response) {
-                                                    //nothing to do here
                                                 }
                                             });
-                                            var newPropid = relationalid;
                                             cswPrivate.nodeLayout.refresh();
                                             cswPrivate.extWindowNew.close();
                                         },
                                         onInitFinish: function () { }
                                     });
                                 }
-                            },
-                            error: function () {
-                                //ERRRRRRRRRRRRROR
-                                var test = 0;
                             }
                         });
 
