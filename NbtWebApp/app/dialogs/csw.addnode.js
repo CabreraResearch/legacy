@@ -43,10 +43,10 @@
                             EditMode: Csw.enums.editMode.Add
                         },
                         ReloadTabOnSave: false,
-                        onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
+                        onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
                             cswPublic.tabsAndProps.tearDown();
                             if (nodeid || nodekey) {
-                                Csw.tryExec(cswPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                                Csw.tryExec(cswPrivate.onAddNode, nodeid, nodekey, nodename, nodelink, relationalid);
                             }
                             Csw.tryExec(cswPrivate.onSaveImmediate);
                             addDialog.close();

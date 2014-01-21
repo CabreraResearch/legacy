@@ -18,7 +18,7 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             foreach( CswNbtLayoutProp Prop in Req.Props )
             {
                 CswNbtMetaDataNodeTypeProp ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
-                NbtResources.MetaData.NodeTypeLayout.updatePropLayout( Req.Layout, Req.NodeTypeId, ntp, true, Req.TabId, Prop.DisplayRow, Prop.DisplayColumn, Prop.TabGroup );
+                NbtResources.MetaData.NodeTypeLayout.updatePropLayout( Req.Layout, Req.NodeTypeId, ntp, Prop.DoMove, Req.TabId, Prop.DisplayRow, Prop.DisplayColumn, Prop.TabGroup );
             }
         }
 
