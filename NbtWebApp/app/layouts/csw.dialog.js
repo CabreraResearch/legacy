@@ -85,5 +85,9 @@
 
         return cswPublic;
     });
-}
-());
+
+    Csw.dialogs.register('closeAll', function() {
+        'use strict';
+        $(".ui-dialog-content").dialog("close");
+    });
+}());

@@ -13,11 +13,13 @@
     Csw.layouts.register('designmode', function (options) {
 
         var cswPrivate = {
+            nodeid: '',
             sidebarDiv: Csw.main.sidebarDiv,
             sidebarOptions: {},
             nodeLayoutDiv: Csw.main.rightDiv,
             nodelayoutOptions: {},
-            onClose: function () { }
+            onClose: function () { },
+            renderInNewView: false
         };
         if (options) {
             Csw.extend(cswPrivate, options);
@@ -37,18 +39,27 @@
         };
 
         (function _pre() {
+            if (cswPrivate.renderInNewView) {
+                Csw.clientDb.setItem('openDesignMode', true);
+                Csw.dialogs.closeAll();
+                Csw.main.handleItemSelect({
+                    type: 'view',
+                    mode: 'tree',
+                    nodeid: cswPrivate.nodeid
+                });
+            } else {
+                var sidebarDiv = Csw.designmode.factory(cswPrivate.sidebarDiv, 'sidebar');
+                sidebar = sidebarDiv.sidebar(cswPrivate.sidebarOptions);
 
-            var sidebarDiv = Csw.designmode.factory(cswPrivate.sidebarDiv, 'sidebar');
-            sidebar = sidebarDiv.sidebar(cswPrivate.sidebarOptions);
+                cswPrivate.nodelayoutOptions.onClose = function() {
+                    cswPublic.tearDown();
+                    cswPrivate.onClose();
+                };
 
-            cswPrivate.nodelayoutOptions.onClose = function () {
-                cswPublic.tearDown();
-                cswPrivate.onClose();
-            };
-
-            nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
-            nodelayout.setSidebar(sidebar);
-            sidebar.setNodeLayout(nodelayout);
+                nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
+                nodelayout.setSidebar(sidebar);
+                sidebar.setNodeLayout(nodelayout);
+            }
         })();
 
         (function _post() {
