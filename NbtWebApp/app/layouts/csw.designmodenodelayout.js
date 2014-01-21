@@ -50,19 +50,18 @@
                     cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
                 }
             });
-            //cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
             cswPrivate.contentDiv = cswParent.div();
 
             var layout = null;
             if (cswPrivate.Layout === 'Edit') {
                 layout = Csw.layouts.editNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Add') {
-                cswPrivate.makeAddNodeLayout();
+                layout = Csw.layouts.addNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Search') {
                 cswPrivate.Layout = 'Table'; //"Search" layout is really just a table layout
-                cswPrivate.makeSearchNodeLayout();
+                layout = Csw.layouts.searchNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Preview') {
-                cswPrivate.makePreviewNodeLayout();
+                layout = Csw.layouts.previewNode(cswPrivate);
             }
 
             if (null !== layout) {
@@ -71,30 +70,6 @@
                 //BZZZZZZZZT - throw error
             }
 
-        };
-        
-        cswPrivate.makeAddNodeLayout = function () {
-            cswPrivate.nameDiv.append('Add Node Layout');
-            var addPanel = window.Ext.create('Ext.panel.Panel', {
-                renderTo: cswPrivate.contentDiv.getId(),
-                layout: {
-                    align: 'stretch',
-                    padding: 1
-                }
-            });
-            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
-        };
-
-        cswPrivate.makePreviewNodeLayout = function () {
-            cswPrivate.nameDiv.append('Preview Node Layout');
-            var addPanel = window.Ext.create('Ext.panel.Panel', {
-                renderTo: cswPrivate.contentDiv.getId(),
-                layout: {
-                    align: 'stretch',
-                    padding: 1
-                }
-            });
-            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
         };
 
         cswPrivate.makeSearchNodeLayout = function () {
