@@ -1,8 +1,11 @@
 ﻿
 using ChemSW;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.WebSvc.Logic.Layout
 {
@@ -31,6 +34,13 @@ namespace NbtWebApp.WebSvc.Logic.Layout
                 }
                 NbtResources.MetaData.NodeTypeLayout.removePropFromLayout( Req.Layout, ntp, Req.TabId );
             }
+        }
+
+        public static void UpdateTabOrder( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtTabMoveRequest Req )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            CswNbtObjClassDesignNodeTypeTab Tab = NbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey("nodetype_tabset", Req.TabId) );
+            Tab.UpdateTabPosition( Req.NewPosition );
         }
 
     }

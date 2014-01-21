@@ -314,7 +314,8 @@ namespace ChemSW.Nbt
         {
             if( null != NodeType ) /* Case 25943 */
             {
-                setSecond( CswEnumNbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
+                //setSecond( CswEnumNbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
+                setSecond( CswEnumNbtViewRelatedIdType.NodeTypeId, NodeType.NodeTypeId, NodeType.NodeTypeName, NodeType.IconFileName );
             }
             else
             {

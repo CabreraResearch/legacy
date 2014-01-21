@@ -318,20 +318,20 @@ namespace ChemSW.Nbt.Actions
             return RetCount;
         }
 
-        private CswNbtMetaDataNodeType _confirmInspectionDesignTarget( CswNbtMetaDataNodeType InspectionDesignNt, string InspectionTargetName, ref string Category )
+        private void _confirmInspectionDesignTarget( CswNbtMetaDataNodeType InspectionDesignNt, string InspectionTargetName, ref string Category, out CswNbtMetaDataNodeType InspectionTargetNt, out CswNbtMetaDataNodeType InspectionTargetGroupNt )
         {
             if( string.IsNullOrEmpty( InspectionTargetName ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot generate an Inspection Design without a Target name.", "InspectionTargetName was null or empty." );
             }
-            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
-
+            InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
             Category = _guaranteeCategoryName( Category, InspectionTargetNt, InspectionDesignNt, InspectionTargetName );
 
+            InspectionTargetGroupNt = null;
             //This is a New Target
             if( null == InspectionTargetNt )
             {
-                InspectionTargetNt = _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt );
+                _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt, out InspectionTargetNt, out InspectionTargetGroupNt );
             }
             else
             {
@@ -339,13 +339,12 @@ namespace ChemSW.Nbt.Actions
                 _updateInspectionsGridView( InspectionDesignNt, InspectionTargetNt );
             }
             _validateNodeType( InspectionTargetNt, CswEnumNbtObjectClass.InspectionTargetClass );
-
-            return InspectionTargetNt;
         }
 
-        private CswNbtMetaDataNodeType _createNewInspectionTargetAndGroup( string InspectionTargetName, string Category, CswNbtMetaDataNodeType InspectionDesignNt )
+        private void _createNewInspectionTargetAndGroup( string InspectionTargetName, string Category, CswNbtMetaDataNodeType InspectionDesignNt,
+                                                         out CswNbtMetaDataNodeType RetInspectionTargetNt, out CswNbtMetaDataNodeType InspectionTargetGroupNt )
         {
-            CswNbtMetaDataNodeType RetInspectionTargetNt = null;
+            RetInspectionTargetNt = null;
             if( string.IsNullOrEmpty( InspectionTargetName ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot create Inspection Target without a name.", "InspectionTargetName was null or empty." );
@@ -373,7 +372,7 @@ namespace ChemSW.Nbt.Actions
             _setNodeTypePermissions( RetInspectionTargetNt );
 
             string InspectionGroupName = _validateNodeTypeName( InspectionTargetName + " Group" );
-            CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.makeNewNodeTypeNew( new CswNbtWcfMetaDataModel.NodeType( InspectionTargetGroupOc )
+            InspectionTargetGroupNt = _CswNbtResources.MetaData.makeNewNodeTypeNew( new CswNbtWcfMetaDataModel.NodeType( InspectionTargetGroupOc )
                 {
                     NodeTypeName = InspectionGroupName,
                     Category = Category
@@ -468,6 +467,7 @@ namespace ChemSW.Nbt.Actions
 
                 ItgSchedulesView.save();
                 ItgSchedulesNtp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = ItgSchedulesView.ViewId;
+                ItgSchedulesNtp.DesignNode.postChanges( false );
                 ItgSchedulesNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
             }
 
@@ -475,8 +475,6 @@ namespace ChemSW.Nbt.Actions
 
             _setAuditing( RetInspectionTargetNt );
             _setAuditing( InspectionTargetGroupNt );
-
-            return RetInspectionTargetNt;
         }
 
         // case 30874 - set auditing enabled by default
@@ -484,10 +482,12 @@ namespace ChemSW.Nbt.Actions
         {
             //NodeType.AuditLevel = CswEnumAuditLevel.PlainAudit;
             NodeType.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
+            NodeType.DesignNode.postChanges( false );
             foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
             {
                 //Prop.AuditLevel = CswEnumAuditLevel.PlainAudit;
                 Prop.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.AuditLevel].AsList.Value = CswEnumAuditLevel.PlainAudit;
+                Prop.DesignNode.postChanges( false );
             }
         }
 
@@ -554,21 +554,21 @@ namespace ChemSW.Nbt.Actions
 
         #region Views
 
-        private JObject _createInspectionDesignViews( string Category, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
+        private JObject _createInspectionDesignViews( string Category, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionTargetGroupNt )
         {
             JObject RetObj = new JObject();
 
-            //Inspection Target Group Assignement view
-            CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt );
+            //Inspection Target Group Assignment view
+            CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt, InspectionTargetGroupNt );
             RetObj["viewid"] = InspectionTargetGroupAssignmentView.ViewId.ToString();
             return RetObj;
         }
 
-        private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt )
+        private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetGroupNt )
         {
             _validateNodeType( InspectionTargetNt, CswEnumNbtObjectClass.InspectionTargetClass );
             CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
-            CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
+            //CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
             _validateNodeType( InspectionTargetGroupNt, CswEnumNbtObjectClass.InspectionTargetGroupClass );
 
             CswNbtView RetView = null;
@@ -899,11 +899,13 @@ namespace ChemSW.Nbt.Actions
                 InspectionDesignNt.DesignNode.CopyNode( false, delegate( CswNbtNode CopiedNode )
                     {
                         CswNbtMetaDataNodeType CopiedInspectionDesignNt = ( (CswNbtObjClassDesignNodeType) CopiedNode ).RelationalNodeType;
-                        CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category );
+                        CswNbtMetaDataNodeType InspectionTargetGroupNt;
+                        CswNbtMetaDataNodeType InspectionTargetNt;
+                        _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category, out InspectionTargetNt, out InspectionTargetGroupNt );
                         _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );
                         _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
-                        RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt );
+                        RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt, InspectionTargetGroupNt );
                     } );
             }
             return RetObj;
@@ -942,7 +944,10 @@ namespace ChemSW.Nbt.Actions
             Int32 PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
 
             //Build the MetaData
-            CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
+            CswNbtMetaDataNodeType InspectionTargetNt;
+            CswNbtMetaDataNodeType InspectionTargetGroupNt;
+            _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category, out InspectionTargetNt, out InspectionTargetGroupNt );
+
             _setInspectionDesignTabsAndProps( InspectionDesignNt, InspectionTargetNt );
             _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
@@ -951,7 +956,7 @@ namespace ChemSW.Nbt.Actions
             InspectionDesignNt.DesignNode.postChanges( false );
 
             //Get the views
-            JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
+            JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt, InspectionTargetGroupNt );
 
             //More return data
             RetObj["totalrows"] = TotalRows.ToString();

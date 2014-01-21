@@ -95,7 +95,8 @@
                                             cswPrivate.renderTab(tab.id, tab.id);
                                         }
                                     }
-                                }
+                                },//listeners
+                                closable: true,
                             });
                         } else {
                             cswPrivate.identityTabId = tabData.id;
@@ -106,9 +107,9 @@
                         title: "New Tab (+)",
                         listeners: {
                             activate: function () {
-                                //TODO: add new tab to NodeType edit layout
                             }
-                        }
+                        },//listeners
+                        reorderable: false,
                     });
 
                     window.Ext.create('Ext.panel.Panel', {
@@ -122,8 +123,26 @@
                             xtype: 'panel'
                         }, {
                             id: tabPanelId,
+                            plugins: Ext.create('Ext.ux.TabReorderer', {
+                                listeners: {
+                                    Drop: function (e, tabStrip, tabObj, oldPosition, newPosition, f) {
+                                        if (oldPosition != newPosition) {
+                                            Csw.ajaxWcf.post({
+                                                urlMethod: 'Design/updateTabOrder',
+                                                data: {
+                                                    TabId: tabObj.card.id, //for whatever reason, this is where the id we set is being stored
+                                                    OldPosition: oldPosition,
+                                                    NewPosition: newPosition+1
+                                                },
+                                                success: function (response) {
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            }),
                             xtype: 'tabpanel',
-                            items: tabs
+                            items: tabs,
                         }]
                     });
 

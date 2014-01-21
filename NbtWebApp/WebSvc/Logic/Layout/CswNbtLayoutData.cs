@@ -109,4 +109,17 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             set { _DoMove = value; }
         }
     }
+
+    [DataContract]
+    public class CswNbtTabMoveRequest
+    {
+        [DataMember]
+        public int TabId { get; set; }
+
+        [DataMember]
+        public int OldPosition { get; set; }
+
+        [DataMember]
+        public int NewPosition { get; set; }
+    }
 }
