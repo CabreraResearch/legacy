@@ -319,6 +319,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // Delete Tabs
                 foreach( CswNbtObjClassDesignNodeTypeTab TabNode in getTabNodes() )
                 {
+                    TabNode.InternalDelete = true;
                     TabNode.Node.delete( true, true );
                 }
 
@@ -826,7 +827,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView NodesView = new CswNbtView( _CswNbtResources );
             NodesView.AddViewRelationship( this.RelationalNodeType, false );
 
-            ICswNbtTree NodesTree = _CswNbtResources.Trees.getTreeFromView( NodesView, false, true, true );
+            ICswNbtTree NodesTree = _CswNbtResources.Trees.getTreeFromView( NodesView, false, true, true, true );
             for( Int32 n = 0; n < NodesTree.getChildNodeCount(); n++ )
             {
                 NodesTree.goToNthChild( n );
