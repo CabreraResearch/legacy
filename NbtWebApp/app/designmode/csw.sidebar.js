@@ -343,20 +343,14 @@
                                     text: 'Delete', handler: function () {
                                         var nodeids = [];
                                         nodeids.push(cswPrivate.designNodeType.nodeid);
-
                                         Csw.deleteNodes({
                                             nodeids: nodeids,
-                                            //nodekeys: cswDlgPrivate.cswnbtnodekeys,
                                             onSuccess: function (nodeid, nodekey) {
-                                                //To do:
-                                                //  1. Delete the nodetype
-                                                //  2. Close design mode
                                                 cswPrivate.extWindowDelete.close();
                                                 cswPublic.close();
-                                                //NOTE: DO WE NEED THE FOLLOWING:
-                                                //Csw.publish(Csw.enums.events.CswNodeDelete,
-                                                //    { nodeids: nodeids, cswnbtnodekeys: [] 
-                                                //    });
+                                                Csw.main.clear({ 'all': true });
+                                                //TODO - Case 31657 - maybe look into reopening a blank design mode after delete?
+                                                Csw.main.refreshWelcomeLandingPage();
                                             },
                                             onError: function () { }
                                         });
