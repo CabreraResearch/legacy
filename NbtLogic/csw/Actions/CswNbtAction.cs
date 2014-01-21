@@ -9,12 +9,12 @@ namespace ChemSW.Nbt.Actions
     {
         public const string PermissionXValue = "Allow";
 
-        public Int32 ActionId;
-        public string Url;
-        public string IconFileName = "wizard.png";
-        public CswEnumNbtActionName Name;
-        public bool ShowInList;
-        public string Category;
+        public readonly Int32 ActionId;
+        public readonly string Url;
+        public readonly string IconFileName = "wizard.png";
+        public readonly CswEnumNbtActionName Name;
+        public readonly bool ShowInList;
+        public readonly string Category;
 
         public string DisplayName
         {

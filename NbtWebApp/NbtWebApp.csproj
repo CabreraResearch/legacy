@@ -852,7 +852,6 @@
     <Content Include="Services\RegulatoryReporting.svc" />
     <Content Include="Services\Reports.svc" />
     <Content Include="Images\favicon.ico" />
-    <Content Include="Design.aspx" />
     <Content Include="DisplayLog.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
     <Content Include="Deprecated\ie6style.css" />
@@ -1299,9 +1298,6 @@
     <Compile Include="ConfigVars.aspx.designer.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Design.aspx.designer.cs">
-      <DependentUpon>Design.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
     </Compile>
@@ -1340,9 +1336,6 @@
     <Compile Include="ConfigVars.aspx.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Design.aspx.cs">
-      <DependentUpon>Design.aspx</DependentUpon>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
