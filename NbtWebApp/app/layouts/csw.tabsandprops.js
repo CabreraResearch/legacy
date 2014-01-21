@@ -962,6 +962,7 @@
 
         cswPrivate.openDesignMode = function() {
             Csw.layouts.designmode({
+                nodeid: cswPrivate.tabState.nodeid,
                 sidebarDiv: Csw.main.sidebarDiv,
                 sidebarOptions: {
                     name: 'newsidebar',
@@ -984,7 +985,8 @@
                         nodekey: cswPrivate.tabState.nodekey,
                         viewid: cswPrivate.tabState.viewid
                     });
-                }
+                },
+                renderInNewView: cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup
             });
         };
 
