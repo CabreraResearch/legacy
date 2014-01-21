@@ -57,7 +57,7 @@
             } else if (cswPrivate.Layout === 'Add') {
                 cswPrivate.makeAddNodeLayout();
             } else if (cswPrivate.Layout === 'Search') {
-                cswPrivate.Layout = 'Table'; //TODO: rename Table layout to Search
+                cswPrivate.Layout = 'Table'; //"Search" layout is really just a table layout
                 cswPrivate.makeSearchNodeLayout();
             } else if (cswPrivate.Layout === 'Preview') {
                 cswPrivate.makePreviewNodeLayout();
@@ -157,14 +157,14 @@
             cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
         };
 
-        //TODO: fix search (aka Table) layouts then make this layout
         cswPrivate.makeSearchNodeLayout = function () {
-            var searchTbl = cswPrivate.contentDiv.table().css({ 'height': '400px' });
+            var searchTbl = cswPrivate.contentDiv.table();
 
-            var imageCell = searchTbl.cell(1, 1).div().css('width', '200px');
-            var propsCell = searchTbl.cell(1, 2).div().css('width', '400px');
-            var buttonsCell = searchTbl.cell(1, 3).div().css('width', '400px');
-            var disabledButtonsCell = searchTbl.cell(1, 4).div().css('width', '400px');
+            var imageCell = searchTbl.cell(2, 1).div().css('width', '200px');
+            var labelCell = searchTbl.cell(1, 2).div().css('height', '20px' );
+            var propsCell = searchTbl.cell(2, 2).div().css('width', '400px');
+            var buttonsCell = searchTbl.cell(2, 3).div().css('width', '400px');
+            var disabledButtonsCell = searchTbl.cell(2, 4).div().css('width', '400px');
 
             Csw.ajaxWcf.post({
                 urlMethod: 'Design/GetSearchImageLink',
@@ -221,14 +221,18 @@
                             otherProps.push(prop);
                         }
                     });
+                    labelCell.setLabelText(data.node.nodename, false, false);
 
-                    cswPrivate.renderProps(data.node, otherProps, propsPanel.id, '');
-                    cswPrivate.renderProps(data.node, buttonProps, buttonsPanel.id, '');
+                    cswPrivate.renderProps(data.node, otherProps, propsPanel.id, '', false);
+                    cswPrivate.renderProps(data.node, buttonProps, buttonsPanel.id, '', false);
 
                 } // success
             }); // ajax
 
-            var disabledBtnsTbl = disabledButtonsCell.table();
+            var disabledBtnsTbl = disabledButtonsCell.table({
+                cellspacing: 5,
+                cellpadding: 5
+            });
             disabledBtnsTbl.cell(1, 1).buttonExt({
                 isEnabled: false,
                 enabledText: 'Details',
@@ -281,7 +285,7 @@
                 },
                 success: function (data) {
 
-                    cswPrivate.renderProps(data.node, data.properties, extid, tabid);
+                    cswPrivate.renderProps(data.node, data.properties, extid, tabid, true);
 
                 } // success{}
             }); // ajax
@@ -323,12 +327,13 @@
             Csw.nbt.property(fieldOpt, {});
         };
 
-        cswPrivate.renderProps = function (node, properties, extid, tabid) {
+        cswPrivate.renderProps = function (node, properties, extid, tabid, showAddColBtn) {
             var cols = cswPrivate.howManyCols(properties);
             var propsDiv = cswPrivate.makeDiv(extid);
 
             var dragPanel = Csw.composites.draggablepanel(propsDiv, {
                 columns: cols,
+                showAddColumnButton: showAddColBtn,
                 border: 0
             });
             dragPanel.allowDrag(false);
