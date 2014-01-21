@@ -294,6 +294,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret["node"]["nodelink"] = Node.NodeLink;
                     Ret["node"]["nodename"] = Node.NodeName;
                     Ret["node"]["nodetypeid"] = Node.NodeTypeId;
+                    if( null != Node.RelationalId && CswTools.IsPrimaryKey( Node.RelationalId ) )
+                    {
+                        Ret["node"]["relationalid"] = Node.RelationalId.PrimaryKey.ToString();
+                    }
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
@@ -489,6 +493,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             JProperty ret = new JProperty( "prop_" + PropIdAttr, PropObj );
             CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
+            PropObj["propnodeid"] = Prop.DesignNode.NodeId.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
             if( null != PropWrapper )
             {

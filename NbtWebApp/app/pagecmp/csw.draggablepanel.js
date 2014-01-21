@@ -98,7 +98,9 @@
                     tools.push({
                         type: 'gear',
                         tooltip: 'Configure property',
-                        handler: params.onConfigure
+                        handler: function() {
+                            params.onConfigure(extRenderTo);
+                        }
                     });
                 }
                 if (params.showCloseButton) {

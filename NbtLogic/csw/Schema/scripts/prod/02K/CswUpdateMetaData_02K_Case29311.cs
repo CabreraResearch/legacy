@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _metaDataListFieldType()
         {
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswEnumNbtFieldType.MetaDataList, CswEnumNbtFieldTypeDataType.INTEGER );
+            _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldTypeDeprecated( CswEnumNbtFieldType.MetaDataList, CswEnumNbtFieldTypeDataType.INTEGER );
         }
 
         private void _sequenceOC()

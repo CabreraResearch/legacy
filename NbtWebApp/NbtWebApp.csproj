@@ -852,7 +852,6 @@
     <Content Include="Services\RegulatoryReporting.svc" />
     <Content Include="Services\Reports.svc" />
     <Content Include="Images\favicon.ico" />
-    <Content Include="Design.aspx" />
     <Content Include="DisplayLog.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
     <Content Include="Deprecated\ie6style.css" />
@@ -1128,8 +1127,6 @@
     <Content Include="Images\vld\good.gif" />
     <Content Include="Main.aspx" />
     <Content Include="Deprecated\Main.js" />
-    <Content Include="Popup_DesignAdd.aspx" />
-    <Content Include="Popup_DesignDelete.aspx" />
     <Content Include="Services\Requests.svc" />
     <Content Include="Services\Materials.svc" />
     <Content Include="Services\Session.svc" />
@@ -1299,9 +1296,6 @@
     <Compile Include="ConfigVars.aspx.designer.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Design.aspx.designer.cs">
-      <DependentUpon>Design.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
     </Compile>
@@ -1341,9 +1335,6 @@
       <DependentUpon>ConfigVars.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Design.aspx.cs">
-      <DependentUpon>Design.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1364,19 +1355,6 @@
     </Compile>
     <Compile Include="PopupLayout.master.designer.cs">
       <DependentUpon>PopupLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DesignAdd.aspx.cs">
-      <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DesignAdd.aspx.designer.cs">
-      <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DesignDelete.aspx.cs">
-      <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_DesignDelete.aspx.designer.cs">
-      <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\SqlRptViewDict.cs">

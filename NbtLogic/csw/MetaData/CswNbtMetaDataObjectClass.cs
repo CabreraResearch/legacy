@@ -250,6 +250,15 @@ namespace ChemSW.Nbt.MetaData
             }
         } // CanAdd
 
+        public bool IsDesign()
+        {
+            //return ( ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeClass ||
+            //         ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass ||
+            //         ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeTabClass ||
+            //         ObjectClass == CswEnumNbtObjectClass.DesignSequenceClass );
+            return ObjectClass.ToString().StartsWith( "Design" );
+        }
+
         #region IEquatable
 
         public static bool operator ==( CswNbtMetaDataObjectClass oc1, CswNbtMetaDataObjectClass oc2 )
@@ -296,5 +305,6 @@ namespace ChemSW.Nbt.MetaData
         }
 
         #endregion IEquatable
+
     }
 }

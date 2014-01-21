@@ -6,6 +6,7 @@ using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Layout;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.Services
 {
@@ -63,6 +64,25 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
+        [Description( "Update the position of a tab on a layout" )]
+        public CswWebSvcReturn updateTabOrder( CswNbtTabMoveRequest Request )
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswNbtTabMoveRequest>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.UpdateTabOrder,
+                ParamObj : Request
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
         [Description( "" )]
         public CswNbtLayoutDataReturn removePropsFromLayout( CswNbtNodeTypeLayout LayoutData )
         {
@@ -73,6 +93,25 @@ namespace NbtWebApp.Services
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceLayout.RemovePropsFromLayout,
                 ParamObj : LayoutData
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "" )]
+        public CswNbtLayoutDataReturn getSearchImageLink( string NodeId )
+        {
+            CswNbtLayoutDataReturn Ret = new CswNbtLayoutDataReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.GetSearchImageLink,
+                ParamObj : NodeId
                 );
 
             GetViewDriverType.run();

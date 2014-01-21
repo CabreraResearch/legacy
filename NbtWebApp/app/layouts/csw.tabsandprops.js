@@ -553,6 +553,7 @@
                     cswPrivate.tabState.nodename = node.nodename;
                     cswPrivate.tabState.nodelink = node.nodelink;
                     cswPrivate.tabState.nodetypeid = node.nodetypeid;
+                    cswPrivate.tabState.relationalid = node.relationalid;
                 }
             }
             return nodeid;
@@ -961,6 +962,7 @@
 
         cswPrivate.openDesignMode = function() {
             Csw.layouts.designmode({
+                nodeid: cswPrivate.tabState.nodeid,
                 sidebarDiv: Csw.main.sidebarDiv,
                 sidebarOptions: {
                     name: 'newsidebar',
@@ -983,7 +985,8 @@
                         nodekey: cswPrivate.tabState.nodekey,
                         viewid: cswPrivate.tabState.viewid
                     });
-                }
+                },
+                renderInNewView: cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup
             });
         };
 
@@ -1243,7 +1246,7 @@
 
         cswPublic.refreshOnAdd = function (nodeState) {
             Csw.publish('onAnyNodeButtonClickFinish', true);
-            Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, nodeState.nodename, nodeState.nodelink);
+            Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, nodeState.nodename, nodeState.nodelink, nodeState.relationalid);
             if (false == cswPrivate.isInDom()) {
                 cswPrivate.onTearDown();
             }

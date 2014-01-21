@@ -21,6 +21,14 @@ namespace NbtWebApp.WebSvc.Logic.Layout
     [DataContract]
     public class CswNbtNodeTypeLayout
     {
+        private string _imgLink = string.Empty;
+        [DataMember( Name = "imagelink" )]
+        public string ImageLink
+        {
+            get { return _imgLink; }
+            set { _imgLink = value; }
+        }
+
         [DataMember( Name = "props" )]
         public Collection<CswNbtLayoutProp> Props = new Collection<CswNbtLayoutProp>();
 
@@ -82,10 +90,44 @@ namespace NbtWebApp.WebSvc.Logic.Layout
         [DataMember( Name = "tabgroup" )]
         public string TabGroup { get; set; }
 
+        private int _DisplayColumn = Int32.MinValue;
         [DataMember( Name = "displaycol" )]
-        public int DisplayColumn { get; set; }
+        public int DisplayColumn
+        {
+            get { return _DisplayColumn; }
+            set { _DisplayColumn = value; }
+        }
 
+        private int _DisplayRow = Int32.MinValue;
         [DataMember( Name = "displayrow" )]
-        public int DisplayRow { get; set; }
+        public int DisplayRow
+        {
+            get { return _DisplayRow; }
+            set { _DisplayRow = value; }
+        }
+
+        private bool _DoMove = true;
+        /// <summary>
+        /// Determines whether or not the prop should be moved from an existing layout
+        /// </summary>
+        [DataMember( Name = "domove" )]
+        public bool DoMove
+        {
+            get { return _DoMove; }
+            set { _DoMove = value; }
+        }
+    }
+
+    [DataContract]
+    public class CswNbtTabMoveRequest
+    {
+        [DataMember]
+        public int TabId { get; set; }
+
+        [DataMember]
+        public int OldPosition { get; set; }
+
+        [DataMember]
+        public int NewPosition { get; set; }
     }
 }

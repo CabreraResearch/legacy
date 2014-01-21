@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                     {
                         newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = CswConvert.ToString( row["listopts"] );
                     }
+                    newProp.DesignNode.postChanges( false );
                     newProp.removeFromAllLayouts();
 
                     string cafColPropName = "prop" + row["propertyid"];
