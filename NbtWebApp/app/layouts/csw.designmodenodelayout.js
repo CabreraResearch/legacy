@@ -253,6 +253,7 @@
                                         cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
                                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                                         });
+                                        cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
                                         confirm.close();
                                     },
                                     onNo: function () {
