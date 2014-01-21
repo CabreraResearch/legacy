@@ -477,19 +477,22 @@
                                             EditMode: Csw.enums.editMode.Add
                                         },
                                         ReloadTabOnSave: false,
-                                        onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                                            /*Csw.ajaxWcf.post({
+                                        onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
+                                            Csw.ajaxWcf.post({
                                                 urlMethod: 'Design/updateLayout',
                                                 data: {
                                                     layout: cswPrivate.nodeLayout.getActiveLayout(),
-                                                    nodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
+                                                    nodetypeid: cswPrivate.tabState.nodetypeid,
                                                     tabid: cswPrivate.nodeLayout.getActiveTabId(),
-                                                    props: propsReq//TODO - use nodeid to get related ntp
+                                                    props: [{
+                                                        nodetypepropid: relationalid
+                                                    }]
                                                 },
                                                 success: function (response) {
                                                     //nothing to do here
                                                 }
-                                            });*/
+                                            });
+                                            var newPropid = relationalid;
                                             cswPrivate.nodeLayout.refresh();
                                             cswPrivate.extWindowNew.close();
                                         },
@@ -640,7 +643,7 @@
 
             //#endregion Public
 
-            //constructor
+            //#region constructor
             (function _postCtor() {
                 cswPrivate.init();
             }());

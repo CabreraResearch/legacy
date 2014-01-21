@@ -82,10 +82,20 @@ namespace NbtWebApp.WebSvc.Logic.Layout
         [DataMember( Name = "tabgroup" )]
         public string TabGroup { get; set; }
 
+        private int _DisplayColumn = Int32.MinValue;
         [DataMember( Name = "displaycol" )]
-        public int DisplayColumn { get; set; }
+        public int DisplayColumn
+        {
+            get { return _DisplayColumn; }
+            set { _DisplayColumn = value; }
+        }
 
+        private int _DisplayRow = Int32.MinValue;
         [DataMember( Name = "displayrow" )]
-        public int DisplayRow { get; set; }
+        public int DisplayRow
+        {
+            get { return _DisplayRow; }
+            set { _DisplayRow = value; }
+        }
     }
 }

@@ -435,7 +435,7 @@
                 Csw.iterate(propPanels, function (panel) {
                     Csw.iterate(panel.data, function(panelProp) {
                         propsReq.push({
-                            nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
+                            nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //panelProp.id is 'nodes_<nodeid>_<propid>' - we just want the propid
                             tabgroup: panelProp.tabgroup,
                             displaycol: thisCol,
                             displayrow: thisRow
