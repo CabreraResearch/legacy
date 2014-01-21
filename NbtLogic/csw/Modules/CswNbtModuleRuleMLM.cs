@@ -38,15 +38,10 @@ namespace ChemSW.Nbt
                 }
             }
 
-            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
-            foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
+            //Case 31546 - If requesting is disabled, we don't need to show anything on the Request Item OC because it is not available
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) )
             {
-                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
-                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
-                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
-                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
-                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
-                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
+                CswNbtObjClassRequestItem.ToggleMLMProps( _CswNbtResources, false );
             }
 
             //Case 28339
@@ -85,15 +80,10 @@ namespace ChemSW.Nbt
                 //}
             }
 
-            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
-            foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
+            //Case 31546 - If requesting is disabled, we don't need to hide anything on the Request Item OC because it is not available
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) )
             {
-                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
-                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
-                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
-                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
-                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
-                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
+                CswNbtObjClassRequestItem.ToggleMLMProps( _CswNbtResources, true );
             }
 
             //Case 28339

@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -164,11 +163,63 @@ namespace ChemSW.Nbt.ObjClasses
 
         } //afterDeleteNode()        
 
+
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+        #endregion
+
+
+        #region Custom Logic
+ 
+        /// <summary>
+        /// Sets the order for this tab and all other tabs on the same nodetype. Use this instead of changing Order directly to ensure your tab ends up where you intend
+        /// </summary>
+        /// <param name="NewPosition">the 1-based index of the tab</param>
+        public void UpdateTabPosition( int NewPosition )
+        {
+
+            //this is not efficient, at all. However, its necessary because we have code that scrambles tab order, but the number we receive from ExtJS is an array position
+            CswNbtMetaDataNodeType TabNT = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass ).FirstNodeType;
+
+            //construct a view of all the tabs between the old position and the new position
+            CswNbtView TabList = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship TabRelationship = TabList.AddViewRelationship( TabNT, false );
+            //constrain by the nodetype to which this tab is attached
+            TabList.AddViewPropertyAndFilter( TabRelationship, TabNT.getNodeTypePropByObjectClassProp( PropertyName.NodeTypeValue ),
+                SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                FilterMode : CswEnumNbtFilterMode.Equals,
+                Value: NodeTypeValue.RelatedNodeId.PrimaryKey.ToString()
+                );
+            //then order from first to last tab by Order property
+            CswNbtViewProperty OrderProp = TabList.AddViewProperty( TabRelationship, TabNT.getNodeTypePropByObjectClassProp( PropertyName.Order ) );
+            TabList.setSortProperty( OrderProp, CswEnumNbtViewPropertySortMethod.Ascending );
+
+            //iterate through each tab on this nodetype, and set the position
+            double OriginalPosition = Order.Value;
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( TabList, IncludeSystemNodes : true, RequireViewPermissions : false, IncludeHiddenNodes : true );
+            for( int i = 0; i < Tree.getChildNodeCount(); i++ )
+            {
+                Tree.goToNthChild( i );
+                CswNbtObjClassDesignNodeTypeTab Tab = Tree.getNodeForCurrentPosition();
+                if( Tab.NodeId == this.NodeId )
+                {
+                    Tab.Order.Value = NewPosition;
+                }
+                else
+                {
+                    int Spacer = ( (i >= NewPosition && NewPosition < OriginalPosition) || ( i > NewPosition && NewPosition >= OriginalPosition ) ? 1 : 0 ) - ( ( i >= OriginalPosition ) ? 1 : 0 );
+                    Tab.Order.Value = i + Spacer;  
+                }
+                Tab.postChanges( false );
+                Tree.goToParentNode();
+            }
+
+
+        }//UpdateTabPosition
+
         #endregion
 
         #region Object class specific properties

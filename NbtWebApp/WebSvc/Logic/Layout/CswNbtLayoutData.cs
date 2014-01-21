@@ -21,6 +21,14 @@ namespace NbtWebApp.WebSvc.Logic.Layout
     [DataContract]
     public class CswNbtNodeTypeLayout
     {
+        private string _imgLink = string.Empty;
+        [DataMember( Name = "imagelink" )]
+        public string ImageLink
+        {
+            get { return _imgLink; }
+            set { _imgLink = value; }
+        }
+
         [DataMember( Name = "props" )]
         public Collection<CswNbtLayoutProp> Props = new Collection<CswNbtLayoutProp>();
 
@@ -108,5 +116,18 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             get { return _DoMove; }
             set { _DoMove = value; }
         }
+    }
+
+    [DataContract]
+    public class CswNbtTabMoveRequest
+    {
+        [DataMember]
+        public int TabId { get; set; }
+
+        [DataMember]
+        public int OldPosition { get; set; }
+
+        [DataMember]
+        public int NewPosition { get; set; }
     }
 }

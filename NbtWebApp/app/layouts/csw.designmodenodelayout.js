@@ -28,7 +28,7 @@
             cswParent = cswParent || Csw.main.rightDiv;
 
         })();
-        
+
         cswPrivate.init = function () {
             cswParent.empty();
 
@@ -50,124 +50,31 @@
                     cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
                 }
             });
-            cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
             cswPrivate.contentDiv = cswParent.div();
+
+            var layout = null;
             if (cswPrivate.Layout === 'Edit') {
-                cswPrivate.makeEditNodeLayout();
+                layout = Csw.layouts.editNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Add') {
-                cswPrivate.makeAddNodeLayout();
+                layout = Csw.layouts.addNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Search') {
-                cswPrivate.Layout = 'Table'; //TODO: rename Table layout to Search
-                cswPrivate.makeSearchNodeLayout();
+                cswPrivate.Layout = 'Table'; //"Search" layout is really just a table layout
+                layout = Csw.layouts.searchNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Preview') {
-                cswPrivate.makePreviewNodeLayout();
+                layout = Csw.layouts.previewNode(cswPrivate);
             }
-        };
 
-        cswPrivate.makeEditNodeLayout = function () {
-            cswPrivate.getTabsAjax = Csw.ajax.deprecatedWsNbt({
-                urlMethod: 'getTabs',
-                data: {
-                    EditMode: cswPrivate.Layout,
-                    NodeId: cswPrivate.nodeId,
-                    SafeNodeKey: cswPrivate.nodeKey,
-                    Date: new Date().toDateString(),
-                    filterToPropId: '',
-                    Multi: false,
-                    ConfigMode: true
-                },
-                success: function (data) {
-                    cswPrivate.nameDiv.append(data.node.nodename);
+            if (null !== layout) {
+                layout.render(cswPrivate.contentDiv);
+            } else {
+                Csw.error.showError({
+                    name: 'Layout error',
+                    type: 'js',
+                    message: 'Error rendering ' + cswPrivate.Layout + ' layout',
+                    detail: "'" + cswPrivate.Layout + "' is not a valid layout"
+                });
+            }
 
-                    var tabs = [];
-                    for (var tabIdx in data.tabs) {
-                        var tabData = data.tabs[tabIdx];
-                        if (tabData.name !== 'Identity') {
-                            tabs.push({
-                                id: tabData.id,
-                                title: tabData.name,
-                                listeners: {
-                                    activate: function (tab) {
-                                        cswPrivate.activeTabId = tab.id;
-                                        cswPrivate.sidebar.refreshExistingProperties('Edit',tab.id);
-                                        if (!renderedTabs[tab.id]) {
-                                            renderedTabs[tab.id] = tab;
-                                            cswPrivate.renderTab(tab.id, tab.id);
-                                        }
-                                    }
-                                }
-                            });
-                        } else {
-                            cswPrivate.identityTabId = tabData.id;
-                        }
-                    }
-                    tabs.push({
-                        id: window.Ext.id(),
-                        title: "New Tab (+)",
-                        listeners: {
-                            activate: function () {
-                                //TODO: add new tab to NodeType edit layout
-                            }
-                        }
-                    });
-
-                    window.Ext.create('Ext.panel.Panel', {
-                        renderTo: cswPrivate.contentDiv.getId(),
-                        layout: {
-                            type: 'vbox',
-                            align: 'stretch'    // Each takes up full width
-                        },
-                        items: [{
-                            id: identityTabId,
-                            xtype: 'panel'
-                        }, {
-                            id: tabPanelId,
-                            xtype: 'tabpanel',
-                            items: tabs
-                        }]
-                    });
-
-                    cswPrivate.renderTab(identityTabId, cswPrivate.identityTabId);
-
-                }
-            });
-        };
-
-        cswPrivate.makeAddNodeLayout = function () {
-            cswPrivate.nameDiv.append('Add Node Layout');
-            var addPanel = window.Ext.create('Ext.panel.Panel', {
-                renderTo: cswPrivate.contentDiv.getId(),
-                layout: {
-                    align: 'stretch',
-                    padding: 1
-                }
-            });
-            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
-        };
-
-        cswPrivate.makePreviewNodeLayout = function () {
-            cswPrivate.nameDiv.append('Preview Node Layout');
-            var addPanel = window.Ext.create('Ext.panel.Panel', {
-                renderTo: cswPrivate.contentDiv.getId(),
-                layout: {
-                    align: 'stretch',
-                    padding: 1
-                }
-            });
-            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
-        };
-
-        //TODO: fix search (aka Table) layouts then make this layout
-        cswPrivate.makeSearchNodeLayout = function () {
-            cswPrivate.nameDiv.append('Search Node Layout');
-            var addPanel = window.Ext.create('Ext.panel.Panel', {
-                renderTo: cswPrivate.contentDiv.getId(),
-                layout: {
-                    align: 'stretch',
-                    padding: 1
-                }
-            });
-            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
         };
 
         cswPrivate.makeDiv = function (extId) {
@@ -208,8 +115,8 @@
                     ForceReadOnly: false
                 },
                 success: function (data) {
-                    
-                    cswPrivate.renderProps(data.node, data.properties, extid, tabid);
+
+                    cswPrivate.renderProps(data.node, data.properties, extid, tabid, true);
 
                 } // success{}
             }); // ajax
@@ -251,12 +158,13 @@
             Csw.nbt.property(fieldOpt, {});
         };
 
-        cswPrivate.renderProps = function (node, properties, extid, tabid) {
+        cswPrivate.renderProps = function (node, properties, extid, tabid, showAddColBtn) {
             var cols = cswPrivate.howManyCols(properties);
             var propsDiv = cswPrivate.makeDiv(extid);
 
             var dragPanel = Csw.composites.draggablepanel(propsDiv, {
                 columns: cols,
+                showAddColumnButton: showAddColBtn,
                 border: 0
             });
             dragPanel.allowDrag(false);
@@ -271,7 +179,7 @@
                     dragPanel.addItemToCol(realCol, {
                         id: prop.id,
                         showRearrangeButton: (prop.hassubprops || false === Csw.isNullOrEmpty(prop.tabgroup)),
-                        showConfigureButton: false,//TODO: when we want to edit NTPs in the layout editor, show this button
+                        showConfigureButton: Csw.isNullOrEmpty(prop.tabgroup),
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
@@ -289,7 +197,7 @@
                                 fieldSet.legend({ value: prop.tabgroup });
                                 propDiv = fieldSet.div();
                                 var groupProps = cswPrivate.getPropsInGroup(prop.tabgroup, properties);
-                                
+
                                 for (var groupIdx in groupProps) {
                                     var groupProp = groupProps[groupIdx];
                                     seenProps[groupProp.id] = groupProp;
@@ -315,6 +223,7 @@
                                 cswPrivate.arrangeDialog(node, groupProps, tabid, 'Configure ' + prop.tabgroup + ' Props');
                             }
                         },
+                        onConfigure: cswPrivate.onConfigure,
                         onDrop: function (ext, col, row) {
                             window.Ext.getCmp(extid).doLayout();
                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
@@ -322,7 +231,7 @@
                         onClose: function (draggable) {
                             var canRemove = true;
                             var doomedPropsCollection = [];
-                            Csw.iterate(draggable.data, function(doomedProp) {
+                            Csw.iterate(draggable.data, function (doomedProp) {
                                 doomedPropsCollection.push({
                                     nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
                                     displaycol: Csw.int32MinVal,
@@ -344,6 +253,7 @@
                                         cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
                                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                                         });
+                                        cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
                                         confirm.close();
                                     },
                                     onNo: function () {
@@ -372,6 +282,18 @@
                 dragPanel.doLayout(); //fix our layout
                 window.Ext.getCmp(extid).doLayout();
             }, 2000);
+        };
+
+        cswPrivate.onConfigure = function (draggable, onSave) {
+            var propToConfigure = draggable.data[0];
+            $.CswDialog('EditNodeDialog', {
+                currentNodeId: propToConfigure.propnodeid,
+                title: 'Edit Property: ' + propToConfigure.name,
+                onEditNode: function () {
+                    Csw.tryExec(onSave);
+                    cswPrivate.init();
+                }
+            });
         };
 
         cswPrivate.getPropsInGroup = function (group, properties) {
@@ -406,13 +328,17 @@
                         groupDragPanel.addItemToCol(0, {
                             id: 'group_' + groupProp.id,
                             showRearrangeButton: false,
-                            showConfigureButton: false, //TODO: when we want to edit NTPs in the layout editor, show this button
+                            showConfigureButton: true,
                             showCloseButton: false,
                             render: function (subExtEl, subCswEl) {
                                 var propTbl = subCswEl.table();
                                 var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
 
+                                subExtEl.data = [groupProp];
                                 cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
+                            },
+                            onConfigure: function(draggable) {
+                                cswPrivate.onConfigure(draggable, rearrangeGroupPropDialog.close);
                             },
                             onDrop: function () {
                                 cswPrivate.saveLayout(groupDragPanel, node, seenProps, tabid);
@@ -433,7 +359,7 @@
                 var thisCol = i + 1;
                 var thisRow = 1;
                 Csw.iterate(propPanels, function (panel) {
-                    Csw.iterate(panel.data, function(panelProp) {
+                    Csw.iterate(panel.data, function (panelProp) {
                         propsReq.push({
                             nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //panelProp.id is 'nodes_<nodeid>_<propid>' - we just want the propid
                             tabgroup: panelProp.tabgroup,
@@ -472,7 +398,7 @@
                 }
             });
         };
-        
+
         //#region Public
 
         cswPublic.tearDown = function () {
@@ -482,16 +408,16 @@
         cswPublic.setSidebar = function (sidebar) {
             cswPrivate.sidebar = sidebar;
         };
-        
+
         cswPublic.getActiveTabId = function () {
             return cswPrivate.activeTabId;
         };
-        
+
         cswPublic.getActiveLayout = function () {
             return cswPrivate.Layout;
         };
 
-        cswPublic.refresh = function() {
+        cswPublic.refresh = function () {
             cswPrivate.init();
         };
 
