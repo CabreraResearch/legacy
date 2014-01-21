@@ -1127,8 +1127,6 @@
     <Content Include="Images\vld\good.gif" />
     <Content Include="Main.aspx" />
     <Content Include="Deprecated\Main.js" />
-    <Content Include="Popup_DesignAdd.aspx" />
-    <Content Include="Popup_DesignDelete.aspx" />
     <Content Include="Services\Requests.svc" />
     <Content Include="Services\Materials.svc" />
     <Content Include="Services\Session.svc" />
@@ -1357,19 +1355,6 @@
     </Compile>
     <Compile Include="PopupLayout.master.designer.cs">
       <DependentUpon>PopupLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DesignAdd.aspx.cs">
-      <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DesignAdd.aspx.designer.cs">
-      <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DesignDelete.aspx.cs">
-      <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_DesignDelete.aspx.designer.cs">
-      <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\SqlRptViewDict.cs">

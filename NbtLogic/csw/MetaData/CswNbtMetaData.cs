@@ -11,6 +11,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.MetaData
@@ -612,7 +613,7 @@ namespace ChemSW.Nbt.MetaData
 
         #region ...FieldType
 
-        public CswNbtMetaDataFieldType makeNewFieldType( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType, string FieldPrecision = "", string Mask = "" )
+        public CswNbtMetaDataFieldType makeNewFieldTypeDeprecated( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType, string FieldPrecision = "", string Mask = "" )
         {
             CswNbtMetaDataFieldType RetFieldType = null;
             if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
@@ -636,7 +637,183 @@ namespace ChemSW.Nbt.MetaData
             }
 
             return RetFieldType;
-        }//makeNewFieldType()
+        }//makeNewFieldTypeDeprecated()
+
+        /// <summary>
+        /// Create all the necessary data elements for a new FieldType, including the row in field_types and the new "Design NodeTypeProp" nodetype
+        /// **************************************************************************************
+        /// ***                                IMPORTANT NOTE:                                 ***
+        /// *** While based off of functioning code in CswUpdateSchema_02K_Case29311_Design.cs ***
+        /// ***                   THIS IS COMPLETELY AND ENTIRELY UNTESTED!!!                  ***
+        /// ***                  If you're the first one to use this, good luck!               ***
+        /// **************************************************************************************
+        /// </summary>
+        public void makeNewFieldTypeNew( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType )
+        {
+            if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
+            {
+                // Insert row in the field_types table
+                DataTable FieldTypeTable = _CswNbtMetaDataResources.FieldTypeTableUpdate.getEmptyTable();
+                DataRow Row = FieldTypeTable.NewRow();
+                Row["datatype"] = CswConvert.ToDbVal( DataType.ToString().ToLower() );
+                Row["fieldtype"] = FieldType.ToString();
+                //Row["fieldprecision"] = CswConvert.ToDbVal( FieldPrecision );
+                //Row["mask"] = CswConvert.ToDbVal( Mask );
+                FieldTypeTable.Rows.Add( Row );
+                Int32 FieldTypeId = CswConvert.ToInt32( Row["fieldtypeid"] );
+                _CswNbtMetaDataResources.FieldTypeTableUpdate.update( FieldTypeTable );
+
+                //refreshAll();
+                //CswNbtMetaDataFieldType MetaDataFieldType = getFieldType( FieldType );
+
+                // Create a new "Design NodeTypeProp" nodetype node
+                CswNbtMetaDataObjectClass NodeTypePropOC = this.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+                CswNbtMetaDataNodeType NodeTypePropNT = this.makeNewNodeTypeNew( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
+                    {
+                        NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FieldType ),
+                        Category = "Design"
+                    } );
+                NodeTypePropNT.setNameTemplateText( MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue ) + ": " +
+                                                    MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) + " Prop" );
+
+                // Set default permission for the new nodetype    
+                CswNbtObjClassRole ChemSWAdminRole = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                CswEnumNbtNodeTypePermission[] AllPerms = new CswEnumNbtNodeTypePermission[]
+                    {
+                        CswEnumNbtNodeTypePermission.Create,
+                        CswEnumNbtNodeTypePermission.Delete,
+                        CswEnumNbtNodeTypePermission.Edit,
+                        CswEnumNbtNodeTypePermission.View
+                    };
+                _CswNbtMetaDataResources.CswNbtResources.Permit.set( AllPerms, NodeTypePropNT, ChemSWAdminRole, true );
+
+                // Configure the "Design NodeTypeProp" nodetype
+                Int32 TabId = NodeTypePropNT.getFirstNodeTypeTab().TabId;
+
+                CswNbtMetaDataNodeTypeProp NTPAuditLevelNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel );
+                CswNbtMetaDataNodeTypeProp NTPCompoundUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique );
+                CswNbtMetaDataNodeTypeProp NTPDisplayConditionFilterNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilterMode );
+                CswNbtMetaDataNodeTypeProp NTPDisplayConditionPropertyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty );
+                CswNbtMetaDataNodeTypeProp NTPDisplayConditionSubfieldNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield );
+                CswNbtMetaDataNodeTypeProp NTPDisplayConditionValueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue );
+                CswNbtMetaDataNodeTypeProp NTPFieldTypeNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType );
+                CswNbtMetaDataNodeTypeProp NTPHelpTextNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.HelpText );
+                CswNbtMetaDataNodeTypeProp NTPNodeTypeValueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+                CswNbtMetaDataNodeTypeProp NTPObjectClassPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName );
+                CswNbtMetaDataNodeTypeProp NTPPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
+                CswNbtMetaDataNodeTypeProp NTPReadOnlyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly );
+                CswNbtMetaDataNodeTypeProp NTPRequiredNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Required );
+                CswNbtMetaDataNodeTypeProp NTPServerManagedNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ServerManaged );
+                CswNbtMetaDataNodeTypeProp NTPUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique );
+                CswNbtMetaDataNodeTypeProp NTPUseNumberingNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering );
+
+                // Edit layout
+                NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
+                NTPObjectClassPropNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 1 );
+                NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
+                NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 4, DisplayColumn: 1 );
+                NTPDisplayConditionPropertyNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 5, DisplayColumn: 1 );
+                NTPDisplayConditionSubfieldNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 6, DisplayColumn: 1 );
+                NTPDisplayConditionFilterNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 7, DisplayColumn: 1 );
+                NTPDisplayConditionValueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 8, DisplayColumn: 1 );
+                NTPRequiredNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 9, DisplayColumn: 1 );
+                NTPServerManagedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 10, DisplayColumn: 1 );
+                NTPUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 11, DisplayColumn: 1 );
+                NTPCompoundUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 12, DisplayColumn: 1 );
+                NTPReadOnlyNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 13, DisplayColumn: 1 );
+                NTPUseNumberingNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 14, DisplayColumn: 1 );
+                NTPHelpTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
+                NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 16, DisplayColumn: 1 );
+
+                // Add layout
+                NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
+                NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
+                NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
+                NTPRequiredNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 4, DisplayColumn: 1 );
+                NTPServerManagedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPAuditLevelNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPCompoundUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPDisplayConditionFilterNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPDisplayConditionPropertyNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPDisplayConditionSubfieldNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPDisplayConditionValueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPHelpTextNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPObjectClassPropNameNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPReadOnlyNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPUseNumberingNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                // Table layout
+                NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
+                NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 2, DisplayColumn: 1 );
+                NTPObjectClassPropNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 3, DisplayColumn: 1 );
+                NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 4, DisplayColumn: 1 );
+
+                // Preview layout
+                NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 1, DisplayColumn: 1 );
+                NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 1 );
+                NTPObjectClassPropNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 3, DisplayColumn: 1 );
+                NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 4, DisplayColumn: 1 );
+
+                // Set default value of "Field Type" to this fieldtype
+                NTPFieldTypeNTP.DefaultValue.AsList.Value = FieldTypeId.ToString();
+                NTPFieldTypeNTP.DefaultValue.AsList.Text = FieldType.ToString();
+                NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+
+                ICswNbtFieldTypeRule Rule = getFieldTypeRule( FieldType );
+
+                // Make all the attribute properties
+                CswTableUpdate jctUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "MetaData_jctddntp_update", "jct_dd_ntp" );
+                DataTable jctTable = jctUpdate.getEmptyTable();
+                foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
+                {
+                    CswNbtMetaDataNodeTypeProp thisNTP = NodeTypePropNT.getNodeTypeProp( Attr.Name );
+                    if( null == thisNTP )
+                    {
+                        thisNTP = makeNewPropDeprecated( NodeTypePropNT, Attr.AttributeFieldType, Attr.Name, TabId );
+                        thisNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                        if( Attr.Column == CswEnumNbtPropertyAttributeColumn.Isfk )
+                        {
+                            thisNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                            thisNTP.DefaultValue.AsLogical.Checked = CswEnumTristate.True;
+                            thisNTP.removeFromAllLayouts();
+                        }
+                    }
+                    if( string.Empty != Attr.Column && CswNbtResources.UnknownEnum != Attr.Column )
+                    {
+                        _addJctDdNtpRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column, Attr.SubFieldName );
+                    }
+                }
+                jctUpdate.update( jctTable );
+
+                // Configure the nodetype to synchronize with nodetype_props
+                NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
+
+            } // if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
+        }//makeNewFieldTypeNew()
+
+
+        private void _addJctDdNtpRow( DataTable JctTable, CswNbtMetaDataNodeTypeProp Prop, string TableName, string ColumnName, CswEnumNbtSubFieldName SubFieldName = null )
+        {
+            if( false == string.IsNullOrEmpty( ColumnName ) && ColumnName != "Unknown" )
+            {
+                _CswNbtMetaDataResources.CswNbtResources.DataDictionary.setCurrentColumn( TableName, ColumnName );
+                DataRow NodeTypeNameRow = JctTable.NewRow();
+                NodeTypeNameRow["nodetypepropid"] = Prop.PropId;
+                NodeTypeNameRow["datadictionaryid"] = _CswNbtMetaDataResources.CswNbtResources.DataDictionary.TableColId;
+                if( null != SubFieldName )
+                {
+                    NodeTypeNameRow["subfieldname"] = SubFieldName.ToString();
+                }
+                else if( null != Prop.getFieldTypeRule().SubFields.Default )
+                {
+                    NodeTypeNameRow["subfieldname"] = Prop.getFieldTypeRule().SubFields.Default.Name;
+                }
+                JctTable.Rows.Add( NodeTypeNameRow );
+            }
+        }
+
+
 
         #endregion ...FieldType
 
