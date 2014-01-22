@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.ObjClasses
                     //PropsUpdate.update( PropsTable );
 
                     //_CswNbtResources.MetaData._CswNbtMetaDataResources.RecalculateQuestionNumbers( RelationalNodeTypeProp.getNodeType() );    // this could cause versioning
-
+                    RelationalNodeType.DesignNode.RecalculateQuestionNumbers();
 
                     //if( OnMakeNewNodeTypeProp != null )
                     //{
@@ -527,10 +527,12 @@ namespace ChemSW.Nbt.ObjClasses
                 RelationalNodeType.DesignNode.NameTemplateText.Text = NodeTypeTemp;
                 RelationalNodeType.DesignNode.postChanges( false );
 
-                //if( false == Internal )
-                //{
+                if( false == InternalDelete )
+                {
                 //    _CswNbtResources.MetaData.RecalculateQuestionNumbers( RelationalNodeType );
-                //}
+                    RelationalNodeType.DesignNode.RecalculateQuestionNumbers();
+                }
+
             } // if( false == IsTemp )
         }//beforeDeleteNode()
 
@@ -835,6 +837,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void _DisplayConditionProperty_Change( CswNbtNodeProp Prop, bool Creating )
         {
             _setDisplayConditionOptions();
+            RelationalNodeType.DesignNode.RecalculateQuestionNumbers();
         }
 
         public CswNbtNodePropList DisplayConditionSubfield { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionSubfield] ); } }
