@@ -5,7 +5,7 @@
         extend: 'Ext.panel.Panel',
         title: 'Design Mode',
         width: 290,
-        height: 610,
+        height: 670,
         collapsible: true,
         collapseDirection: 'left',
         collapsed: true,
@@ -37,6 +37,8 @@
     Csw.designmode.sidebar = Csw.designmode.sidebar ||
         Csw.designmode.register('sidebar', function (cswParent, options) {
             'use strict';
+
+            //#region Properties
 
             var cswPrivate = {
                 name: 'sidebar',
@@ -83,8 +85,22 @@
                 dataStore: {},
                 control: {}
             };
+            
+            var newProperties = {
+                div: {},
+                dataStore: {},
+                control: {}
+            };
+            
+            var nodeTypeSelect = {
+                div: {},
+                dataStore: {},
+                control: {}
+            };
+            
+            //#endregion Properties
 
-            //Constructor
+            //#region Constructor
             (function () {
                 if (options) {
                     Csw.extend(cswPrivate, options);
@@ -99,7 +115,7 @@
                 //Hide the Tree
                 Csw.main.leftDiv.hide();
 
-                // Create the sizebar
+                // Create the sidebar
                 cswPrivate.newSidebar = new DesignSidebar({
                     renderTo: cswParent.getId(),
                     listeners: {
@@ -115,6 +131,7 @@
                 }).css({ overflow: 'auto' });
 
             }());
+            //#endregion Constructor
 
             cswPrivate.init = function () {
                 /// <summary>
@@ -138,8 +155,25 @@
                 cswPrivate.makeButton(buttons.deleteBtn, deleteBtnCell);
                 cswPrivate.makeButton(buttons.newBtn, newBtnCell);
                 //#endregion Buttons
+                
+                cswPublic.componentItem.br();
 
-                cswPublic.componentItem.br({ number: 2 });
+                var NTSelectTable = cswPublic.componentItem.table({
+                    width: '100%',
+                    cellalign: 'center'
+                });
+                
+                NTSelectTable.cell(1,1).div({ text: '&nbsp;Load: ', cssclass: 'CswDesignMode_NTName' });
+
+                NTSelectTable.cell(1,2).nodeTypeSelect({
+                    name: 'design_nt_select',
+                    value: cswPrivate.tabState.nodetypeid,
+                    onSelect: function (val) {
+                        cswPrivate.createTempNode(val);
+                    }
+                });
+
+                cswPublic.componentItem.br();
 
                 //#region Edit NodeType Form
 
@@ -201,65 +235,8 @@
                 //#region Add Properties
                 existingProperties.div = cswPublic.componentItem.div({ align: 'center' });
 
-                var fieldTypesDiv = cswPublic.componentItem.div({ align: 'center' });
-
-                var fieldTypesDataStore = Ext.create('Ext.data.ArrayStore', {
-                    fields: ['value', 'display'],
-                    data: [],
-                    autoLoad: false
-                });
-
-                cswPrivate.ajax.fieldTypes = Csw.ajax.deprecatedWsNbt({
-                    urlMethod: 'getFieldTypes',
-                    success: function (data) {
-                        var fieldTypes = [];
-                        Csw.each(data.fieldtypes, function (f) {
-                            var display = f.fieldtypename;
-                            fieldTypes.push([
-                               f.fieldtypeid,
-                               display
-                            ]);
-                        });
-                        fieldTypesDataStore.loadData(fieldTypes);
-                    } // success
-                }); // Csw.ajax
-
-
-                cswPrivate.fieldTypesForm = window.Ext.widget('form', {
-                    title: 'Add New Property',
-                    width: 275,
-                    height: 150,
-                    //bodyPadding: 10,
-                    renderTo: fieldTypesDiv.getId(),
-                    layout: 'fit',
-                    items: [{
-                        anchor: '100%',
-                        xtype: 'multiselect',
-                        msgTarget: 'bottom',
-                        name: 'addnewprop',
-                        id: 'add-new-prop',
-                        store: fieldTypesDataStore,
-                        valueField: 'value',
-                        displayField: 'display',
-                        ddReorder: true,
-                        listeners: {
-                            change: function (thisList, newVal, oldVal, eOpts) {
-                                if (newVal.length === 1) {
-                                    cswPrivate.fieldTypeIdToAdd = newVal[0];
-                                    cswPrivate.buttons[buttons.addNewBtn].enable();
-                                } else {
-                                    cswPrivate.buttons[buttons.addNewBtn].disable();
-                                }
-                            }
-                        }
-                    }]
-                    
-                });
-
-                fieldTypesDiv.br();
-
-                cswPrivate.makeButton(buttons.addNewBtn, fieldTypesDiv);
-                cswPrivate.buttons[buttons.addNewBtn].disable();
+                newProperties.div = cswPublic.componentItem.div({ align: 'center' });
+                cswPrivate.loadNewProperties();
                 
                 //#endregion Add Properties
             };
@@ -309,7 +286,7 @@
                                                 NodeKey: Csw.string('')
                                             },
                                             success: function (result) {
-                                                cswPrivate.createNewNodeTypeNode(result.NewNodeId);
+                                                cswPrivate.createTempNode(result.NewRelationalId);
                                                 cswPrivate.extWindowCopy.close();
                                             }
                                         });
@@ -406,8 +383,8 @@
                                 EditMode: Csw.enums.editMode.Add
                             },
                             ReloadTabOnSave: false,
-                            onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                                cswPrivate.createNewNodeTypeNode(nodeid);
+                            onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
+                                cswPrivate.createTempNode(relationalid);
                                 cswPrivate.extWindowNew.close();
                             },
                             onInitFinish: function () { }
@@ -500,7 +477,7 @@
                 }
             };
 
-            cswPrivate.createNewNodeTypeNode = function(designNTNodeId) {
+            cswPrivate.createTempNode = function(designNTNodeId) {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Nodes/createTempNode',
                     data: designNTNodeId,
@@ -591,6 +568,66 @@
                 cswPrivate.buttons[buttons.addExistingBtn].disable();
                 
                 existingProperties.div.br({ number: 2 });
+            };
+            
+            cswPrivate.loadNewProperties = function () {
+                newProperties.dataStore = Ext.create('Ext.data.ArrayStore', {
+                    fields: ['value', 'display'],
+                    data: [],
+                    autoLoad: false
+                });
+
+                cswPrivate.ajax.fieldTypes = Csw.ajax.deprecatedWsNbt({
+                    urlMethod: 'getFieldTypes',
+                    success: function (data) {
+                        var fieldTypes = [];
+                        Csw.each(data.fieldtypes, function (f) {
+                            var display = f.fieldtypename;
+                            fieldTypes.push([
+                               f.fieldtypeid,
+                               display
+                            ]);
+                        });
+                        newProperties.dataStore.loadData(fieldTypes);
+                    } // success
+                }); // Csw.ajax
+
+
+                newProperties.control = window.Ext.widget('form', {
+                    title: 'Add New Property',
+                    width: 275,
+                    height: 150,
+                    //bodyPadding: 10,
+                    renderTo: newProperties.div.getId(),
+                    layout: 'fit',
+                    items: [{
+                        anchor: '100%',
+                        xtype: 'multiselect',
+                        msgTarget: 'bottom',
+                        name: 'addnewprop',
+                        id: 'add-new-prop',
+                        store: newProperties.dataStore,
+                        valueField: 'value',
+                        displayField: 'display',
+                        ddReorder: true,
+                        listeners: {
+                            change: function (thisList, newVal, oldVal, eOpts) {
+                                if (newVal.length === 1) {
+                                    cswPrivate.fieldTypeIdToAdd = newVal[0];
+                                    cswPrivate.buttons[buttons.addNewBtn].enable();
+                                } else {
+                                    cswPrivate.buttons[buttons.addNewBtn].disable();
+                                }
+                            }
+                        }
+                    }]
+
+                });
+
+                newProperties.div.br();
+
+                cswPrivate.makeButton(buttons.addNewBtn, newProperties.div);
+                cswPrivate.buttons[buttons.addNewBtn].disable();
             };
             
             //#region Public
