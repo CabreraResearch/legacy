@@ -14,6 +14,7 @@
 
         var cswPrivate = {
             nodeid: '',
+            tabid: '',
             sidebarDiv: Csw.main.sidebarDiv,
             sidebarOptions: {},
             nodeLayoutDiv: Csw.main.rightDiv,
@@ -55,6 +56,7 @@
                     cswPublic.tearDown();
                     cswPrivate.onClose();
                 };
+                cswPrivate.nodelayoutOptions.tabid = cswPrivate.tabid;
 
                 nodelayout = Csw.layouts.designmodenodelayout(cswPrivate.nodeLayoutDiv, cswPrivate.nodelayoutOptions);
                 nodelayout.setSidebar(sidebar);

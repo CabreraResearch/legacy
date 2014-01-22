@@ -19,7 +19,7 @@
 
         var cswPublic = {};
 
-        cswPublic.activeTabId = 0;
+        cswPublic.activeTabId = cswPrivate.tabid;
 
         cswPublic.render = function (div) {
             cswPrivate.getTabsAjax = Csw.ajax.deprecatedWsNbt({
@@ -37,31 +37,32 @@
                     div.div({ cssclass: 'CswIdentityTabHeader' }).append(data.node.nodename);
                     var contentDiv = div.div();
 
-                    var beforeCloseTab = function(tab) {
+                    var beforeCloseTab = function (tab) {
                         var confirmDialog = Csw.dialogs.confirmDialog({
                             title: 'Delete Tab',
                             message: 'Are you sure you want to delete this tab?',
                             width: 300,
                             height: 160,
-                            onYes: function() {
+                            onYes: function () {
                                 Csw.ajaxWcf.post({
                                     urlMethod: 'Design/deleteTab',
                                     data: tab.id,
-                                    success: function(data) {
+                                    success: function (data) {
                                         tab.ownerCt.removeListener('beforeclose', beforeCloseTab); //self referential, ooo. Necessary to not open this dialog again when we remove the tab
                                         tab.ownerCt.remove(tab);
                                         confirmDialog.close();
                                     },
                                 }); //confirm dialog
                             },//onYes
-                            onNo: function() {
+                            onNo: function () {
                                 confirmDialog.close();
                             }
                         });
                         return false;
                     };//beforeClose
 
-                    var clickTab = function(tab) {
+                    var clickTab = function (tab) {
+                        cswPrivate.setActiveTabId(tab.id);
                         cswPublic.activeTabId = tab.id;
                         cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
                         if (!cswPrivate.renderedTabs[tab.id]) {
@@ -69,11 +70,17 @@
                             cswPrivate.renderTab(tab.id, tab.id, cswPrivate.tabStyle);
                         }
                     };
-                    
+
+                    var tabNo = 0;
+                    var activeTab = 0;
                     var tabs = [];
                     for (var tabIdx in data.tabs) {
                         var tabData = data.tabs[tabIdx];
                         if (tabData.name !== 'Identity') {
+                            if (tabData.id === cswPrivate.tabid) {
+                                activeTab = tabNo;
+                            }
+                            tabNo++;
                             tabs.push({
                                 id: tabData.id,
                                 title: tabData.name,
@@ -81,11 +88,11 @@
                                     activate: clickTab,
                                     beforeclose: beforeCloseTab,
 
-                                    },//listeners
+                                },//listeners
                                 closable: true,
                             });
-                            
-                            
+
+
                         } else {
                             cswPrivate.identityTabId = tabData.id;
                         }
@@ -145,7 +152,7 @@
                         }, {
                             id: tabPanelId,
                             border: 0,
-                            //bodyStyle: cswPrivate.identityTabStyle,
+                            activeTab: activeTab,
                             padding: '0 10 10 10',
                             xtype: 'tabpanel',
                             plugins: Ext.create('Ext.ux.TabReorderer', {

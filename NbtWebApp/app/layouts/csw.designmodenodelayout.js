@@ -11,6 +11,7 @@
             nodeKey: '',
             nodeTypeId: '',
             identityTabId: '',
+            tabid: '',
             Layout: 'Edit',
             onClose: function () { },
             sidebar: {}
@@ -20,7 +21,6 @@
         }
 
         var cswPublic = {};
-        var renderedTabs = {};
         var layout = null;
 
         (function _pre() {
@@ -28,6 +28,10 @@
             cswParent = cswParent || Csw.main.rightDiv;
 
         })();
+
+        cswPrivate.setActiveTabId = function (tabid) {
+            cswPrivate.tabid = tabid;
+        };
 
         cswPrivate.makeDiv = function (extId) {
             var tabPanel = window.Ext.getCmp(extId);
