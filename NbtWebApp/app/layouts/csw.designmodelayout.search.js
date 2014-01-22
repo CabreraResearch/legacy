@@ -12,7 +12,7 @@
         cswPublic.activeTabId = 0;
 
         cswPublic.render = function (div) {
-            var searchTbl = div.table();
+            var searchTbl = div.table().css('border', '1px solid #99CCFF');
 
             var imageCell = searchTbl.cell(2, 1).div().css('width', '200px');
             var labelCell = searchTbl.cell(1, 2).div().css('height', '20px');
