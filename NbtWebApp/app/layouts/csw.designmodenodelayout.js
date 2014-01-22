@@ -101,7 +101,7 @@
 
         cswPrivate.renderPropDiv = function (tabid, node, prop, div) {
             var propTbl = div.table();
-            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px', 'width': '230px', 'text-align': 'right' });
+            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px', 'width': '180px', 'text-align': 'right' });
             var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
 
             labelDiv.setLabelText(prop.name, prop.required, false); //in design mode, readonly better always be true, but we want required props to have the "*"

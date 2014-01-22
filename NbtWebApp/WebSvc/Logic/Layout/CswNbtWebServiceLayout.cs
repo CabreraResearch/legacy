@@ -5,8 +5,8 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using NbtWebApp.WebSvc.Returns;
 using ChemSW.Nbt.PropTypes;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.WebSvc.Logic.Layout
 {

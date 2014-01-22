@@ -10,7 +10,7 @@
             width: 400,
             border: 1,
 
-            columns: 2,
+            columns: 1,
             showAddColumnButton: true
         };
         var cswPublic = {};
@@ -43,7 +43,11 @@
 
             //Create column items up front
             var _columns = [];
-            for (var i = 0; i < cswPrivate.columns; i++) {
+            var addedCol = cswPrivate.columns;
+            if (cswPrivate.columns + 1 <= 4) {
+                addedCol = cswPrivate.columns + 1;
+            }
+            for (var i = 0; i < addedCol; i++) { //guarantee we provide one more col than asked for
                 _columns.push(makeCol(i));
             }
             //Set up parent
@@ -67,6 +71,10 @@
                 addColBtn.hide();
             }
 
+            var getLastColumn = function () {
+                var colId = _colIdPrefix + (cswPublic.getNumCols() - 1);
+                return window.Ext.getCmp(colId);
+            };
 
             cswPublic.addItemToCol = function (colNo, paramsIn) {
                 var params = {
@@ -138,7 +146,13 @@
                             }
                         }
                     },
-                    onDrop: params.onDrop
+                    onDrop: function () {
+                        params.onDrop();
+                        var lastCol = getLastColumn();
+                        if ( lastCol.items.items.length > 0 && dragPanelCmp.items.items.length < 4) {
+                            cswPublic.addCol();
+                        }
+                    }
                 });
                 _draggables.push(extRenderTo);
 
@@ -154,6 +168,7 @@
                 for (var name in params.style) {
                     window.Ext.get(extRenderTo.getId()).setStyle(name, params.style[name]);
                 }
+
                 dragPanelCmp.doLayout();
             };
 
