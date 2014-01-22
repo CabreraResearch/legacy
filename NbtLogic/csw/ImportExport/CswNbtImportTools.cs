@@ -358,14 +358,14 @@ namespace ChemSW.Nbt.csw.ImportExport
             {
                 string SheetName = ExcelDataTable.TableName;
                 CswNbtImportDef Definition = null;
-                try
-                {
+                //try
+                //{
                     Definition = new CswNbtImportDef( CswNbtResources, ImportDefinitionName, SheetName );
-                }
-                catch( Exception ex )
-                {
-                    //OnMessage( "Sheet '" + SheetName + "' is invalid: " + ex.Message );
-                }
+                //}
+                //catch( Exception ex )
+                //{
+                //    //OnMessage( "Sheet '" + SheetName + "' is invalid: " + ex.Message );
+                //}
 
                 // ignore bad sheetnames
                 if( null != Definition )
