@@ -10,8 +10,7 @@
             width: 400,
             border: 1,
 
-            columns: 1,
-            showAddColumnButton: true
+            columns: 1
         };
         var cswPublic = {};
 
@@ -61,16 +60,7 @@
                 items: _columns
             });
             var dragPanelCmp = window.Ext.getCmp(dragPanelCmpId);
-            var addColBtn = myDiv.div().buttonExt({
-                enabledText: 'Add Column',
-                onClick: function () {
-                    cswPublic.addCol();
-                }
-            });
-            if (false === cswPrivate.showAddColumnButton) {
-                addColBtn.hide();
-            }
-
+            
             var getLastColumn = function () {
                 var colId = _colIdPrefix + (cswPublic.getNumCols() - 1);
                 return window.Ext.getCmp(colId);

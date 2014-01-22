@@ -5,6 +5,9 @@
         Csw.extend(cswPrivate, cswHelpers);
 
         var cswPublic = {};
+        cswPrivate.bodyStyle = {
+            background: '#F8F9FB'
+        };
 
         cswPublic.render = function (div) {
             var searchTbl = div.table();
@@ -72,8 +75,8 @@
                     });
                     labelCell.setLabelText(data.node.nodename, false, false);
 
-                    cswPrivate.renderProps(data.node, otherProps, propsPanel.id, '', false);
-                    cswPrivate.renderProps(data.node, buttonProps, buttonsPanel.id, '', false);
+                    cswPrivate.renderProps(data.node, otherProps, propsPanel.id, '',  cswPrivate.bodyStyle);
+                    cswPrivate.renderProps(data.node, buttonProps, buttonsPanel.id, '', cswPrivate.bodyStyle);
 
                 } // success
             }); // ajax

@@ -68,7 +68,7 @@
                 },
                 success: function (data) {
 
-                    cswPrivate.renderProps(data.node, data.properties, extid, tabid, true, style);
+                    cswPrivate.renderProps(data.node, data.properties, extid, tabid, style);
 
                 } // success{}
             }); // ajax
@@ -110,13 +110,12 @@
             Csw.nbt.property(fieldOpt, {});
         };
 
-        cswPrivate.renderProps = function (node, properties, extid, tabid, showAddColBtn, style) {
+        cswPrivate.renderProps = function (node, properties, extid, tabid, style) {
             var cols = cswPrivate.howManyCols(properties);
             var propsDiv = cswPrivate.makeDiv(extid);
 
             var dragPanel = Csw.composites.draggablepanel(propsDiv, {
                 columns: cols,
-                showAddColumnButton: showAddColBtn,
                 border: 0,
                 bodyStyle: style
             });
@@ -268,8 +267,7 @@
                 height: 400,
                 onOpen: function () {
                     var groupDragPanel = Csw.composites.draggablepanel(rearrangeGroupPropDialog.div, {
-                        columns: 1, //We force all grouped props to be in a single column
-                        showAddColumnButton: false
+                        columns: 1 //We force all grouped props to be in a single column
                     });
 
                     groupDragPanel.allowDrag(false); //TODO: enable drag for sub/tabgroup props
