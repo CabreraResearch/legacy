@@ -66,12 +66,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesByDisplayOrder()
         {
-            Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
-            foreach( CswNbtMetaDataNodeTypeProp ntp in this.RelationalNodeTypeTab.getNodeTypePropsByDisplayOrder() )
-            {
-                ret.Add( ntp.DesignNode );
-            }
-            return ret;
+            return this.RelationalNodeTypeTab.getPropNodesByDisplayOrder();
         } // getPropNodesByDisplayOrder()
 
 

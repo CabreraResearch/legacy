@@ -389,6 +389,48 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeType.NodeTypeId, TabId, LayoutType, Date, false );
         } // getPropsNotInLayout()
 
+
+        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesInLayout( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, CswDateTime Date = null )
+        {
+            Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
+            CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropNodesInLayout_select", "nodetype_layout" );
+            string WhereClause = "where nodetypeid = " + NodeTypeId.ToString() +
+                                 "  and nodetypetabsetid = " + TabId.ToString() +
+                                 "  and layouttype = '" + LayoutType.ToString() + "'";
+            Collection<OrderByClause> orderBy = new Collection<OrderByClause>()
+                {
+                    new OrderByClause( "display_row", CswEnumOrderByType.Ascending ),
+                    new OrderByClause( "display_column", CswEnumOrderByType.Descending )
+                };
+            DataTable LayoutTable = LayoutSelect.getTable( WhereClause, orderBy );
+            foreach( DataRow Row in LayoutTable.Rows )
+            {
+                Int32 PropId = CswConvert.ToInt32( Row["nodetypepropid"] );
+                CswNbtObjClassDesignNodeTypeProp PropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", PropId ) );
+                ret.Add( PropNode );
+            }
+            return ret;
+        } // getPropNodesInLayout()
+
+        public IEnumerable<CswNbtObjClassDesignNodeTypeProp> getPropNodesNotInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, CswEnumNbtLayoutType LayoutType, CswDateTime Date = null )
+        {
+            Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
+            CswTableSelect PropsSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropNodesNotInLayout_select", "nodetype_props" );
+            string WhereClause = "where nodetypepropid not in (select nodetypepropid " +
+                                 "                               from nodetype_layout " +
+                                 "                              where nodetypeid = " + NodeType.NodeTypeId.ToString() +
+                                 "                                and nodetypetabsetid = " + TabId.ToString() +
+                                 "                                and layouttype = '" + LayoutType.ToString() + "')";
+            DataTable LayoutTable = PropsSelect.getTable( WhereClause );
+            foreach( DataRow Row in LayoutTable.Rows )
+            {
+                Int32 PropId = CswConvert.ToInt32( Row["nodetypepropid"] );
+                CswNbtObjClassDesignNodeTypeProp PropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", PropId ) );
+                ret.Add( PropNode );
+            }
+            return ret;
+        } // getPropNodesNotInLayout()
+
         public void updateLayoutAuditLevel( CswNbtMetaDataNodeTypeProp NtProp, string AuditLevel )
         {
             CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "updatePropAuditLevel_Update", "nodetype_layout" );

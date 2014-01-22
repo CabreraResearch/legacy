@@ -50,6 +50,7 @@ namespace ChemSW.Nbt.MetaData
         public Collection<Int32> getNodeTypePropIds() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByDisplayOrder() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( NodeTypeId, TabId ); }
+        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesByDisplayOrder() { return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getPropNodesInLayout( NodeTypeId, TabId, CswEnumNbtLayoutType.Edit ); }
 
         /// <summary>
         /// True if the Tab has any editable props. All tabs should have a Save button, so the calculation is there is at least one prop that is not hidden and is not the save prop
