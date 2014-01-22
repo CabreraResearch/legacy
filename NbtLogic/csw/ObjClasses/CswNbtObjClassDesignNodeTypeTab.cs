@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -61,6 +63,17 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
+
+        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesByDisplayOrder()
+        {
+            Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
+            foreach( CswNbtMetaDataNodeTypeProp ntp in this.RelationalNodeTypeTab.getNodeTypePropsByDisplayOrder() )
+            {
+                ret.Add( ntp.DesignNode );
+            }
+            return ret;
+        } // getPropNodesByDisplayOrder()
+
 
         #region Inherited Events
 
@@ -170,8 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
         #endregion
-
-
+        
         #region Custom Logic
  
         /// <summary>
@@ -232,7 +244,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText TabName { get { return ( _CswNbtNode.Properties[PropertyName.TabName] ); } }
 
         #endregion
-
 
     }//CswNbtObjClassDesignNodeTypeTab
 

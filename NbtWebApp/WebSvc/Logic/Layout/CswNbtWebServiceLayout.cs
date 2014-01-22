@@ -3,6 +3,7 @@ using ChemSW;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.WebSvc.Returns;
@@ -16,10 +17,19 @@ namespace NbtWebApp.WebSvc.Logic.Layout
         public static void UpdateLayout( ICswResources CswResources, CswNbtLayoutDataReturn Ret, CswNbtNodeTypeLayout Req )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            foreach( CswNbtLayoutProp Prop in Req.Props )
+            if( NbtResources.Permit.can( CswEnumNbtActionName.Design ) )
             {
-                CswNbtMetaDataNodeTypeProp ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
-                NbtResources.MetaData.NodeTypeLayout.updatePropLayout( Req.Layout, Req.NodeTypeId, ntp, Prop.DoMove, Req.TabId, Prop.DisplayRow, Prop.DisplayColumn, Prop.TabGroup );
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Req.NodeTypeId );
+                if( null != NodeType )
+                {
+                    foreach( CswNbtLayoutProp Prop in Req.Props )
+                    {
+                        CswNbtMetaDataNodeTypeProp ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
+                        NbtResources.MetaData.NodeTypeLayout.updatePropLayout( Req.Layout, Req.NodeTypeId, ntp, Prop.DoMove, Req.TabId, Prop.DisplayRow, Prop.DisplayColumn, Prop.TabGroup );
+                    }
+                    NbtResources.MetaData.refreshAll();
+                    NodeType.DesignNode.RecalculateQuestionNumbers();
+                }
             }
         }
 
