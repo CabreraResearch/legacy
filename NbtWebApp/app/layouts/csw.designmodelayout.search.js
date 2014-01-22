@@ -5,11 +5,14 @@
         Csw.extend(cswPrivate, cswHelpers);
 
         var cswPublic = {};
+        cswPrivate.bodyStyle = {
+            background: '#F8F9FB'
+        };
         
         cswPublic.activeTabId = 0;
 
         cswPublic.render = function (div) {
-            var searchTbl = div.table();
+            var searchTbl = div.table().css('border', '1px solid #99CCFF');
 
             var imageCell = searchTbl.cell(2, 1).div().css('width', '200px');
             var labelCell = searchTbl.cell(1, 2).div().css('height', '20px');
@@ -74,8 +77,8 @@
                     });
                     labelCell.setLabelText(data.node.nodename, false, false);
 
-                    cswPrivate.renderProps(data.node, otherProps, propsPanel.id, '', false);
-                    cswPrivate.renderProps(data.node, buttonProps, buttonsPanel.id, '', false);
+                    cswPrivate.renderProps(data.node, otherProps, propsPanel.id, '',  cswPrivate.bodyStyle);
+                    cswPrivate.renderProps(data.node, buttonProps, buttonsPanel.id, '', cswPrivate.bodyStyle);
 
                 } // success
             }); // ajax

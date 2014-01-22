@@ -963,6 +963,7 @@
         cswPrivate.openDesignMode = function() {
             Csw.layouts.designmode({
                 nodeid: cswPrivate.tabState.nodeid,
+                tabid: cswPrivate.tabState.tabid,
                 sidebarDiv: Csw.main.sidebarDiv,
                 sidebarOptions: {
                     name: 'newsidebar',

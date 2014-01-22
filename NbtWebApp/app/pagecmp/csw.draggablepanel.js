@@ -10,8 +10,7 @@
             width: 400,
             border: 1,
 
-            columns: 2,
-            showAddColumnButton: true
+            columns: 1
         };
         var cswPublic = {};
 
@@ -43,7 +42,11 @@
 
             //Create column items up front
             var _columns = [];
-            for (var i = 0; i < cswPrivate.columns; i++) {
+            var addedCol = cswPrivate.columns;
+            if (cswPrivate.columns + 1 <= 4) {
+                addedCol = cswPrivate.columns + 1;
+            }
+            for (var i = 0; i < addedCol; i++) { //guarantee we provide one more col than asked for
                 _columns.push(makeCol(i));
             }
             //Set up parent
@@ -53,19 +56,15 @@
                 renderTo: myDiv.getId(),
                 id: dragPanelCmpId,
                 border: 0,
+                bodyStyle: cswPrivate.bodyStyle,
                 items: _columns
             });
             var dragPanelCmp = window.Ext.getCmp(dragPanelCmpId);
-            var addColBtn = myDiv.div().buttonExt({
-                enabledText: 'Add Column',
-                onClick: function () {
-                    cswPublic.addCol();
-                }
-            });
-            if (false === cswPrivate.showAddColumnButton) {
-                addColBtn.hide();
-            }
-
+            
+            var getLastColumn = function () {
+                var colId = _colIdPrefix + (cswPublic.getNumCols() - 1);
+                return window.Ext.getCmp(colId);
+            };
 
             cswPublic.addItemToCol = function (colNo, paramsIn) {
                 var params = {
@@ -89,23 +88,26 @@
                 var tools = [];
                 if (params.showRearrangeButton) {
                     tools.push({
-                        type: 'restore',
+                        xtype: 'button',
+                        text: 'Rearrange Properties',
                         tooltip: 'Rearrange sub properties',
                         handler: params.onRearrange
                     });
                 }
                 if (params.showConfigureButton) {
                     tools.push({
-                        type: 'gear',
+                        xtype: 'button',
+                        text: 'Configure Property',
                         tooltip: 'Configure property',
-                        handler: function() {
+                        handler: function () {
                             params.onConfigure(extRenderTo);
                         }
                     });
                 }
                 if (params.showCloseButton) {
                     tools.push({
-                        type: 'close',
+                        xtype: 'button',
+                        text: 'Remove From Layout',
                         tooltip: 'Remove from layout',
                         handler: function () {
                             params.onClose(extRenderTo);
@@ -117,12 +119,17 @@
                 var extRenderTo = extCol.add({
                     id: params.id,
                     tools: tools,
+                    bodyStyle: cswPrivate.bodyStyle,
+                    frame: false,
+                    border: 0,
                     listeners: {
                         render: function (c) {
                             c.body.on('click', function () {
                                 Csw.iterate(_draggables, function (draggable) {
                                     draggable.header.hide();
+                                    draggable.getEl().applyStyles('border: 0px');
                                 });
+                                extRenderTo.getEl().applyStyles('border: 1px solid #BDD3F0');
                                 extRenderTo.header.show();
                             });
                         },
@@ -132,7 +139,13 @@
                             }
                         }
                     },
-                    onDrop: params.onDrop
+                    onDrop: function () {
+                        params.onDrop();
+                        var lastCol = getLastColumn();
+                        if ( lastCol.items.items.length > 0 && dragPanelCmp.items.items.length < 4) {
+                            cswPublic.addCol();
+                        }
+                    }
                 });
                 _draggables.push(extRenderTo);
 
@@ -148,6 +161,7 @@
                 for (var name in params.style) {
                     window.Ext.get(extRenderTo.getId()).setStyle(name, params.style[name]);
                 }
+
                 dragPanelCmp.doLayout();
             };
 
