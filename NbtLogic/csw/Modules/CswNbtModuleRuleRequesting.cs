@@ -49,7 +49,7 @@ namespace ChemSW.Nbt
             //Case 31546 - If we're enabling Requesting AFTER MLM, we need to show the MLM props
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
             {
-                CswNbtObjClassRequestItem.ToggleMLMProps( _CswNbtResources, true );
+                CswNbtObjClassRequestItem.ToggleMLMProps( _CswNbtResources, false );
             }
         }
 
