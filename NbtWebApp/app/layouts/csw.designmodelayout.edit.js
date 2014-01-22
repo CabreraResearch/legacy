@@ -103,7 +103,7 @@
                                                 Order: tab.ownerCt.items.length,
                                             },
                                             success: function (data) {
-                                                tab.ownerCt.add({
+                                                var newTab = tab.ownerCt.add({
                                                     title: fields['Name'].val(),
                                                     id: data.TabId,
                                                     listeners: {
@@ -112,6 +112,7 @@
                                                     },//listeners
                                                     closable: true,
                                                 });
+                                                tab.ownerCt.setActiveTab(newTab);
                                                 inputDialog.close();
                                             }
                                         });
