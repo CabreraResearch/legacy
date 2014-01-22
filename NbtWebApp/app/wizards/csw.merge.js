@@ -223,6 +223,7 @@
                             extraAction: 'Select',
                             extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                             universalSearchOnly: true, //No C3 or Structure Search here
+                            showC3SrchPromptText: false, // Don't offer alternate C3 search
                             excludeNodeIds: [cswPrivate.node1.nodeid.replace( /^\D+/g, '')],
                             onExtraAction: function(nodeObj) {
                                 cswPrivate.node2 = nodeObj;
