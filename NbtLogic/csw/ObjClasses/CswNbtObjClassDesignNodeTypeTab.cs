@@ -64,9 +64,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesByDisplayOrder()
+        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesByDisplayOrder( bool NumberedOnly = false )
         {
-            return this.RelationalNodeTypeTab.getPropNodesByDisplayOrder();
+            return this.RelationalNodeTypeTab.getPropNodesByDisplayOrder( NumberedOnly );
         } // getPropNodesByDisplayOrder()
 
 

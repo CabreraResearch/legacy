@@ -842,9 +842,10 @@ namespace ChemSW.Nbt.ObjClasses
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first
                 Dictionary<CswPrimaryKey, Int32> PropQuestionNumbers = new Dictionary<CswPrimaryKey, Int32>();
-                foreach( CswNbtObjClassDesignNodeTypeProp Prop in Tab.getPropNodesByDisplayOrder() )
+                Collection<CswNbtObjClassDesignNodeTypeProp> Props = Tab.getPropNodesByDisplayOrder( NumberedOnly: true );
+                foreach( CswNbtObjClassDesignNodeTypeProp Prop in Props )
                 {
-                    if( Prop.UseNumbering.Checked == CswEnumTristate.True && 
+                    if( //Prop.UseNumbering.Checked == CswEnumTristate.True && 
                         Prop.DisplayConditionProperty.Empty )
                     {
                         Prop.QuestionNo.Value = CurrentQuestionNo;
@@ -862,9 +863,9 @@ namespace ChemSW.Nbt.ObjClasses
                     SubQuestionNos[i] = 1;
                 }
 
-                foreach( CswNbtObjClassDesignNodeTypeProp Prop in Tab.getPropNodesByDisplayOrder() )
+                foreach( CswNbtObjClassDesignNodeTypeProp Prop in Props )
                 {
-                    if( Prop.UseNumbering.Checked == CswEnumTristate.True &&
+                    if( //Prop.UseNumbering.Checked == CswEnumTristate.True &&
                         false == Prop.DisplayConditionProperty.Empty )
                     {
                         //CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();

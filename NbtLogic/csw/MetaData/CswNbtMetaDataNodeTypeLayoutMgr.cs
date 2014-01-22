@@ -390,13 +390,19 @@ namespace ChemSW.Nbt.MetaData
         } // getPropsNotInLayout()
 
 
-        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesInLayout( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, CswDateTime Date = null )
+        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodesInLayout( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, bool NumberedOnly = false, CswDateTime Date = null )
         {
             Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropNodesInLayout_select", "nodetype_layout" );
             string WhereClause = "where nodetypeid = " + NodeTypeId.ToString() +
                                  "  and nodetypetabsetid = " + TabId.ToString() +
                                  "  and layouttype = '" + LayoutType.ToString() + "'";
+            if( NumberedOnly )
+            {
+                WhereClause += " and nodetypepropid in (select nodetypepropid " +
+                               "                          from nodetype_props " +
+                               "                         where " + CswEnumNbtNodeTypePropAttributes.usenumbering + " = '" + CswConvert.ToDbVal( true ) + "')";
+            }
             Collection<OrderByClause> orderBy = new Collection<OrderByClause>()
                 {
                     new OrderByClause( "display_row", CswEnumOrderByType.Ascending ),

@@ -82,8 +82,11 @@ namespace NbtWebApp.WebSvc.Logic.Layout
         public static void UpdateTabOrder( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtTabMoveRequest Req )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            CswNbtObjClassDesignNodeTypeTab Tab = NbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey("nodetype_tabset", Req.TabId) );
+            CswNbtObjClassDesignNodeTypeTab Tab = NbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_tabset", Req.TabId ) );
             Tab.UpdateTabPosition( Req.NewPosition );
+
+            NbtResources.MetaData.refreshAll();
+            Tab.RelationalNodeTypeTab.getNodeType().DesignNode.RecalculateQuestionNumbers();
         }
 
     }
