@@ -12,6 +12,8 @@
 
         var cswPublic = {};
 
+        cswPublic.activeTabId = 0;
+
         cswPublic.render = function (div) {
             cswPrivate.getTabsAjax = Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getTabs',
@@ -37,7 +39,7 @@
                                 title: tabData.name,
                                 listeners: {
                                     activate: function (tab) {
-                                        cswPrivate.activeTabId = tab.id;
+                                        cswPublic.activeTabId = tab.id;
                                         cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
                                         if (!cswPrivate.renderedTabs[tab.id]) {
                                             cswPrivate.renderedTabs[tab.id] = tab;

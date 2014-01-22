@@ -13,8 +13,7 @@
             identityTabId: '',
             Layout: 'Edit',
             onClose: function () { },
-            sidebar: {},
-            activeTabId: ''
+            sidebar: {}
         };
         if (options) {
             Csw.extend(cswPrivate, options);
@@ -22,6 +21,7 @@
 
         var cswPublic = {};
         var renderedTabs = {};
+        var layout = null;
 
         (function _pre() {
 
@@ -205,7 +205,7 @@
                                         cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
                                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                                         });
-                                        cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
+                                        cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
                                         confirm.close();
                                     },
                                     onNo: function () {
@@ -362,7 +362,7 @@
         };
 
         cswPublic.getActiveTabId = function () {
-            return cswPrivate.activeTabId;
+            return layout.activeTabId;
         };
 
         cswPublic.getActiveLayout = function () {
@@ -391,12 +391,11 @@
                 onChange: function (val) {
                     cswPrivate.Layout = val;
                     cswPublic.init();
-                    cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, cswPrivate.activeTabId);
+                    cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
                 }
             });
             cswPrivate.contentDiv = cswParent.div();
 
-            var layout = null;
             if (cswPrivate.Layout === 'Edit') {
                 layout = Csw.layouts.editNode(cswPrivate);
             } else if (cswPrivate.Layout === 'Add') {
