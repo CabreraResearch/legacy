@@ -5,7 +5,7 @@
         extend: 'Ext.panel.Panel',
         title: 'Design Mode',
         width: 290,
-        height: 670,
+        height: 655,
         collapsible: true,
         collapseDirection: 'left',
         collapsed: true,
@@ -76,6 +76,7 @@
                 copyBtn: 'Copy',
                 deleteBtn: 'Delete',
                 newBtn: 'New',
+                loadBtn: 'Load',
                 addExistingBtn: 'Add Existing Prop',
                 addNewBtn: 'Add New Prop'
             };
@@ -150,18 +151,21 @@
                 var copyBtnCell = btnTbl.cell(1, 1).empty();
                 var deleteBtnCell = btnTbl.cell(1, 2).empty();
                 var newBtnCell = btnTbl.cell(1, 3).empty();
+                var loadBtnCell = btnTbl.cell(1, 4).empty();
 
                 cswPrivate.makeButton(buttons.copyBtn, copyBtnCell);
                 cswPrivate.makeButton(buttons.deleteBtn, deleteBtnCell);
                 cswPrivate.makeButton(buttons.newBtn, newBtnCell);
                 //#endregion Buttons
                 
+                //#region Load NodeType
+                
                 cswPublic.componentItem.br();
 
                 var NTSelectTable = cswPublic.componentItem.table({
                     width: '100%',
                     cellalign: 'center'
-                });
+                }).hide();
                 
                 NTSelectTable.cell(1,1).div({ text: '&nbsp;Load: ', cssclass: 'CswDesignMode_NTName' });
 
@@ -172,8 +176,18 @@
                         cswPrivate.createTempNode(val);
                     }
                 });
+                
+                cswPrivate.buttons[buttons.loadBtn] = loadBtnCell.buttonExt({
+                    enabledText: buttons.loadBtn,
+                    disableOnClick: false,
+                    onClick: function () {
+                        NTSelectTable.show();
+                    }
+                });
 
                 cswPublic.componentItem.br();
+                
+                //#endregion Load NodeType
 
                 //#region Edit NodeType Form
 
