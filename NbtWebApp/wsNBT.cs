@@ -2910,10 +2910,11 @@ namespace ChemSW.Nbt.WebServices
                     if( null != RealNodePk )
                     {
                         CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                        CswPrimaryKey NewNodePk = ws.CopyNode( RealNodePk );
-                        if( NewNodePk != null )
+                        CswNbtNode NewNode = ws.CopyNode( RealNodePk );
+                        if( NewNode != null )
                         {
-                            ReturnVal["NewNodeId"] = NewNodePk.ToString();
+                            ReturnVal["NewNodeId"] = NewNode.NodeId.ToString();
+                            ReturnVal["NewRelationalId"] = NewNode.RelationalId.PrimaryKey.ToString();
                         }
                         else
                         {

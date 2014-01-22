@@ -83,6 +83,45 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
+        [Description( "Add a new tab to the given nodetype" )]
+        public CswNbtTabAddReturn createNewTab( CswNbtTabAddRequest Request )
+        {
+            CswNbtTabAddReturn Ret = new CswNbtTabAddReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtTabAddReturn, CswNbtTabAddRequest>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.CreateNewTab,
+                ParamObj : Request
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Remove a tab from the given edit layout" )]
+        public CswWebSvcReturn deleteTab( int TabId )
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswWebSvcReturn, int>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.DeleteTab,
+                ParamObj : TabId
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
         [Description( "" )]
         public CswNbtLayoutDataReturn removePropsFromLayout( CswNbtNodeTypeLayout LayoutData )
         {

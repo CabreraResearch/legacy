@@ -17,6 +17,17 @@
             cswPrivate.loadView = null; // function() { }
             cswPrivate.preferredSuppliers = '';
         }());
+        
+        function setVendorOpts()
+        {
+            Csw.ajaxWcf.post({
+                urlMethod: 'ChemCatCentral/GetVendorOptions',
+                success: function (data) {
+                    cswPrivate.vendorOptions.empty();
+                    cswPrivate.vendorOptions.setOptions(cswPrivate.vendorOptions.makeOptions(data.VendorListOptions));
+                }
+            });
+        }
 
         return (function () {
             'use strict';
@@ -62,12 +73,7 @@
                             }
                         });
 
-                        Csw.ajaxWcf.post({
-                            urlMethod: 'ChemCatCentral/GetVendorOptions',
-                            success: function (data) {
-                                cswPrivate.vendorOptions.setOptions(cswPrivate.vendorOptions.makeOptions(data.VendorListOptions));
-                            }
-                        });
+                        setVendorOpts();
 
                     };//function onOpen() 
                     
@@ -198,12 +204,7 @@
                                 Csw.dialogs.c3PrefSuppliersDialog({
                                     onSave: function(selected) {
                                         //reload the source select
-                                        Csw.ajaxWcf.post({
-                                            urlMethod: 'ChemCatCentral/GetVendorOptions',
-                                            success: function (data) {
-                                                cswPrivate.vendorOptions.setOptions(cswPrivate.vendorOptions.makeOptions(data.VendorListOptions));
-                                            }
-                                        });
+                                        setVendorOpts();
                                     }
                                 });
                             }

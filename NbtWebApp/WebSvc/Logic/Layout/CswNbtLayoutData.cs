@@ -130,4 +130,30 @@ namespace NbtWebApp.WebSvc.Logic.Layout
         [DataMember]
         public int NewPosition { get; set; }
     }
+
+    [DataContract]
+    public class CswNbtTabAddRequest
+    {
+        [DataMember]
+        public int NodetypeId { get; set; }
+
+        [DataMember]
+        public string Name { get; set; }
+
+        [DataMember]
+        public int Order { get; set; }
+    }
+
+    [DataContract]
+    public class CswNbtTabAddReturn : CswWebSvcReturn
+    {
+        [DataMember]
+        public TabAddPayload Data = new TabAddPayload();
+
+        public class TabAddPayload
+        {
+            [DataMember]
+            public int TabId { get; set; }
+        }
+    }
 }

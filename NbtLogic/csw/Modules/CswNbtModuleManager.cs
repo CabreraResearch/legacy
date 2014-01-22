@@ -159,29 +159,31 @@ namespace ChemSW.Nbt
                 initModules();
             }
 
+            bool ModuleEnabled = false;
+
             CswTableUpdate ModuleUpdate = _CswNbtResources.makeCswTableUpdate( "ModuleManager.UpdateModule", "modules" );
             DataTable ModulesTbl = ModuleUpdate.getTable( "moduleid", moduleid );
             foreach( DataRow row in ModulesTbl.Rows ) //should only ever get one row
             {
-                bool ModuleEnabled = CswConvert.ToBoolean( row["enabled"] );
-                if( Enable && false == ModuleEnabled )
-                {
-                    row["enabled"] = CswConvert.ToDbVal( true );
-                    _ModuleRules[Module].Enabled = true;
-                    _ModuleRules[Module].Enable();
-                }
-                else if( false == Enable && ModuleEnabled )
-                {
-                    row["enabled"] = CswConvert.ToDbVal( false );
-                    _ModuleRules[Module].Enabled = false;
-                    _ModuleRules[Module].Disable();
-                }
+                ModuleEnabled = CswConvert.ToBoolean( row["enabled"] );
+                row["enabled"] = CswConvert.ToDbVal( Enable );
+                _ModuleRules[Module].Enabled = Enable;
             }
             ModuleUpdate.update( ModulesTbl );
 
+            //Case 31546 - if we're DISABLING a module, we have to call Disable() BEFORE reseting available metadata or metadata objects hidden by the module will not be fetchable in the toggle events
+            if( false == Enable && ModuleEnabled )
+            {
+                _ModuleRules[Module].Disable();
+            }
             _CswNbtResources.MetaData.ResetEnabledNodeTypes();
             _CswNbtResources.finalize();
             _CswNbtResources.MetaData.refreshAll();
+            //Case 31546 - if we ENABLING a module, we have to call Enable() AFTER reseting available metadata or modules won't be able to find their child metadata objects
+            if( Enable && false == ModuleEnabled )
+            {
+                _ModuleRules[Module].Enable();
+            }
 
             //We have to clear Session data or the view selects recent views will have non-accesible views and break
             _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );

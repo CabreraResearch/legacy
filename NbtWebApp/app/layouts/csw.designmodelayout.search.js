@@ -5,6 +5,8 @@
         Csw.extend(cswPrivate, cswHelpers);
 
         var cswPublic = {};
+        
+        cswPublic.activeTabId = 0;
 
         cswPublic.render = function (div) {
             var searchTbl = div.table();
