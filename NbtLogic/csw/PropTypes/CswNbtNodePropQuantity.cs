@@ -344,6 +344,7 @@ namespace ChemSW.Nbt.PropTypes
                         if( null == _View )
                         {
                             _View = DefaultView;
+                            _View.saveNew( this.PropName, CswEnumNbtViewVisibility.Property );
                         }
                         else
                         {
