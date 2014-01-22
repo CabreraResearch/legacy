@@ -993,7 +993,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private bool _canEditLayout()
         {
-            return ( _CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() );
+            return ( _CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) ); //|| _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }
 
         public JObject getObjectClassButtons( string ObjectClassId )

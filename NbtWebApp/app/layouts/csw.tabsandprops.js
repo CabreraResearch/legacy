@@ -860,6 +860,12 @@
                     cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                 }
 
+                formTable.cell(1, 2).favoriteButton({
+                    name: cswPrivate.name + '_favBtn',
+                    nodeid: cswPrivate.tabState.nodeid,
+                    isFavorite: cswPrivate.tabState.isFavorite,
+                });
+                    
                 if (Csw.bool(cswPrivate.tabState.Config)) {
                     cswPrivate.layoutTable.configOn();
                 } else if (Csw.isNullOrEmpty(cswPrivate.tabState.date) &&
@@ -884,12 +890,6 @@
                     //    }
                     //};
 
-                    formTable.cell(1, 2).favoriteButton({
-                        name: cswPrivate.name + '_favBtn',
-                        nodeid: cswPrivate.tabState.nodeid,
-                        isFavorite: cswPrivate.tabState.isFavorite,
-                    });
-                    
                     /* Show the 'fake' config button to open the dialog */
                     cswPrivate.tabState.configIcn = formTable.cell(1, 3).icon({
                         name: cswPrivate.name + 'configbtn',
