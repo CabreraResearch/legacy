@@ -88,14 +88,16 @@
                 var tools = [];
                 if (params.showRearrangeButton) {
                     tools.push({
-                        type: 'restore',
+                        xtype: 'button',
+                        text: 'Rearrange Properties',
                         tooltip: 'Rearrange sub properties',
                         handler: params.onRearrange
                     });
                 }
                 if (params.showConfigureButton) {
                     tools.push({
-                        type: 'gear',
+                        xtype: 'button',
+                        text: 'Configure Property',
                         tooltip: 'Configure property',
                         handler: function () {
                             params.onConfigure(extRenderTo);
@@ -104,7 +106,8 @@
                 }
                 if (params.showCloseButton) {
                     tools.push({
-                        type: 'close',
+                        xtype: 'button',
+                        text: 'Remove From Layout',
                         tooltip: 'Remove from layout',
                         handler: function () {
                             params.onClose(extRenderTo);

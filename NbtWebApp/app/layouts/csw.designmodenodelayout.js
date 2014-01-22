@@ -169,10 +169,10 @@
                         },
                         onRearrange: function () {
                             if (prop.hassubprops) { //we render the sub properties in a re-arrangable dialog
-                                cswPrivate.arrangeDialog(node, prop.subprops, tabid, 'Configure ' + prop.name + ' Subprops');
+                                cswPrivate.arrangeDialog(node, prop.subprops, tabid, 'Configure ' + prop.name + ' Subprops', style);
                             } else if (false === Csw.isNullOrEmpty(prop.tabgroup)) { //render all the grouped properties in a re-arrangable dialog
                                 var groupProps = cswPrivate.getPropsInGroup(prop.tabgroup, properties);
-                                cswPrivate.arrangeDialog(node, groupProps, tabid, 'Configure ' + prop.tabgroup + ' Props');
+                                cswPrivate.arrangeDialog(node, groupProps, tabid, 'Configure ' + prop.tabgroup + ' Props', style);
                             }
                         },
                         onConfigure: cswPrivate.onConfigure,
@@ -258,7 +258,7 @@
             return groupProps;
         };
 
-        cswPrivate.arrangeDialog = function (node, props, tabid, title) {
+        cswPrivate.arrangeDialog = function (node, props, tabid, title, style) {
             var seenProps = {};
 
             var rearrangeGroupPropDialog = Csw.layouts.dialog({
@@ -267,7 +267,8 @@
                 height: 400,
                 onOpen: function () {
                     var groupDragPanel = Csw.composites.draggablepanel(rearrangeGroupPropDialog.div, {
-                        columns: 1 //We force all grouped props to be in a single column
+                        columns: 1, //We force all grouped props to be in a single column
+                        bodyStyle: style
                     });
 
                     groupDragPanel.allowDrag(false); //TODO: enable drag for sub/tabgroup props
