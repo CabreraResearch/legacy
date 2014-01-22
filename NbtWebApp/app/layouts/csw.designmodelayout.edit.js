@@ -10,6 +10,13 @@
         };
         Csw.extend(cswPrivate, cswHelpers);
 
+        cswPrivate.tabStyle = {
+            background: '#F2F5F7'
+        };
+        cswPrivate.identityTabStyle = {
+            background: '#E5F0FF'
+        };
+
         var cswPublic = {};
 
         cswPublic.render = function (div) {
@@ -41,7 +48,7 @@
                                         cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
                                         if (!cswPrivate.renderedTabs[tab.id]) {
                                             cswPrivate.renderedTabs[tab.id] = tab;
-                                            cswPrivate.renderTab(tab.id, tab.id);
+                                            cswPrivate.renderTab(tab.id, tab.id, cswPrivate.tabStyle);
                                         }
                                     }
                                 },//listeners
@@ -64,15 +71,21 @@
 
                     window.Ext.create('Ext.panel.Panel', {
                         renderTo: contentDiv.getId(),
+                        bodyStyle: cswPrivate.identityTabStyle,
                         layout: {
                             type: 'vbox',
                             align: 'stretch'    // Each takes up full width
                         },
                         items: [{
                             id: identityTabId,
-                            xtype: 'panel'
+                            xtype: 'panel',
+                            border: 0,
+                            bodyStyle: cswPrivate.identityTabStyle
                         }, {
                             id: tabPanelId,
+                            border: 0,
+                            //bodyStyle: cswPrivate.identityTabStyle,
+                            padding: '0 10 10 10',
                             xtype: 'tabpanel',
                             plugins: Ext.create('Ext.ux.TabReorderer', {
                                 listeners: {
@@ -96,7 +109,7 @@
                         }]
                     });
 
-                    cswPrivate.renderTab(identityTabId, cswPrivate.identityTabId);
+                    cswPrivate.renderTab(identityTabId, cswPrivate.identityTabId, cswPrivate.identityTabStyle);
 
                 }
             });

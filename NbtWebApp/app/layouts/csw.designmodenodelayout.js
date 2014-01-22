@@ -49,7 +49,7 @@
             return cols;
         };
 
-        cswPrivate.renderTab = function (extid, tabid) {
+        cswPrivate.renderTab = function (extid, tabid, style) {
             Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getProps',
                 data: {
@@ -68,7 +68,7 @@
                 },
                 success: function (data) {
 
-                    cswPrivate.renderProps(data.node, data.properties, extid, tabid, true);
+                    cswPrivate.renderProps(data.node, data.properties, extid, tabid, true, style);
 
                 } // success{}
             }); // ajax
@@ -101,7 +101,7 @@
 
         cswPrivate.renderPropDiv = function (tabid, node, prop, div) {
             var propTbl = div.table();
-            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px', 'width': '150px', 'text-align': 'right' });
+            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px', 'width': '230px', 'text-align': 'right' });
             var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
 
             labelDiv.setLabelText(prop.name, prop.required, false); //in design mode, readonly better always be true, but we want required props to have the "*"
@@ -110,14 +110,15 @@
             Csw.nbt.property(fieldOpt, {});
         };
 
-        cswPrivate.renderProps = function (node, properties, extid, tabid, showAddColBtn) {
+        cswPrivate.renderProps = function (node, properties, extid, tabid, showAddColBtn, style) {
             var cols = cswPrivate.howManyCols(properties);
             var propsDiv = cswPrivate.makeDiv(extid);
 
             var dragPanel = Csw.composites.draggablepanel(propsDiv, {
                 columns: cols,
                 showAddColumnButton: showAddColBtn,
-                border: 0
+                border: 0,
+                bodyStyle: style
             });
             dragPanel.allowDrag(false);
 
@@ -268,7 +269,7 @@
                 onOpen: function () {
                     var groupDragPanel = Csw.composites.draggablepanel(rearrangeGroupPropDialog.div, {
                         columns: 1, //We force all grouped props to be in a single column
-                        showAddColumnButton: false,
+                        showAddColumnButton: false
                     });
 
                     groupDragPanel.allowDrag(false); //TODO: enable drag for sub/tabgroup props

@@ -53,6 +53,7 @@
                 renderTo: myDiv.getId(),
                 id: dragPanelCmpId,
                 border: 0,
+                bodyStyle: cswPrivate.bodyStyle,
                 items: _columns
             });
             var dragPanelCmp = window.Ext.getCmp(dragPanelCmpId);
@@ -98,7 +99,7 @@
                     tools.push({
                         type: 'gear',
                         tooltip: 'Configure property',
-                        handler: function() {
+                        handler: function () {
                             params.onConfigure(extRenderTo);
                         }
                     });
@@ -117,12 +118,17 @@
                 var extRenderTo = extCol.add({
                     id: params.id,
                     tools: tools,
+                    bodyStyle: cswPrivate.bodyStyle,
+                    frame: false,
+                    border: 0,
                     listeners: {
                         render: function (c) {
                             c.body.on('click', function () {
                                 Csw.iterate(_draggables, function (draggable) {
                                     draggable.header.hide();
+                                    draggable.getEl().applyStyles('border: 0px');
                                 });
+                                extRenderTo.getEl().applyStyles('border: 1px solid #BDD3F0');
                                 extRenderTo.header.show();
                             });
                         },
