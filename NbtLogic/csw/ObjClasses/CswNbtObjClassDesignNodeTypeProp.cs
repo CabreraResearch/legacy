@@ -33,6 +33,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ServerManaged = CswEnumNbtPropertyAttributeName.ServerManaged; // "Server Managed";
             public const string Unique = CswEnumNbtPropertyAttributeName.Unique; // "Unique";
             public const string UseNumbering = CswEnumNbtPropertyAttributeName.UseNumbering; // "Use Numbering";
+            public const string QuestionNo = CswEnumNbtPropertyAttributeName.QuestionNo;
+            public const string SubQuestionNo = CswEnumNbtPropertyAttributeName.SubQuestionNo;
         }
 
         private const string PropRefValue_OCP_Suffix = " (by Object Class)";
@@ -848,9 +850,11 @@ namespace ChemSW.Nbt.ObjClasses
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Edit );
         }
 
+        public CswNbtNodePropNumber QuestionNo { get { return ( _CswNbtNode.Properties[PropertyName.QuestionNo] ); } }
         public CswNbtNodePropLogical ReadOnly { get { return ( _CswNbtNode.Properties[PropertyName.ReadOnly] ); } }
         public CswNbtNodePropLogical Required { get { return ( _CswNbtNode.Properties[PropertyName.Required] ); } }
         public CswNbtNodePropLogical ServerManaged { get { return ( _CswNbtNode.Properties[PropertyName.ServerManaged] ); } }
+        public CswNbtNodePropNumber SubQuestionNo { get { return ( _CswNbtNode.Properties[PropertyName.SubQuestionNo] ); } }
         public CswNbtNodePropLogical Unique { get { return ( _CswNbtNode.Properties[PropertyName.Unique] ); } }
         public CswNbtNodePropLogical UseNumbering { get { return ( _CswNbtNode.Properties[PropertyName.UseNumbering] ); } }
 
