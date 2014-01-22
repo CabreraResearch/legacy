@@ -304,7 +304,8 @@
         calendarstack: 80,
         envelopes: 81,
         personclock: 82,
-        starsolid: 83
+        starsolid: 83,
+        sequence: 84
     });
 
 
