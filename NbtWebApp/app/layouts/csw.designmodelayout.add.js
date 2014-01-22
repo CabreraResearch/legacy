@@ -8,6 +8,8 @@
         cswPrivate.bodyStyle = {
             background: '#F8F9FB'
         };
+        
+        cswPublic.activeTabId = 0;
 
         cswPublic.render = function (div) {
             div.div({ cssclass: 'CswIdentityTabHeader' }).append('Add Node Layout');

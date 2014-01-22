@@ -76,5 +76,19 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             Tab.UpdateTabPosition( Req.NewPosition );
         }
 
+        public static void CreateNewTab( ICswResources CswResources, CswNbtTabAddReturn Ret, CswNbtTabAddRequest Req )
+        {
+
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtMetaDataNodeTypeTab Tab =  NbtResources.MetaData.makeNewTabNew( NbtResources.MetaData.getNodeType( Req.NodetypeId ), Req.Name, Req.Order );
+            Ret.Data.TabId = Tab.TabId;
+        }
+
+        public static void DeleteTab( ICswResources CswResources, CswWebSvcReturn Ret, int TabId )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            NbtResources.MetaData.getNodeTypeTab( TabId ).DesignNode.Node.delete();
+        }
     }
 }

@@ -156,21 +156,20 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private Int32 _SearchThreshold = 100;
 
-        public CswPrimaryKey CopyNode( CswPrimaryKey NodePk )
+        public CswNbtNode CopyNode( CswPrimaryKey NodePk )
         {
-            CswPrimaryKey RetKey = null;
+            CswNbtNode NewNode = null;
             CswNbtNode OriginalNode = _CswNbtResources.Nodes.GetNode( NodePk );
 
             if( null != OriginalNode )
             {
-                CswNbtNode NewNode = OriginalNode.ObjClass.CopyNode();
+                NewNode = OriginalNode.ObjClass.CopyNode();
                 if( NewNode != null && null != _CswNbtStatisticsEvents )
                 {
                     _CswNbtStatisticsEvents.OnCopyNode( OriginalNode, NewNode );
-                    RetKey = NewNode.NodeId;
                 }
             }
-            return RetKey;
+            return NewNode;
         }
 
         public bool DeleteNode( CswPrimaryKey NodePk, out string NodeName, bool DeleteAllRequiredRelatedNodes = false )

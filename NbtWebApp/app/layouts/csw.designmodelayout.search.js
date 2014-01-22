@@ -8,6 +8,8 @@
         cswPrivate.bodyStyle = {
             background: '#F8F9FB'
         };
+        
+        cswPublic.activeTabId = 0;
 
         cswPublic.render = function (div) {
             var searchTbl = div.table();
