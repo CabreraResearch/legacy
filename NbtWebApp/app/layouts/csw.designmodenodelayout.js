@@ -28,7 +28,7 @@
             cswParent = cswParent || Csw.main.rightDiv;
 
         })();
-        
+
         cswPrivate.makeDiv = function (extId) {
             var tabPanel = window.Ext.getCmp(extId);
             var cswEl = Csw.domNode({
@@ -289,7 +289,7 @@
                                 subExtEl.data = [groupProp];
                                 cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
                             },
-                            onConfigure: function(draggable) {
+                            onConfigure: function (draggable) {
                                 cswPrivate.onConfigure(draggable, rearrangeGroupPropDialog.close);
                             },
                             onDrop: function () {
@@ -327,7 +327,7 @@
                 data: {
                     layout: cswPrivate.Layout,
                     nodetypeid: node.nodetypeid,
-                    tabid: tabid,
+                    tabid: (false === Csw.isNullOrEmpty(tabid) ? tabid : Csw.int32MinVal),
                     props: propsReq
                 },
                 success: function (response) {
@@ -342,7 +342,7 @@
                 data: {
                     layout: cswPrivate.Layout,
                     nodetypeid: node.nodetypeid,
-                    tabid: tabid,
+                    tabid: (false === Csw.isNullOrEmpty(tabid) ? tabid : Csw.int32MinVal),
                     props: props
                 },
                 success: function (response) {
@@ -424,7 +424,7 @@
         //#endregion Public
 
         (function _post() {
-            
+
         })();
 
         return cswPublic;
