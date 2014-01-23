@@ -129,11 +129,11 @@
             Csw.iterate(properties, function (prop) {
                 //for (var propIdx in properties) {
                 //var prop = properties[propIdx];
-                if (!seenProps[prop.id]) {
-                    seenProps[prop.id] = prop;
+                if (!seenProps[tabid + '_' + prop.id]) {
+                    seenProps[tabid + '_' + prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
                     dragPanel.addItemToCol(realCol, {
-                        id: prop.id,
+                        id: tabid + '_' + prop.id,
                         showRearrangeButton: (prop.hassubprops || false === Csw.isNullOrEmpty(prop.tabgroup)),
                         showConfigureButton: Csw.isNullOrEmpty(prop.tabgroup),
                         render: function (extEl, cswEl) {
@@ -156,7 +156,7 @@
 
                                 for (var groupIdx in groupProps) {
                                     var groupProp = groupProps[groupIdx];
-                                    seenProps[groupProp.id] = groupProp;
+                                    seenProps[tabid + '_' + groupProp.id] = groupProp;
                                     cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);
                                     extEl.data.push(groupProp);
                                 }
@@ -165,7 +165,7 @@
                             if (prop.hassubprops) {
                                 for (var subPropIdx in prop.subprops) {
                                     var subProp = prop.subprops[subPropIdx];
-                                    seenProps[subProp.id] = subProp;
+                                    seenProps[tabid + '_' + subProp.id] = subProp;
                                     cswPrivate.renderPropDiv(tabid, node, subProp, subPropsDiv);
                                 } //for subProp in subProps
                                 //subDragPanel.doLayout();
@@ -182,10 +182,10 @@
                         onConfigure: cswPrivate.onConfigure,
                         onDrop: function (ext, col, row) {
                             window.Ext.getCmp(extid).doLayout();
-                            cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
+                            cswPrivate.saveLayout(dragPanel, node, tabid);
                         },
                         onClose: function (draggable) {
-                            cswPrivate.onRemove(dragPanel, draggable, realCol, tabid, node, seenProps);
+                            cswPrivate.onRemove(dragPanel, draggable, realCol, tabid, node);
                         }
                     });
                 } //if (!seenProps[prop.id)
@@ -203,7 +203,7 @@
             }, 2000);
         };
 
-        cswPrivate.onRemove = function (dragPanel, draggable, col, tabid, node, props) {
+        cswPrivate.onRemove = function (dragPanel, draggable, col, tabid, node) {
             var canRemove = true;
             var doomedPropsCollection = [];
             Csw.iterate(draggable.data, function (doomedProp) {
@@ -225,9 +225,7 @@
                     width: 300,
                     onYes: function () {
                         dragPanel.removeDraggableFromCol(col, draggable.id);
-                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
-                            cswPrivate.saveLayout(dragPanel, node, props, tabid);
-                        });
+                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid);
                         cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
                         confirm.close();
                     },
@@ -309,10 +307,10 @@
                                 cswPrivate.onConfigure(draggable, rearrangeGroupPropDialog.close);
                             },
                             onDrop: function () {
-                                cswPrivate.saveLayout(groupDragPanel, node, seenProps, tabid);
+                                cswPrivate.saveLayout(groupDragPanel, node, tabid);
                             },
                             onClose: function (draggable) {
-                                cswPrivate.onRemove(groupDragPanel, draggable, 0, tabid, node, props);
+                                cswPrivate.onRemove(groupDragPanel, draggable, 0, tabid, node);
                                 rearrangeGroupPropDialog.close();
                                 cswPublic.init();
                             }
@@ -324,7 +322,7 @@
             rearrangeGroupPropDialog.open();
         };
 
-        cswPrivate.saveLayout = function (dragPanel, node, props, tabid) {
+        cswPrivate.saveLayout = function (dragPanel, node, tabid) {
             var propsReq = [];
             var numCols = dragPanel.getNumCols();
             for (var i = 0; i < numCols; i++) {
