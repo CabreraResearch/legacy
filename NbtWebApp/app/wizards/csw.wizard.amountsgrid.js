@@ -303,7 +303,7 @@
                                         },
                                         allowAdd: true
                                     });
-                                    onSizeChange();
+                                    //onSizeChange();
                                     break;
                                 case cswPrivate.config.quantityName:
                                     cswPublic.rows[rowid].qtyCell = cswCell;
