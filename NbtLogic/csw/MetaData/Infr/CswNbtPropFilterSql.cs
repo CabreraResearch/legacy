@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.MetaData
             if( CswNbtSubField == null )
                 throw ( new CswDniException( "CswNbtPropFilterSql.renderViewPropFilter() got a null CswNbtSubField for view: " + CswNbtViewPropertyFilterIn.View.ViewName ) );
 
-            if( !CswNbtSubField.SupportedFilterModes.Contains( CswNbtViewPropertyFilterIn.FilterMode ) )
+            if( false == CswNbtSubField.SupportedFilterModes.Contains( CswNbtViewPropertyFilterIn.FilterMode ) )
                 throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for sub field: " + CswNbtSubField.Name + "; view name is: " + CswNbtViewPropertyFilterIn.View.ViewName ) );
 
             string Column = CswNbtSubField.Column.ToString();
@@ -157,8 +157,12 @@ namespace ChemSW.Nbt.MetaData
                     {
                         //ReturnVal = NonNumericValueColumn + " in( " + CasePrepend + "'" + SafeValue + "'" + CaseAppend + " ) ";
                         // see case 30165
-                        ReturnVal = NonNumericValueColumn + " in(:" + ParameterName + ") ";
-                        ParameterCollection.Add( ParameterName, CswNbtViewPropertyFilterIn.Value );
+                        
+                        //ReturnVal = NonNumericValueColumn + " in(:" + ParameterName + ") ";
+                        //ParameterCollection.Add( ParameterName, CswNbtViewPropertyFilterIn.Value );
+                        // see case 31330
+                        
+                        ReturnVal = NonNumericValueColumn + " in(" + CswNbtViewPropertyFilterIn.Value + ") ";
                     }
                     else
                     {
