@@ -121,13 +121,13 @@ namespace ChemSW.Nbt.Batch
                                             BatchNode.appendToLog( "The operation " + operation + "doesn't exist." );
                                             break;
                                     } //switch (operation)
-
-                                    BatchData.Operations.RemoveAt( 0 );
                                 }
                                 else
                                 {
                                     BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to edit a Container." );
                                 }
+
+                                BatchData.Operations.RemoveAt( 0 );
 
                             } //forloop
 

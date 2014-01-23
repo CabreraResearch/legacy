@@ -185,44 +185,9 @@
                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                         },
                         onClose: function (draggable) {
-                            var canRemove = true;
-                            var doomedPropsCollection = [];
-                            Csw.iterate(draggable.data, function (doomedProp) {
-                                doomedPropsCollection.push({
-                                    nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
-                                    displaycol: Csw.int32MinVal,
-                                    displayrow: Csw.int32MinVal
-                                });
-                                if (doomedProp.required && 'Add' === cswPrivate.Layout) {
-                                    canRemove = false;
-                                }
-                            });
+                            cswPrivate.onRemove(dragPanel, draggable, realCol, tabid, node, seenProps);
 
-                            if (canRemove) {
-                                var confirm = Csw.dialogs.confirmDialog({
-                                    title: 'Remove Property From Layout',
-                                    message: 'Are you sure you want to remove this property from the layout?',
-                                    height: 200,
-                                    width: 300,
-                                    onYes: function () {
-                                        dragPanel.removeDraggableFromCol(realCol, draggable.id);
-                                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
-                                            cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
-                                        });
-                                        cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
-                                        confirm.close();
-                                    },
-                                    onNo: function () {
-                                        confirm.close();
-                                    }
-                                });
-                            } else {
-                                var alert = Csw.dialogs.alert({
-                                    title: 'Error removing property',
-                                    message: 'Cannot remove required properties from the Add layout'
-                                });
-                                alert.open();
-                            }
+
                         }
                     });
                 } //if (!seenProps[prop.id)
@@ -238,6 +203,47 @@
                 dragPanel.doLayout(); //fix our layout
                 window.Ext.getCmp(extid).doLayout();
             }, 2000);
+        };
+
+        cswPrivate.onRemove = function (dragPanel, draggable, col, tabid, node, props) {
+            var canRemove = true;
+            var doomedPropsCollection = [];
+            Csw.iterate(draggable.data, function (doomedProp) {
+                doomedPropsCollection.push({
+                    nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
+                    displaycol: Csw.int32MinVal,
+                    displayrow: Csw.int32MinVal
+                });
+                if (doomedProp.required && 'Add' === cswPrivate.Layout) {
+                    canRemove = false;
+                }
+            });
+
+            if (canRemove) {
+                var confirm = Csw.dialogs.confirmDialog({
+                    title: 'Remove Property From Layout',
+                    message: 'Are you sure you want to remove this property from the layout?',
+                    height: 200,
+                    width: 300,
+                    onYes: function () {
+                        dragPanel.removeDraggableFromCol(col, draggable.id);
+                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
+                            cswPrivate.saveLayout(dragPanel, node, props, tabid);
+                        });
+                        cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
+                        confirm.close();
+                    },
+                    onNo: function () {
+                        confirm.close();
+                    }
+                });
+            } else {
+                var alert = Csw.dialogs.alert({
+                    title: 'Error removing property',
+                    message: 'Cannot remove required properties from the Add layout'
+                });
+                alert.open();
+            }
         };
 
         cswPrivate.onConfigure = function (draggable, onSave) {
@@ -270,7 +276,15 @@
                 width: 800,
                 height: 400,
                 onOpen: function () {
-                    var groupDragPanel = Csw.composites.draggablepanel(rearrangeGroupPropDialog.div, {
+
+                    var div = rearrangeGroupPropDialog.div;
+                    if (false === Csw.isNullOrEmpty(props[Object.keys(props)[0]].tabgroup)) {
+                        var fieldSet = div.fieldSet();
+                        fieldSet.legend({ value: props[Object.keys(props)[0]].tabgroup });
+                        div = fieldSet.div();
+                    }
+
+                    var groupDragPanel = Csw.composites.draggablepanel(div, {
                         columns: 1, //We force all grouped props to be in a single column
                         bodyStyle: style
                     });
@@ -285,7 +299,7 @@
                             id: 'group_' + groupProp.id,
                             showRearrangeButton: false,
                             showConfigureButton: true,
-                            showCloseButton: false,
+                            showCloseButton: true,
                             render: function (subExtEl, subCswEl) {
                                 var propTbl = subCswEl.table();
                                 var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
@@ -298,6 +312,9 @@
                             },
                             onDrop: function () {
                                 cswPrivate.saveLayout(groupDragPanel, node, seenProps, tabid);
+                            },
+                            onClose: function (draggable) {
+                                cswPrivate.onRemove(groupDragPanel, draggable, 0, tabid, node, props);
                             }
                         });
                     } //for subProp in subProps
