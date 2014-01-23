@@ -186,8 +186,6 @@
                         },
                         onClose: function (draggable) {
                             cswPrivate.onRemove(dragPanel, draggable, realCol, tabid, node, seenProps);
-
-
                         }
                     });
                 } //if (!seenProps[prop.id)
@@ -315,6 +313,8 @@
                             },
                             onClose: function (draggable) {
                                 cswPrivate.onRemove(groupDragPanel, draggable, 0, tabid, node, props);
+                                rearrangeGroupPropDialog.close();
+                                cswPublic.init();
                             }
                         });
                     } //for subProp in subProps
