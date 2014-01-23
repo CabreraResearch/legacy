@@ -87,7 +87,7 @@
                     nodenames.push(row.nodename);
                 });
 
-                $.CswDialog('EditNodeDialog', {
+                Csw.dialogs.editnode({
                     currentNodeId: firstNodeId,
                     currentNodeKey: firstNodeKey,
                     selectedNodeIds: nodeids,
@@ -101,6 +101,7 @@
                     //},
                     onRefresh: cswPrivate.onRefresh
                 });
+                
             }, // onEdit
             onDelete: function (rows) {
                 // this works for both Multi-edit and regular

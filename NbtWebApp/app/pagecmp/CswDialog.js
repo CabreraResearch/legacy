@@ -458,121 +458,6 @@
 
             openDialog(div, 900, 600, _onclose, 'Configure Layouts', cswDlgPrivate.onOpen);
         }, // EditLayoutDialog
-        EditNodeDialog: function (options) {
-            'use strict';
-            var cswDlgPrivate = {
-                selectedNodeIds: Csw.delimitedString(),
-                selectedNodeKeys: Csw.delimitedString(),
-                currentNodeId: '',
-                currentNodeKey: '',
-                nodenames: [],
-                Multi: false,
-                ReadOnly: false,
-                filterToPropId: '',
-                title: 'Edit',
-                onEditNode: null, // function (nodeid, nodekey) { },
-                onEditView: null, // function (viewid) {}
-                onRefresh: null,
-                onClose: null,
-                onAfterButtonClick: null,
-                date: '', // viewing audit records
-                editMode: Csw.enums.editMode.EditInPopup
-            };
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
-            }
-            Csw.extend(cswDlgPrivate, options);
-
-            //Case 31402 - set cookies to this nodeid and store the previous ones
-            var prevNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
-            var prevNodeKey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
-            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, cswDlgPrivate.currentNodeId);
-            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, cswDlgPrivate.currentNodeKey);
-
-            var doRefresh = true;
-            var cswPublic = {
-                closed: false,
-                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
-                close: function () {
-                    if (false === cswPublic.closed && doRefresh) {
-                        //Case 31402 - when we close the dialog, set the cookies to the node on the main screen
-                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, prevNodeId);
-                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, prevNodeKey);
-
-                        cswPublic.closed = true;
-                        //cswPublic.tabsAndProps.refresh(null, null);
-                        cswPublic.tabsAndProps.tearDown();
-                        Csw.tryExec(cswDlgPrivate.onClose);
-                    }
-                }
-            };
-
-            var title = Csw.string(cswDlgPrivate.title);
-            if (cswDlgPrivate.nodenames.length > 1) {
-                title += ': ' + cswDlgPrivate.nodenames.join(', ');
-            }
-            cswPublic.title = title;
-
-            cswDlgPrivate.onOpen = function () {
-                var table = cswPublic.div.table({ width: '100%' });
-                var tabCell = table.cell(1, 2);
-
-                setupTabs(cswDlgPrivate.date);
-
-                function setupTabs(date) {
-                    tabCell.empty();
-
-                    cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
-                        forceReadOnly: cswDlgPrivate.ReadOnly,
-                        Multi: cswDlgPrivate.Multi,
-                        tabState: {
-                            date: date,
-                            selectedNodeIds: cswDlgPrivate.selectedNodeIds,
-                            selectedNodeKeys: cswDlgPrivate.selectedNodeKeys,
-                            nodenames: cswDlgPrivate.nodenames,
-                            filterToPropId: cswDlgPrivate.filterToPropId,
-                            nodeid: cswDlgPrivate.currentNodeId || cswDlgPrivate.selectedNodeIds.first(),
-                            nodekey: cswDlgPrivate.currentNodeKey || cswDlgPrivate.selectedNodeKeys.first(),
-                            ReadOnly: cswDlgPrivate.ReadOnly,
-                            EditMode: cswDlgPrivate.editMode,
-                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
-                        },
-
-                        ReloadTabOnSave: true,
-                        Refresh: cswDlgPrivate.onRefresh,
-                        onEditView: function (viewid) {
-                            doRefresh = false; //We're loading the view editor, don't refresh when the dialog closes                        
-                            cswPublic.div.$.dialog('close');
-                            Csw.tryExec(cswDlgPrivate.onEditView, viewid);
-                        },
-                        onSave: function (nodeids, nodekeys, tabcount) {
-                            Csw.clientChanges.unsetChanged();
-                            if (tabcount <= 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
-                                if (false === cswPublic.closed) {
-                                    cswPublic.close();
-                                    cswPublic.div.$.dialog('close');
-                                }
-                            }
-                            Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
-                        },
-                        onBeforeTabSelect: function () {
-                            return Csw.clientChanges.manuallyCheckChanges();
-                        },
-                        onTabSelect: function (tabid) {
-                            Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
-                        },
-                        onPropertyChange: function () {
-                            Csw.clientChanges.setChanged();
-                        },
-                        onAfterButtonClick: cswDlgPrivate.onAfterButtonClick
-                    });
-                }
-
-                // _setupTabs()
-            };
-            openDialog(cswPublic.div, 1100, 700, cswPublic.close, title, cswDlgPrivate.onOpen);
-            return cswPublic;
-        }, // EditNodeDialog
         DeleteNodeDialog: function (options) {
             'use strict';
             var cswDlgPrivate = {
@@ -1801,7 +1686,7 @@
                                         nodenames.push(row.nodename);
                                     });
 
-                                    $.CswDialog('EditNodeDialog', {
+                                    Csw.dialogs.editnode({
                                         currentNodeId: firstNodeId,
                                         currentNodeKey: firstNodeKey,
                                         selectedNodeIds: nodeids,

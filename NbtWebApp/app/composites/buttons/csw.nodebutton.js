@@ -56,7 +56,7 @@
                 launchAction = true;
                 break;
             case Csw.enums.nbtButtonAction.editprop:
-                $.CswDialog('EditNodeDialog', {
+                Csw.dialogs.editnode({
                     currentNodeId: Csw.string(actionJson.nodeid),
                     filterToPropId: Csw.string(actionJson.propidattr),
                     title: Csw.string(actionJson.title),

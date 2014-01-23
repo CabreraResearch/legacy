@@ -411,6 +411,9 @@
         if (num) {
             dialogsCount += num;
         }
+        if (dialogsCount < 0) {
+            dialogsCount = 0;
+        }
         return dialogsCount;
     });
 
