@@ -580,6 +580,20 @@ namespace ChemSW.Nbt.Schema
                             relviewNTP.setFilterDeprecated( reltargetNTP, reltargetNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.NotNull, string.Empty );
                             break;
 
+
+                        case CswEnumNbtFieldType.ReportLink:
+                            // FKType is nodeid, servermanaged
+                            CswNbtMetaDataNodeTypeProp rlFkTypeNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleReportLink.AttributeName.FKType.ToString() );
+                            rlFkTypeNTP.DefaultValue.AsText.Text = "nodeid";
+                            rlFkTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                            rlFkTypeNTP.removeFromAllLayouts();
+
+                            // FKValue is relationship to Report
+                            CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+                            CswNbtMetaDataNodeTypeProp rlFkValueNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleReportLink.AttributeName.Target.ToString() );
+                            rlFkValueNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), ReportOC.ObjectClassId );
+                            break;
+
                         case CswEnumNbtFieldType.Sequence:
                             CswNbtMetaDataNodeTypeProp seqSequenceNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleSequence.AttributeName.Sequence.ToString() );
                             seqSequenceNTP._DataRow["isrequired"] = CswConvert.ToDbVal( true );
