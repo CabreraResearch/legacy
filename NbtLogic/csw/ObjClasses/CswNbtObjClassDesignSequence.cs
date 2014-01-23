@@ -99,12 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public string getDbName()
         {
-            string DbName = Name.Text.Replace( " ", string.Empty );
-            if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
-            {
-                _CswNbtResources.makeUniqueSequence( DbName, 1 );
-            }
-            return DbName;
+            return Name.Text.Replace( " ", string.Empty );
         }
 
         public string formatSequence( Int32 RawSequenceVal )
@@ -147,15 +142,25 @@ namespace ChemSW.Nbt.ObjClasses
         public string getNext()
         {
             string DbName = getDbName();
+            if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
+            {
+                _CswNbtResources.makeUniqueSequence( DbName, 1 );
+            }
             Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal( DbName );
             return formatSequence( RawSequenceVal );
         }
 
         public string getCurrent()
         {
+            string ret = string.Empty;
             string DbName = getDbName();
-            Int32 RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal( DbName );
-            return formatSequence( RawSequenceVal );
+            if( _CswNbtResources.doesUniqueSequenceExist( DbName ) )
+            {
+                // Do not create the sequence if it's missing here, or else you create race conditions.  See case 31584.
+                Int32 RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal( DbName );
+                ret = formatSequence( RawSequenceVal );
+            }
+            return ret;
         }
 
         /// <summary>

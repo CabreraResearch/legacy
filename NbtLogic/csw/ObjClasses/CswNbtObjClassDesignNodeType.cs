@@ -92,6 +92,8 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool InternalCreate = false;
 
+        private bool _requiresSync = false;
+
         protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             if( false == OverrideUniqueValidation &&
@@ -169,6 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         // Make initial props
                         _setPropertyValuesFromObjectClass();
+                        _requiresSync = false;
 
                     } // if( false == InternalCreate )
 
@@ -289,6 +292,16 @@ namespace ChemSW.Nbt.ObjClasses
                 _syncNameTemplate();
             }
         } //beforeWriteNode()
+
+        protected override void afterWriteNodeLogic()
+        {
+            if( _requiresSync )
+            {
+                _setPropertyValuesFromObjectClass();
+                _requiresSync = false;
+            }
+            base.afterWriteNodeLogic();
+        }
 
         protected override void beforeDeleteNodeLogic() // bool DeleteAllRequiredRelatedNodes = false )
         {
@@ -648,11 +661,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                     IconFileName.Value.FromString( ObjectClassPropertyValue.IconFileName );
 
-                    if( false == Creating ) // see case 31678
-                    {
-                        // Sync properties with new object class
-                        _setPropertyValuesFromObjectClass();
-                    }
+                    // Sync properties with new object class
+                    // see case 31678
+                    _requiresSync = true;
 
                     ObjectClassProperty.ServerManaged = true;
                 }
