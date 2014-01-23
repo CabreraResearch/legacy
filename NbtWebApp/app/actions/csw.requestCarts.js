@@ -177,7 +177,7 @@
                 urlMethod: 'Requests/Favorites/create',
                 success: function (json) {
                     if (json.Succeeded) {
-                        $.CswDialog('EditNodeDialog', {
+                        Csw.dialogs.editnode({
                             currentNodeId: json.RequestId,
                             filterToPropId: json.RequestName,
                             title: 'Add new Favorite',
@@ -358,7 +358,7 @@
                         nodenames.push(row.nodename);
                     });
 
-                    $.CswDialog('EditNodeDialog', {
+                    Csw.dialogs.editnode({
                         currentNodeId: currentNodeId,
                         currentNodeKey: currentNodeKey,
                         selectedNodeIds: nodeids,

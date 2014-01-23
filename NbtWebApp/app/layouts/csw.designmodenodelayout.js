@@ -242,7 +242,7 @@
 
         cswPrivate.onConfigure = function (draggable, onSave) {
             var propToConfigure = draggable.data[0];
-            $.CswDialog('EditNodeDialog', {
+            Csw.dialogs.editnode({
                 currentNodeId: propToConfigure.propnodeid,
                 title: 'Edit Property: ' + propToConfigure.name,
                 onEditNode: function () {
