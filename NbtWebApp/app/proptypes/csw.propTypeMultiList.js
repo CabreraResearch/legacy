@@ -66,6 +66,7 @@
                 var validator = Csw.validator(errorDiv, multiSel, {
                     cssOptions: { 'visibility': 'hidden', 'width': '20px' },
                     errorMsg: 'At least one value must be selected',
+                    className: 'multiListValidator' + nodeProperty.propData.id,
                     onValidation: function (isValid) {
                         if (isValid || Csw.enums.editMode.Edit === nodeProperty.tabState.EditMode) {
                             errorDiv.hide();

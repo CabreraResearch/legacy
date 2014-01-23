@@ -228,7 +228,8 @@ module.exports = function (grunt) {
                 compress: true,
                 output: 'uglify.log',
                 //beautify: true,
-                sourceMap: 'release/' + buildName + '.min.js.map',
+                sourceMap: true,
+				sourceMapName: 'release/' + buildName + '.min.js.map',
                 sourceMapRoot: '../',
                 sourceMappingURL: buildName + '.min.js.map'
             },
