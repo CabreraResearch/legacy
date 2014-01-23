@@ -706,6 +706,8 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtMetaDataNodeTypeProp NTPServerManagedNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ServerManaged );
                 CswNbtMetaDataNodeTypeProp NTPUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique );
                 CswNbtMetaDataNodeTypeProp NTPUseNumberingNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering );
+                CswNbtMetaDataNodeTypeProp NTPQuestionNoNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.QuestionNo );
+                CswNbtMetaDataNodeTypeProp NTPSubQuestionNoNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.SubQuestionNo );
 
                 // Edit layout
                 NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
@@ -722,8 +724,10 @@ namespace ChemSW.Nbt.MetaData
                 NTPCompoundUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 12, DisplayColumn: 1 );
                 NTPReadOnlyNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 13, DisplayColumn: 1 );
                 NTPUseNumberingNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 14, DisplayColumn: 1 );
-                NTPHelpTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
-                NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 16, DisplayColumn: 1 );
+                NTPQuestionNoNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
+                NTPSubQuestionNoNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 16, DisplayColumn: 1 );
+                NTPHelpTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 17, DisplayColumn: 1 );
+                NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 18, DisplayColumn: 1 );
 
                 // Add layout
                 NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
@@ -742,6 +746,8 @@ namespace ChemSW.Nbt.MetaData
                 NTPReadOnlyNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTPUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTPUseNumberingNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPQuestionNoNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPSubQuestionNoNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                 // Table layout
                 NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
@@ -758,8 +764,20 @@ namespace ChemSW.Nbt.MetaData
                 // Set default value of "Field Type" to this fieldtype
                 NTPFieldTypeNTP.DefaultValue.AsList.Value = FieldTypeId.ToString();
                 NTPFieldTypeNTP.DefaultValue.AsList.Text = FieldType.ToString();
-                NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                //NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                NTPFieldTypeNTP.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
 
+                //// Set display condition on QuestionNo and SubQuestionNo
+                //NTPQuestionNoNTP.DesignNode.DisplayConditionProperty.RelatedNodeId = NTPUseNumberingNTP.DesignNode.NodeId;
+                //NTPQuestionNoNTP.DesignNode.DisplayConditionSubfield.Value = CswNbtFieldTypeRuleLogical.SubFieldName.Checked.ToString();
+                //NTPQuestionNoNTP.DesignNode.DisplayConditionFilterMode.Value = CswEnumNbtFilterMode.Equals.ToString();
+                //NTPQuestionNoNTP.DesignNode.DisplayConditionValue.Text = CswEnumTristate.True.ToString();
+                
+                //NTPSubQuestionNoNTP.DesignNode.DisplayConditionProperty.RelatedNodeId = NTPUseNumberingNTP.DesignNode.NodeId;
+                //NTPSubQuestionNoNTP.DesignNode.DisplayConditionSubfield.Value = CswNbtFieldTypeRuleLogical.SubFieldName.Checked.ToString();
+                //NTPSubQuestionNoNTP.DesignNode.DisplayConditionFilterMode.Value = CswEnumNbtFilterMode.Equals.ToString();
+                //NTPSubQuestionNoNTP.DesignNode.DisplayConditionValue.Text = CswEnumTristate.True.ToString();
+                
                 ICswNbtFieldTypeRule Rule = getFieldTypeRule( FieldType );
 
                 // Make all the attribute properties

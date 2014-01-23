@@ -834,6 +834,54 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         } // Nodes()
 
+
+        public void RecalculateQuestionNumbers()
+        {
+            foreach( CswNbtObjClassDesignNodeTypeTab Tab in this.getTabNodes() )
+            {
+                Int32 CurrentQuestionNo = 1;
+                // Do non-conditional ones first
+                Dictionary<CswPrimaryKey, Int32> PropQuestionNumbers = new Dictionary<CswPrimaryKey, Int32>();
+                Collection<CswNbtObjClassDesignNodeTypeProp> Props = Tab.getPropNodesByDisplayOrder( NumberedOnly: true );
+                foreach( CswNbtObjClassDesignNodeTypeProp Prop in Props )
+                {
+                    if( //Prop.UseNumbering.Checked == CswEnumTristate.True && 
+                        Prop.DisplayConditionProperty.Empty )
+                    {
+                        Prop.QuestionNo.Value = CurrentQuestionNo;
+                        Prop.SubQuestionNo.Value = Int32.MinValue;
+                        Prop.postChanges( false );
+                        PropQuestionNumbers[Prop.NodeId] = CurrentQuestionNo;
+                        CurrentQuestionNo++;
+                    }
+                } // foreach( CswNbtObjClassDesignNodeTypeProp Prop in Tab.getPropNodesByDisplayOrder() )
+
+                // Now do the conditional ones (with numbered parents)
+                Int32[] SubQuestionNos = new Int32[CurrentQuestionNo + 1];
+                for( Int32 i = 1; i <= CurrentQuestionNo; i++ )
+                {
+                    SubQuestionNos[i] = 1;
+                }
+
+                foreach( CswNbtObjClassDesignNodeTypeProp Prop in Props )
+                {
+                    if( //Prop.UseNumbering.Checked == CswEnumTristate.True &&
+                        false == Prop.DisplayConditionProperty.Empty )
+                    {
+                        //CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
+                        if( PropQuestionNumbers.ContainsKey( Prop.DisplayConditionProperty.RelatedNodeId ) )
+                        {
+                            Int32 ParentPropQuestionNo = PropQuestionNumbers[Prop.DisplayConditionProperty.RelatedNodeId];
+                            Prop.QuestionNo.Value = ParentPropQuestionNo;
+                            Prop.SubQuestionNo.Value = SubQuestionNos[ParentPropQuestionNo];
+                            Prop.postChanges( false );
+                            SubQuestionNos[ParentPropQuestionNo] += 1;
+                        }
+                    }
+                }
+            } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
+        } // RecalculateQuestionNumbers()
+
     }//CswNbtObjClassDesignNodeType
 
 }//namespace ChemSW.Nbt.ObjClasses

@@ -359,6 +359,8 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp NTPServerManagedNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ServerManaged );
                     CswNbtMetaDataNodeTypeProp NTPUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique );
                     CswNbtMetaDataNodeTypeProp NTPUseNumberingNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering );
+                    CswNbtMetaDataNodeTypeProp NTPQuestionNoNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.QuestionNo );
+                    CswNbtMetaDataNodeTypeProp NTPSubQuestionNoNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.SubQuestionNo );
 
                     // Edit layout
                     NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
@@ -375,8 +377,10 @@ namespace ChemSW.Nbt.Schema
                     NTPCompoundUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 12, DisplayColumn: 1 );
                     NTPReadOnlyNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 13, DisplayColumn: 1 );
                     NTPUseNumberingNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 14, DisplayColumn: 1 );
-                    NTPHelpTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
-                    NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 16, DisplayColumn: 1 );
+                    NTPQuestionNoNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
+                    NTPSubQuestionNoNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 16, DisplayColumn: 1 );
+                    NTPHelpTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 17, DisplayColumn: 1 );
+                    NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 18, DisplayColumn: 1 );
 
                     // Add layout
                     NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
@@ -395,6 +399,8 @@ namespace ChemSW.Nbt.Schema
                     NTPReadOnlyNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPUseNumberingNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                    NTPQuestionNoNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                    NTPSubQuestionNoNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                     // Table layout
                     NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );

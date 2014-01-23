@@ -24,9 +24,11 @@ namespace ChemSW.Nbt.MetaData
               { NodeTypeValue                 , NodeTypeValue                },
               { ObjectClassPropName           , ObjectClassPropName          },
               { PropName                      , PropName                     },
+              { QuestionNo                    , QuestionNo                   },
               { ReadOnly                      , ReadOnly                     },
               { Required                      , Required                     },
               { ServerManaged                 , ServerManaged                },
+              { SubQuestionNo                 , SubQuestionNo                },
               { Unique                        , Unique                       },
               { UseNumbering                  , UseNumbering                 },
             
@@ -163,6 +165,8 @@ namespace ChemSW.Nbt.MetaData
         public const string ServerManaged = "Server Managed";
         public const string Unique = "Unique";
         public const string UseNumbering = "Use Numbering";
+        public const string QuestionNo = "Question Number";
+        public const string SubQuestionNo = "Sub-Question Number";
 
         public const string AddToTemplate = "Add To Template";
         public const string AllowHourly = "Allow Hourly";
