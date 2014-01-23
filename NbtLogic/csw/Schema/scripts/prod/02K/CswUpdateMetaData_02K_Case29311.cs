@@ -273,6 +273,18 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Logical,
                         IsRequired = true
                     } );
+                    CswNbtMetaDataObjectClassProp QuestionNoOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.QuestionNo,
+                        FieldType = CswEnumNbtFieldType.Number,
+                        ServerManaged = true
+                    } );
+                    CswNbtMetaDataObjectClassProp SubQuestionNoOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.SubQuestionNo,
+                        FieldType = CswEnumNbtFieldType.Number,
+                        ServerManaged = true
+                    } );
 
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
@@ -300,6 +312,17 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.NotNull.ToString() );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionFilterOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.NotNull.ToString() );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionValueOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.NotNull.ToString() );
+
+                    // QuestionNo and SubQuestionNo depend on UseNumbering
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, UseNumberingOCP.ObjectClassPropId );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filtersubfield, CswNbtFieldTypeRuleLogical.SubFieldName.Checked.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.Equals.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filtervalue, CswEnumTristate.True.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SubQuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, UseNumberingOCP.ObjectClassPropId );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SubQuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filtersubfield, CswNbtFieldTypeRuleLogical.SubFieldName.Checked.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SubQuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filtermode, CswEnumNbtFilterMode.Equals.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SubQuestionNoOCP, CswEnumNbtObjectClassPropAttributes.filtervalue, CswEnumTristate.True.ToString() );
+
                 }
 
                 // DesignNodeTypeTab

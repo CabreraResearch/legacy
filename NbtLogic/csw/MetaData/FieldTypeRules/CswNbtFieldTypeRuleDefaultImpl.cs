@@ -170,6 +170,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.QuestionNo,
+                AttributeFieldType = CswEnumNbtFieldType.Number,
+                Column = CswEnumNbtPropertyAttributeColumn.Questionno
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
                 Name = CswEnumNbtPropertyAttributeName.ReadOnly,
                 AttributeFieldType = CswEnumNbtFieldType.Logical,
                 Column = CswEnumNbtPropertyAttributeColumn.Readonly
@@ -187,6 +194,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = CswEnumNbtPropertyAttributeName.ServerManaged,
                 AttributeFieldType = CswEnumNbtFieldType.Logical,
                 Column = CswEnumNbtPropertyAttributeColumn.Servermanaged
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.SubQuestionNo,
+                AttributeFieldType = CswEnumNbtFieldType.Number,
+                Column = CswEnumNbtPropertyAttributeColumn.Subquestionno
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
