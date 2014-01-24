@@ -1,0 +1,1 @@
+"node_modules\node.exe"  "node_modules\grunt-cli\node_modules\grunt-cli\bin\grunt" %*

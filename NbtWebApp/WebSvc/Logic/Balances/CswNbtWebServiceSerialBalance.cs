@@ -343,10 +343,28 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
             MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
                                                        MetaDataProp: AliasesOCP,
-                                                       Value: UnitName,
+                                                       Value: "," + UnitName + ",",
                                                        SubFieldName: CswEnumNbtSubFieldName.Text,
                                                        FilterMode: CswEnumNbtFilterMode.Contains,
                                                        Conjunction: CswEnumNbtFilterConjunction.Or );
+            MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                       MetaDataProp : AliasesOCP,
+                                                       Value : UnitName + ",",
+                                                       SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                       FilterMode : CswEnumNbtFilterMode.Begins,
+                                                       Conjunction : CswEnumNbtFilterConjunction.Or );
+            MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                       MetaDataProp : AliasesOCP,
+                                                       Value : "," + UnitName,
+                                                       SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                       FilterMode : CswEnumNbtFilterMode.Ends,
+                                                       Conjunction : CswEnumNbtFilterConjunction.Or );
+            MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                       MetaDataProp : AliasesOCP,
+                                                       Value : UnitName,
+                                                       SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                       FilterMode : CswEnumNbtFilterMode.Equals,
+                                                       Conjunction : CswEnumNbtFilterConjunction.Or );
 
             // Get and iterate the Tree
             ICswNbtTree MatchingUOMsTree = NbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );

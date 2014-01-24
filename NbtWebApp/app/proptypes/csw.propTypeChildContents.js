@@ -80,7 +80,7 @@
                     enabledText: 'Edit Selected',
                     onClick: function () {
                         var nodeid = nodeSelect.selectedNodeId();
-                        $.CswDialog('EditNodeDialog', {
+                        Csw.dialogs.editnode({
                             currentNodeId: nodeid,
                             nodenames: [nodeSelect.selectedName()],
                             onEditNode: function () {

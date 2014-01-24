@@ -289,7 +289,7 @@
                                             onEditNode: cswPrivate.onEditNode
                                         });
                                     } else {
-                                        $.CswDialog('EditNodeDialog', {
+                                        Csw.dialogs.editnode({
                                             currentNodeId: nodeid,
                                             currentNodeKey: nodeObj.nodekey,
                                             nodenames: [nodeObj.nodename],

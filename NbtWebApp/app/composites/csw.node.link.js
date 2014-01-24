@@ -52,7 +52,7 @@
                 cssclass: cswPrivate.cssclasslink,
                 onClick: function () {
                     Csw.tryExec(cswPrivate.onClick);
-                    $.CswDialog('EditNodeDialog', {
+                    Csw.dialogs.editnode({
                         currentNodeId: nodeid,
                         currentNodeKey: '',
                         nodenames: [nodename]

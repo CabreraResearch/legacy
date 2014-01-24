@@ -18,7 +18,8 @@
         }());
 
         cswPublic.div = Csw.literals.div({
-            name: cswPrivate.title + 'DialogDiv'
+            name: cswPrivate.title + 'DialogDiv',
+            ID: window.Ext.id()
         });
         cswPublic.close = function () {
             cswPublic.div.$.dialog('close');
@@ -89,5 +90,6 @@
     Csw.dialogs.register('closeAll', function() {
         'use strict';
         $(".ui-dialog-content").dialog("close");
+        Csw.dialogsCount(-99);
     });
 }());
