@@ -29,6 +29,52 @@
 
         })();
 
+        cswPrivate.init = function() {
+            cswParent.empty();
+
+            var closeBtnDiv = cswParent.div().css('float', 'right');
+            closeBtnDiv.buttonExt({
+                enabledText: 'Close Design Mode',
+                onClick: function () {
+                    cswPrivate.onClose();
+                }
+            });
+            var layoutSelectDiv = cswParent.div().css('float', 'right');
+            layoutSelectDiv.setLabelText('Select Layout:', false, false);
+            layoutSelectDiv.select({
+                values: ['Edit', 'Add', 'Search', 'Preview'],
+                selected: cswPrivate.Layout,
+                onChange: function (val) {
+                    cswPrivate.Layout = val;
+                    cswPublic.init();
+                    cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
+                }
+            });
+            cswPrivate.contentDiv = cswParent.div();
+
+            if (cswPrivate.Layout === 'Edit') {
+                layout = Csw.layouts.editNode(cswPrivate);
+            } else if (cswPrivate.Layout === 'Add') {
+                layout = Csw.layouts.addNode(cswPrivate);
+            } else if (cswPrivate.Layout === 'Search') {
+                cswPrivate.Layout = 'Table'; //"Search" layout is really just a table layout
+                layout = Csw.layouts.searchNode(cswPrivate);
+            } else if (cswPrivate.Layout === 'Preview') {
+                layout = Csw.layouts.previewNode(cswPrivate);
+            }
+
+            if (null !== layout) {
+                layout.render(cswPrivate.contentDiv);
+            } else {
+                Csw.error.showError({
+                    name: 'Layout error',
+                    type: 'js',
+                    message: 'Error rendering ' + cswPrivate.Layout + ' layout',
+                    detail: "'" + cswPrivate.Layout + "' is not a valid layout"
+                });
+            }
+        };
+
         cswPrivate.setActiveTabId = function (tabid) {
             cswPrivate.tabid = tabid;
         };
@@ -392,52 +438,7 @@
             cswPublic.init();
         };
 
-        cswPublic.init = function () {
-            cswParent.empty();
-
-            var closeBtnDiv = cswParent.div().css('float', 'right');
-            closeBtnDiv.buttonExt({
-                enabledText: 'Close Design Mode',
-                onClick: function () {
-                    cswPrivate.onClose();
-                }
-            });
-            var layoutSelectDiv = cswParent.div().css('float', 'right');
-            layoutSelectDiv.setLabelText('Select Layout:', false, false);
-            layoutSelectDiv.select({
-                values: ['Edit', 'Add', 'Search', 'Preview'],
-                selected: cswPrivate.Layout,
-                onChange: function (val) {
-                    cswPrivate.Layout = val;
-                    cswPublic.init();
-                    cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
-                }
-            });
-            cswPrivate.contentDiv = cswParent.div();
-
-            if (cswPrivate.Layout === 'Edit') {
-                layout = Csw.layouts.editNode(cswPrivate);
-            } else if (cswPrivate.Layout === 'Add') {
-                layout = Csw.layouts.addNode(cswPrivate);
-            } else if (cswPrivate.Layout === 'Search') {
-                cswPrivate.Layout = 'Table'; //"Search" layout is really just a table layout
-                layout = Csw.layouts.searchNode(cswPrivate);
-            } else if (cswPrivate.Layout === 'Preview') {
-                layout = Csw.layouts.previewNode(cswPrivate);
-            }
-
-            if (null !== layout) {
-                layout.render(cswPrivate.contentDiv);
-            } else {
-                Csw.error.showError({
-                    name: 'Layout error',
-                    type: 'js',
-                    message: 'Error rendering ' + cswPrivate.Layout + ' layout',
-                    detail: "'" + cswPrivate.Layout + "' is not a valid layout"
-                });
-            }
-
-        };
+        cswPublic.init = cswPrivate.init;
 
         //#endregion Public
 
