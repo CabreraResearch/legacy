@@ -251,6 +251,7 @@
         };
 
         if (o.status === 'Authenticated') {
+            cswPrivate.isAuthenticated = true;
             _next();
 
         } else {
