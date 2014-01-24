@@ -10,6 +10,7 @@
         };
         
         cswPublic.activeTabId = 0;
+        cswPublic.identityTabId = 0;
 
         cswPublic.render = function (div) {
             var searchTbl = div.table().css('border', '1px solid #99CCFF');
