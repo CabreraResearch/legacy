@@ -41,7 +41,7 @@
                 receiptLotTypeId: '',
                 receiptLotId: '',
                 requestitem: {},
-                printLabels: false
+                printLabels: true
             },
             amountsGrid: null,
             saveError: false,
@@ -427,7 +427,7 @@
                         var printLabelCell = printLabelsTbl.cell(1, 1).css({ 'padding-bottom': '20px' });
                         printLabelCell.div({ text: 'I want to print labels: ' }).checkBox({
                             name: 'printLabelCheckBox',
-                            checked: false,
+                            checked: true,
                             onChange: function (newVal) {
                                 if (newVal) {
                                     labelsDiv.show();
@@ -439,7 +439,7 @@
                             }
                         });
 
-                        var labelsDiv = printLabelsTbl.cell(2, 1).div().hide();
+                        var labelsDiv = printLabelsTbl.cell(2, 1).div();
                         cswPrivate.printLabels = Csw.composites.printLabels(labelsDiv,
                             {
                                 showButton: false,
