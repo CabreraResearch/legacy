@@ -303,11 +303,13 @@
                                         },
                                         allowAdd: true
                                     });
-                                    //onSizeChange();
+                                    updateSizeVals();
                                     break;
                                 case cswPrivate.config.quantityName:
                                     cswPublic.rows[rowid].qtyCell = cswCell;
-                                    cswPrivate.getQuantity(buildQtyCtrl);
+                                    cswPrivate.getQuantity(function () {
+                                        buildQtyCtrl();
+                                    });
                                     break;
                                 case cswPrivate.config.barcodeName:
                                     cswPublic.rows[rowid].barcodeControl = cswCell.textArea({
