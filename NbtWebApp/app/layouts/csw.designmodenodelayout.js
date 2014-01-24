@@ -417,6 +417,7 @@
                     cswPrivate.Layout = val;
                     cswPublic.init();
                     cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
+                    cswPrivate.sidebar.toggleIdentityTabOption(cswPrivate.Layout === 'Edit');
                 }
             });
             cswPrivate.contentDiv = cswParent.div();
