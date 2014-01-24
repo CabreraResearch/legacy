@@ -89,6 +89,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public virtual bool onPropertySetButtonClick( NbtButtonData ButtonData ) { return true; }
 
+        protected override bool onButtonClick( NbtButtonData ButtonData )
+        {
+            bool Ret = false;
+            if( null != ButtonData.NodeTypeProp )
+            {
+                Ret = onPropertySetButtonClick( ButtonData );
+            }
+            return Ret;
+        }//afterPopulateProps()
+
         #endregion
 
         #region Property Set specific properties
