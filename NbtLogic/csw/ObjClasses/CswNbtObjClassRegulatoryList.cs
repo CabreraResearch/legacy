@@ -397,7 +397,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         } // findMatches()
 
-        private readonly Dictionary<string, string> _AllArielRegions = new Dictionary<string, string>
+        public static Dictionary<string, string> ArielRegionOptions = new Dictionary<string, string>
             {
                 {"EU", "Western Europe"},
                 {"NA", "North America" },
@@ -414,7 +414,7 @@ namespace ChemSW.Nbt.ObjClasses
             foreach( string Module in CustomerArielModules )
             {
                 string Abbreviation = Module;
-                string FullName = _AllArielRegions[Abbreviation];
+                string FullName = ArielRegionOptions[Abbreviation];
                 Ret.Add( Abbreviation, FullName );
             }
 

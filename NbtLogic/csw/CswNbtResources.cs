@@ -27,7 +27,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// A collection of useful resources for NBT business logic.
     /// </summary>
-    public class CswNbtResources: ICswResources
+    public class CswNbtResources : ICswResources
     {
         /// <summary>
         /// The MD5 seed used for NBT
@@ -615,23 +615,23 @@ namespace ChemSW.Nbt
             MailReportsView.ViewName = "runMailReportEventsView";
             CswNbtViewRelationship Rel1 = MailReportsView.AddViewRelationship( MailReportOC, false );
             // Nodetype matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : TargetTypeOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Contains,
-                                                      Value : TargetNodeType.FirstVersionNodeTypeId.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: TargetTypeOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Contains,
+                                                      Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
             // Event matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : EventOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Equals,
-                                                      Value : EventOpt.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EventOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                      Value: EventOpt.ToString() );
             // Enabled
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : EnabledOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Equals,
-                                                      Value : CswEnumTristate.True.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EnabledOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                      Value: CswEnumTristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : false );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
@@ -1066,6 +1066,16 @@ namespace ChemSW.Nbt
                     ConfigVariable.VariableValue = "5";
                 }
             }//if( VariableName.Equals( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString().ToLower() ) )
+
+            if( ConfigVariable.VariableName.Equals( CswEnumNbtConfigurationVariables.arielmodules.ToString().ToLower() ) )
+            {
+                // If the value is empty or doesn't exist in the list of options, we set the value to the default value
+                if( string.IsNullOrEmpty( ConfigVariable.VariableValue )
+                    || false == CswNbtObjClassRegulatoryList.ArielRegionOptions.ContainsKey( ConfigVariable.VariableValue ) )
+                {
+                    ConfigVariable.VariableValue = "NA,EU";
+                }
+            }//if (ConfigVariable.VariableName.Equals(CswEnumNbtConfigurationVariables.arielmodules.ToString().ToLower()))
 
         } // _onConfigVblChange()
 
