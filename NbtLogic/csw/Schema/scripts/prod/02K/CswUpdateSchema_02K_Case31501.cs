@@ -28,17 +28,40 @@ namespace ChemSW.Nbt.Schema
             get { return 31501; }
         }
 
-        private bool _unitExists( CswNbtMetaDataNodeType UnitNT, string UnitName )
+        private bool _unitExists( CswNbtMetaDataNodeType UnitNT, string UnitName, string AliasName )
         {
             CswNbtMetaDataNodeTypeProp UnitNameNTP = UnitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+            CswNbtMetaDataNodeTypeProp UnitAliasesNTP = UnitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
             CswNbtView View = _CswNbtSchemaModTrnsctn.makeView();
             View.ViewName = "31501_unitview";
             CswNbtViewRelationship rel1 = View.AddViewRelationship( UnitNT, false );
+            // name equals UnitName
             View.AddViewPropertyAndFilter( rel1,
                                            UnitNameNTP,
                                            SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
                                            FilterMode: CswEnumNbtFilterMode.Equals,
                                            Value: UnitName );
+            // ... or name equals AliasName
+            View.AddViewPropertyAndFilter( rel1,
+                                           UnitNameNTP,
+                                           Conjunction: CswEnumNbtFilterConjunction.Or,
+                                           SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
+                                           FilterMode: CswEnumNbtFilterMode.Equals,
+                                           Value: AliasName );
+            // ... or alias contains UnitName
+            View.AddViewPropertyAndFilter( rel1,
+                                           UnitAliasesNTP,
+                                           Conjunction: CswEnumNbtFilterConjunction.Or,
+                                           SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
+                                           FilterMode: CswEnumNbtFilterMode.Contains,
+                                           Value: UnitName );
+            // ... or alias contains AliasName
+            View.AddViewPropertyAndFilter( rel1,
+                                           UnitAliasesNTP,
+                                           Conjunction: CswEnumNbtFilterConjunction.Or,
+                                           SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
+                                           FilterMode: CswEnumNbtFilterMode.Contains,
+                                           Value: AliasName );
             ICswNbtTree Tree = _CswNbtSchemaModTrnsctn.getTreeFromView( View, true );
             return Tree.getChildNodeCount() > 0;
         }
@@ -49,7 +72,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType Unit_VolumeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit_Volume" );
             if( null != Unit_VolumeNT )
             {
-                if( false == _unitExists( Unit_VolumeNT, "pint" ) )
+                if( false == _unitExists( Unit_VolumeNT, "pint", "pt" ) )
                 {
                     _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( Unit_VolumeNT.NodeTypeId, delegate( CswNbtNode newNode )
                         {
@@ -61,7 +84,7 @@ namespace ChemSW.Nbt.Schema
                             newUnit.Fractional.Checked = CswEnumTristate.True;
                         } );
                 }
-                if( false == _unitExists( Unit_VolumeNT, "quart" ) )
+                if( false == _unitExists( Unit_VolumeNT, "quart", "qt" ) )
                 {
                     _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( Unit_VolumeNT.NodeTypeId, delegate( CswNbtNode newNode )
                         {
@@ -77,7 +100,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType Unit_WeightNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit_Weight" );
             if( null != Unit_WeightNT )
             {
-                if( false == _unitExists( Unit_VolumeNT, "ug" ) )
+                if( false == _unitExists( Unit_VolumeNT, "ug", "microg" ) )
                 {
                     _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( Unit_WeightNT.NodeTypeId, delegate( CswNbtNode newNode )
                         {

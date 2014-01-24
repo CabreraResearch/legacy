@@ -7,6 +7,7 @@
         var cswPublic = {};
         
         cswPublic.activeTabId = 0;
+        cswPublic.identityTabId = 0;
 
         cswPublic.render = function (div) {
             div.div({ cssclass: 'CswIdentityTabHeader' }).append('Preview Node Layout');

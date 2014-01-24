@@ -296,7 +296,7 @@ namespace ChemSW.Nbt.MetaData
             if( false == Added )
             {
                 // Just add it somewhere
-                updatePropLayout( LayoutType, Prop.NodeTypeId, Prop, false );
+                updatePropLayout( LayoutType, Prop.NodeTypeId, Prop, false, Prop.getNodeType().getFirstNodeTypeTab().TabId );
             }
 
             if( _Cache.ContainsKey( Prop.NodeTypeId ) )

@@ -20,6 +20,7 @@
         var cswPublic = {};
 
         cswPublic.activeTabId = cswPrivate.tabid;
+        cswPublic.identityTabId = 0;
 
         cswPublic.render = function (div) {
             cswPrivate.getTabsAjax = Csw.ajax.deprecatedWsNbt({
@@ -94,7 +95,7 @@
 
 
                         } else {
-                            cswPrivate.identityTabId = tabData.id;
+                            cswPublic.identityTabId = tabData.id;
                         }
                     }
                     tabs.push({
@@ -177,7 +178,7 @@
                         }]
                     });
 
-                    cswPrivate.renderTab(identityTabId, cswPrivate.identityTabId, cswPrivate.identityTabStyle);
+                    cswPrivate.renderTab(identityTabId, cswPublic.identityTabId, cswPrivate.identityTabStyle);
 
                 }
             });
