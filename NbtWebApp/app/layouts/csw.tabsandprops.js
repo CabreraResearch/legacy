@@ -872,23 +872,6 @@
                             cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
                             cswPrivate.tabs[tabid] &&
                             Csw.bool(cswPrivate.tabs[tabid].data('canEditLayout'))) {
-                    /* Case 24437 */
-                    //var editLayoutOpt = {
-                    //    name: cswPrivate.name,
-                    //    tabState: {
-                    //        nodeid: cswPublic.getNodeId(),
-                    //        nodekey: cswPublic.getNodeKey(),
-                    //        nodetypeid: cswPrivate.tabState.nodetypeid,
-                    //        tabid: cswPrivate.tabState.tabid,
-                    //        tabNo: cswPrivate.tabState.tabNo,
-                    //        EditMode: cswPrivate.tabState.EditMode
-                    //    },
-                    //    Refresh: function () {
-                    //        //Csw.tryExec(cswPrivate.Refresh);
-                    //        cswPrivate.tabState.Config = false;
-                    //        cswPrivate.getTabs();
-                    //    }
-                    //};
 
                     /* Show the 'fake' config button to open the dialog */
                     cswPrivate.tabState.configIcn = formTable.cell(1, 3).icon({
@@ -898,11 +881,6 @@
                         size: 16,
                         isButton: true,
                         onClick: function () {
-
-                            // Old layout editor
-                            //cswPrivate.clearTabs();
-                            //$.CswDialog('EditLayoutDialog', editLayoutOpt);
-
                             if (Csw.designmode.isDesignModeVisible()) {
                                 Csw.publish('designModeTearDown');
                             } else {
@@ -911,21 +889,17 @@
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
-                    
-                    var openDesignMode = Csw.clientDb.getItem('openDesignMode');
-                    if (openDesignMode) {
-                        Csw.clientDb.removeItem('openDesignMode');
-                        cswPrivate.openDesignMode();
-                    }
                 }
 
                 Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
                 Csw.tryExec(onSuccess);
             }
-
-            if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
-                Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
-
+            
+            var openDesignMode = Csw.clientDb.getItem('openDesignMode');
+            if (openDesignMode) {
+                Csw.clientDb.removeItem('openDesignMode');
+                cswPrivate.openDesignMode();
+            } else if (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
                 cswPrivate.ajax.propsImpl = Csw.ajax.deprecatedWsNbt({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: cswPrivate.urls.PropsUrlMethod,
@@ -964,6 +938,7 @@
             Csw.layouts.designmode({
                 nodeid: cswPrivate.tabState.nodeid,
                 tabid: cswPrivate.tabState.tabid,
+                viewid: cswPrivate.tabState.viewid,
                 sidebarDiv: Csw.main.sidebarDiv,
                 sidebarOptions: {
                     name: 'newsidebar',
@@ -979,13 +954,6 @@
                     nodeKey: cswPrivate.tabState.nodekey,
                     nodeTypeId: cswPrivate.tabState.nodetypeid,
                     tabs: cswPrivate.tabs
-                },
-                onClose: function () {
-                    Csw.main.refreshSelected({
-                        nodeid:  cswPrivate.tabState.nodeid,
-                        nodekey: cswPrivate.tabState.nodekey,
-                        viewid: cswPrivate.tabState.viewid
-                    });
                 },
                 renderInNewView: cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup
             });

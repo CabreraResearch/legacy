@@ -908,13 +908,30 @@ namespace ChemSW.Nbt.WebServices
                                                                SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
 
-
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                               MetaDataProp: AliasesOCP,
-                                                               Value: Value,
-                                                               SubFieldName: CswNbtFieldTypeRuleMemo.SubFieldName.Text,
-                                                               FilterMode: CswEnumNbtFilterMode.Contains,
-                                                               Conjunction: CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : "," + Value + ",",
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Contains,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
+                MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : Value + ",",
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Begins,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
+                MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : "," + Value,
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Ends,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
+                MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : Value,
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Equals,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
 
                 // Create the tree
                 Ret = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
