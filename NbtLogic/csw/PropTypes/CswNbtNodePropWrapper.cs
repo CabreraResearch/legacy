@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -336,9 +333,9 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        private string _makeTypeErrorMessage( Type CurrentType )
+        private string _makeTypeErrorMessage( CswNbtNodeProp Prop, Type CurrentType )
         {
-            return ( "Current class is not of type " + CurrentType.ToString() );
+            return ( "'" + Prop.PropName + "' is not of type " + CurrentType.ToString() );
         }
 
         /// <summary>
@@ -402,7 +399,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropBarcode ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropBarcode ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropBarcode ) ) ) );
                 return ( (CswNbtNodePropBarcode) _CswNbtNodeProp );
             }
         }//Barcode
@@ -412,7 +409,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropButton ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropButton ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropButton ) ) ) );
                 return ( (CswNbtNodePropButton) _CswNbtNodeProp );
             }
         }//Button
@@ -422,7 +419,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropBlob ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropBlob ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropBlob ) ) ) );
                 return ( (CswNbtNodePropBlob) _CswNbtNodeProp );
             }
         }//Blob
@@ -432,7 +429,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropCASNo ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropCASNo ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropCASNo ) ) ) );
                 return ( (CswNbtNodePropCASNo) _CswNbtNodeProp );
             }
         }//CASNo
@@ -442,7 +439,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropChildContents ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropChildContents ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropChildContents ) ) ) );
                 return ( (CswNbtNodePropChildContents) _CswNbtNodeProp );
             }
         }//ChildContents
@@ -452,7 +449,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropComments ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropComments ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropComments ) ) ) );
                 return ( (CswNbtNodePropComments) _CswNbtNodeProp );
             }
         }//Comments
@@ -462,7 +459,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropComposite ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropComposite ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropComposite ) ) ) );
                 return ( (CswNbtNodePropComposite) _CswNbtNodeProp );
             }
         }//Composite
@@ -472,7 +469,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropDateTime ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropDateTime ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropDateTime ) ) ) );
                 return ( (CswNbtNodePropDateTime) _CswNbtNodeProp );
             }
         }//DateTime
@@ -482,7 +479,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( false == ( _CswNbtNodeProp is CswNbtNodePropFormula ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropFormula ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropFormula ) ) ) );
                 return ( (CswNbtNodePropFormula) _CswNbtNodeProp );
             }
         }//Formula
@@ -492,7 +489,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropGrid ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropGrid ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropGrid ) ) ) );
                 return ( (CswNbtNodePropGrid) _CswNbtNodeProp );
             }
         }//Grid
@@ -502,7 +499,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropImage ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImage ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropImage ) ) ) );
                 return ( (CswNbtNodePropImage) _CswNbtNodeProp );
             }
         }//Image
@@ -512,7 +509,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropImageList ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImageList ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropImageList ) ) ) );
                 return ( (CswNbtNodePropImageList) _CswNbtNodeProp );
             }
         }//ImageList
@@ -522,7 +519,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropLink ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropLink ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropLink ) ) ) );
                 return ( (CswNbtNodePropLink) _CswNbtNodeProp );
             }
         }//Link
@@ -532,7 +529,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropList ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropList ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropList ) ) ) );
                 return ( (CswNbtNodePropList) _CswNbtNodeProp );
             }
         }//List
@@ -542,7 +539,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropLocation ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropLocation ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropLocation ) ) ) );
                 return ( (CswNbtNodePropLocation) _CswNbtNodeProp );
             }
         }//Location
@@ -552,7 +549,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropLogical ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropLogical ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropLogical ) ) ) );
                 return ( (CswNbtNodePropLogical) _CswNbtNodeProp );
             }
         }//Logical
@@ -562,7 +559,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropLogicalSet ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropLogicalSet ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropLogicalSet ) ) ) );
                 return ( (CswNbtNodePropLogicalSet) _CswNbtNodeProp );
             }
         }//LogicalSet
@@ -572,7 +569,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropMetaDataList ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMetaDataList ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropMetaDataList ) ) ) );
                 return ( (CswNbtNodePropMetaDataList) _CswNbtNodeProp );
             }
 
@@ -583,7 +580,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropMemo ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMemo ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropMemo ) ) ) );
                 return ( (CswNbtNodePropMemo) _CswNbtNodeProp );
             }
 
@@ -594,7 +591,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropMol ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMol ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropMol ) ) ) );
                 return ( (CswNbtNodePropMol) _CswNbtNodeProp );
             }
 
@@ -605,7 +602,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropMTBF ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMTBF ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropMTBF ) ) ) );
                 return ( (CswNbtNodePropMTBF) _CswNbtNodeProp );
             }
 
@@ -616,7 +613,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropMultiList ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMultiList ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropMultiList ) ) ) );
                 return ( (CswNbtNodePropMultiList) _CswNbtNodeProp );
             }
 
@@ -627,7 +624,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropNodeTypeSelect ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropNodeTypeSelect ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropNodeTypeSelect ) ) ) );
                 return ( (CswNbtNodePropNodeTypeSelect) _CswNbtNodeProp );
             }
         }//AsNodeTypeSelect
@@ -637,7 +634,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropNFPA ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropNFPA ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropNFPA ) ) ) );
                 return ( (CswNbtNodePropNFPA) _CswNbtNodeProp );
             }
         }//AsNFPA
@@ -647,7 +644,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropNumber ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropNumber ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropNumber ) ) ) );
                 return ( (CswNbtNodePropNumber) _CswNbtNodeProp );
             }
         }//Number
@@ -657,7 +654,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropPassword ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropPassword ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropPassword ) ) ) );
                 return ( (CswNbtNodePropPassword) _CswNbtNodeProp );
             }
         }//Password
@@ -667,7 +664,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropPropertyReference ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropPropertyReference ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropPropertyReference ) ) ) );
                 return ( (CswNbtNodePropPropertyReference) _CswNbtNodeProp );
             }
         }//PropertyReference
@@ -677,7 +674,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropQuantity ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropQuantity ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropQuantity ) ) ) );
                 return ( (CswNbtNodePropQuantity) _CswNbtNodeProp );
             }
         }//Quantity
@@ -687,7 +684,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropQuestion ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropQuestion ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropQuestion ) ) ) );
                 return ( (CswNbtNodePropQuestion) _CswNbtNodeProp );
             }
         }//Question
@@ -697,7 +694,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropRelationship ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropRelationship ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropRelationship ) ) ) );
                 return ( (CswNbtNodePropRelationship) _CswNbtNodeProp );
             }
         }//Relationship
@@ -707,7 +704,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropReportLink ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropReportLink ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropReportLink ) ) ) );
                 return ( (CswNbtNodePropReportLink) _CswNbtNodeProp );
             }
         }//Relationship
@@ -717,7 +714,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropScientific ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropScientific ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropScientific ) ) ) );
                 return ( (CswNbtNodePropScientific) _CswNbtNodeProp );
             }
         }//Scientific
@@ -727,7 +724,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropSequence ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropSequence ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropSequence ) ) ) );
                 return ( (CswNbtNodePropSequence) _CswNbtNodeProp );
             }
         }//Sequence
@@ -737,7 +734,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropStatic ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropStatic ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropStatic ) ) ) );
                 return ( (CswNbtNodePropStatic) _CswNbtNodeProp );
             }
         }//Static
@@ -747,7 +744,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropText ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropText ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropText ) ) ) );
                 return ( (CswNbtNodePropText) _CswNbtNodeProp );
             }
         }//Text
@@ -757,7 +754,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropTimeInterval ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropTimeInterval ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropTimeInterval ) ) ) );
                 return ( (CswNbtNodePropTimeInterval) _CswNbtNodeProp );
             }
         }//TimeInterval
@@ -767,7 +764,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropUserSelect ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropUserSelect ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropUserSelect ) ) ) );
                 return ( (CswNbtNodePropUserSelect) _CswNbtNodeProp );
             }
         }//UserSelect
@@ -777,7 +774,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropViewPickList ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropViewPickList ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropViewPickList ) ) ) );
                 return ( (CswNbtNodePropViewPickList) _CswNbtNodeProp );
             }
         }//ViewPickList
@@ -787,7 +784,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is CswNbtNodePropViewReference ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropViewReference ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropViewReference ) ) ) );
                 return ( (CswNbtNodePropViewReference) _CswNbtNodeProp );
             }
         }//View
@@ -801,7 +798,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( !( _CswNbtNodeProp is ICswNbtNodePropNodeReference ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( ICswNbtNodePropNodeReference ) ) ) );
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( ICswNbtNodePropNodeReference ) ) ) );
                 return ( (ICswNbtNodePropNodeReference) _CswNbtNodeProp );
             }
         }//AsNodeReference
