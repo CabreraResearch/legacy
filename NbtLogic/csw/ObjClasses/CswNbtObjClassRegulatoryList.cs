@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 View1.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
                                                                 MetaDataProp: RegListListModeOCP,
                                                                 Value: SyncModule, //sync module that is enabled
-                                                               SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                                                                 FilterMode: CswEnumNbtFilterMode.Equals );
                                 CswNbtViewRelationship SecondaryRelationship = View1.AddViewRelationship( ParentRelationship, CswEnumNbtViewPropOwnerType.Second, RegListListCodeRegulatoryListOCP, false );
                                 View1.AddViewProperty( SecondaryRelationship, RegListListCodeListCodeOCP );
@@ -298,7 +298,14 @@ namespace ChemSW.Nbt.ObjClasses
                                     CswNbtObjClassRegulatoryList CurrentRegListNode = Tree1.getCurrentNode();
                                     CswPrimaryKey CurrentRegListPk = CurrentRegListNode.NodeId;
                                     string CurrentRegListRegions = "";
-                                    if( null != CurrentRegListNode.Regions.Value )
+                                    if( string.IsNullOrEmpty( CswConvert.ToString( CurrentRegListNode.Regions.Value ) ) )
+                                    {
+                                        if( SyncModule.Equals( CswEnumNbtModuleName.ArielSync ) )
+                                        {
+                                            CurrentRegListRegions = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConvert.ToString( CswEnumNbtConfigurationVariables.arielmodules ) );
+                                        }
+                                    }
+                                    else
                                     {
                                         CurrentRegListRegions = CswConvert.ToString( CurrentRegListNode.Regions.Value );
                                     }
