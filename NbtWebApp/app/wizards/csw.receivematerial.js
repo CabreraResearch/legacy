@@ -263,7 +263,7 @@
                     cswPrivate.toggleStepButtons(StepNo);
 
                     if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Select the number of containers and their quantities to receive. The maximum containers received at once is: ' + cswPrivate.state.containerlimit);
+                        cswPrivate.setStepHeader(StepNo, 'The limit for containers created at receipt is [' + cswPrivate.state.containerlimit + ']');
 
                         //Container Select (if multiple container nodetypes exist)
                         var containerSelect = Csw.wizard.nodeTypeSelect(cswPrivate['divStep' + StepNo].div(), {
