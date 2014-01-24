@@ -161,12 +161,15 @@ namespace ChemSW.Nbt
                 DoomedBlobData.Add( BlobProp.JctNodePropId.ToString() );
             }
             CswTableUpdate CswTableUpdateBlobData = _CswNbtResources.makeCswTableUpdate( "deletenode_blobdata", "blob_data" );
-            DataTable BlobData = CswTableUpdateBlobData.getTable( "where jctnodepropid in (" + DoomedBlobData + ")" );
-            foreach( DataRow BlobRow in BlobData.Rows )
+            if( DoomedBlobData.Count > 0 )
             {
-                BlobRow.Delete();
+                DataTable BlobData = CswTableUpdateBlobData.getTable( "where jctnodepropid in (" + DoomedBlobData + ")" );
+                foreach( DataRow BlobRow in BlobData.Rows )
+                {
+                    BlobRow.Delete();
+                }
+                CswTableUpdateBlobData.update( BlobData );
             }
-            CswTableUpdateBlobData.update( BlobData );
 
             // Delete this node's property values
             CswTableUpdate CswTableUpdateJct = _CswNbtResources.makeCswTableUpdate( "deletenode_update", "jct_nodes_props" );
