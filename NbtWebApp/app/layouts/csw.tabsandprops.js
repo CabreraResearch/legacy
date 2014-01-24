@@ -889,21 +889,17 @@
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
-                    
-                    var openDesignMode = Csw.clientDb.getItem('openDesignMode');
-                    if (openDesignMode) {
-                        Csw.clientDb.removeItem('openDesignMode');
-                        cswPrivate.openDesignMode();
-                    }
                 }
 
                 Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
                 Csw.tryExec(onSuccess);
             }
-
-            if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
-                Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
-
+            
+            var openDesignMode = Csw.clientDb.getItem('openDesignMode');
+            if (openDesignMode) {
+                Csw.clientDb.removeItem('openDesignMode');
+                cswPrivate.openDesignMode();
+            } else if (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
                 cswPrivate.ajax.propsImpl = Csw.ajax.deprecatedWsNbt({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: cswPrivate.urls.PropsUrlMethod,
