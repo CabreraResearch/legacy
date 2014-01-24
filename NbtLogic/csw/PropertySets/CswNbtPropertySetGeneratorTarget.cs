@@ -91,7 +91,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            return onPropertySetButtonClick( ButtonData );
+            bool Ret = false;
+            if( null != ButtonData.NodeTypeProp )
+            {
+                Ret = onPropertySetButtonClick( ButtonData );
+            }
+            return Ret;
         }//afterPopulateProps()
 
         #endregion
