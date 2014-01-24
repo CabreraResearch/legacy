@@ -20,7 +20,7 @@
                         allowEditRow: (nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport),
                         onEditRow: function(date) {
                             Csw.publish('initPropertyTearDown');
-                            $.CswDialog('EditNodeDialog', {
+                            Csw.dialogs.editnode({
                                 currentNodeId: nodeProperty.tabState.nodeid,
                                 currentNodeKey: nodeProperty.tabState.nodekey,
                                 onEditNode: nodeProperty.onEditNode,

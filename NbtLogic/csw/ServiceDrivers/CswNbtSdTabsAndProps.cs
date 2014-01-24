@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                         {
                             if( null != After )
                             {
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                 {
-                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp : true );
+                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp: true );
                 }
                 else
                 {
@@ -379,7 +379,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
-                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true );
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
             }
 
             if( Node != null )
@@ -544,13 +544,21 @@ namespace ChemSW.Nbt.ServiceDrivers
                 PropObj["helptext"] = PropWrapper[CswEnumNbtPropertyAttributeName.HelpText];   // case 29342
 
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
+
+                CswEnumNbtNodeTypePermission permission = CswEnumNbtNodeTypePermission.Edit;
+                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                {
+                    //case 31503
+                    permission = CswEnumNbtNodeTypePermission.Create;
+                }
+
                 if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible
                     FieldType == CswEnumNbtFieldType.Button ||
                     ( false == ForceReadOnly &&
-                      ( _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
-                        _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, NodeId ) &&
-                        ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
-                          _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, Tab ) ) ) ) )
+                      ( _CswNbtResources.Permit.isPropWritable( permission, Prop, Tab, PropWrapper ) &&
+                        _CswNbtResources.Permit.isNodeWritable( permission, NodeType, NodeId ) &&
+                        ( _CswNbtResources.Permit.canNodeType( permission, NodeType ) ||
+                          _CswNbtResources.Permit.canTab( permission, NodeType, Tab ) ) ) ) )
                 {
                     PropObj["readonly"] = false;
                 }
@@ -666,12 +674,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNodeKey nodekey = null;
                 Action<CswNbtNode> After2 = delegate( CswNbtNode NewNode )
                     {
-                        bool CanEdit = (
-                                            _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
-                                            _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
-                                            _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, NewNode.NodeId )
-                                       );
-                        if( CanEdit )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) ||
+                            _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Create, NodeType, NodeTypeTab ) ||
+                            _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Create, NodeType, NewNode.NodeId ) )
                         {
                             nodekey = _saveProp( NewNode, PropsObj, View, NodeTypeTab, true );
                         }
@@ -763,12 +768,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                         default:
                             if( null != Node )
                             {
-                                bool CanEdit = (
-                                                   _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
-                                                   _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
-                                                   _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, Node.NodeId )
-                                               );
-                                if( CanEdit )
+                                if( _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
+                                    _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                                    _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, Node.NodeId ) )
                                 {
                                     if( Node.PendingUpdate )
                                     {
@@ -908,7 +910,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                     }
-                    CopyToNode.postChanges( ForceUpdate : false );
+                    CopyToNode.postChanges( ForceUpdate: false );
                 } // foreach( string NodeIdStr in CopyNodeIds )
             }
         }

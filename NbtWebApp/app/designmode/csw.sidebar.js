@@ -227,7 +227,7 @@
                                 disableOnClick: false,
                                 onClick: function () {
                                     // Open a dialog to edit the properties of the design nodetype
-                                    $.CswDialog('EditNodeDialog', {
+                                    Csw.dialogs.editnode({
                                         currentNodeId: cswPrivate.designNodeType.nodeid,
                                         filterToPropId: '',
                                         title: 'Edit Node',

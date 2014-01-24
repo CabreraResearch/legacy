@@ -79,7 +79,7 @@
         }
     });
     menuAction.add('Profile', function (privateScope, menuItemName, menuItemJson, menuItem) {
-        $.CswDialog('EditNodeDialog', {
+        Csw.dialogs.editnode({
             currentNodeId: menuItemJson.userid,
             filterToPropId: '',
             title: 'User Profile',
