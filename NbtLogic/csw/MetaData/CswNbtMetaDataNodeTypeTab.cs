@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
                 {
-                    _checkVersioningTab();
+                    //_checkVersioningTab();
 
                     _NodeTypeTabRow["tabname"] = value;
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
@@ -106,16 +106,16 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        private void _checkVersioningTab()
-        {
-            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioningDeprecated( this.getNodeType() );
-            if( NewNodeType.NodeTypeId != NodeTypeId )
-            {
-                // Get the new tab and reassign myself
-                CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabVersion( NewNodeType.NodeTypeId, this.TabId );
-                this._NodeTypeTabRow = NewTab._DataRow;
-            }
-        }
+        //private void _checkVersioningTab()
+        //{
+        //    CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioningDeprecated( this.getNodeType() );
+        //    if( NewNodeType.NodeTypeId != NodeTypeId )
+        //    {
+        //        // Get the new tab and reassign myself
+        //        CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabVersion( NewNodeType.NodeTypeId, this.TabId );
+        //        this._NodeTypeTabRow = NewTab._DataRow;
+        //    }
+        //}
 
         private bool _CanEditTab()
         {
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 if( CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ) != value )
                 {
-                    _checkVersioningTab();
+                    //_checkVersioningTab();
 
                     _NodeTypeTabRow["taborder"] = CswConvert.ToDbVal( value );
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();

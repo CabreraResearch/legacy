@@ -394,7 +394,8 @@ namespace ChemSW.Nbt.Actions
 
                 //NodeTypeName Template
                 CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Description );
-                RetInspectionTargetNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName ) );
+                //RetInspectionTargetNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName ) );
+                RetInspectionTargetNt.DesignNode.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
                 ItDescriptionNtp.updateLayout( CswEnumNbtLayoutType.Add, ItInspectionGroupNtp, true );
 
                 CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Barcode );
@@ -427,7 +428,8 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtMetaDataNodeTypeProp ItgNameNtp = InspectionTargetGroupNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTargetGroup.PropertyName.Name );
 
-                InspectionTargetGroupNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName ) );
+                //InspectionTargetGroupNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName ) );
+                InspectionTargetGroupNt.DesignNode.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName );
 
                 //Description is useful.
                 _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( InspectionTargetGroupNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Description" )
