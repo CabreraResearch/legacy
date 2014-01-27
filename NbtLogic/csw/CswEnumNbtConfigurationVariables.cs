@@ -158,7 +158,12 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Customer password for accessing ChemWatch
         /// </summary>
-        chemwatchpassword
+        chemwatchpassword,
+
+        /// <summary>
+        /// Customer level limit on Ariel regions.
+        /// </summary>
+        arielmodules
 
     };
 

@@ -78,7 +78,20 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != RegListNode )
                 {
                     CswC3SearchParams.RegulationDatabase = CswNbtC3ClientManager.RegulationDatabase;
-                    CswC3SearchParams.Regions = CswConvert.ToString( RegListNode.Regions.Value );
+
+                    string Regions = "";
+                    if( string.IsNullOrEmpty( CswConvert.ToString( RegListNode.Regions.Value ) ) )
+                    {
+                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
+                        {
+                            Regions = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConvert.ToString( CswEnumNbtConfigurationVariables.arielmodules ) );
+                        }
+                    }
+                    else
+                    {
+                        Regions = CswConvert.ToString( RegListNode.Regions.Value );
+                    }
+                    CswC3SearchParams.Regions = Regions;
                 }
                 CswC3SearchParams.Query = SearchTerm;
 

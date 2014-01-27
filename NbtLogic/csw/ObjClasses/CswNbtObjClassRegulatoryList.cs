@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 View1.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
                                                                 MetaDataProp: RegListListModeOCP,
                                                                 Value: SyncModule, //sync module that is enabled
-                                                               SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                                                                 FilterMode: CswEnumNbtFilterMode.Equals );
                                 CswNbtViewRelationship SecondaryRelationship = View1.AddViewRelationship( ParentRelationship, CswEnumNbtViewPropOwnerType.Second, RegListListCodeRegulatoryListOCP, false );
                                 View1.AddViewProperty( SecondaryRelationship, RegListListCodeListCodeOCP );
@@ -298,7 +298,14 @@ namespace ChemSW.Nbt.ObjClasses
                                     CswNbtObjClassRegulatoryList CurrentRegListNode = Tree1.getCurrentNode();
                                     CswPrimaryKey CurrentRegListPk = CurrentRegListNode.NodeId;
                                     string CurrentRegListRegions = "";
-                                    if( null != CurrentRegListNode.Regions.Value )
+                                    if( string.IsNullOrEmpty( CswConvert.ToString( CurrentRegListNode.Regions.Value ) ) )
+                                    {
+                                        if( SyncModule.Equals( CswEnumNbtModuleName.ArielSync ) )
+                                        {
+                                            CurrentRegListRegions = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConvert.ToString( CswEnumNbtConfigurationVariables.arielmodules ) );
+                                        }
+                                    }
+                                    else
                                     {
                                         CurrentRegListRegions = CswConvert.ToString( CurrentRegListNode.Regions.Value );
                                     }
@@ -390,18 +397,29 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         } // findMatches()
 
+        public static Dictionary<string, string> ArielRegionOptions = new Dictionary<string, string>
+            {
+                {"EU", "Western Europe"},
+                {"NA", "North America" },
+                {"LA", "Latin America"},
+                {"MA", "Middle East Africa"},
+                {"EE", "Central/Eastern Europe"},
+                {"AP", "Asia Pacific"}
+            };
         private Dictionary<string, string> _initRegionsOptions()
         {
             Dictionary<string, string> Ret = new Dictionary<string, string>();
-            Ret.Add( "EU", "Western Europe" );
-            Ret.Add( "NA", "North America" );
-            Ret.Add( "LA", "Latin America" );
-            Ret.Add( "MA", "Middle East Africa" );
-            Ret.Add( "EE", "Central/Eastern Europe" );
-            Ret.Add( "AP", "Asia Pacific" );
+
+            CswCommaDelimitedString CustomerArielModules = new CswCommaDelimitedString( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConvert.ToString( CswEnumNbtConfigurationVariables.arielmodules ) ) );
+            foreach( string Module in CustomerArielModules )
+            {
+                string Abbreviation = Module;
+                string FullName = ArielRegionOptions[Abbreviation];
+                Ret.Add( Abbreviation, FullName );
+            }
 
             return Ret;
-        } // _initDsdPhraseOptions()
+        } // _initRegionsOptions()
 
         private void _setListModeOptions()
         {

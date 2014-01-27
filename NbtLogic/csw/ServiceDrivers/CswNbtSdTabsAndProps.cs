@@ -947,6 +947,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( NodeType != null )
             {
                 IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, CswConvert.ToInt32( TabId ), LayoutType );
+                if( LayoutType == CswEnumNbtLayoutType.Edit )//Case 31740 - For Edit Layout, include all props for Identity tab's sake.
+                {
+                    Props = Props.Concat( _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeType.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType ) );
+                }
                 foreach( CswNbtMetaDataNodeTypeProp Prop in from Prop in Props
                                                             orderby Prop.PropNameWithQuestionNo
                                                             select Prop )

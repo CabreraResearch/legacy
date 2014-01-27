@@ -425,6 +425,10 @@
         cswPublic.setSidebar = function (sidebar) {
             cswPrivate.sidebar = sidebar;
         };
+        
+        cswPublic.getIdentityTabId = function () {
+            return layout.identityTabId;
+        };
 
         cswPublic.getActiveTabId = function () {
             return layout.activeTabId;
@@ -439,6 +443,7 @@
         };
 
         cswPublic.init = cswPrivate.init;
+                    cswPrivate.sidebar.toggleIdentityTabOption(cswPrivate.Layout === 'Edit');
 
         //#endregion Public
 
