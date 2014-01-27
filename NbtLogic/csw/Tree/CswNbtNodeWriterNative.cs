@@ -1,16 +1,18 @@
 using System;
 using System.Data;
+using System.Linq;
 using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodeWriterNative : ICswNbtNodeWriterImpl
+    public class CswNbtNodeWriterNative: ICswNbtNodeWriterImpl
     {
         private CswNbtResources _CswNbtResources = null;
         private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
@@ -152,8 +154,24 @@ namespace ChemSW.Nbt
 
         public void delete( CswNbtNode Node )
         {
-            // Delete this node's property values
+            //Case 31416 - Delete any blob_data associated with this nodes properties
+            CswCommaDelimitedString DoomedBlobData = new CswCommaDelimitedString();
+            foreach( CswNbtNodePropWrapper BlobProp in Node.Properties.Where( P => P.IsBlobProp() ) )
+            {
+                DoomedBlobData.Add( BlobProp.JctNodePropId.ToString() );
+            }
+            CswTableUpdate CswTableUpdateBlobData = _CswNbtResources.makeCswTableUpdate( "deletenode_blobdata", "blob_data" );
+            if( DoomedBlobData.Count > 0 )
+            {
+                DataTable BlobData = CswTableUpdateBlobData.getTable( "where jctnodepropid in (" + DoomedBlobData + ")" );
+                foreach( DataRow BlobRow in BlobData.Rows )
+                {
+                    BlobRow.Delete();
+                }
+                CswTableUpdateBlobData.update( BlobData );
+            }
 
+            // Delete this node's property values
             CswTableUpdate CswTableUpdateJct = _CswNbtResources.makeCswTableUpdate( "deletenode_update", "jct_nodes_props" );
             DataTable JctTable = CswTableUpdateJct.getTable( " where nodeid=" + Node.NodeId.PrimaryKey.ToString() );
             foreach( DataRow Row in JctTable.Rows )

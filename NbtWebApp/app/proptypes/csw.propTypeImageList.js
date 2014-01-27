@@ -8,7 +8,7 @@
         var cswPrivate = {};
 
         //The render function to be executed as a callback
-        var render = function() {
+        var render = function () {
             'use strict';
 
             cswPrivate.value = nodeProperty.propData.values.value;
@@ -22,13 +22,13 @@
                 cellvalign: 'top'
             });
             var cell = table.cell(1, 2);
-            var errorDiv = table.cell(1,3).div();
-            
+            var errorDiv = table.cell(1, 3).div();
+
             cswPrivate.imageTable = table.cell(1, 1).table();
             cswPrivate.imgTblCol = 1;
             cswPrivate.selectedValues = [];
 
-            cswPrivate.addImage = function(name, href, doAnimation) {
+            cswPrivate.addImage = function (name, href, doAnimation) {
                 var imageCell = cswPrivate.imageTable.cell(1, cswPrivate.imgTblCol)
                     .css({
                         'text-align': 'center',
@@ -67,7 +67,7 @@
                         hovertext: 'Remove',
                         size: 16,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             nameCell.$.fadeOut('fast');
                             imageCell.$.fadeOut('fast');
                             cswPrivate.removeValue(href);
@@ -85,13 +85,14 @@
                 }
             }; // addImage()
 
-            cswPrivate.saveProp = function() {
+            cswPrivate.saveProp = function () {
                 //Case 29390: No sync for Image List
                 nodeProperty.propData.values.value = cswPrivate.selectedValues.join('\n');
                 nodeProperty.broadcastPropChange(nodeProperty.propData.values.value);
+                cswPrivate.doValidation(nodeProperty.propData.values.value);
             };
 
-            cswPrivate.addValue = function(valueToAdd) {
+            cswPrivate.addValue = function (valueToAdd) {
                 if (false === Csw.contains(cswPrivate.selectedValues, valueToAdd) &&
                     false === Csw.isNullOrEmpty(valueToAdd)) {
                     cswPrivate.selectedValues.push(valueToAdd);
@@ -99,21 +100,21 @@
                 cswPrivate.saveProp();
             };
 
-            cswPrivate.removeValue = function(valueToRemove) {
+            cswPrivate.removeValue = function (valueToRemove) {
                 var idx = cswPrivate.selectedValues.indexOf(valueToRemove);
                 if (idx !== -1) {
                     cswPrivate.selectedValues.splice(idx, 1);
                 }
                 cswPrivate.saveProp();
             };
-
-            cswPrivate.makeImageSelectList = function() {
-                cell.empty();
+            
+            (function () {
+                
                 cswPrivate.imageSelectList = cell.imageSelect({
                     comboImgHeight: cswPrivate.height,
                     comboImgWidth: cswPrivate.width,
                     imageprefix: cswPrivate.imageprefix,
-                    onSelect: function(name, href, id, imageCell, nameCell) {
+                    onSelect: function (name, href, id, imageCell, nameCell) {
                         if (false === cswPrivate.allowMultiple) {
                             cswPrivate.imageTable.empty();
                             cswPrivate.selectedValues = [];
@@ -125,11 +126,12 @@
                         }
                         cswPrivate.addImage(name, href, true);
                         Csw.tryExec(nodeProperty.onChange, cswPrivate.selectedValues);
-                        doValidation(href);
                         return false;
                     }
                 });
-                Csw.iterate(cswPrivate.options, function(thisOpt) {
+
+                cswPrivate.imageTable.empty();
+                Csw.iterate(cswPrivate.options, function (thisOpt) {
                     if (Csw.bool(thisOpt.selected)) {
                         cswPrivate.selectedValues.push(thisOpt.value);
                         cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
@@ -139,22 +141,13 @@
                         }
                     }
                 }, true);
+                
                 if (nodeProperty.isReadOnly()) {
                     cswPrivate.imageSelectList.hide();
                 }
                 cswPrivate.imageSelectList.required(nodeProperty.isRequired());
-
-//                if (nodeProperty.isRequired()) {
-//                    $.validator.addMethod('imageRequired', function(value, element) {
-//                        return (cswPrivate.selectedValues.length > 0);
-//                    }, 'An image is required.');
-//                    cswPrivate.imageSelectList.addClass('imageRequired');
-//                }
                 
-                // Validation
-                //  (stolen and adapted from propTypeMultiList)
-                
-                var doValidation = function (val) {
+                cswPrivate.doValidation = function (val) {
                     var ret = true;
                     if (nodeProperty.isRequired()) {
                         if (Csw.isNullOrEmpty(val)) {
@@ -168,14 +161,14 @@
                     }
                     return ret;
                 };
-                
+
                 var validator = Csw.validator(errorDiv, cswPrivate.imageSelectList, {
                     cssOptions: { 'visibility': 'hidden', 'width': '20px' },
                     errorMsg: 'At least one value must be selected',
                     className: 'imageListValidator' + nodeProperty.propData.id,
                     onValidation: function (isValid) {
                         if (isValid || Csw.enums.editMode.Edit === nodeProperty.tabState.EditMode) {
-                            errorDiv.hide();
+                            errorDiv.show();
                         } else {
                             errorDiv.show();
                         }
@@ -183,43 +176,11 @@
                 });
 
                 cswPrivate.validatorCheckBox = validator.input;
-//                cswPrivate.validatorCheckBox.val(true); //if this is a required property this will get set accordingly , for now set it to true
-//                if (Csw.enums.editMode.Add === nodeProperty.tabState.EditMode) {
-//                    doValidation(nodeProperty.propData.values.value);
-//                } else {
-//                    errorDiv.hide();
-//                }
-
-            }; // makeImageSelectList()
-
-            (function() {
+                var isInitiallyValid = ((false === nodeProperty.isRequired()) || false === Csw.isNullOrEmpty(nodeProperty.propData.values.value));
+                cswPrivate.validatorCheckBox.val(isInitiallyValid);
                 if (false === nodeProperty.isReadOnly()) {
-
-                    if (nodeProperty.tabState.EditMode !== Csw.enums.editMode.Add && // Not Add mode and
-                        (false === nodeProperty.isRequired() ||                      // ( Not required or
-                            false === Csw.isNullOrEmpty(cswPrivate.value))) {        //   Already has a value )
-
-                        cswPrivate.editButton = cell.buttonExt({
-                            enabledText: 'Edit',
-                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                            onClick: function() {
-                                cswPrivate.makeImageSelectList();
-                            }
-                        });
-
-                    } else {
-
-                        cswPrivate.makeImageSelectList();
-
-                    }
+                    cswPrivate.doValidation(nodeProperty.propData.values.value);
                 }
-
-                Csw.iterate(cswPrivate.options, function(thisOpt) {
-                    if (Csw.bool(thisOpt.selected)) {
-                        cswPrivate.selectedValues.push(thisOpt.value);
-                        cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
-                    }
-                }, false);
 
             })();
         }; // render()

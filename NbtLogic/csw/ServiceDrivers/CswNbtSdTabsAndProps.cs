@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) )
                         {
-                            _makeTab( Tabs, Int32.MaxValue, "history", "History", false );
+                            _makeTab( Tabs, Int32.MaxValue, "history", "History", false, Int32.MinValue.ToString() );
                         }
                     }
                     Ret["node"]["nodename"] = Node.NodeName;
@@ -123,12 +123,12 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( _ConfigMode || Tab.getNodeTypePropsByDisplayOrder().Any() )
                 {
-                    _makeTab( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout );
+                    _makeTab( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout, Tab.DesignNode.NodeId.ToString() );
                 }
             }
         }
 
-        public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout )
+        public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout, string TabNodeId )
         {
             // case 24250
             // This mechanism correctly orders all tabs even with redundant tab order values,
@@ -143,6 +143,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             ParentObj[RealTabOrder]["id"] = Id;
             ParentObj[RealTabOrder]["name"] = Name;
             ParentObj[RealTabOrder]["canEditLayout"] = CanEditLayout;
+            ParentObj[RealTabOrder]["tabnodeid"] = TabNodeId;
         }
 
 

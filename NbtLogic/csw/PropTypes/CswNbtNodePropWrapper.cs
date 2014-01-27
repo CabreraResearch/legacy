@@ -382,6 +382,15 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodeProp.SetSubFieldValue( SubField.Name, value );
         }
 
+        /// <summary>
+        /// Whether or not this property stores blob content
+        /// </summary>
+        public bool IsBlobProp()
+        {
+            return getFieldTypeValue() == CswEnumNbtFieldType.MOL ||
+                getFieldTypeValue() == CswEnumNbtFieldType.Image ||
+                getFieldTypeValue() == CswEnumNbtFieldType.File;
+        }
 
         /// <summary>
         /// Gets or sets a property attribute.  Changes temporarily override values from the MetaData database, but are not saved.
