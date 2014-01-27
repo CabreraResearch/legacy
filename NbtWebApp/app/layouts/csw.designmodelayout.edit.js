@@ -183,7 +183,7 @@
                                         text: 'Configure Selected Tab',
                                         onClick: function () {
                                             var selectedTab = window.Ext.getCmp(cswPublic.activeTabId);
-                                            $.CswDialog('EditNodeDialog', {
+                                            Csw.dialogs.editnode({
                                                 currentNodeId: selectedTab.cswTabNodeId,
                                                 title: 'Edit Tab: ' + selectedTab.title,
                                                 onEditNode: function () {
