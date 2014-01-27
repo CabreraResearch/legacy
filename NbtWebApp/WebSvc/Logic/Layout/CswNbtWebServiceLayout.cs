@@ -101,7 +101,38 @@ namespace NbtWebApp.WebSvc.Logic.Layout
         public static void DeleteTab( ICswResources CswResources, CswWebSvcReturn Ret, int TabId )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            NbtResources.MetaData.getNodeTypeTab( TabId ).DesignNode.Node.delete();
+            CswNbtObjClassDesignNodeTypeTab Tab = NbtResources.MetaData.getNodeTypeTab( TabId ).DesignNode;
+
+            CswNbtView NodetypeTabs = new CswNbtView(NbtResources);
+            CswNbtViewRelationship TabRelationship = NodetypeTabs.AddViewRelationship( Tab.NodeType, true );
+            //only check tabs for the nodetype that we're working with
+            NodetypeTabs.AddViewPropertyAndFilter(
+                TabRelationship,
+                Tab.NodeType.getNodeTypeProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue ),
+                Value: Tab.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString(),
+                FilterMode : CswEnumNbtFilterMode.Equals,
+                Conjunction : CswEnumNbtFilterConjunction.And,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID
+                );
+            //for now, we don't have a better way to fetch identity tab than by name, but there is another pending case on this
+            NodetypeTabs.AddViewPropertyAndFilter(
+                TabRelationship,
+                Tab.NodeType.getNodeTypeProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName ),
+                Value : "Identity",
+                Conjunction : CswEnumNbtFilterConjunction.And,
+                FilterMode : CswEnumNbtFilterMode.NotEquals
+                );
+            ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( NodetypeTabs, false, false, true );
+            
+            //see how many tabs we returned, so we can ensure we're not deleting the last tab in the layout
+            if( Tree.getChildNodeCount() > 1 )
+            {
+                Tab.Node.delete();
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete the last tab of a nodetype.", "" );
+            }
         }
     }
 }
