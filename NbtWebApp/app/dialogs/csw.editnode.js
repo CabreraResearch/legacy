@@ -70,6 +70,7 @@
                         Refresh: cswPrivate.onRefresh,
                         onEditView: function(viewid) {
                             doRefresh = false; //We're loading the view editor, don't refresh when the dialog closes                        
+                            editDialog.close();
                             Csw.tryExec(cswPrivate.onEditView, viewid);
                         },
                         onSave: function(nodeids, nodekeys, tabcount) {

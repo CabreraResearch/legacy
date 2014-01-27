@@ -54,15 +54,15 @@ namespace ChemSW.Nbt.MetaData
             return NodeTypeName + " (" + NodeTypeId.ToString() + ")";
         }
 
-        private void _checkVersioningNodeType()
-        {
-            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioningDeprecated( this );
-            if( NewNodeType.NodeTypeId != NodeTypeId )
-            {
-                // Reassign myself
-                this._NodeTypeRow = NewNodeType._DataRow;
-            }
-        }
+        //private void _checkVersioningNodeType()
+        //{
+        //    CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioningDeprecated( this );
+        //    if( NewNodeType.NodeTypeId != NodeTypeId )
+        //    {
+        //        // Reassign myself
+        //        this._NodeTypeRow = NewNodeType._DataRow;
+        //    }
+        //}
 
         [DataMember]
         public Int32 NodeTypeId
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.MetaData
                     if( ExistingNodeType != null && ExistingNodeType.FirstVersionNodeTypeId != this.FirstVersionNodeTypeId )
                         throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
 
-                    _checkVersioningNodeType();
+                    //_checkVersioningNodeType();
 
                     _NodeTypeRow["nodetypename"] = value;
                     _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["category"].ToString() != value )
                 {
-                    _checkVersioningNodeType();
+                    //_checkVersioningNodeType();
                     _NodeTypeRow["category"] = value;
                 }
             }
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["iconfilename"].ToString() != value )
                 {
-                    _checkVersioningNodeType();
+                    //_checkVersioningNodeType();
                     _NodeTypeRow["iconfilename"] = value;
                 }
             }
@@ -170,16 +170,16 @@ namespace ChemSW.Nbt.MetaData
         public string NameTemplateValue
         {
             get { return _NodeTypeRow["nametemplate"].ToString(); }
-            private set
-            {
-                if( _NodeTypeRow["nametemplate"].ToString() != value )
-                {
-                    _checkVersioningNodeType();
-                    _NodeTypeRow["nametemplate"] = value;
-                    // Need to set all node records to pendingupdate if this changes
-                    SetNodesToPendingUpdate();
-                }
-            }
+            //private set
+            //{
+            //    if( _NodeTypeRow["nametemplate"].ToString() != value )
+            //    {
+            //        _checkVersioningNodeType();
+            //        _NodeTypeRow["nametemplate"] = value;
+            //        // Need to set all node records to pendingupdate if this changes
+            //        SetNodesToPendingUpdate();
+            //    }
+            //}
         }
 
         /// <summary>
@@ -216,22 +216,22 @@ namespace ChemSW.Nbt.MetaData
             return CswNbtMetaData.TemplateValueToTemplateText( getNodeTypeProps(), NameTemplateValue );
         }
 
-        /// <summary>
-        /// Set (overwrite) the Name template using an already well-formed template value.
-        /// </summary>
-        /// <param name="value"></param>
-        public void setNameTemplateText( string value )
-        {
-            NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
-        }
+        ///// <summary>
+        ///// Set (overwrite) the Name template using an already well-formed template value.
+        ///// </summary>
+        ///// <param name="value"></param>
+        //public void setNameTemplateText( string value )
+        //{
+        //    NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
+        //}
 
-        /// <summary>
-        /// Transform a property name into a template value and add it to the Name template.
-        /// </summary>
-        public void addNameTemplateText( string value )
-        {
-            NameTemplateValue += CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), CswNbtMetaData.MakeTemplateEntry( value ) ) + " ";
-        }
+        ///// <summary>
+        ///// Transform a property name into a template value and add it to the Name template.
+        ///// </summary>
+        //public void addNameTemplateText( string value )
+        //{
+        //    NameTemplateValue += CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), CswNbtMetaData.MakeTemplateEntry( value ) ) + " ";
+        //}
 
         public Int32 PriorVersionNodeTypeId
         {

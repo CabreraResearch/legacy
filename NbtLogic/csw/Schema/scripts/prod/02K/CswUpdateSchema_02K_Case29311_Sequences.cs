@@ -46,7 +46,9 @@ namespace ChemSW.Nbt.Schema
                     Category = "Design",
                     IconFileName = "wrench.png"
                 } );
-            SequenceNT.addNameTemplateText( CswNbtObjClassDesignSequence.PropertyName.Name );
+            //SequenceNT.addNameTemplateText( CswNbtObjClassDesignSequence.PropertyName.Name );
+            SequenceNT._DataRow["nametemplate"] = CswNbtMetaData.TemplateTextToTemplateValue( SequenceNT.getNodeTypeProps(), CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignSequence.PropertyName.Name ) );
+
             Int32 TabId = SequenceNT.getFirstNodeTypeTab().TabId;
 
             CswNbtMetaDataNodeTypeProp SeqNameNTP = SequenceNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignSequence.PropertyName.Name );
