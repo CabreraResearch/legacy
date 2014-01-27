@@ -39,26 +39,30 @@
                     var contentDiv = div.div();
 
                     var beforeCloseTab = function (tab) {
-                        var confirmDialog = Csw.dialogs.confirmDialog({
-                            title: 'Delete Tab',
-                            message: 'Are you sure you want to delete this tab?',
-                            width: 300,
-                            height: 160,
-                            onYes: function () {
-                                Csw.ajaxWcf.post({
-                                    urlMethod: 'Design/deleteTab',
-                                    data: tab.id,
-                                    success: function (data) {
-                                        tab.ownerCt.removeListener('beforeclose', beforeCloseTab); //self referential, ooo. Necessary to not open this dialog again when we remove the tab
-                                        tab.ownerCt.remove(tab);
-                                        confirmDialog.close();
-                                    },
-                                }); //confirm dialog
-                            },//onYes
-                            onNo: function () {
-                                confirmDialog.close();
-                            }
-                        });
+                        if (tab.ownerCt.items.length <= 2) {
+                            Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot delete the last tab on a layout.'));
+                        } else {
+                            var confirmDialog = Csw.dialogs.confirmDialog({
+                                title: 'Delete Tab',
+                                message: 'Are you sure you want to delete this tab?',
+                                width: 300,
+                                height: 160,
+                                onYes: function() {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Design/deleteTab',
+                                        data: tab.id,
+                                        success: function(data) {
+                                            tab.ownerCt.removeListener('beforeclose', beforeCloseTab); //self referential, ooo. Necessary to not open this dialog again when we remove the tab
+                                            tab.ownerCt.remove(tab);
+                                            confirmDialog.close();
+                                        },
+                                    }); //confirm dialog
+                                },//onYes
+                                onNo: function() {
+                                    confirmDialog.close();
+                                }
+                            });
+                        }
                         return false;
                     };//beforeClose
 
