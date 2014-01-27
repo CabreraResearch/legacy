@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.WebSvc.Returns;

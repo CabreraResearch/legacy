@@ -77,7 +77,7 @@
                             Csw.clientChanges.unsetChanged();
                             if (tabcount <= 2 || cswPrivate.Multi) { /* Ignore history tab */
                                 if (false === cswPublic.closed) {
-                                    cswPublic.close();
+                                    editDialog.close();
                                     cswPublic.div.$.dialog('close');
                                 }
                             }
@@ -100,6 +100,8 @@
                         //Case 31402 - when we close the dialog, set the cookies to the node on the main screen
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, prevNodeId);
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, prevNodeKey);
+
+
 
                         cswPublic.closed = true;
                         cswPublic.tabsAndProps.tearDown();

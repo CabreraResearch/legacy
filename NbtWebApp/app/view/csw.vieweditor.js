@@ -922,6 +922,7 @@
                         value: cswPrivate.View.ViewName,
                         onChange: function () {
                             handleAttributeChange();
+
                         }
                     });
 
@@ -991,7 +992,12 @@
                                 StepName: stepNames.ViewAttributes
                             },
                             success: function (response) {
+                                var prevOldViewName = cswPrivate.View.ViewName;
                                 cswPrivate.View = response.CurrentView;
+                                //Case 31273 - if the view name changed, reload the preview
+                                if (prevOldViewName !== response.CurrentView.ViewName) {
+                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, null, true);
+                                }
                             }
                         });
                         cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);

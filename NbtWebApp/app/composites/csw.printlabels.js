@@ -25,7 +25,12 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            var labelsDiv = cswParent.div({ text: 'Print labels for the following: ' });
+            var labelText = 'Print labels for the following: ';
+            if (cswPrivate.nodes.length === 0) {
+                labelText = '';
+            }
+
+            var labelsDiv = cswParent.div({ text: labelText });
             labelsDiv.br();
 
             Csw.iterate(cswPrivate.nodes, function (nodeObj) {
@@ -66,7 +71,7 @@
 
                         //if a label to display by default was passed in, use that. Otherwise take the result of the web request
                         var labelSelectionTarget = Csw.isNullOrEmpty(cswPrivate.selectedLabel) ? data.SelectedLabelId : cswPrivate.selectedLabel;
-                        
+
                         //iterate through the list of labels. If the label's nodeid matches our target, set it to be selected
                         for (var i = 0; i < data.Labels.length; i += 1) {
                             var label = data.Labels[i];
@@ -113,7 +118,7 @@
                 printBtn.hide();
             }
 
-            cswPublic.getPrintData = function() {
+            cswPublic.getPrintData = function () {
                 var ret = {
                     LabelId: labelSel.val(),
                     PrinterId: printerSel.selectedNodeId(),

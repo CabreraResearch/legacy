@@ -91,6 +91,7 @@
 
                                 },//listeners
                                 closable: true,
+                                cswTabNodeId: tabData.tabnodeid
                             });
 
 
@@ -174,6 +175,24 @@
                                     }
                                 }
                             }),
+                            tabBar: {
+                                items: [
+                                    { xtype: 'tbfill' }, //this forces the button below to be on the far right
+                                    {
+                                        xtype: 'button',
+                                        text: 'Configure Selected Tab',
+                                        onClick: function () {
+                                            var selectedTab = window.Ext.getCmp(cswPublic.activeTabId);
+                                            $.CswDialog('EditNodeDialog', {
+                                                currentNodeId: selectedTab.cswTabNodeId,
+                                                title: 'Edit Tab: ' + selectedTab.title,
+                                                onEditNode: function () {
+                                                    cswPrivate.init();
+                                                }
+                                            });
+                                        }
+                                    }]
+                            },
                             items: tabs
                         }]
                     });
