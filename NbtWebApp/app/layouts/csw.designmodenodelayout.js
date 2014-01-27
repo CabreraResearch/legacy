@@ -297,6 +297,17 @@
                 onEditNode: function () {
                     Csw.tryExec(onSave);
                     cswPublic.init();
+                },
+                onEditView: function(viewid, viewmode) {
+                    Csw.main.handleAction({
+                        actionname: 'Edit_View',
+                        ActionOptions: {
+                            viewid: viewid,
+                            viewmode: viewmode || Csw.enums.viewMode.grid.name,
+                            startingStep: 2,
+                            IgnoreReturn: true
+                        }
+                    });
                 }
             });
         };
