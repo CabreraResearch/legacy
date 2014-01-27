@@ -73,7 +73,13 @@
         return ret;
     });
 
-    Csw.error.register('throwException', function (exception) {
+    Csw.error.register('throwException', function (exception, namespace, filename, line) {
+        //case 31703: a *lot* of people are misusing this class. You're supposed to wrap these params in a Csw.error.exception.
+        //We're going to do the world a favor and try to detect when you send in raw values
+        if (typeof(exception) === typeof('string') ) {
+            exception = Csw.error.exception(exception, namespace, filename, line);
+        }
+        
         Csw.debug.error(exception);
         throw exception;
     });
