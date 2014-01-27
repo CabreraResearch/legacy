@@ -51,10 +51,17 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: 'Design/deleteTab',
                                         data: tab.id,
-                                        success: function(data) {
-                                            tab.ownerCt.removeListener('beforeclose', beforeCloseTab); //self referential, ooo. Necessary to not open this dialog again when we remove the tab
-                                            tab.ownerCt.remove(tab);
+                                        success: function (data) {
+                                            var tabstrip = tab.ownerCt;
+                                            tabstrip.removeListener('beforeclose', beforeCloseTab); //self referential, ooo. Necessary to not open this dialog again when we remove the tab
+                                            tabstrip.remove(tab);
                                             confirmDialog.close();
+                                            //if there is only one tab left now, remove the little [X]
+                                            if (tabstrip.items.length <= 2) {
+                                                tabstrip.items.items.forEach( function (eachTab) {
+                                                    eachTab.tab.setClosable(false);
+                                                });
+                                            }
                                         },
                                     }); //confirm dialog
                                 },//onYes
@@ -94,7 +101,7 @@
                                     beforeclose: beforeCloseTab,
 
                                 },//listeners
-                                closable: true,
+                                closable: (Object.keys(data.tabs).length > 2),
                             });
 
 
@@ -133,6 +140,14 @@
                                                 });
                                                 tab.ownerCt.setActiveTab(newTab);
                                                 inputDialog.close();
+                                                //if there was previously only 1 tab, re-insert the little [X]
+                                                if (tab.ownerCt.items.length == 3) {
+                                                    tab.ownerCt.items.items.forEach( function(eachTab) {
+                                                        if (eachTab !== tab) {//ignore the 'New Tab (+)' tab
+                                                            eachTab.tab.setClosable(true);
+                                                        }
+                                                    });
+                                                }
                                             }
                                         });
                                     },
