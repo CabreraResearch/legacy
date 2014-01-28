@@ -169,6 +169,17 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getLayout()
 
+        /// <summary>
+        /// Updates the given layout by placing the given property in the specified locaiton (or at the bottom)
+        /// </summary>
+        /// <param name="LayoutType">Add, Edit, Preview, or Table (Search)</param>
+        /// <param name="NodeTypeId">NodetypeId of the NodeType to which the prop belongs</param>
+        /// <param name="NtProp">Prop to move</param>
+        /// <param name="DoMove">If true, remove the prop from other tab(s) before moving to the new one (Edit Layout only)</param>
+        /// <param name="TabId">TabId to which the prop should be added (Edit Layout Only)</param>
+        /// <param name="DisplayRow">Row number to place the property.  If the cell is taken, it will be placed beneath the pre-existing prop</param>
+        /// <param name="DisplayColumn">Column number to place the property.  If the cell is taken, it will be placed beneath the pre-existing prop</param>
+        /// <param name="TabGroup">(Optional) specify the name of the TabGroup with which to place the prop (if it doesn't exist, one will be created)</param>
         public void updatePropLayout( CswEnumNbtLayoutType LayoutType, Int32 NodeTypeId, CswNbtMetaDataNodeTypeProp NtProp, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
         {
             if( LayoutType != CswEnumNbtLayoutType.Unknown &&
