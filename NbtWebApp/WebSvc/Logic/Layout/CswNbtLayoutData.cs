@@ -106,15 +106,15 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             set { _DisplayRow = value; }
         }
 
-        private bool _DoMove = true;
+        private bool _RemoveExisting = false;
         /// <summary>
-        /// Determines whether or not the prop should be moved from an existing layout
+        /// Determines whether or not the prop should be removed from existing layouts before updating layout
         /// </summary>
-        [DataMember( Name = "domove" )]
-        public bool DoMove
+        [DataMember( Name = "removeexisting" )]
+        public bool RemoveExisting
         {
-            get { return _DoMove; }
-            set { _DoMove = value; }
+            get { return _RemoveExisting; }
+            set { _RemoveExisting = value; }
         }
     }
 

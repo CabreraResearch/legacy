@@ -519,8 +519,7 @@
                             nodetypeid: cswPrivate.tabState.nodetypeid,
                             tabid: tabid,
                             props: [{
-                                nodetypepropid: cswPrivate.existingPropIdToAdd,
-                                domove: false
+                                nodetypepropid: cswPrivate.existingPropIdToAdd
                             }]
                         }
                     });
@@ -668,7 +667,7 @@
                                                 tabid: tabid,
                                                 props: [{
                                                     nodetypepropid: relationalid,
-                                                    domove: true
+                                                    removeexisting: true
                                                 }]
                                             }
                                         });
