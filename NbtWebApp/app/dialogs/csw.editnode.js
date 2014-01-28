@@ -70,15 +70,16 @@
                         Refresh: cswPrivate.onRefresh,
                         onEditView: function(viewid) {
                             doRefresh = false; //We're loading the view editor, don't refresh when the dialog closes                        
-                            cswPublic.div.$.dialog('close');
+                            //cswPublic.div.$.dialog('close');
+                            editDialog.close();
                             Csw.tryExec(cswPrivate.onEditView, viewid);
                         },
                         onSave: function(nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (tabcount <= 2 || cswPrivate.Multi) { /* Ignore history tab */
                                 if (false === cswPublic.closed) {
-                                    cswPublic.close();
-                                    cswPublic.div.$.dialog('close');
+                                    editDialog.close();
+                                    //cswPublic.div.$.dialog('close');
                                 }
                             }
                             Csw.tryExec(cswPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
@@ -100,6 +101,8 @@
                         //Case 31402 - when we close the dialog, set the cookies to the node on the main screen
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, prevNodeId);
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, prevNodeKey);
+
+
 
                         cswPublic.closed = true;
                         cswPublic.tabsAndProps.tearDown();

@@ -394,12 +394,19 @@ namespace ChemSW.Nbt.Actions
 
                 //NodeTypeName Template
                 CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Description );
-                RetInspectionTargetNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName ) );
+                //RetInspectionTargetNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName ) );
+                RetInspectionTargetNt.DesignNode.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
+                RetInspectionTargetNt.DesignNode.postChanges( false );
                 ItDescriptionNtp.updateLayout( CswEnumNbtLayoutType.Add, ItInspectionGroupNtp, true );
 
                 CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Barcode );
                 //ItBarcodeNtp.ReadOnly = true; /* Case 25044 */
                 ItBarcodeNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
+                CswNbtObjClassDesignSequence SequenceNode = CswNbtObjClassDesignSequence.getSequence( _CswNbtResources, "Inspection Barcode" );
+                if( null != SequenceNode )
+                {
+                    ItBarcodeNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleBarCode.AttributeName.Sequence].AsRelationship.RelatedNodeId = SequenceNode.NodeId;
+                }
                 ItBarcodeNtp.updateLayout( CswEnumNbtLayoutType.Add, ItDescriptionNtp, true );
                 ItBarcodeNtp.DesignNode.postChanges( false );
             }
@@ -427,7 +434,9 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtMetaDataNodeTypeProp ItgNameNtp = InspectionTargetGroupNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTargetGroup.PropertyName.Name );
 
-                InspectionTargetGroupNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName ) );
+                //InspectionTargetGroupNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName ) );
+                InspectionTargetGroupNt.DesignNode.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName );
+                InspectionTargetGroupNt.DesignNode.postChanges( false );
 
                 //Description is useful.
                 _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( InspectionTargetGroupNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Description" )

@@ -41,7 +41,7 @@
                 receiptLotTypeId: '',
                 receiptLotId: '',
                 requestitem: {},
-                printLabels: false
+                printLabels: true
             },
             amountsGrid: null,
             saveError: false,
@@ -263,7 +263,7 @@
                     cswPrivate.toggleStepButtons(StepNo);
 
                     if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Select the number of containers and their quantities to receive. The maximum containers received at once is: ' + cswPrivate.state.containerlimit);
+                        cswPrivate.setStepHeader(StepNo, 'The limit for containers created at receipt is [' + cswPrivate.state.containerlimit + ']');
 
                         //Container Select (if multiple container nodetypes exist)
                         var containerSelect = Csw.wizard.nodeTypeSelect(cswPrivate['divStep' + StepNo].div(), {
@@ -427,7 +427,7 @@
                         var printLabelCell = printLabelsTbl.cell(1, 1).css({ 'padding-bottom': '20px' });
                         printLabelCell.div({ text: 'I want to print labels: ' }).checkBox({
                             name: 'printLabelCheckBox',
-                            checked: false,
+                            checked: true,
                             onChange: function (newVal) {
                                 if (newVal) {
                                     labelsDiv.show();
@@ -439,7 +439,7 @@
                             }
                         });
 
-                        var labelsDiv = printLabelsTbl.cell(2, 1).div().hide();
+                        var labelsDiv = printLabelsTbl.cell(2, 1).div();
                         cswPrivate.printLabels = Csw.composites.printLabels(labelsDiv,
                             {
                                 showButton: false,

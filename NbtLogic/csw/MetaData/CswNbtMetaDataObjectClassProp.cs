@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return ( _ObjectClassPropRow["filtersubfield"].ToString() != string.Empty &&
                      _ObjectClassPropRow["filtermode"].ToString() != string.Empty &&
-                     _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterObjectClassPropId ) != null );
+                     _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ) != null );
         }
 
         public void setFilterDeprecated( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )

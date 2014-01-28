@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -197,6 +198,13 @@ namespace ChemSW.Nbt.ObjClasses
             } // foreach( DataRow SeqValueRow in SeqValueTable.Rows )
             _CswNbtResources.resetUniqueSequenceVal( getDbName(), MaxSeqVal + 1 );
         } // reSync()
+
+        public static CswNbtObjClassDesignSequence getSequence( CswNbtResources CswNbtResources, string SequenceName )
+        {
+            CswNbtMetaDataObjectClass SequenceOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignSequenceClass );
+            return SequenceOC.getNodes( forceReInit: false, includeSystemNodes: true )
+                             .FirstOrDefault( seq => ( (CswNbtObjClassDesignSequence) seq ).Name.Text.ToLower() == SequenceName.ToLower() );
+        }
 
         #endregion Sequence Functions
 

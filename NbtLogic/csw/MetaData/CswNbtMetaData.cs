@@ -673,8 +673,10 @@ namespace ChemSW.Nbt.MetaData
                         NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FieldType ),
                         Category = "Design"
                     } );
-                NodeTypePropNT.setNameTemplateText( MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue ) + ": " +
-                                                    MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) + " Prop" );
+                //NodeTypePropNT.setNameTemplateText( MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue ) + ": " +
+                //                                    MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) + " Prop" );
+                NodeTypePropNT.DesignNode.NameTemplateText.Text = MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue ) + ": " +
+                                                                  MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) + " Prop";
 
                 // Set default permission for the new nodetype    
                 CswNbtObjClassRole ChemSWAdminRole = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
@@ -1151,7 +1153,7 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( CswEnumErrorType.Warning, "Tab Name must be unique (per NodeType)", "Attempted to create a new nodetypetab with the same name as an existing nodetypetab on the same nodetype" );
 
             // Version, if necessary
-            NodeType = CheckVersioningDeprecated( NodeType );
+            //NodeType = CheckVersioningDeprecated( NodeType );
 
             //CswTableCaddy TabsTableCaddy = _CswNbtResources.makeCswTableCaddy("nodetype_tabset");
             DataTable TabsTable = _CswNbtMetaDataResources.NodeTypeTabTableUpdate.getEmptyTable();
@@ -1363,7 +1365,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 OriginalTabName = NtpModel.NodeType.getFirstNodeTypeTab().TabName;
             }
-            NtpModel.NodeType = CheckVersioningDeprecated( NtpModel.NodeType );
+            //NtpModel.NodeType = CheckVersioningDeprecated( NtpModel.NodeType );
             CswNbtMetaDataNodeTypeTab Tab = NtpModel.NodeType.getNodeTypeTab( OriginalTabName );
             if( null == Tab )
             {
@@ -1481,30 +1483,30 @@ namespace ChemSW.Nbt.MetaData
         #region Mutators
 
 
-        /// <summary>
-        /// Before making changes to a nodetype (or its tab or properties), call this function to handle whether the nodetype should version
-        /// </summary>
-        public CswNbtMetaDataNodeType CheckVersioningDeprecated( CswNbtMetaDataNodeType NodeType )
-        {
-            CswNbtMetaDataNodeType ret = NodeType;
-            if( !_CswNbtMetaDataResources._PreventVersioning )
-            {
-                // Version, if necessary
-                if( NodeType.IsLocked )
-                {
-                    if( NodeType.IsLatestVersion() )
-                    {
-                        CswNbtMetaDataNodeType NewNodeTypeVersion = MakeNewVersionDeprecated( NodeType );
-                        ret = NewNodeTypeVersion;
-                    }
-                    else
-                    {
-                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot modify locked nodetype", "Nodetype " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") cannot be modified because it is locked" );
-                    }
-                }
-            }
-            return ret;
-        }
+        ///// <summary>
+        ///// Before making changes to a nodetype (or its tab or properties), call this function to handle whether the nodetype should version
+        ///// </summary>
+        //public CswNbtMetaDataNodeType CheckVersioningDeprecated( CswNbtMetaDataNodeType NodeType )
+        //{
+        //    CswNbtMetaDataNodeType ret = NodeType;
+        //    if( !_CswNbtMetaDataResources._PreventVersioning )
+        //    {
+        //        // Version, if necessary
+        //        if( NodeType.IsLocked )
+        //        {
+        //            if( NodeType.IsLatestVersion() )
+        //            {
+        //                CswNbtMetaDataNodeType NewNodeTypeVersion = MakeNewVersionDeprecated( NodeType );
+        //                ret = NewNodeTypeVersion;
+        //            }
+        //            else
+        //            {
+        //                throw new CswDniException( CswEnumErrorType.Warning, "Cannot modify locked nodetype", "Nodetype " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") cannot be modified because it is locked" );
+        //            }
+        //        }
+        //    }
+        //    return ret;
+        //}
 
         /// <summary>
         /// Reevaluates what nodetypes should be enabled
@@ -1629,196 +1631,196 @@ namespace ChemSW.Nbt.MetaData
 
         //} // ConvertObjectClass
 
-        public CswNbtMetaDataNodeType MakeNewVersionDeprecated( CswNbtMetaDataNodeType NodeType )
-        {
-            return CopyNodeTypeDeprecated( NodeType, NodeType.NodeTypeName, true );
-        }
-        public CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType )
-        {
-            return CopyNodeTypeDeprecated( NodeType, string.Empty, false );
-        }
-        public CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName )
-        {
-            return CopyNodeTypeDeprecated( NodeType, NewNodeTypeName, false );
-        }
-        private CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName, bool IsVersioning )
-        {
-            if( NewNodeTypeName == String.Empty )
-                NewNodeTypeName = "Copy Of " + NodeType.NodeTypeName;
+        //public CswNbtMetaDataNodeType MakeNewVersionDeprecated( CswNbtMetaDataNodeType NodeType )
+        //{
+        //    return CopyNodeTypeDeprecated( NodeType, NodeType.NodeTypeName, true );
+        //}
+        //public CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType )
+        //{
+        //    return CopyNodeTypeDeprecated( NodeType, string.Empty, false );
+        //}
+        //public CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName )
+        //{
+        //    return CopyNodeTypeDeprecated( NodeType, NewNodeTypeName, false );
+        //}
+        //private CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName, bool IsVersioning )
+        //{
+        //    if( NewNodeTypeName == String.Empty )
+        //        NewNodeTypeName = "Copy Of " + NodeType.NodeTypeName;
 
-            if( !IsVersioning && getNodeType( NewNodeTypeName ) != null )
-                throw new CswDniException( CswEnumErrorType.Warning, "Copy failed: Name is already in use", "User tried to copy nodetype: " + NodeType.NodeTypeName + " to name: " + NewNodeTypeName + ", which is already in use" );
+        //    if( !IsVersioning && getNodeType( NewNodeTypeName ) != null )
+        //        throw new CswDniException( CswEnumErrorType.Warning, "Copy failed: Name is already in use", "User tried to copy nodetype: " + NodeType.NodeTypeName + " to name: " + NewNodeTypeName + ", which is already in use" );
 
-            // Copy nodetype info
-            DataTable NewNodeTypeTable = _CswNbtMetaDataResources.NodeTypeTableUpdate.getEmptyTable();
-            DataRow InsertedNodeTypeRow = NewNodeTypeTable.NewRow();
-            InsertedNodeTypeRow["objectclassid"] = CswConvert.ToDbVal( NodeType.ObjectClassId );
-            InsertedNodeTypeRow["iconfilename"] = NodeType.IconFileName;
-            InsertedNodeTypeRow["nodetypename"] = NewNodeTypeName;
-            InsertedNodeTypeRow["category"] = NodeType.Category;
-            InsertedNodeTypeRow["islocked"] = CswConvert.ToDbVal( false );
-            InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
-            InsertedNodeTypeRow["nodecount"] = 0;
+        //    // Copy nodetype info
+        //    DataTable NewNodeTypeTable = _CswNbtMetaDataResources.NodeTypeTableUpdate.getEmptyTable();
+        //    DataRow InsertedNodeTypeRow = NewNodeTypeTable.NewRow();
+        //    InsertedNodeTypeRow["objectclassid"] = CswConvert.ToDbVal( NodeType.ObjectClassId );
+        //    InsertedNodeTypeRow["iconfilename"] = NodeType.IconFileName;
+        //    InsertedNodeTypeRow["nodetypename"] = NewNodeTypeName;
+        //    InsertedNodeTypeRow["category"] = NodeType.Category;
+        //    InsertedNodeTypeRow["islocked"] = CswConvert.ToDbVal( false );
+        //    InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
+        //    InsertedNodeTypeRow["nodecount"] = 0;
 
-            InsertedNodeTypeRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( NewNodeTypeName );
+        //    InsertedNodeTypeRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( NewNodeTypeName );
 
-            NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
-            Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
-            if( IsVersioning )
-            {
-                // new version of this nodetype
-                InsertedNodeTypeRow["versionno"] = ( NodeType.VersionNo + 1 ).ToString();
-                InsertedNodeTypeRow["priorversionid"] = CswConvert.ToDbVal( NodeType.NodeTypeId );
-                InsertedNodeTypeRow["firstversionid"] = CswConvert.ToDbVal( NodeType.FirstVersionNodeTypeId );
-            }
-            else
-            {
-                // first version of new nodetype
-                InsertedNodeTypeRow["versionno"] = "1";
-                InsertedNodeTypeRow["firstversionid"] = CswConvert.ToDbVal( NewNodeTypeId );
-            }
-            _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NewNodeTypeTable );
+        //    NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
+        //    Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
+        //    if( IsVersioning )
+        //    {
+        //        // new version of this nodetype
+        //        InsertedNodeTypeRow["versionno"] = ( NodeType.VersionNo + 1 ).ToString();
+        //        InsertedNodeTypeRow["priorversionid"] = CswConvert.ToDbVal( NodeType.NodeTypeId );
+        //        InsertedNodeTypeRow["firstversionid"] = CswConvert.ToDbVal( NodeType.FirstVersionNodeTypeId );
+        //    }
+        //    else
+        //    {
+        //        // first version of new nodetype
+        //        InsertedNodeTypeRow["versionno"] = "1";
+        //        InsertedNodeTypeRow["firstversionid"] = CswConvert.ToDbVal( NewNodeTypeId );
+        //    }
+        //    _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NewNodeTypeTable );
 
-            _CswNbtMetaDataResources.refreshAll();
+        //    _CswNbtMetaDataResources.refreshAll();
 
-            CswNbtMetaDataNodeType OldNodeType = NodeType;
-            CswNbtMetaDataNodeType NewNodeType = getNodeType( NewNodeTypeId );
+        //    CswNbtMetaDataNodeType OldNodeType = NodeType;
+        //    CswNbtMetaDataNodeType NewNodeType = getNodeType( NewNodeTypeId );
 
-            // Copy tabs
-            Hashtable TabMap = new Hashtable();
-            DataTable NewTabsTable = _CswNbtMetaDataResources.NodeTypeTabTableUpdate.getEmptyTable();
-            Collection<CswNbtMetaDataNodeTypeTab> TabsToCopy = new Collection<CswNbtMetaDataNodeTypeTab>();
-            foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in OldNodeType.getNodeTypeTabs() )
-                TabsToCopy.Add( NodeTypeTab );
-            foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in TabsToCopy )
-            {
-                DataRow NewTabRow = NewTabsTable.NewRow();
-                NodeTypeTab.CopyTabToNewNodeTypeTabRow( NewTabRow );
-                NewTabRow["nodetypeid"] = NewNodeTypeId.ToString();
-                NewTabsTable.Rows.Add( NewTabRow );
-                Int32 NewTabId = CswConvert.ToInt32( NewTabRow["nodetypetabsetid"].ToString() );
-                if( IsVersioning )
-                {
-                    // new version of this nodetypetab
-                    NewTabRow["priortabversionid"] = CswConvert.ToDbVal( NodeTypeTab.TabId );
-                    NewTabRow["firsttabversionid"] = CswConvert.ToDbVal( NodeTypeTab.FirstTabVersionId );
-                }
-                else
-                {
-                    // first version of new nodetypetab
-                    NewTabRow["priortabversionid"] = CswConvert.ToDbVal( Int32.MinValue );
-                    NewTabRow["firsttabversionid"] = CswConvert.ToDbVal( NewTabId );
-                }
-                _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( NewTabsTable );
-                TabMap.Add( NodeTypeTab.TabId, NewTabId );
+        //    // Copy tabs
+        //    Hashtable TabMap = new Hashtable();
+        //    DataTable NewTabsTable = _CswNbtMetaDataResources.NodeTypeTabTableUpdate.getEmptyTable();
+        //    Collection<CswNbtMetaDataNodeTypeTab> TabsToCopy = new Collection<CswNbtMetaDataNodeTypeTab>();
+        //    foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in OldNodeType.getNodeTypeTabs() )
+        //        TabsToCopy.Add( NodeTypeTab );
+        //    foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in TabsToCopy )
+        //    {
+        //        DataRow NewTabRow = NewTabsTable.NewRow();
+        //        NodeTypeTab.CopyTabToNewNodeTypeTabRow( NewTabRow );
+        //        NewTabRow["nodetypeid"] = NewNodeTypeId.ToString();
+        //        NewTabsTable.Rows.Add( NewTabRow );
+        //        Int32 NewTabId = CswConvert.ToInt32( NewTabRow["nodetypetabsetid"].ToString() );
+        //        if( IsVersioning )
+        //        {
+        //            // new version of this nodetypetab
+        //            NewTabRow["priortabversionid"] = CswConvert.ToDbVal( NodeTypeTab.TabId );
+        //            NewTabRow["firsttabversionid"] = CswConvert.ToDbVal( NodeTypeTab.FirstTabVersionId );
+        //        }
+        //        else
+        //        {
+        //            // first version of new nodetypetab
+        //            NewTabRow["priortabversionid"] = CswConvert.ToDbVal( Int32.MinValue );
+        //            NewTabRow["firsttabversionid"] = CswConvert.ToDbVal( NewTabId );
+        //        }
+        //        _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( NewTabsTable );
+        //        TabMap.Add( NodeTypeTab.TabId, NewTabId );
 
-                //_CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( NewTabRow, NodeTypeTab.TabId );
-            }
+        //        //_CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( NewTabRow, NodeTypeTab.TabId );
+        //    }
 
-            // Copy props 
-            DataTable NewPropsTable = _CswNbtMetaDataResources.NodeTypePropTableUpdate.getEmptyTable();
-            Collection<CswNbtMetaDataNodeTypeProp> PropsToCopy = new Collection<CswNbtMetaDataNodeTypeProp>();
-            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in OldNodeType.getNodeTypeProps() )
-                PropsToCopy.Add( NodeTypeProp );
-            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropsToCopy )
-            {
-                DataRow NewPropRow = NewPropsTable.NewRow();
-                NewPropRow["nodetypeid"] = CswConvert.ToDbVal( NewNodeTypeId );
-                //NewPropRow["nodetypetabsetid"] = CswConvert.ToDbVal( CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.Tab.TabId] ) );
-                NewPropsTable.Rows.Add( NewPropRow );
-                Int32 NewPropId = CswConvert.ToInt32( NewPropRow["nodetypepropid"].ToString() );
-                if( IsVersioning )
-                {
-                    NewPropRow["priorpropversionid"] = CswConvert.ToDbVal( NodeTypeProp.PropId );
-                    NewPropRow["firstpropversionid"] = CswConvert.ToDbVal( NodeTypeProp.FirstPropVersionId );
-                }
-                else
-                {
-                    NewPropRow["priorpropversionid"] = CswConvert.ToDbVal( Int32.MinValue );
-                    NewPropRow["firstpropversionid"] = CswConvert.ToDbVal( NewPropId );
-                }
-                _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
+        //    // Copy props 
+        //    DataTable NewPropsTable = _CswNbtMetaDataResources.NodeTypePropTableUpdate.getEmptyTable();
+        //    Collection<CswNbtMetaDataNodeTypeProp> PropsToCopy = new Collection<CswNbtMetaDataNodeTypeProp>();
+        //    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in OldNodeType.getNodeTypeProps() )
+        //        PropsToCopy.Add( NodeTypeProp );
+        //    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropsToCopy )
+        //    {
+        //        DataRow NewPropRow = NewPropsTable.NewRow();
+        //        NewPropRow["nodetypeid"] = CswConvert.ToDbVal( NewNodeTypeId );
+        //        //NewPropRow["nodetypetabsetid"] = CswConvert.ToDbVal( CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.Tab.TabId] ) );
+        //        NewPropsTable.Rows.Add( NewPropRow );
+        //        Int32 NewPropId = CswConvert.ToInt32( NewPropRow["nodetypepropid"].ToString() );
+        //        if( IsVersioning )
+        //        {
+        //            NewPropRow["priorpropversionid"] = CswConvert.ToDbVal( NodeTypeProp.PropId );
+        //            NewPropRow["firstpropversionid"] = CswConvert.ToDbVal( NodeTypeProp.FirstPropVersionId );
+        //        }
+        //        else
+        //        {
+        //            NewPropRow["priorpropversionid"] = CswConvert.ToDbVal( Int32.MinValue );
+        //            NewPropRow["firstpropversionid"] = CswConvert.ToDbVal( NewPropId );
+        //        }
+        //        _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
 
-                // case 25389
-                // Kind of a kludge here.  But something we may need to do when creating any new metadata object.
-                // CopyPropToNewNodeTypePropRow below instances the NodeTypeProp, but since its not yet in the cache, 
-                // it fetches a new empty row instead of using NewPropRow.
-                // So we need to associate NewPropRow with the CswNbtMetaDataNodeTypeProp in the cache.
-                CswNbtMetaDataNodeTypeProp NewMetaDataProp = _CswNbtMetaDataResources.NodeTypePropsCollection.makeNodeTypeProp( _CswNbtMetaDataResources, NewPropRow );
-                _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewMetaDataProp );
+        //        // case 25389
+        //        // Kind of a kludge here.  But something we may need to do when creating any new metadata object.
+        //        // CopyPropToNewNodeTypePropRow below instances the NodeTypeProp, but since its not yet in the cache, 
+        //        // it fetches a new empty row instead of using NewPropRow.
+        //        // So we need to associate NewPropRow with the CswNbtMetaDataNodeTypeProp in the cache.
+        //        CswNbtMetaDataNodeTypeProp NewMetaDataProp = _CswNbtMetaDataResources.NodeTypePropsCollection.makeNodeTypeProp( _CswNbtMetaDataResources, NewPropRow );
+        //        _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewMetaDataProp );
 
-                // BZ 10242 forces this to happen after the row is inserted, so we'll have to update it twice
-                NodeTypeProp.CopyPropToNewNodeTypePropRow( NewPropRow );
-                _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
+        //        // BZ 10242 forces this to happen after the row is inserted, so we'll have to update it twice
+        //        NodeTypeProp.CopyPropToNewNodeTypePropRow( NewPropRow );
+        //        _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
 
-                // Fix layout
-                foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
-                {
-                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp, null );
-                    foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
-                    {
-                        if( OriginalLayout != null )
-                        {
-                            Int32 NewTabId = Int32.MinValue;
-                            if( LayoutType == CswEnumNbtLayoutType.Edit )
-                            {
-                                NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
-                            }
-                            CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
-                            NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, Prop, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
-                        }
-                    }
-                }
+        //        // Fix layout
+        //        foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
+        //        {
+        //            Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp, null );
+        //            foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
+        //            {
+        //                if( OriginalLayout != null )
+        //                {
+        //                    Int32 NewTabId = Int32.MinValue;
+        //                    if( LayoutType == CswEnumNbtLayoutType.Edit )
+        //                    {
+        //                        NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
+        //                    }
+        //                    CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
+        //                    NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, Prop, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
+        //                }
+        //            }
+        //        }
 
-                //Case 29181 - Save prop on all tabs except identity
-                if( NodeTypeProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) )
-                {
-                    CswNbtMetaDataNodeTypeProp saveNTP = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
-                    foreach( CswNbtMetaDataNodeTypeTab tab in NewNodeType.getNodeTypeTabs() )
-                    {
-                        if( false == tab.Equals( NewNodeType.getIdentityTab() ) )
-                        {
-                            saveNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, tab.TabId, Int32.MaxValue, 1 );
-                        }
-                    }
-                }
+        //        //Case 29181 - Save prop on all tabs except identity
+        //        if( NodeTypeProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) )
+        //        {
+        //            CswNbtMetaDataNodeTypeProp saveNTP = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
+        //            foreach( CswNbtMetaDataNodeTypeTab tab in NewNodeType.getNodeTypeTabs() )
+        //            {
+        //                if( false == tab.Equals( NewNodeType.getIdentityTab() ) )
+        //                {
+        //                    saveNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, tab.TabId, Int32.MaxValue, 1 );
+        //                }
+        //            }
+        //        }
 
-                //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
-            }
+        //        //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
+        //    }
 
-            // Fix Conditional Props (case 22328)
-            Collection<CswNbtMetaDataNodeTypeProp> NewProps = new Collection<CswNbtMetaDataNodeTypeProp>();
-            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NewNodeType.getNodeTypeProps() )
-            {
-                NewProps.Add( NodeTypeProp );
-            }
-            foreach( CswNbtMetaDataNodeTypeProp NewProp in NewProps )
-            {
-                if( NewProp.FilterNodeTypePropId != Int32.MinValue )
-                {
-                    CswNbtMetaDataNodeTypeProp OldFilter = OldNodeType.getNodeTypeProp( NewProp.FilterNodeTypePropId );
-                    if( OldFilter != null )
-                    {
-                        CswNbtSubField SubField = null;
-                        CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
-                        string FilterValue = string.Empty;
-                        OldFilter.getFilter( ref SubField, ref FilterMode, ref FilterValue );
+        //    // Fix Conditional Props (case 22328)
+        //    Collection<CswNbtMetaDataNodeTypeProp> NewProps = new Collection<CswNbtMetaDataNodeTypeProp>();
+        //    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NewNodeType.getNodeTypeProps() )
+        //    {
+        //        NewProps.Add( NodeTypeProp );
+        //    }
+        //    foreach( CswNbtMetaDataNodeTypeProp NewProp in NewProps )
+        //    {
+        //        if( NewProp.FilterNodeTypePropId != Int32.MinValue )
+        //        {
+        //            CswNbtMetaDataNodeTypeProp OldFilter = OldNodeType.getNodeTypeProp( NewProp.FilterNodeTypePropId );
+        //            if( OldFilter != null )
+        //            {
+        //                CswNbtSubField SubField = null;
+        //                CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+        //                string FilterValue = string.Empty;
+        //                OldFilter.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
-                        CswNbtMetaDataNodeTypeProp NewFilter = NewNodeType.getNodeTypeProp( OldFilter.PropName );
-                        NewProp.setFilterDeprecated( NewFilter.PropId, SubField, FilterMode, FilterValue );
-                    }
-                }
-            }
+        //                CswNbtMetaDataNodeTypeProp NewFilter = NewNodeType.getNodeTypeProp( OldFilter.PropName );
+        //                NewProp.setFilterDeprecated( NewFilter.PropId, SubField, FilterMode, FilterValue );
+        //            }
+        //        }
+        //    }
 
-            // Fix the name template
-            NewNodeType.setNameTemplateText( OldNodeType.getNameTemplateText() );
+        //    // Fix the name template
+        //    NewNodeType.setNameTemplateText( OldNodeType.getNameTemplateText() );
 
-            if( OnCopyNodeType != null )
-                OnCopyNodeType( OldNodeType, NewNodeType );
+        //    if( OnCopyNodeType != null )
+        //        OnCopyNodeType( OldNodeType, NewNodeType );
 
-            return NewNodeType;
+        //    return NewNodeType;
 
-        }// CopyNodeType()
+        //}// CopyNodeType()
 
         public void CopyNodeTypePropFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, DataRow NodeTypePropRow ) //, CswNbtMetaDataNodeTypeProp NodeTypeProp)
         {
@@ -2021,8 +2023,8 @@ namespace ChemSW.Nbt.MetaData
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + NodeTypeProp.PropName + " ; PropId = " + NodeTypeProp.PropId );
 
                     //string OriginalPropName = NodeTypeProp.PropName;
-                    CswNbtMetaDataNodeType NodeType = CheckVersioningDeprecated( NodeTypeProp.getNodeType() );
-                    NodeTypeProp = getNodeTypePropVersion( NodeType.NodeTypeId, NodeTypeProp.PropId );
+                    //CswNbtMetaDataNodeType NodeType = CheckVersioningDeprecated( NodeTypeProp.getNodeType() );
+                    NodeTypeProp = getNodeTypePropVersion( NodeTypeProp.NodeTypeId, NodeTypeProp.PropId );
                 }
 
                 // Delete Jct_Nodes_Props records
@@ -2147,12 +2149,12 @@ namespace ChemSW.Nbt.MetaData
                 }
 
                 ret = NodeTypeTab.getNodeType();
-                if( CauseVersioning )
-                {
-                    string OriginalTabName = NodeTypeTab.TabName;
-                    CswNbtMetaDataNodeType NodeType = CheckVersioningDeprecated( NodeTypeTab.getNodeType() );
-                    NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
-                }
+                //if( CauseVersioning )
+                //{
+                //    string OriginalTabName = NodeTypeTab.TabName;
+                //    CswNbtMetaDataNodeType NodeType = CheckVersioningDeprecated( NodeTypeTab.getNodeType() );
+                //    NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
+                //}
 
                 // This breaks deleting nodetypes.  Instead, the menu doesn't display the delete button.
                 //if (this.NodeType.NodeTypeTabs.Count <= 1)
