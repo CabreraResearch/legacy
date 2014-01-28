@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
             public Collection<VendorOption> VendorListOptions = new Collection<VendorOption>();
 
             [DataMember]
-            public Collection<ACDSupplier> ACDSuppliers = new Collection<ACDSupplier>();
+            public IEnumerable<ACDSupplier> ACDSuppliers { get; set; }
 
             [DataMember]
             public string ACDPreferredSuppliers = string.Empty;
@@ -406,22 +406,22 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 Collection<ACDSupplier> ACDSuppliers = new Collection<ACDSupplier>();
-
+                IEnumerable<ACDSupplier> SortedSuppliers = new Collection<ACDSupplier>();
                 if( null != Results )
                 {
-                    //for( int i = 0; i < 51; i++ )
                     foreach( CswC3ACDResponseACDSupplier ACDSupplier in Results.ACDSuppliers )
                     {
-                        //CswC3ACDResponseACDSupplier ACDSupplier = Results.ACDSuppliers[i];
                         ACDSupplier NewSupplier = new ACDSupplier();
                         NewSupplier.Name = ACDSupplier.Name + ": " + ACDSupplier.Country;
                         NewSupplier.Id = CswConvert.ToString( ACDSupplier.Id );
                         NewSupplier.Selected = PreferredSuppliers.Contains( ACDSupplier.Id.ToString() );
                         ACDSuppliers.Add( NewSupplier );
                     }
+
+                    SortedSuppliers = ACDSuppliers.OrderBy( si => si.Name );
                 }
 
-                Return.Data.ACDSuppliers = ACDSuppliers;
+                Return.Data.ACDSuppliers = SortedSuppliers;
             }
         }//GetACDSuppliers()
 
@@ -909,29 +909,29 @@ namespace ChemSW.Nbt.WebServices
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
 
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp : AliasesOCP,
-                                                           Value : "," + Value + ",",
-                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
-                                                           FilterMode : CswEnumNbtFilterMode.Contains,
-                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp: AliasesOCP,
+                                                           Value: "," + Value + ",",
+                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                           FilterMode: CswEnumNbtFilterMode.Contains,
+                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp : AliasesOCP,
-                                                           Value : Value + ",",
-                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
-                                                           FilterMode : CswEnumNbtFilterMode.Begins,
-                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp: AliasesOCP,
+                                                           Value: Value + ",",
+                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                           FilterMode: CswEnumNbtFilterMode.Begins,
+                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp : AliasesOCP,
-                                                           Value : "," + Value,
-                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
-                                                           FilterMode : CswEnumNbtFilterMode.Ends,
-                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp: AliasesOCP,
+                                                           Value: "," + Value,
+                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                           FilterMode: CswEnumNbtFilterMode.Ends,
+                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp : AliasesOCP,
-                                                           Value : Value,
-                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
-                                                           FilterMode : CswEnumNbtFilterMode.Equals,
-                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp: AliasesOCP,
+                                                           Value: Value,
+                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                           FilterMode: CswEnumNbtFilterMode.Equals,
+                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
 
                 // Create the tree
                 Ret = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );

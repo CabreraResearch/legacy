@@ -6,9 +6,9 @@ using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassSize: CswNbtObjClass
+    public class CswNbtObjClassSize : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Material = "Material";
             public const string InitialQuantity = "Initial Quantity";
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UPC = "UPC";
         }
 
-        public CswNbtObjClassSize( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassSize( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -54,16 +54,25 @@ namespace ChemSW.Nbt.ObjClasses
                     Material.RelatedNodeId = pk;
                 }
             }
-            _setUnits();//Case 30571 - set available quantity units on the add layout
+            //_setUnits(); //Case 30571 - set available quantity units on the add layout
             if( CswEnumTristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
+            }
+            // case 31749 - Unit is always required
+            if( false == CswTools.IsPrimaryKey( this.InitialQuantity.UnitId ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "Unit for Initial Quantity is required.", "Cannot have a null unit selected for Initial Quantity." );
             }
         }//beforeWriteNode()     
 
         protected override void afterPopulateProps()
         {
-            _setUnits();//Case 29579 - set available quantity units on the edit layout
+            InitialQuantity.SetOnBeforeRender( delegate( CswNbtNodeProp prop )
+                {
+                    //Case 29579 - set available quantity units
+                    _setUnits();
+                } );
         }//afterPopulateProps()
 
         #endregion
@@ -107,7 +116,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( MaterialNode != null )
             {
-                Material.setReadOnly( value : true, SaveToDb : true );
+                Material.setReadOnly( value: true, SaveToDb: true );
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                 Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
             }

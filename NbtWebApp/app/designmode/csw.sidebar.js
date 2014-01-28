@@ -505,8 +505,11 @@
                     }]
                 });
                 existingProperties.div.br();
-                
-                var onAddExistingClick = function(isIdentityTab) {
+                cswPrivate.createAddExistingButtons();
+            };
+
+            cswPrivate.createAddExistingButtons = function () {
+                var onAddExistingClick = function (isIdentityTab) {
                     var tabid = cswPrivate.nodeLayout.getActiveTabId();
                     if (isIdentityTab) {
                         tabid = cswPrivate.nodeLayout.getIdentityTabId();
@@ -519,21 +522,23 @@
                             nodetypeid: cswPrivate.tabState.nodetypeid,
                             tabid: tabid,
                             props: [{
-                                nodetypepropid: cswPrivate.existingPropIdToAdd,
-                                domove: false
+                                nodetypepropid: cswPrivate.existingPropIdToAdd
                             }]
+                        },
+                        success: function () {
+                            cswPrivate.nodeLayout.refresh();
                         }
                     });
-                    cswPrivate.nodeLayout.refresh();
+                    
                 };
-
                 var existingPropertiesTable = existingProperties.div.table();
+                var menuOn = cswPrivate.nodeLayout.getActiveLayout() === 'Edit';
                 
                 cswPrivate.buttons[buttons.addExistingBtn] = existingPropertiesTable.cell(1,1).buttonExt({
                     enabledText: buttons.addExistingBtn,
                     disableOnClick: false,
                     onClick: Csw.method(function () { onAddExistingClick(); })
-                }).hide();
+                });
                 cswPrivate.buttons[buttons.addExistingBtn].disable();
 
                 cswPrivate.buttons[buttons.addExistingBtn + '_menu'] = existingPropertiesTable.cell(1,2).menuButton({
@@ -550,6 +555,12 @@
                     onClick: Csw.method(function () { onAddExistingClick(); })
                 });
                 cswPrivate.buttons[buttons.addExistingBtn + '_menu'].disable();
+                
+                if (menuOn) {
+                    cswPrivate.buttons[buttons.addExistingBtn].hide();
+                } else {
+                    cswPrivate.buttons[buttons.addExistingBtn + '_menu'].hide();
+                }
                 
                 existingProperties.div.br({ number: 2 });
             };
@@ -668,7 +679,7 @@
                                                 tabid: tabid,
                                                 props: [{
                                                     nodetypepropid: relationalid,
-                                                    domove: true
+                                                    removeexisting: true
                                                 }]
                                             }
                                         });

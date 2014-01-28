@@ -1351,7 +1351,8 @@
                 name: 'print_label',
                 nodes: [],
                 nodeids: [],
-                nodetypeid: ''
+                nodetypeid: '',
+                selectedLabel: '',
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
@@ -1375,7 +1376,8 @@
 
                 Csw.composites.printLabels(cswPublic.div, {
                     nodeids: cswDlgPrivate.nodeids,
-                    nodes: cswDlgPrivate.nodes
+                    nodes: cswDlgPrivate.nodes,
+                    selectedLabel: cswDlgPrivate.selectedLabel
                 }, Csw.number(cswDlgPrivate.nodetypeid, 0), cswDlgPrivate.nodeids[0]);
 
                 openDialog(cswPublic.div, 400, 300, null, 'Print');
