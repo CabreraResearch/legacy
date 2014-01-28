@@ -63,7 +63,7 @@
             } else if (cswPrivate.Layout === 'Preview') {
                 layout = Csw.layouts.previewNode(cswPrivate);
             }
-
+            
             if (null !== layout) {
                 layout.render(cswPrivate.contentDiv);
             } else {
@@ -120,7 +120,6 @@
                 success: function (data) {
 
                     cswPrivate.renderProps(data.node, data.properties, extid, tabid, style);
-
                 } // success{}
             }); // ajax
         };
@@ -242,6 +241,8 @@
             dragPanel.allowDrag(true);
             //trigger the prop render events
             Csw.publish('render_' + node.nodeid + '_' + tabid);
+            
+            cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
 
             //TODO: fix this hack - we need to wait for all property ajax requests (like grid) to finish before calling doLayout()
             Csw.defer(function () {
@@ -451,7 +452,7 @@
         };
 
         cswPublic.refresh = function () {
-            cswPublic.init();
+            cswPrivate.init();
         };
 
         cswPublic.init = cswPrivate.init;
