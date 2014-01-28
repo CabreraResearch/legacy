@@ -39,6 +39,9 @@
                     cswPrivate.onClose();
                 }
             });
+            if (cswPrivate.Layout === 'Table') {
+                cswPrivate.Layout = 'Search'; //This is stupid, but it needs to be done for the sake of the LayoutSelect
+            }
             var layoutSelectDiv = cswParent.div().css('float', 'right');
             layoutSelectDiv.setLabelText('Select Layout:', false, false);
             layoutSelectDiv.select({
@@ -273,8 +276,9 @@
                     width: 300,
                     onYes: function () {
                         dragPanel.removeDraggableFromCol(col, draggable.id);
-                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid);
-                        cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
+                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function(){
+                            cswPrivate.sidebar.refreshExistingProperties(cswPrivate.Layout, layout.activeTabId);
+                        });
                         confirm.close();
                     },
                     onNo: function () {

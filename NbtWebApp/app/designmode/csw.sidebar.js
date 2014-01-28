@@ -524,9 +524,12 @@
                             props: [{
                                 nodetypepropid: cswPrivate.existingPropIdToAdd
                             }]
+                        },
+                        success: function () {
+                            cswPrivate.nodeLayout.refresh();
                         }
                     });
-                    cswPrivate.nodeLayout.refresh();
+                    
                 };
                 var existingPropertiesTable = existingProperties.div.table();
                 var menuOn = cswPrivate.nodeLayout.getActiveLayout() === 'Edit';
