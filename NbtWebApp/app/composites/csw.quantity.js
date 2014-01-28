@@ -125,7 +125,7 @@
             cswPrivate.validatorMethods.validateGreaterThanZero = function () {
                 return (Csw.validateGreaterThanZero(cswPrivate.numberTextBox.val()) || false == cswPrivate.isRequired);
             };
-            var validateGreaterThanZeroClassName = 'validateGreaterThanZero_' + cswPrivate.numberTextBox.val();
+            var validateGreaterThanZeroClassName = 'validateGreaterThanZero_' + cswPrivate.numberTextBox.getId();
             $.validator.addMethod(validateGreaterThanZeroClassName, function (value, element) {
                 return Csw.tryExec(cswPrivate.validatorMethods.validateGreaterThanZero);
             }, 'Value must be a non-zero, positive number');
