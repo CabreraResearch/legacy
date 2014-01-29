@@ -1529,7 +1529,6 @@
     <Compile Include="csw\Tree\CswNbtNodeReaderDataRelationalDb.cs" />
     <Compile Include="csw\Tree\CswNbtNodeTypeProp.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriter.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeWriterNative.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />
     <Compile Include="csw\Tree\CswNbtPropEnmrtrFiltered.cs" />
     <Compile Include="csw\Tree\CswNbtTreeBuilder.cs" />

@@ -1,6 +1,11 @@
 using System;
+using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
+using ChemSW.Audit;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -13,52 +18,34 @@ namespace ChemSW.Nbt
     {
 
         private CswNbtResources _CswNbtResources = null;
-        private CswNbtNodeWriterNative _CswNbtNodeWriterNative = null;
-        //private CswNbtNodeWriterRelationalDb _CswNbtNodeWriterRelationalDb = null;
+        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+        private CswNbtNodeWriterRelationalDb _CswNbtNodeWriterRelationalDb = null;
+
+
+        private CswTableUpdate _CswTableUpdateNodes = null;
+        private CswTableUpdate CswTableUpdateNodes
+        {
+            get
+            {
+                if( _CswTableUpdateNodes == null )
+                    _CswTableUpdateNodes = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterNative_update", "nodes" );
+                return _CswTableUpdateNodes;
+            }
+        }
+
         public CswNbtNodeWriter( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtNodeWriterRelationalDb = new CswNbtNodeWriterRelationalDb( _CswNbtResources );
         }
 
         public void clear()
         {
-            if( null != _CswNbtNodeWriterNative )
+            if( null != _CswTableUpdateNodes )
             {
-                _CswNbtNodeWriterNative.clear();
+                _CswTableUpdateNodes.clear();
             }
-
-
-            //if( null != _CswNbtNodeWriterRelationalDb )
-            //{
-            //    _CswNbtNodeWriterRelationalDb.clear();
-            //}
         }//clear() 
-
-        private ICswNbtNodeWriterImpl getWriterImpl( CswPrimaryKey NodePk )
-        {
-            return getWriterImpl( NodePk.TableName );
-        }
-        private ICswNbtNodeWriterImpl getWriterImpl( Int32 NodeTypeId )
-        {
-            return getWriterImpl( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName );
-        }
-        private ICswNbtNodeWriterImpl getWriterImpl( string TableName )
-        {
-            ICswNbtNodeWriterImpl ReturnVal = null;
-            //if( TableName.ToLower() == "nodes" )
-            //{
-                if( _CswNbtNodeWriterNative == null )
-                    _CswNbtNodeWriterNative = new CswNbtNodeWriterNative( _CswNbtResources );
-                ReturnVal = _CswNbtNodeWriterNative;
-            //}
-            //else
-            //{
-            //    if( _CswNbtNodeWriterRelationalDb == null )
-            //        _CswNbtNodeWriterRelationalDb = new CswNbtNodeWriterRelationalDb( _CswNbtResources );
-            //    ReturnVal = _CswNbtNodeWriterRelationalDb;
-            //}
-            return ( ReturnVal );
-        }
 
         //public void makeNewNodeEntry( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         public void makeNewNodeEntry( CswNbtNode Node )
@@ -71,7 +58,43 @@ namespace ChemSW.Nbt
                 Node.Locked = true;
             }
 
-            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node );
+            DataTable NewNodeTable = CswTableUpdateNodes.getEmptyTable();
+            DataRow NewNodeRow = NewNodeTable.NewRow();
+            NewNodeRow["nodename"] = Node.NodeName;
+            NewNodeRow["nodetypeid"] = CswConvert.ToDbVal( Node.NodeTypeId );
+            NewNodeRow["pendingupdate"] = CswConvert.ToDbVal( false );
+            NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
+            NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
+            NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
+            NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
+            NewNodeRow["searchable"] = CswConvert.ToDbVal( true );
+            NewNodeRow["iconfilename"] = Node.IconFileNameOverride;
+            NewNodeRow["created"] = DateTime.Now;
+
+            //case 27709: nodes must have an explicit audit level
+            CswNbtMetaDataNodeType CswNbtMetaDataNodeType = Node.getNodeType();
+            if( null != CswNbtMetaDataNodeType )
+            {
+                NewNodeRow[_CswAuditMetaData.AuditLevelColName] = CswNbtMetaDataNodeType.AuditLevel;
+                Node.AuditLevel = CswNbtMetaDataNodeType.AuditLevel; //Otherwise the Node's deafult NoAudit setting gets written to db; trust me on this one
+            }
+
+            NewNodeTable.Rows.Add( NewNodeRow );
+
+            Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
+
+            // case 29311 - Sync with relational data
+            if( Node.getNodeType().DoRelationalSync )
+            {
+                _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, false );
+            }
+            if( CswTools.IsPrimaryKey( Node.RelationalId ) )
+            {
+                NewNodeRow["relationalid"] = Node.RelationalId.PrimaryKey;
+                NewNodeRow["relationaltable"] = Node.RelationalId.TableName;
+            }
+            CswTableUpdateNodes.update( NewNodeTable );
+
             //setDefaultPropertyValues( Node );
 
             // case 22591 - make empty rows for every property
@@ -102,7 +125,39 @@ namespace ChemSW.Nbt
                 //set nodename with updated prop values
                 _synchNodeName( Node );
 
-                getWriterImpl( Node.NodeId ).write( Node, ForceSave, IsCopy, AllowAuditing );
+                // save nodename and pendingupdate
+                if( Node.NodeId.TableName != "nodes" )
+                    throw new CswDniException( CswEnumErrorType.Error, "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
+
+                DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey );
+                if( 1 != NodesTable.Rows.Count )
+                    throw ( new CswDniException( CswEnumErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
+
+                NodesTable.Rows[0]["nodename"] = Node.NodeName;
+                NodesTable.Rows[0]["pendingupdate"] = CswConvert.ToDbVal( Node.PendingUpdate );
+                NodesTable.Rows[0]["readonly"] = CswConvert.ToDbVal( Node.ReadOnlyPermanent );
+                NodesTable.Rows[0]["locked"] = CswConvert.ToDbVal( Node.Locked );
+                NodesTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( Node.IsDemo );
+                NodesTable.Rows[0]["istemp"] = CswConvert.ToDbVal( Node.IsTemp );
+                NodesTable.Rows[0]["sessionid"] = CswConvert.ToDbVal( Node.SessionId );
+                NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName] = Node.AuditLevel;
+                NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
+                NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
+                NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+
+                // case 29311 - Sync with relational data
+                if( Node.getNodeType().DoRelationalSync )
+                {
+                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy, AllowAuditing );
+                }
+
+                if( null != Node.RelationalId )
+                {
+                    NodesTable.Rows[0]["relationalid"] = Node.RelationalId.PrimaryKey;
+                    NodesTable.Rows[0]["relationaltable"] = Node.RelationalId.TableName;
+                }
+                CswTableUpdateNodes.update( NodesTable );
+
 
             }//if node was modified
 
@@ -150,12 +205,92 @@ namespace ChemSW.Nbt
 
         public void updateRelationsToThisNode( CswNbtNode Node )
         {
-            getWriterImpl( Node.NodeId ).updateRelationsToThisNode( Node );
+            if( Node.NodeId.TableName != "nodes" )
+                throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
+
+            string SQL = @"update jct_nodes_props 
+                              set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"' 
+                            where jctnodepropid in (select j.jctnodepropid
+                                                      from jct_nodes_props j
+                                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid
+                                                      join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                     where (f.fieldtype = 'Relationship' or f.fieldtype = 'Location' or f.fieldtype = 'Quantity')
+                                                       and j.field1_fk = " + Node.NodeId.PrimaryKey.ToString() + ")";
+
+            // We're not doing this in a CswTableUpdate because it might be a large operation, 
+            // and we don't care about auditing for this change.
+            _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
+
+            //// case 29311 - Sync with relational data
+            //if( Node.getNodeType().DoRelationalSync )
+            //{
+            //    _CswNbtNodeWriterRelationalDb.updateRelationsToThisNode( Node );
+            //}
         }
 
-        public void delete( CswNbtNode CswNbtNode )
+        public void delete( CswNbtNode Node )
         {
-            getWriterImpl( CswNbtNode.NodeId ).delete( CswNbtNode );
+            //Case 31416 - Delete any blob_data associated with this nodes properties
+            CswCommaDelimitedString DoomedBlobData = new CswCommaDelimitedString();
+            foreach( CswNbtNodePropWrapper BlobProp in Node.Properties.Where( P => P.IsBlobProp() ) )
+            {
+                DoomedBlobData.Add( BlobProp.JctNodePropId.ToString() );
+            }
+            CswTableUpdate CswTableUpdateBlobData = _CswNbtResources.makeCswTableUpdate( "deletenode_blobdata", "blob_data" );
+            if( DoomedBlobData.Count > 0 )
+            {
+                DataTable BlobData = CswTableUpdateBlobData.getTable( "where jctnodepropid in (" + DoomedBlobData + ")" );
+                foreach( DataRow BlobRow in BlobData.Rows )
+                {
+                    BlobRow.Delete();
+                }
+                CswTableUpdateBlobData.update( BlobData );
+            }
+
+            // Delete this node's property values
+            CswTableUpdate CswTableUpdateJct = _CswNbtResources.makeCswTableUpdate( "deletenode_update", "jct_nodes_props" );
+            DataTable JctTable = CswTableUpdateJct.getTable( " where nodeid=" + Node.NodeId.PrimaryKey.ToString() );
+            foreach( DataRow Row in JctTable.Rows )
+            {
+                Row.Delete();
+            }
+            CswTableUpdateJct.update( JctTable );
+
+            // Delete property values of relationships to this node
+            if( Node.NodeId.TableName != "nodes" )
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
+            }
+
+            // From getRelationshipsToNode.  see case 27711
+            string InClause = @"select j.jctnodepropid
+                                      from jct_nodes_props j
+                                      join nodes n on j.nodeid = n.nodeid
+                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid
+                                      join field_types f on p.fieldtypeid = f.fieldtypeid
+                                     where (f.fieldtype = 'Relationship' or f.fieldtype = 'Location')
+                                       and j.field1_fk = " + Node.NodeId.PrimaryKey.ToString();
+
+            DataTable RelatedJctTable = CswTableUpdateJct.getTable( " where jctnodepropid in (" + InClause + ")" );
+            foreach( DataRow Row in RelatedJctTable.Rows )
+            {
+                Row.Delete();
+            }
+            CswTableUpdateJct.update( RelatedJctTable );
+
+            // Delete the node
+
+            DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey, true );
+            NodesTable.Rows[0].Delete();
+            CswTableUpdateNodes.update( NodesTable );
+
+
+            // case 29311 - Sync with relational data
+            if( Node.getNodeType().DoRelationalSync )
+            {
+                _CswNbtNodeWriterRelationalDb.delete( Node );
+            }
+
         }//delete()
 
         private void _synchNodeName( CswNbtNode Node )
@@ -218,9 +353,13 @@ namespace ChemSW.Nbt
         /// </summary>
         public void AuditInsert( CswNbtNode Node )
         {
-            getWriterImpl( Node.NodeId ).AuditInsert( Node );
+            DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey );
+            if( NodesTable.Rows.Count > 0 )
+            {
+                _CswNbtResources.AuditRecorder.addInsertRow( NodesTable.Rows[0] );
+            }
         }
 
-    }//CswNbtNodeWriterNative
+    }//CswNbtNodeWriter
 
 }//namespace ChemSW.Nbt
