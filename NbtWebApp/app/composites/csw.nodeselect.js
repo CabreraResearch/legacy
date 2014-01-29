@@ -207,12 +207,11 @@
                 false === cswPrivate.isMulti) {
 
                 cswPrivate.nodeLinkCell.empty();
-
                 if (cswPrivate.hideNodeLink) {
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkCell.span({
                         text: cswPrivate.selectedName
                     });
-                } else {
+                } else if(false === Csw.isNullOrEmpty(link) && link !== "undefined") {
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkCell.nodeLink({
                         text: link
                     });

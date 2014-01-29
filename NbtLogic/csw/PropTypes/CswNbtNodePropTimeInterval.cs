@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.PropTypes
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _ClobDataSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => _init( x ) ) );
-            _SubFieldMethods.Add( _StartDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getStartDate(), null ) );
+            _SubFieldMethods.Add( _StartDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getStartDate(), null ) );  // weird but intentional - start date comes from clob
         }
 
         private CswNbtSubField _IntervalSubField;
@@ -44,11 +44,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 XmlDocument XmlDoc = new XmlDocument();
                 XmlDoc.LoadXml( clobData );
-                _RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
+                RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
             }
             else
             {
-                _RateInterval = new CswRateInterval( _CswNbtResources );
+                RateInterval = new CswRateInterval( _CswNbtResources );
             }
         }
 

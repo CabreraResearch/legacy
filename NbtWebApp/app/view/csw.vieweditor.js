@@ -95,7 +95,9 @@
         };
 
         cswPrivate.handleStep = function (newStepNo) {
-            cswPrivate.abortAjaxReqs();
+            if (5 !== newStepNo - 1) {//step 5 sends web requests upon clicking Next, so aborting them immediately would be bad
+                cswPrivate.abortAjaxReqs();
+            }
             if (1 === newStepNo) {
                 if (cswPrivate.previousStep === 2) {
                     cswPrivate.previewDiv.empty();
@@ -921,7 +923,7 @@
                         name: 'vieweditor_viewname_input',
                         value: cswPrivate.View.ViewName,
                         onChange: function () {
-                            handleAttributeChange();
+                            cswPrivate.handleAttributeChange();
 
                         }
                     });
@@ -931,7 +933,7 @@
                         name: 'vieweditor_category_input',
                         value: cswPrivate.View.Category,
                         onChange: function () {
-                            handleAttributeChange();
+                            cswPrivate.handleAttributeChange();
                         }
                     });
 
@@ -942,7 +944,7 @@
                         roleid: cswPrivate.View.VisibilityRoleId,
                         userid: cswPrivate.View.VisibilityUserId,
                         onChange: function () {
-                            handleAttributeChange();
+                            cswPrivate.handleAttributeChange();
                         }
                     });
                     if (false == isAdmin) {
@@ -960,7 +962,7 @@
                         MaxValue: 1000,
                         MinValue: 100,
                         onChange: function () {
-                            handleAttributeChange();
+                            cswPrivate.handleAttributeChange();
                         }
                     });
 
@@ -976,7 +978,7 @@
                         widthInput.hide();
                     }
 
-                    var handleAttributeChange = function () {
+                    cswPrivate.handleAttributeChange = function (callback) {
                         //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
                         var visibilityData = visibilitySelect.getSelected();
                         var req = Csw.ajaxWcf.post({
@@ -997,6 +999,9 @@
                                 //Case 31273 - if the view name changed, reload the preview
                                 if (prevOldViewName !== response.CurrentView.ViewName) {
                                     cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, null, true);
+                                }
+                                if (undefined != callback) {
+                                    callback();
                                 }
                             }
                         });
@@ -1383,16 +1388,26 @@
             cswPrivate.currentStepNo = cswPrivate.startingStep;
 
             cswPrivate.finalize = function () {
-                Csw.ajaxWcf.post({
-                    urlMethod: 'ViewEditor/Finalize',
-                    data: {
-                        CurrentView: cswPrivate.View
-                    },
-                    success: function (response) {
-                        cswPrivate.View = response.CurrentView;
-                        cswPrivate.onFinish(cswPrivate.View.ViewId, cswPrivate.View.ViewMode);
-                    }
-                });
+
+                var finalizeView = function() {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/Finalize',
+                        data: {
+                            CurrentView: cswPrivate.View
+                        },
+                        success: function(response) {
+                            cswPrivate.View = response.CurrentView;
+                            cswPrivate.onFinish(cswPrivate.View.ViewId, cswPrivate.View.ViewMode);
+                        }
+                    });
+                }
+
+                if (cswPrivate.currentStepNo === 5) { //case 31640 -- we need to update props when someone edits a textbox then immediately clicks finish
+                    cswPrivate.handleAttributeChange(finalizeView);
+                } else {
+                    finalizeView();
+                }
+                
             };
 
             cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
@@ -1409,6 +1424,9 @@
                 onFinish: cswPrivate.finalize,
                 doNextOnInit: false,
                 onBeforeNext: function (currentStep) {
+                    if (5 === currentStep) {//case 31640 -- we need to update props when someone edits a textbox then immediately clicks next
+                        cswPrivate.handleAttributeChange();
+                    }
                     cswPrivate.previousStep = currentStep;
                     return true;
                 },

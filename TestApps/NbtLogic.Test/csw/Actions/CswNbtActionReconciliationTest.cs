@@ -398,6 +398,35 @@ namespace ChemSW.Nbt.Test.Actions
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Disposed.ToString(), Data.ContainerStatuses[0].ContainerStatus );
         }
 
+        /// <summary>
+        /// Given a location that has one Container and a ContainerLocation for that Container in a different location,
+        /// given that the scanned location is the container's expected location
+        /// assert that the returned ContainerStatus data has a container with a ContainerStatus value of "Wrong Location"
+        /// Prior to resolving Case 31505, this test failed.
+        /// </summary>
+        [Test]
+        public void getContainerStatusesTestWrongLocationOutOfScope()
+        {
+            CswNbtObjClassLocation Location1 = TestData.Nodes.createLocationNode();
+            CswNbtObjClassLocation Location2 = TestData.Nodes.createLocationNode( Name: "NewRoom2", AllowInventory: false );
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: Location1.NodeId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: Location2.NodeId,
+                ContainerScan: ContainerNode.Barcode.Barcode,
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = Location2.NodeId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+        }
+
         #endregion
 
         #region getContainerStatistics
