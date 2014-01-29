@@ -826,14 +826,14 @@ namespace ChemSW.Nbt.Schema
             jctUpdate.update( jctTable );
 
 
-            // Create a temporary view for debugging (REMOVE ME)
-            CswNbtView DesignView = _CswNbtSchemaModTrnsctn.makeView();
-            DesignView.saveNew( "Design", CswEnumNbtViewVisibility.Role, ChemSWAdminRole.NodeId );
-            DesignView.Category = "Design";
-            CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
-            NtViewRel.setGroupByProp( NTCategoryNTP );
-            DesignView.AddViewPropertyAndFilter( NtViewRel, NTEnabledNTP, Value: CswConvert.TristateToDbVal( CswEnumTristate.True ).ToString() );
-            DesignView.save();
+            //// Create a temporary view for debugging (REMOVE ME)
+            //CswNbtView DesignView = _CswNbtSchemaModTrnsctn.makeView();
+            //DesignView.saveNew( "Design", CswEnumNbtViewVisibility.Role, ChemSWAdminRole.NodeId );
+            //DesignView.Category = "Design";
+            //CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
+            //NtViewRel.setGroupByProp( NTCategoryNTP );
+            //DesignView.AddViewPropertyAndFilter( NtViewRel, NTEnabledNTP, Value: CswConvert.TristateToDbVal( CswEnumTristate.True ).ToString() );
+            //DesignView.save();
 
         } // update()
 
