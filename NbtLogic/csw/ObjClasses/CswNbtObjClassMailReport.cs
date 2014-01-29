@@ -215,6 +215,7 @@ namespace ChemSW.Nbt.ObjClasses
             // This will only trigger when the viewid is first set.
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
             View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
+            View.ViewMode = CswEnumNbtViewRenderingMode.Grid;
             View.save();
         } // OnReportViewChange()
         public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
