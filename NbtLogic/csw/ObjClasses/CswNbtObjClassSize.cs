@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
             }
             // case 31749 - Unit is always required
-            if( false == CswTools.IsPrimaryKey( this.InitialQuantity.UnitId ) )
+            if( false == this.IsTemp && false == CswTools.IsPrimaryKey( this.InitialQuantity.UnitId ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Unit for Initial Quantity is required.", "Cannot have a null unit selected for Initial Quantity." );
             }
