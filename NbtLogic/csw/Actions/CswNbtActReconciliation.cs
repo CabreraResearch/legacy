@@ -131,6 +131,10 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
             }
+            foreach( CswNbtObjClassContainerLocation OutOfScopeScan in _getRelevantScansOutsideLocationScope( Request ).Values )
+            {
+                _incrementContainerCount( Data.ContainerStatistics, CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString() );
+            }
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
                 if( Stat.ContainerCount > 0 )
@@ -203,6 +207,24 @@ namespace ChemSW.Nbt.Actions
                     ContainersTree.goToParentNode();
                 }
             }
+            foreach( CswNbtObjClassContainerLocation OutOfScopeScan in _getRelevantScansOutsideLocationScope( Request ).Values )
+            {
+                CswNbtNode ContainerNode = _CswNbtResources.Nodes[OutOfScopeScan.Container.RelatedNodeId];
+                Data.ContainerStatuses.Add( new ContainerData.ReconciliationStatuses
+                {
+                    ContainerId = OutOfScopeScan.Container.RelatedNodeId.ToString(),
+                    ContainerBarcode = OutOfScopeScan.ContainerScan.Text,
+                    LocationId = OutOfScopeScan.Location.SelectedNodeId.ToString(),
+                    ExpectedLocation = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Location].AsLocation.CachedFullPath,
+                    ScannedLocation = OutOfScopeScan.Location.CachedFullPath,
+                    ContainerStatus = CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(),
+                    ContainerLocationId = OutOfScopeScan.NodeId.ToString(),
+                    ScanDate = OutOfScopeScan.ScanDate.DateTimeValue.Date.ToShortDateString(),
+                    Action = OutOfScopeScan.Action.Value,
+                    Completed = OutOfScopeScan.ActionApplied.Checked.ToString(),
+                    ActionOptions = _getActionOptions( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), OutOfScopeScan.Location.SelectedNodeId )
+                } );
+            }
             return Data;
         }
 
@@ -238,6 +260,8 @@ namespace ChemSW.Nbt.Actions
         #endregion Public Methods
 
         #region Private Methods
+
+        #region View Creation
 
         private void _setContainersTree( ContainerData.ReconciliationRequest Request )
         {
@@ -294,6 +318,52 @@ namespace ChemSW.Nbt.Actions
             return ContainersView;
         }
 
+        private CswNbtView _getReconciliationScansForOutOfScopeContainersView( ContainerData.ReconciliationRequest Request )
+        {
+            Collection<CswPrimaryKey> LocationIds = _getLocationIds( Request );
+
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp CLocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+            CswNbtMetaDataObjectClass ContainerLocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClassProp ContainerOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
+            CswNbtMetaDataObjectClassProp TypeOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Type );
+            CswNbtMetaDataObjectClassProp LocationOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Location );
+            CswNbtMetaDataObjectClassProp ScanDateOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
+
+            CswNbtView ContainerLocationsView = new CswNbtView( _CswNbtResources );
+            //Filter to selected location (and all child locations if applicable)
+            CswNbtViewRelationship LocationVR = ContainerLocationsView.AddViewRelationship( LocationOC, false );
+            LocationVR.NodeIdsToFilterIn = LocationIds;
+            CswCommaDelimitedString LocIds = new CswCommaDelimitedString();
+            foreach( CswPrimaryKey LocId in LocationIds )
+            {
+                LocIds.Add( LocId.PrimaryKey.ToString() );
+            }
+            //Filter to Container Location records of type Reconcile Scans in the current time scope 
+            CswNbtViewRelationship ContainerLocationVR = ContainerLocationsView.AddViewRelationship( LocationVR, CswEnumNbtViewPropOwnerType.Second, LocationOCP, false );
+            CswNbtViewProperty TypeVP = ContainerLocationsView.AddViewProperty( ContainerLocationVR, TypeOCP );
+            ContainerLocationsView.AddViewPropertyFilter( TypeVP, FilterMode: CswEnumNbtFilterMode.Equals, Value: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
+            CswNbtViewProperty ScanDateVP = ContainerLocationsView.AddViewProperty( ContainerLocationVR, ScanDateOCP );
+            if( CswConvert.ToDateTime( Request.StartDate ) > CswConvert.ToDateTime( Request.EndDate ) )
+            {
+                Request.StartDate = Request.EndDate;
+            }
+            ContainerLocationsView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswEnumNbtFilterMode.GreaterThanOrEquals, Value: Request.StartDate );
+            ContainerLocationsView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswEnumNbtFilterMode.LessThanOrEquals, Value: Request.EndDate );
+            ContainerLocationsView.setSortProperty( ScanDateVP, CswEnumNbtViewPropertySortMethod.Descending );
+            //Filter to Containers not matching current location scope
+            CswNbtViewRelationship ContainerVR = ContainerLocationsView.AddViewRelationship( ContainerLocationVR, CswEnumNbtViewPropOwnerType.First, ContainerOCP, false );
+            CswNbtViewProperty CLocVP = ContainerLocationsView.AddViewProperty( ContainerVR, CLocationOCP );
+            ContainerLocationsView.AddViewPropertyFilter( CLocVP, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.In, LocIds.ToString() );
+
+            return ContainerLocationsView;
+        }
+
+        #endregion View Creation
+
+        #region Location Collection
+
         private Collection<CswPrimaryKey> _getLocationIds( ContainerData.ReconciliationRequest Request )
         {
             Collection<CswPrimaryKey> LocationIds = new Collection<CswPrimaryKey>();
@@ -329,6 +399,10 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
+        #endregion Location Collection
+
+        //TODO - Looking back, this is pretty evil (and fragile) - we're manipulating the global tree under the assumption that
+        //TODO - it's in the proper relationship level.  We should really fix this.
         private CswNbtObjClassContainerLocation _getMostRelevantContainerLocation()
         {
             CswNbtObjClassContainerLocation ContainerLocationNode = null;
@@ -359,6 +433,38 @@ namespace ChemSW.Nbt.Actions
                 ContainersTree.goToParentNode();
             }
             return ContainerLocationNode;
+        }
+
+        private Dictionary<CswPrimaryKey, CswNbtObjClassContainerLocation> _getRelevantScansOutsideLocationScope( ContainerData.ReconciliationRequest Request )
+        {
+            Dictionary<CswPrimaryKey, CswNbtObjClassContainerLocation> OutOfScopeScans = new Dictionary<CswPrimaryKey, CswNbtObjClassContainerLocation>();
+            ICswNbtTree OutOfScopeScansTree = _CswNbtResources.Trees.getTreeFromView( _getReconciliationScansForOutOfScopeContainersView( Request ), false, true, false );
+            if( OutOfScopeScansTree.getChildNodeCount() > 0 )
+            {
+                for( int i = 0; i < OutOfScopeScansTree.getChildNodeCount(); i++ )//Location Nodes
+                {
+                    OutOfScopeScansTree.goToNthChild( i );
+                    if( OutOfScopeScansTree.getChildNodeCount() > 0 )
+                    {
+                        for( int j = 0; j < OutOfScopeScansTree.getChildNodeCount(); j++ )//ContainerLocation Nodes
+                        {
+                            OutOfScopeScansTree.goToNthChild( j );
+                            if( OutOfScopeScansTree.getChildNodeCount() == 0 )//Container Nodes
+                            {
+                                //No container means it's out of scope - only add the most recent scan record
+                                CswNbtObjClassContainerLocation OutOfScopeScan = OutOfScopeScansTree.getNodeForCurrentPosition();
+                                if( false == OutOfScopeScans.ContainsKey( OutOfScopeScan.Container.RelatedNodeId ) )
+                                {
+                                    OutOfScopeScans.Add( OutOfScopeScan.Container.RelatedNodeId, OutOfScopeScan );
+                                }
+                            }
+                            OutOfScopeScansTree.goToParentNode();
+                        }
+                    }
+                    OutOfScopeScansTree.goToParentNode();
+                }
+            }
+            return OutOfScopeScans;
         }
 
         private bool _isTypeEnabled( String Type, ContainerData.ReconciliationRequest Request )
