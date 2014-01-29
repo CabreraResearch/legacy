@@ -64,11 +64,22 @@
                             tooltip: { title: 'Print Barcode Label' },
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                             onClick: function () {
+
+                                var selectedLabel;
+                                //iterate through the properties to find label format so that it can be preselected in the dialog
+                                Object.keys(nodeProperty.tabState.propertyData).forEach(function (propId) {
+                                    var prop = nodeProperty.tabState.propertyData[propId];
+                                    if (prop.name == "Label Format")
+                                        selectedLabel = prop.values.relatednodeid;
+                                });
+                                
+
                                 $.CswDialog('PrintLabelDialog', {
                                     nodes: [{
                                         nodeid: nodeProperty.tabState.nodeid,
                                         nodename: nodeProperty.tabState.nodename || cswPrivate.value
                                     }],
+                                    selectedLabel: selectedLabel,
                                     nodetypeid: Csw.number(nodeProperty.tabState.nodetypeid, 0)
                                 });
                             }

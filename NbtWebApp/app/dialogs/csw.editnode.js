@@ -70,7 +70,6 @@
                         Refresh: cswPrivate.onRefresh,
                         onEditView: function(viewid) {
                             doRefresh = false; //We're loading the view editor, don't refresh when the dialog closes                        
-                            //cswPublic.div.$.dialog('close');
                             editDialog.close();
                             Csw.tryExec(cswPrivate.onEditView, viewid);
                         },
@@ -79,7 +78,6 @@
                             if (tabcount <= 2 || cswPrivate.Multi) { /* Ignore history tab */
                                 if (false === cswPublic.closed) {
                                     editDialog.close();
-                                    //cswPublic.div.$.dialog('close');
                                 }
                             }
                             Csw.tryExec(cswPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
