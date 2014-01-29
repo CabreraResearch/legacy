@@ -174,10 +174,17 @@
             });
             dragPanel.allowDrag(false);
 
+            var sorted = [];
+            for (var propKey in properties) {
+                sorted.push(propKey);
+            }
+            sorted.sort(function(a, b) {
+                return properties[a].displayrow - properties[b].displayrow;
+            });
+
             var seenProps = {};
-            Csw.iterate(properties, function (prop) {
-                //for (var propIdx in properties) {
-                //var prop = properties[propIdx];
+            Csw.iterate(sorted, function (sortedPropKey) {
+                var prop = properties[sortedPropKey];
                 if (!seenProps[tabid + '_' + prop.id]) {
                     seenProps[tabid + '_' + prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
