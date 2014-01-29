@@ -388,6 +388,28 @@ namespace ChemSW.Nbt.ObjClasses
                     } // if( null != SelectedProp )
                 } // if( CswTools.IsPrimaryKey( AddToTemplateProp.RelatedNodeId ) )
             } // if( FieldTypeValue == CswEnumNbtFieldType.Composite )
+
+            if( FieldTypeValue == CswEnumNbtFieldType.ImageList )
+            {
+                CswNbtNodePropMemo NameOptionsProp = AttributeProperty[CswNbtFieldTypeRuleImageList.AttributeName.ImageNames].AsMemo;
+                CswNbtNodePropMemo UrlOptionsProp = AttributeProperty[CswNbtFieldTypeRuleImageList.AttributeName.ImageUrls].AsMemo;
+                CswDelimitedString ListOptions = new CswDelimitedString( '\n' );
+                ListOptions.FromString( NameOptionsProp.Text.Trim() );
+                CswDelimitedString ValueOptions = new CswDelimitedString( '\n' );
+                ValueOptions.FromString( UrlOptionsProp.Text.Trim() );
+                Dictionary<string,string> ValidOptions = new Dictionary<string, string>();
+                for( int i = 0; i < ValueOptions.Count; i++ )
+                {
+                    if( ValidOptions.Keys.Contains( ListOptions[i] ) || ValidOptions.Values.Contains( ValueOptions[i] ) )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "Image Names and URLs must be unique", "" );
+                    }
+                    else
+                    {
+                        ValidOptions.Add( ListOptions[i], ValueOptions[i] );
+                    }
+                }
+            }
         }//beforeWriteNode()
 
         protected override void afterWriteNodeLogic()
