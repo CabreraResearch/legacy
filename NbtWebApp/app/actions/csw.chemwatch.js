@@ -56,7 +56,7 @@
             // Supplier
             cswPrivate.supplierInput = stepOneTable.cell(1, 1).empty().css({ width: '350px' });
             cswPrivate.supplierInput.input({
-                labelText: 'Supplier Name contains: ',
+                labelText: 'Supplier Name contains text: ',
                 value: cswPrivate.OperationData.Supplier,
                 onChange: function (value) {
 
@@ -95,13 +95,13 @@
 
             // Material name
             cswPrivate.materialInput = stepOneTable.cell(2, 1).input({
-                labelText: 'Material Name contains: ',
+                labelText: 'Material Name contains word(s): ',
                 value: cswPrivate.OperationData.MaterialName
             });
 
             // Part number
             cswPrivate.partNoInput = stepOneTable.cell(3, 1).input({
-                labelText: 'Part Number is: ',
+                labelText: 'Part Number equals: ',
                 value: cswPrivate.OperationData.PartNo
             });
 

@@ -533,10 +533,13 @@ namespace ChemSW.Nbt.PropTypes
                     //Implementing FieldType specific behavior here. Blame Steve.
                     if( FieldType == CswEnumNbtFieldType.ViewReference )
                     {
-                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.DefaultValue.AsViewReference.ViewId );
-                        CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
-                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                        SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );
+                        if( null != Source.DefaultValue )
+                        {
+                            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.DefaultValue.AsViewReference.ViewId );
+                            CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
+                            ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                            SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );
+                        }
                     }
                     else
                     {

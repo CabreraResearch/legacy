@@ -2914,7 +2914,10 @@ namespace ChemSW.Nbt.WebServices
                         if( NewNode != null )
                         {
                             ReturnVal["NewNodeId"] = NewNode.NodeId.ToString();
-                            ReturnVal["NewRelationalId"] = NewNode.RelationalId.PrimaryKey.ToString();
+                            if( CswTools.IsPrimaryKey( NewNode.RelationalId ) )
+                            {
+                                ReturnVal["NewRelationalId"] = NewNode.RelationalId.PrimaryKey.ToString();
+                            }
                         }
                         else
                         {
