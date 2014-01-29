@@ -134,16 +134,19 @@ namespace ChemSW.Nbt
 
         public void setSequenceValues( CswNbtNode Node )
         {
-            foreach( CswNbtNodePropWrapper Prop in Node.Properties )
+            if( false == Node.IsTemp )
             {
-                CswEnumNbtFieldType FT = Prop.getFieldTypeValue();
-                if( FT == CswEnumNbtFieldType.Barcode )
+                foreach( CswNbtNodePropWrapper Prop in Node.Properties )
                 {
-                    Prop.AsBarcode.setBarcodeValue();  // does not overwrite
-                }
-                else if( FT == CswEnumNbtFieldType.Sequence )
-                {
-                    Prop.AsSequence.setSequenceValue();  // does not overwrite
+                    CswEnumNbtFieldType FT = Prop.getFieldTypeValue();
+                    if( FT == CswEnumNbtFieldType.Barcode )
+                    {
+                        Prop.AsBarcode.setBarcodeValue(); // does not overwrite
+                    }
+                    else if( FT == CswEnumNbtFieldType.Sequence )
+                    {
+                        Prop.AsSequence.setSequenceValue(); // does not overwrite
+                    }
                 }
             }
         }

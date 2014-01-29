@@ -117,7 +117,10 @@ namespace ChemSW.Nbt.PropTypes
 
         override public void onBeforeUpdateNodePropRow()
         {
-            setBarcodeValue();
+            if( false == _Node.IsTemp )
+            {
+                setBarcodeValue();
+            }
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )
