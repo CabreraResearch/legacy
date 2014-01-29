@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         //void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
         string getHelpText();
         void onSetFk( CswNbtObjClassDesignNodeTypeProp DesignNTPNode );
+        void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode );
         Collection<CswNbtFieldTypeAttribute> getAttributes();
     }//ICswNbtFieldTypeRule
 

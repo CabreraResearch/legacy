@@ -98,6 +98,28 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return string.Empty;
         }
 
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+            // Set values for FKType
+            CswNbtNodePropText FKTypeWrapper = DesignNTPNode.AttributeProperty[AttributeName.FKType].AsText;
+            CswNbtNodePropList ChildRelationshipWrapper = DesignNTPNode.AttributeProperty[AttributeName.ChildRelationship].AsList;
+            if( false == ChildRelationshipWrapper.Empty )
+            {
+                if( ChildRelationshipWrapper.Text.EndsWith( CswNbtObjClassDesignNodeTypeProp.PropRefValue_OCP_Suffix ) )
+                {
+                    FKTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                }
+                else
+                {
+                    FKTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                }
+            }
+            else
+            {
+                FKTypeWrapper.Text = string.Empty;
+            }
+        }
+
     }//ICswNbtFieldTypeRule
 
 }//namespace ChemSW.Nbt.MetaData
