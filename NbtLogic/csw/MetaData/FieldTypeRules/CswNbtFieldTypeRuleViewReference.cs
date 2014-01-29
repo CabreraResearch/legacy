@@ -81,12 +81,20 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public sealed class AttributeName
         {
-            // public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
         }
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            return _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ViewReference );
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ViewReference );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.ViewReference,
+                Name = AttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.ViewReference
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
