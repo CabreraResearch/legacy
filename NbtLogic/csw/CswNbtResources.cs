@@ -888,7 +888,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new unique sequence (for use by CswSequenceManager)
         /// </summary>
-        public void makeUniqueSequence( string SequenceName, Int32 SeedVal ) { _CswResources.makeUniqueSequence( SequenceName, SeedVal ); }
+        public void makeUniqueSequenceForProperty( string SequenceName, Int32 SeedVal, int CacheSize ) { _CswResources.makeUniqueSequenceForProperty( SequenceName, SeedVal, CacheSize ); }
         /// <summary>
         /// Fetches the next unique sequence value, and increments the value (for use by CswSequenceManager)
         /// </summary>
@@ -896,7 +896,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Resets the sequence to a given value (for use by CswSequenceManager)
         /// </summary>
-        public void resetUniqueSequenceVal( string SequenceName, Int32 Value ) { _CswResources.resetUniqueSequenceVal( SequenceName, Value ); }
+        public void resetUniqueSequenceVal( string SequenceName, Int32 Value, int CacheSize ) { _CswResources.resetUniqueSequenceVal( SequenceName, Value, CacheSize ); }
         /// <summary>
         /// Deletes a unique sequence (for use by CswSequenceManager)
         /// </summary>

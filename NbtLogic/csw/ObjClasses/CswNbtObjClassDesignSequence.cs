@@ -9,15 +9,16 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassDesignSequence : CswNbtObjClass
+    public class CswNbtObjClassDesignSequence: CswNbtObjClass
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Name = "Name";
             public const string Pre = "Pre";
             public const string Post = "Post";
             public const string Pad = "Pad";
             public const string NextValue = "Next Value";
+            public const string CacheSize = "Cache Size";
         }
 
         public CswNbtObjClassDesignSequence( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -51,6 +52,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        protected override void beforeWriteNodeLogic( bool Creating )
+        {
+            if( Creating )
+            {
+                string DbName = getDbName();
+                if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
+                {
+                    _CswNbtResources.makeUniqueSequenceForProperty( DbName, 1, (int) CacheSize.Value );
+                }
+            }
+        }
+
         protected override void afterPopulateProps()
         {
             if( CswTools.IsPrimaryKey( RelationalId ) )
@@ -59,6 +72,8 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         NextValue.Text = getCurrent();
                     } );
+
+                CacheSize.SetOnPropChange( OnCacheSizeChange );
             }
         } //afterPopulateProps()
 
@@ -80,6 +95,18 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Post { get { return ( _CswNbtNode.Properties[PropertyName.Post] ); } }
         public CswNbtNodePropNumber Pad { get { return ( _CswNbtNode.Properties[PropertyName.Pad] ); } }
         public CswNbtNodePropText NextValue { get { return ( _CswNbtNode.Properties[PropertyName.NextValue] ); } }
+        public CswNbtNodePropNumber CacheSize { get { return ( _CswNbtNode.Properties[PropertyName.CacheSize] ); } }
+        private void OnCacheSizeChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( false == Creating ) 
+            {
+                //If we're creating this sequence, the onBeforeWriteNode creates the sequence with the correct init values and there's no need to update it here.
+                string DbName = getDbName();
+                int CurrentVal = deformatSequence( getCurrent() );
+                CswNbtNodePropNumber AsNumber = (CswNbtNodePropNumber) Prop;
+                _CswNbtResources.resetUniqueSequenceVal( DbName, CurrentVal, (int) AsNumber.Value );
+            }
+        }
 
         #endregion
 
@@ -145,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
             string DbName = getDbName();
             if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
             {
-                _CswNbtResources.makeUniqueSequence( DbName, 1 );
+                //_CswNbtResources.makeUniqueSequenceForProperty( DbName, 1 );
             }
             Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal( DbName );
             return formatSequence( RawSequenceVal );
@@ -196,13 +223,13 @@ namespace ChemSW.Nbt.ObjClasses
                     MaxSeqVal = ThisSeqVal;
                 }
             } // foreach( DataRow SeqValueRow in SeqValueTable.Rows )
-            _CswNbtResources.resetUniqueSequenceVal( getDbName(), MaxSeqVal + 1 );
+            //_CswNbtResources.resetUniqueSequenceVal( getDbName(), MaxSeqVal + 1 );
         } // reSync()
 
         public static CswNbtObjClassDesignSequence getSequence( CswNbtResources CswNbtResources, string SequenceName )
         {
             CswNbtMetaDataObjectClass SequenceOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignSequenceClass );
-            return SequenceOC.getNodes( forceReInit: false, includeSystemNodes: true )
+            return SequenceOC.getNodes( forceReInit : false, includeSystemNodes : true )
                              .FirstOrDefault( seq => ( (CswNbtObjClassDesignSequence) seq ).Name.Text.ToLower() == SequenceName.ToLower() );
         }
 
