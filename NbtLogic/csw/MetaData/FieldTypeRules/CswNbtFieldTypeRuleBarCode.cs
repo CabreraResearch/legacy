@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public bool SearchAllowed { get { return ( _CswNbtFieldTypeRuleDefault.SearchAllowed ); } }
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string,string> ParameterCollection, int FilterNumber )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
         {
             return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, CswNbtViewPropertyFilterIn, ParameterCollection, FilterNumber ) );
         }//makeWhereClause()
@@ -101,8 +101,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
-        public string getHelpText(){ return string.Empty; }
-        
+        public string getHelpText() { return string.Empty; }
+
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
             public const string Sequence = CswEnumNbtPropertyAttributeName.Sequence;
@@ -130,7 +130,25 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ret;
         }
 
-        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode ) { }
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+            CswNbtNodePropRelationship SequenceProp = DesignNTPNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Sequence].AsRelationship;
+            if( SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
+            {
+                if( null != DesignNTPNode.RelationalNodeTypeProp && null != DesignNTPNode.RelationalNodeType )
+                {
+                    // Update nodes
+                    foreach( CswNbtNode CurrentNode in DesignNTPNode.RelationalNodeType.getNodes( false, false ) )
+                    {
+                        CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[DesignNTPNode.RelationalNodeTypeProp];
+                        if( CurrentProp.AsBarcode.Empty )
+                        {
+                            CurrentProp.AsBarcode.setBarcodeValue();
+                        }
+                    }
+                } // if prop is sequence or barcode
+            } // if(SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
+        } // onBeforeWriteDesignNode()
 
     }//ICswNbtFieldTypeRule
 
