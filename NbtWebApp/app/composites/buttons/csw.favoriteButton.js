@@ -9,6 +9,7 @@
             isFavorite: false,
             onAddFavoriteSuccess: function() {},
             onRemoveFavoriteSuccess: function () { },
+            onClick: function(isFavorite) {},
             div: {}
         };
         var cswPublic = {};
@@ -34,6 +35,7 @@
                         cswPrivate.addFavoriteIcon.hide();
                         cswPrivate.removeFavoriteIcon.show();
                         cswPrivate.onAddFavoriteSuccess();
+                        cswPrivate.onClick(cswPrivate.isFavorite);
                     }
                 });
             }
@@ -54,6 +56,7 @@
                         cswPrivate.removeFavoriteIcon.hide();
                         cswPrivate.addFavoriteIcon.show();
                         cswPrivate.onRemoveFavoriteSuccess();
+                        cswPrivate.onClick(cswPrivate.isFavorite);
                     }
                 });
             }

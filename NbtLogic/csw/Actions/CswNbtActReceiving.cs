@@ -86,6 +86,11 @@ namespace ChemSW.Nbt.Actions
             CswNbtObjClassContainer InitialContainerNode = _CswNbtResources.Nodes[ReceiptDefinition.ContainerNodeId];
             if( null != InitialContainerNode && ReceiptDefinition.Quantities.Count > 0 )
             {
+                
+                receiveContainers( ReceiptDefinition, ref processed, 1 ); //process only the first container (the initial one)
+
+                commitSDSDocNode( ReceiptDefinition.MaterialNodeId, ReceiptDefinition.SDSNodeId, ReceiptDefinition.SDSProps );
+
                 //Generate the barcodes upfront and treat them as custom barcodes so all Containers in this Receipt Def have similar numbers
                 CswNbtMetaDataNodeTypeProp BarcodeProp = (CswNbtMetaDataNodeTypeProp) InitialContainerNode.NodeType.getBarcodeProperty();
                 for( int i = 0; i < ReceiptDefinition.Quantities.Count; i++ )

@@ -195,12 +195,12 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new temp node according to NodeType.
         /// </summary>
-        public CswNbtNode getAddNodeAndPostChanges( CswNbtMetaDataNodeType NodeType, Action<CswNbtNode> After )
+        public CswNbtNode getAddNodeAndPostChanges( CswNbtMetaDataNodeType NodeType, Action<CswNbtNode> After, bool IgnorePermissions = false )
         {
             CswNbtNode Ret = null;
             if( null != NodeType )
             {
-                if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
+                if( IgnorePermissions || _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                 {
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp: true );
                 }
