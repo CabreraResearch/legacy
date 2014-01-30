@@ -18,7 +18,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Post = "Post";
             public const string Pad = "Pad";
             public const string NextValue = "Next Value";
-            public const string CacheSize = "Cache Size";
         }
 
         public CswNbtObjClassDesignSequence( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -59,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string DbName = getDbName();
                 if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
                 {
-                    _CswNbtResources.makeUniqueSequenceForProperty( DbName, 1, (int) CacheSize.Value );
+                    _CswNbtResources.makeUniqueSequenceForProperty( DbName, 1 );
                 }
             }
         }
@@ -72,8 +71,6 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         NextValue.Text = getCurrent();
                     } );
-
-                CacheSize.SetOnPropChange( OnCacheSizeChange );
             }
         } //afterPopulateProps()
 
@@ -95,19 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Post { get { return ( _CswNbtNode.Properties[PropertyName.Post] ); } }
         public CswNbtNodePropNumber Pad { get { return ( _CswNbtNode.Properties[PropertyName.Pad] ); } }
         public CswNbtNodePropText NextValue { get { return ( _CswNbtNode.Properties[PropertyName.NextValue] ); } }
-        public CswNbtNodePropNumber CacheSize { get { return ( _CswNbtNode.Properties[PropertyName.CacheSize] ); } }
-        private void OnCacheSizeChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            if( false == Creating ) 
-            {
-                //If we're creating this sequence, the onBeforeWriteNode creates the sequence with the correct init values and there's no need to update it here.
-                string DbName = getDbName();
-                int CurrentVal = deformatSequence( getCurrent() );
-                CswNbtNodePropNumber AsNumber = (CswNbtNodePropNumber) Prop;
-                _CswNbtResources.resetUniqueSequenceVal( DbName, CurrentVal, (int) AsNumber.Value );
-            }
-        }
-
+        
         #endregion
 
         #region Sequence Functions

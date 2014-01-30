@@ -886,17 +886,25 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool doesUniqueSequenceExist( string SequenceName ) { return _CswResources.doesUniqueSequenceExist( SequenceName ); }
         /// <summary>
-        /// Creates a new unique sequence (for use by CswSequenceManager)
+        /// Creates a new unique sequence for Properties
         /// </summary>
-        public void makeUniqueSequenceForProperty( string SequenceName, Int32 SeedVal, int CacheSize ) { _CswResources.makeUniqueSequenceForProperty( SequenceName, SeedVal, CacheSize ); }
+        public void makeUniqueSequenceForProperty( string SequenceName, Int32 SeedVal ) { _CswResources.makeUniqueSequenceForProperty( SequenceName, SeedVal ); }
+        /// <summary>
+        /// Creates a new unique sequence for Primary Keys
+        /// </summary>
+        public void makeUniqueSequenceForPrimaryKey( string SequenceName, Int32 SeedVal ) { _CswResources.makeUniqueSequenceForPrimaryKey( SequenceName, SeedVal ); }
         /// <summary>
         /// Fetches the next unique sequence value, and increments the value (for use by CswSequenceManager)
         /// </summary>
         public Int32 getNextUniqueSequenceVal( string SequenceName ) { return _CswResources.getNextUniqueSequenceVal( SequenceName ); }
         /// <summary>
-        /// Resets the sequence to a given value (for use by CswSequenceManager)
+        /// Resets the property sequence to a given value
         /// </summary>
-        public void resetUniqueSequenceVal( string SequenceName, Int32 Value, int CacheSize ) { _CswResources.resetUniqueSequenceVal( SequenceName, Value, CacheSize ); }
+        public void resetUniqueSequenceValForProperty( string SequenceName, Int32 Value ) { _CswResources.resetUniqueSequenceValForProperty( SequenceName, Value ); }
+        /// <summary>
+        ///  Resets the primary key sequence to a given value
+        /// </summary>
+        public void resetUniqueSequenceValForPrimaryKey( string SequenceName, Int32 Value ) { _CswResources.resetUniqueSequenceValForProperty( SequenceName, Value ); }
         /// <summary>
         /// Deletes a unique sequence (for use by CswSequenceManager)
         /// </summary>
