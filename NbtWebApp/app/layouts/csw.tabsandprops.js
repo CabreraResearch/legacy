@@ -864,6 +864,9 @@
                     name: cswPrivate.name + '_favBtn',
                     nodeid: cswPrivate.tabState.nodeid,
                     isFavorite: cswPrivate.tabState.isFavorite,
+                    onClick: function(isFavorite) {
+                        cswPrivate.tabState.isFavorite = isFavorite;
+                    }
                 });
                     
                 if (Csw.bool(cswPrivate.tabState.Config)) {
