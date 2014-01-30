@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.csw.ImportExport
 
         public static void CreateCafProps( CswNbtResources NbtResources, CswEnumNbtObjectClass ObjClass, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
         {
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode: SetupMode );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode : SetupMode );
 
             CswNbtMetaDataObjectClass MetaDataObjClass = NbtResources.MetaData.getObjectClass( ObjClass );
             string sql = GetCAFPropertiesSQL( PropsValsTblName );
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                     //newProp.ListOptions = row["listopts"].ToString();
                     newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Required].AsLogical.Checked = CswConvert.ToTristate( row["required"] );
                     newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.ReadOnly].AsLogical.Checked = CswConvert.ToTristate( row["readonly"] );
-                    if( null != newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options] )
+                    if( newProp.DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Options ) )
                     {
                         newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = CswConvert.ToString( row["listopts"] );
                     }
@@ -75,10 +75,10 @@ namespace ChemSW.Nbt.csw.ImportExport
                     }
 
                     ImpMgr.importBinding( cafSourceCol, PropName, "", "CAF", NodeType.NodeTypeName,
-                        ClobTableName: PropsValsTblName,
-                        LobDataPkColOverride: cafColPropName,
-                        LobDataPkColName: PropsValsPKName,
-                        LegacyPropId: PropId );
+                        ClobTableName : PropsValsTblName,
+                        LobDataPkColOverride : cafColPropName,
+                        LobDataPkColName : PropsValsPKName,
+                        LegacyPropId : PropId );
                 }
             }
 
@@ -89,6 +89,7 @@ namespace ChemSW.Nbt.csw.ImportExport
 
         public static void startCAFImportImpl( ICswResources CswResources, string CAFDatabase, string CAFSchema, string CAFPassword, CswEnumSetupMode SetupMode )
         {
+
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
             //connect to the CAF database
@@ -360,7 +361,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                 CswNbtImportDef Definition = null;
                 //try
                 //{
-                    Definition = new CswNbtImportDef( CswNbtResources, ImportDefinitionName, SheetName );
+                Definition = new CswNbtImportDef( CswNbtResources, ImportDefinitionName, SheetName );
                 //}
                 //catch( Exception ex )
                 //{
