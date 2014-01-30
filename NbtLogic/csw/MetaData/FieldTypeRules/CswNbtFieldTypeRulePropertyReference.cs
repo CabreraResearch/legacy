@@ -336,6 +336,51 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return "Enter \"me\" to use the current user as the search term";
         }
 
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+            // Set values for FKType and RelatedPropType
+            CswNbtNodePropText FKTypeWrapper = DesignNTPNode.AttributeProperty[AttributeName.FKType].AsText;
+            CswNbtNodePropList RelationshipWrapper = DesignNTPNode.AttributeProperty[AttributeName.Relationship].AsList;
+            if( false == FKTypeWrapper.wasAnySubFieldModified( false ) )
+            {
+                if( false == RelationshipWrapper.Empty )
+                {
+                    if( RelationshipWrapper.Text.EndsWith( CswNbtObjClassDesignNodeTypeProp.PropRefValue_OCP_Suffix ) )
+                    {
+                        FKTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                    }
+                    else
+                    {
+                        FKTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                    }
+                }
+                else
+                {
+                    FKTypeWrapper.Text = string.Empty;
+                }
+            }
+            CswNbtNodePropText RelatedPropTypeWrapper = DesignNTPNode.AttributeProperty[AttributeName.RelatedPropType].AsText;
+            CswNbtNodePropList RelatedPropWrapper = DesignNTPNode.AttributeProperty[AttributeName.RelatedProperty].AsList;
+            if( false == RelatedPropTypeWrapper.wasAnySubFieldModified( false ) )
+            {
+                if( false == RelatedPropWrapper.Empty )
+                {
+                    if( RelatedPropWrapper.Text.EndsWith( CswNbtObjClassDesignNodeTypeProp.PropRefValue_OCP_Suffix ) )
+                    {
+                        RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                    }
+                    else
+                    {
+                        RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                    }
+                }
+                else
+                {
+                    RelatedPropTypeWrapper.Text = string.Empty;
+                }
+            }
+        }
+
     }//ICswNbtFieldTypeRule
 
 }//namespace ChemSW.Nbt.MetaData

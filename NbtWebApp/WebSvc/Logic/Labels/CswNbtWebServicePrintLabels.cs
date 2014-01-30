@@ -445,39 +445,46 @@ namespace ChemSW.Nbt.WebServices
                 string TemplateValue = Pair.Value;
                 if( false == ChunkedTemplateValues.ContainsKey( TemplateName ) )
                 {
-                    IEnumerable<string> ValueChunks = null;
-                    if( ParamSizes.ContainsKey( TemplateName ) )
+                    if( false == string.IsNullOrEmpty( TemplateValue ) )
                     {
-                        ValueChunks = CswTools.Chunk( TemplateValue, ParamSizes[TemplateName] );
-                    }
-                    else if( TemplateValue.Contains( "\n" ) )
-                    {
-                        ValueChunks = TemplateValue.Replace( "\r", "" ).Split( '\n' );
-                    }
-
-                    if( null != ValueChunks )
-                    {
-                        Int32 CurrentIteration = 1;
-                        string CurrentTemplateName = TemplateName.Split( ':' )[0];
-                        foreach( string Chunk in ValueChunks )
+                        IEnumerable<string> ValueChunks = null;
+                        if( ParamSizes.ContainsKey( TemplateName ) )
                         {
-                            if( CurrentIteration == 1 )
-                            {
-                                ChunkedTemplateValues[TemplateName] = Chunk;
-                            }
-                            else
-                            {
-                                ChunkedTemplateValues[CurrentTemplateName + "_" + CurrentIteration] = Chunk;
-                            }
-                            CurrentIteration++;
+                            ValueChunks = CswTools.Chunk( TemplateValue, ParamSizes[TemplateName] );
                         }
-                    } // if( null != ValueChunks )
+                        else if( TemplateValue.Contains( "\n" ) )
+                        {
+                            ValueChunks = TemplateValue.Replace( "\r", "" ).Split( '\n' );
+                        }
+
+                        if( null != ValueChunks )
+                        {
+                            Int32 CurrentIteration = 1;
+                            string CurrentTemplateName = TemplateName.Split( ':' )[0];
+                            foreach( string Chunk in ValueChunks )
+                            {
+                                if( CurrentIteration == 1 )
+                                {
+                                    ChunkedTemplateValues[TemplateName] = Chunk;
+                                }
+                                else
+                                {
+                                    ChunkedTemplateValues[CurrentTemplateName + "_" + CurrentIteration] = Chunk;
+                                }
+                                CurrentIteration++;
+                            }
+                        } // if( null != ValueChunks )
+                        else
+                        {
+                            ChunkedTemplateValues[TemplateName] = TemplateValue;
+                        }
+                    } // if( false == string.IsNullOrEmpty( TemplateValue ) )
                     else
                     {
-                        ChunkedTemplateValues[TemplateName] = TemplateValue;
+                        ChunkedTemplateValues[TemplateName] = "";
                     }
-                }
-            }
+                } // if( false == ChunkedTemplateValues.ContainsKey( TemplateName ) )
+            } // foreach( KeyValuePair<string, string> Pair in TemplateVals )
             return ChunkedTemplateValues;
         }
 

@@ -121,6 +121,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return "Click \"today\" to use the current date.</br></br>Enter \"today+N\" to use a date N days in the future, where N is any number.</br></br>Enter \"today-N\" to use a date N days in the past, where N is any number.";
         }
 
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode ) { }
+
     }//CswNbtFieldTypeRuleDateTime
 
 }//namespace ChemSW.Nbt.MetaData

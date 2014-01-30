@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -134,6 +137,28 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
+        }
+
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+            CswNbtNodePropMemo NameOptionsProp = DesignNTPNode.AttributeProperty[AttributeName.ImageNames].AsMemo;
+            CswNbtNodePropMemo UrlOptionsProp = DesignNTPNode.AttributeProperty[AttributeName.ImageUrls].AsMemo;
+            CswDelimitedString ListOptions = new CswDelimitedString( '\n' );
+            ListOptions.FromString( NameOptionsProp.Text.Trim() );
+            CswDelimitedString ValueOptions = new CswDelimitedString( '\n' );
+            ValueOptions.FromString( UrlOptionsProp.Text.Trim() );
+            Dictionary<string, string> ValidOptions = new Dictionary<string, string>();
+            for( int i = 0; i < ValueOptions.Count; i++ )
+            {
+                if( ValidOptions.Keys.Contains( ListOptions[i] ) || ValidOptions.Values.Contains( ValueOptions[i] ) )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "Image Names and URLs must be unique", "" );
+                }
+                else
+                {
+                    ValidOptions.Add( ListOptions[i], ValueOptions[i] );
+                }
+            }
         }
 
         public string getHelpText()

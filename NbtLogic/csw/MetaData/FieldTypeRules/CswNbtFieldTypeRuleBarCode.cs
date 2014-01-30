@@ -130,6 +130,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ret;
         }
 
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode ) { }
+
     }//ICswNbtFieldTypeRule
 
 }//namespace ChemSW.Nbt.MetaData

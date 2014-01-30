@@ -115,6 +115,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return string.Empty;
         }
 
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode ) { }
+
     }//CswNbtFieldTypeRuleViewPickList
 
 }//namespace ChemSW.Nbt.MetaData

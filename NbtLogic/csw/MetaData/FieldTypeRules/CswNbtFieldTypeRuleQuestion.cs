@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
@@ -283,6 +284,27 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public string getHelpText()
         {
             return string.Empty;
+        }
+
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+            CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = DesignNTPNode.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() );
+            CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = DesignNTPNode.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString() );
+            if( null != PossibleAnswersNTP && null != CompliantAnswersNTP )
+            {
+                CswNbtNodePropWrapper PossibleAnswersProp = DesignNTPNode.Node.Properties[PossibleAnswersNTP];
+                CswNbtNodePropWrapper CompliantAnswersProp = DesignNTPNode.Node.Properties[CompliantAnswersNTP];
+                if( null != PossibleAnswersProp && null != CompliantAnswersProp )
+                {
+                    // Guarantee a Compliant Answer for Question
+                    if( CompliantAnswersProp.AsMultiList.Empty &&
+                        CompliantAnswersProp.AsMultiList.Options.Count > 0 )
+                    {
+                        //throw new CswDniException( CswEnumErrorType.Warning, "Compliant Answer is a required field", "Compliant Answer is a required field" );
+                        CompliantAnswersProp.AsMultiList.AddValue( CompliantAnswersProp.AsMultiList.Options.First().Value );
+                    }
+                }
+            }
         }
 
     }//ICswNbtFieldTypeRule

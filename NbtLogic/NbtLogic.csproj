@@ -1309,7 +1309,6 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMemo.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMol.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiList.cs" />
-    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiRelationship.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNFPA.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNodeTypeSelect.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNumber.cs" />

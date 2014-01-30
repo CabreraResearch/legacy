@@ -219,6 +219,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return "Enter \"me\" to use the current user as the search term";
         }
 
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode ) { }
+
     }//CswNbtFieldTypeRuleRelationship
 
 }//namespace ChemSW.Nbt.MetaData

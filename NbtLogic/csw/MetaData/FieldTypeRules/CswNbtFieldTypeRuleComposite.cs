@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -106,6 +107,32 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public string getHelpText()
         {
             return string.Empty;
+        }
+
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+            // Copy value of 'Add To Template' to the Template
+            CswNbtNodePropText TemplateProp = DesignNTPNode.AttributeProperty[AttributeName.Template].AsText;
+            CswNbtNodePropRelationship AddToTemplateProp = DesignNTPNode.AttributeProperty[AttributeName.AddToTemplate].AsRelationship;
+            if( CswTools.IsPrimaryKey( AddToTemplateProp.RelatedNodeId ) )
+            {
+                CswNbtObjClassDesignNodeTypeProp SelectedProp = _CswNbtFieldResources.CswNbtResources.Nodes[AddToTemplateProp.RelatedNodeId];
+                if( null != SelectedProp )
+                {
+                    string newTemplate = TemplateProp.Text;
+                    if( false == string.IsNullOrEmpty( newTemplate ) )
+                    {
+                        newTemplate += " ";
+                    }
+                    newTemplate += CswNbtMetaData.MakeTemplateEntry( SelectedProp.RelationalNodeTypeProp.FirstPropVersionId.ToString() );
+                    TemplateProp.Text = newTemplate;
+
+                    // Clear the selected value
+                    AddToTemplateProp.RelatedNodeId = null;
+                    AddToTemplateProp.CachedNodeName = string.Empty;
+                    AddToTemplateProp.PendingUpdate = false;
+                } // if( null != SelectedProp )
+            } // if( CswTools.IsPrimaryKey( AddToTemplateProp.RelatedNodeId ) )
         }
 
     }//ICswNbtFieldTypeRule
