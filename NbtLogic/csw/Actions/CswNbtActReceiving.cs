@@ -88,15 +88,17 @@ namespace ChemSW.Nbt.Actions
             {
                 ReceiptDefinition.Quantities[0].ContainerIds.Add( InitialContainerNode.NodeId.ToString() );
                 int processed = 0;
-                receiveContainers( ReceiptDefinition, ref processed, 1 ); //process only the first container (the initial one)
-
-                commitSDSDocNode( ReceiptDefinition.MaterialNodeId, ReceiptDefinition.SDSNodeId, ReceiptDefinition.SDSProps );
 
                 CswNbtNode ReceiptLot = _makeReceiptLot( ReceiptDefinition.MaterialNodeId, ReceiptDefinition, InitialContainerNode.ExpirationDate.DateTimeValue );
                 if( null == ReceiptDefinition.ReceiptLotNodeId )
                 {
                     ReceiptDefinition.ReceiptLotNodeId = ReceiptLot.NodeId;
                 }
+                
+                receiveContainers( ReceiptDefinition, ref processed, 1 ); //process only the first container (the initial one)
+
+                commitSDSDocNode( ReceiptDefinition.MaterialNodeId, ReceiptDefinition.SDSNodeId, ReceiptDefinition.SDSProps );
+
 
                 //Generate the barcodes upfront and treat them as custom barcodes so all Containers in this Receipt Def have similar numbers
                 CswNbtMetaDataNodeTypeProp BarcodeProp = (CswNbtMetaDataNodeTypeProp) InitialContainerNode.NodeType.getBarcodeProperty();
