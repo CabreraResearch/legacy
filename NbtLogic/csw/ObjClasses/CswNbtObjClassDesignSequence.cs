@@ -9,9 +9,9 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassDesignSequence : CswNbtObjClass
+    public class CswNbtObjClassDesignSequence: CswNbtObjClass
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Name = "Name";
             public const string Pre = "Pre";
@@ -51,6 +51,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        protected override void beforeWriteNodeLogic( bool Creating )
+        {
+            if( Creating )
+            {
+                string DbName = getDbName();
+                if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
+                {
+                    _CswNbtResources.makeUniqueSequenceForProperty( DbName, 1 );
+                }
+            }
+        }
+
         protected override void afterPopulateProps()
         {
             if( CswTools.IsPrimaryKey( RelationalId ) )
@@ -80,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Post { get { return ( _CswNbtNode.Properties[PropertyName.Post] ); } }
         public CswNbtNodePropNumber Pad { get { return ( _CswNbtNode.Properties[PropertyName.Pad] ); } }
         public CswNbtNodePropText NextValue { get { return ( _CswNbtNode.Properties[PropertyName.NextValue] ); } }
-
+        
         #endregion
 
         #region Sequence Functions
@@ -145,7 +157,7 @@ namespace ChemSW.Nbt.ObjClasses
             string DbName = getDbName();
             if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
             {
-                _CswNbtResources.makeUniqueSequence( DbName, 1 );
+                //_CswNbtResources.makeUniqueSequenceForProperty( DbName, 1 );
             }
             Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal( DbName );
             return formatSequence( RawSequenceVal );
@@ -196,13 +208,13 @@ namespace ChemSW.Nbt.ObjClasses
                     MaxSeqVal = ThisSeqVal;
                 }
             } // foreach( DataRow SeqValueRow in SeqValueTable.Rows )
-            _CswNbtResources.resetUniqueSequenceVal( getDbName(), MaxSeqVal + 1 );
+            //_CswNbtResources.resetUniqueSequenceVal( getDbName(), MaxSeqVal + 1 );
         } // reSync()
 
         public static CswNbtObjClassDesignSequence getSequence( CswNbtResources CswNbtResources, string SequenceName )
         {
             CswNbtMetaDataObjectClass SequenceOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignSequenceClass );
-            return SequenceOC.getNodes( forceReInit: false, includeSystemNodes: true )
+            return SequenceOC.getNodes( forceReInit : false, includeSystemNodes : true )
                              .FirstOrDefault( seq => ( (CswNbtObjClassDesignSequence) seq ).Name.Text.ToLower() == SequenceName.ToLower() );
         }
 

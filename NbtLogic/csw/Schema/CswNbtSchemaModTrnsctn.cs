@@ -312,6 +312,17 @@ namespace ChemSW.Nbt.Schema
         public string Accessid { get { return ( _CswNbtResources.AccessId ); } }
         public string ServerId { get { return ( _CswNbtResources.CswResources.ServerId ); } }
         public string UserName { get { return ( _CswNbtResources.CswResources.UserName ); } }
+
+        public void ResetSequenceForProperty( string SequenceName, int SeedVal )
+        {
+            _CswNbtResources.resetUniqueSequenceValForProperty( SequenceName, SeedVal );
+        }
+
+        public void ResetSequenceForPrimaryKey( string SequenceName, int SeedVal )
+        {
+            _CswNbtResources.resetUniqueSequenceValForPrimaryKey( SequenceName, SeedVal );
+        }
+
         #endregion
 
         #region Metadata, table, and Nodes
@@ -891,7 +902,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public Int32 createModule( string Description, string Name )
         {
-            return createModule( Description, Name, Enabled: isMaster() );
+            return createModule( Description, Name, Enabled : isMaster() );
         }
 
         /// <summary>
@@ -926,7 +937,7 @@ namespace ChemSW.Nbt.Schema
                 //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
-                DataTable RuleTable = RulesUpdate.getTable( WhereClause: " where lower(rulename)='" + RuleName.ToString().ToLower() + "' " );
+                DataTable RuleTable = RulesUpdate.getTable( WhereClause : " where lower(rulename)='" + RuleName.ToString().ToLower() + "' " );
                 if( 0 == RuleTable.Rows.Count )
                 {
                     DataRow NewRuleRow = RuleTable.NewRow();
@@ -1037,7 +1048,7 @@ namespace ChemSW.Nbt.Schema
         public void deleteModule( string ModuleName )
         {
             Int32 ModuleId = Modules.GetModuleId( ModuleName );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId: Int32.MinValue );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId : Int32.MinValue );
             deleteAllModuleObjectClassJunctions( ModuleId );
 
             CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
@@ -1157,7 +1168,7 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds().Keys )
             {
-                deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
+                deleteModuleNodeTypeJunction( ModuleId : Int32.MinValue, NodeTypeId : NodeTypeId );
             }
 
             CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );

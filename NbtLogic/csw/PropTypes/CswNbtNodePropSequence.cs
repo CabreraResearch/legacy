@@ -101,7 +101,10 @@ namespace ChemSW.Nbt.PropTypes
 
         override public void onBeforeUpdateNodePropRow()
         {
-            setSequenceValue();
+            if( false == _Node.IsTemp )
+            {
+                setSequenceValue();
+            }
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )

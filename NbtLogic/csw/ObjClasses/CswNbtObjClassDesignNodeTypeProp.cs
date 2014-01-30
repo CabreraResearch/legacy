@@ -13,9 +13,9 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassDesignNodeTypeProp : CswNbtObjClass
+    public class CswNbtObjClassDesignNodeTypeProp: CswNbtObjClass
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;
             public const string CompoundUnique = CswEnumNbtPropertyAttributeName.CompoundUnique; //"Compound Unique";
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // Copy values from ObjectClassProp
                     _syncFromObjectClassProp( InsertedRow );
-                    postChanges( false, SkipEvents: true );
+                    postChanges( false, SkipEvents : true );
 
                     ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
                     InsertedRow["isquicksearch"] = CswConvert.ToDbVal( RelationalRule.SearchAllowed );
@@ -321,6 +321,21 @@ namespace ChemSW.Nbt.ObjClasses
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + PropName.Text + " ; PropId = " + RelationalNodeTypeProp.PropId + "; NodeId = " + this.NodeId.ToString() );
                 }
 
+                //Case 28025 - check for property references referencing this prop
+                if( FieldTypeValue == CswEnumNbtFieldType.Relationship )
+                {
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in RelationalNodeType.getNodeTypeProps() )//.Where( P => P.getFieldTypeValue() == CswEnumNbtFieldType.PropertyReference ) )
+                    {
+                        if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.PropertyReference )
+                        {
+                            if( RelationalNodeTypeProp.PropId == Prop.FKValue )
+                            {
+                                throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete the " + PropName.Text + " property", "The " + PropName.Text + " property cannot be deleted because the " + Prop.PropName + " prop references this property. Delete the " + Prop.PropName + " property before deleting this property." );
+                            }
+                        }
+                    }
+                }
+
                 // Delete jct_nodes_props records
                 {
                     CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtObjClassDesignNodeTypeProp_beforeDeleteNode_jctUpdate", "jct_nodes_props" );
@@ -366,7 +381,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( false == InternalDelete )
                 {
-                //    _CswNbtResources.MetaData.RecalculateQuestionNumbers( RelationalNodeType );
+                    //    _CswNbtResources.MetaData.RecalculateQuestionNumbers( RelationalNodeType );
                     RelationalNodeType.DesignNode.RecalculateQuestionNumbers();
                 }
 
@@ -605,9 +620,9 @@ namespace ChemSW.Nbt.ObjClasses
                 addTemplateView.AddViewPropertyAndFilter( PropRel1,
                                                           NodeTypeValue.NodeTypeProp,
                                                           CswEnumNbtFilterConjunction.And,
-                                                          FilterMode: CswEnumNbtFilterMode.Equals,
-                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                                                          Value: this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
+                                                          FilterMode : CswEnumNbtFilterMode.Equals,
+                                                          SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                          Value : this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
                 CswNbtNodePropRelationship AddToTemplateProp = AttributeProperty[CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate].AsRelationship;
                 AddToTemplateProp.OverrideView( addTemplateView );
             }
@@ -727,9 +742,9 @@ namespace ChemSW.Nbt.ObjClasses
                 DispCondView.AddViewPropertyAndFilter( PropRel1,
                                                        NodeTypeValue.NodeTypeProp,
                                                        CswEnumNbtFilterConjunction.And,
-                                                       FilterMode: CswEnumNbtFilterMode.Equals,
-                                                       SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                                                       Value: this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
+                                                       FilterMode : CswEnumNbtFilterMode.Equals,
+                                                       SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                       Value : this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
                 DisplayConditionProperty.OverrideView( DispCondView );
 
 
