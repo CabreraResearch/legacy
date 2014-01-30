@@ -584,7 +584,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType CDTNT = CDTOC.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != CDTNT )
             {
-                CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null );
+                CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null, true );
                 ActionDataObj["dispenseTransactionAddLayout"] = _TabsAndProps.getProps( CDT.Node, "", null, CswEnumNbtLayoutType.Add );
             }
 

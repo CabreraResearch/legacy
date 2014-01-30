@@ -564,6 +564,14 @@ namespace ChemSW.Nbt.ObjClasses
                                     Title += " (" + TotalDispensed.Gestalt + ") dispensed.";
                                 }
                                 ButtonData.Data["title"] = Title;
+                                CswNbtSdTabsAndProps _TabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                                CswNbtMetaDataObjectClass CDTOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerDispenseTransactionClass );
+                                CswNbtMetaDataNodeType CDTNT = CDTOC.getLatestVersionNodeTypes().FirstOrDefault();
+                                if( null != CDTNT )
+                                {
+                                    CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null, true );
+                                    ButtonData.Data["dispenseTransactionAddLayout"] = _TabsAndProps.getProps( CDT.Node, "", null, CswEnumNbtLayoutType.Add );
+                                }
                                 ButtonData.Action = CswEnumNbtButtonAction.dispense;
                                 break;
                             case FulfillMenu.DispenseContainer:
