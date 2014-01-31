@@ -1317,11 +1317,11 @@ namespace ChemSW.Nbt.MetaData
             // Layout
             if( null != NtpModel.InsertAfterProp )
             {
-                NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewPropNode.RelationalNodeTypeProp, NtpModel.InsertAfterProp, false );
+                NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewPropNode.RelationalNodeTypeProp, NtpModel.InsertAfterProp, true );
             }
             else if( Int32.MinValue != NtpModel.TabId )
             {
-                NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewPropNode.RelationalNodeType.NodeTypeId, NewPropNode.RelationalNodeTypeProp, false, NtpModel.TabId );
+                NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewPropNode.RelationalNodeType.NodeTypeId, NewPropNode.RelationalNodeTypeProp, true, NtpModel.TabId );
             }
 
             refreshAll();
