@@ -207,8 +207,8 @@
                             cswPrivate.designNodeType.iconfilename = data.IconFileName;
 
                             cswPrivate.nodetypeNameDiv.img({
-                                height: 20,
-                                width: 20,
+                                height: 18,
+                                width: 18,
                                 src: cswPrivate.designNodeType.iconfilename
                             }).css({
                                 marginRight: '5px',
