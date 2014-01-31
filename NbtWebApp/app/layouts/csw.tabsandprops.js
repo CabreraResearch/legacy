@@ -359,6 +359,13 @@
         cswPrivate.getTabs = function (tabParent) {
             'use strict';
             tabParent = tabParent || cswPrivate.outerTabDiv;
+            
+            var openDesignMode = Csw.clientDb.getItem('openDesignMode');
+            if (openDesignMode) {
+                Csw.clientDb.removeItem('openDesignMode');
+                cswPrivate.tabState.Config = true;
+            }
+
             // For performance, don't bother getting tabs if we're in Add, Temp, Preview or Table
             if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add ||
                 cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp ||
@@ -392,7 +399,12 @@
                         cswPrivate.tabState.nodetypename = Csw.string(data.node.nodetypename);
 
                         if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
-                            Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
+                            if (data.node.canEditLayout) {
+                                cswPrivate.tabState.Config = true;
+                                cswPrivate.openDesignMode();
+                            } else {
+                                Csw.error.throwException('Cannot create a property layout without at least one tab that has properties on it.', 'csw.tabsandprops.js');
+                            }
                         }
 
                         var lastTab = cswPrivate.getLastSelectedTab();
@@ -461,7 +473,7 @@
 
                             Csw.iterate(data.tabs, tabFunc);
 
-                            if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+                            if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport && jqTabs[0]) {
                                 jqTabs[0].$.tabs({
                                     active: cswPrivate.tabState.tabNo,
                                     beforeActivate: function (event, ui) {
@@ -898,9 +910,7 @@
                 Csw.tryExec(onSuccess);
             }
             
-            var openDesignMode = Csw.clientDb.getItem('openDesignMode');
-            if (openDesignMode) {
-                Csw.clientDb.removeItem('openDesignMode');
+            if (cswPrivate.tabState.Config) {
                 cswPrivate.openDesignMode();
             } else if (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
                 cswPrivate.ajax.propsImpl = Csw.ajax.deprecatedWsNbt({
@@ -937,7 +947,8 @@
             }
         }; // getPropsImpl()
 
-        cswPrivate.openDesignMode = function() {
+        cswPrivate.openDesignMode = function () {
+            cswPrivate.tabState.Config = true;
             Csw.layouts.designmode({
                 nodeid: cswPrivate.tabState.nodeid,
                 tabid: cswPrivate.tabState.tabid,

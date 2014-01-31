@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     )
                                )
                             {
-                                _makeTab( Tabs, Tab, false );
+                                _makeTabObj( Tabs, Tab, false );
                                 break;
                             }
                         }
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                     ) )
                                                               select _Tab )
                     {
-                        _makeTab( Tabs, Tab, _canEditLayout() );
+                        _makeTabObj( Tabs, Tab, _canEditLayout() );
                     }
 
                     // History tab
@@ -103,9 +103,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) )
                         {
-                            _makeTab( Tabs, Int32.MaxValue, "history", "History", false, Int32.MinValue.ToString() );
+                            _makeTabObj( Tabs, Int32.MaxValue, "history", "History", false, Int32.MinValue.ToString() );
                         }
                     }
+
+                    Ret["node"]["canEditLayout"] = _canEditLayout();
                     Ret["node"]["nodename"] = Node.NodeName;
                 } // if-else( filterToPropId != string.Empty )
                 Ret["node"]["nodetypeid"] = NodeTypeId;
@@ -117,18 +119,18 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private Int32 TabOrderModifier = 0;
 
-        public void _makeTab( JObject ParentObj, CswNbtMetaDataNodeTypeTab Tab, bool CanEditLayout )
+        private void _makeTabObj( JObject ParentObj, CswNbtMetaDataNodeTypeTab Tab, bool CanEditLayout )
         {
             if( null != Tab )
             {
                 if( _ConfigMode || Tab.getNodeTypePropsByDisplayOrder().Any() )
                 {
-                    _makeTab( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout, Tab.DesignNode.NodeId.ToString() );
+                    _makeTabObj( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout, Tab.DesignNode.NodeId.ToString() );
                 }
             }
         }
 
-        public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout, string TabNodeId )
+        private void _makeTabObj( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout, string TabNodeId )
         {
             // case 24250
             // This mechanism correctly orders all tabs even with redundant tab order values,
