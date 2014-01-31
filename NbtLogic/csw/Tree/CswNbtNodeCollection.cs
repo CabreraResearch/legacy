@@ -447,8 +447,17 @@ namespace ChemSW.Nbt
             {
                 NodePersistStrategy = new CswNbtNodePersistStrategyCreateTemp( _CswNbtResources );
             }
-            NodePersistStrategy.IsCopy = IsCopy;
-            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
+            
+            // only override the defaults on these if they are true
+            if( OverrideUniqueValidation )
+            {
+                NodePersistStrategy.OverrideUniqueValidation = true;
+            }
+            if( IsCopy )
+            {
+                NodePersistStrategy.IsCopy = true;
+            }
+            
             NodePersistStrategy.postChanges( Node );
 
             return ( Node );
