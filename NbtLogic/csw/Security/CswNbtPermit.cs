@@ -630,7 +630,6 @@ namespace ChemSW.Nbt.Security
 
         public bool isNodeWritable( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, CswNbtObjClassRole Role )
         {
-            bool ret = true;
             _initPermissionInfo( Role, null, NodeType, Permission, NodeId );
             return _isNodeWritableImpl();
         }//isNodeWritable() 
