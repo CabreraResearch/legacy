@@ -22,10 +22,11 @@
             this.callParent();
         },
         //header: false,
-        bodyStyle: {
-            background: '#164399',
-            color: '#FFFFFF'
-        },
+        bodyCls: 'CswDesignMode',
+//        bodyStyle: {
+//            background: '#164399',
+//            color: '#FFFFFF'
+//        },
         listeners: {
             beforeclose: null
         }
