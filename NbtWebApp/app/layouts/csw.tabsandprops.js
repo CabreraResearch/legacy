@@ -1188,11 +1188,18 @@
                         urlMethod: cswPrivate.urls.SinglePropUrlMethod,
                         data: jsonData,
                         success: function (data) {
+                            //first clear all the old subprops
+                            Csw.each(singlePropData.subprops, function (subprop) {
+                                Csw.publish('initPropertyTearDown_' + subprop.id);
+                            });
+                            //also clear the layout table the props lived in
+                            propCell.$.children().empty();
+
+                            //then assign the newly returned subprops
                             singlePropData.wasmodified = true;
                             singlePropData.subprops = data.subprops;
 
-                            // keep the fact that the parent property was modified
-                            propCell.$.children().empty();
+                            //and render them to the tab
                             cswPrivate.makeSubProps(propCell, singlePropData, tabid, configMode, layoutTable);
                             cswPrivate.onRenderProps(tabid);
                         }

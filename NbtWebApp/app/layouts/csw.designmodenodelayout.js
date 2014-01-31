@@ -154,8 +154,8 @@
 
         cswPrivate.renderPropDiv = function (tabid, node, prop, div) {
             var propTbl = div.table();
-            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px', 'width': '180px', 'text-align': 'right' });
-            var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
+            var labelDiv = propTbl.cell(1, 1).div().css({ 'paddingRight': '10px', 'width': '180px', 'text-align': 'right' });
+            var propDiv = propTbl.cell(1, 2).div().css({ 'paddingRight': '10px' });
 
             labelDiv.setLabelText(prop.name, prop.required, false); //in design mode, readonly better always be true, but we want required props to have the "*"
 
@@ -195,7 +195,7 @@
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
-                            var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+                            var propDiv = propTbl.cell(1, 1).div().css({ 'paddingRight': '10px' });
                             var subPropsDiv = propTbl.cell(2, 2).div().css({
                                 'border': '1px solid #ccc'
                             });
@@ -368,7 +368,7 @@
                             showCloseButton: true,
                             render: function (subExtEl, subCswEl) {
                                 var propTbl = subCswEl.table();
-                                var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+                                var propDiv = propTbl.cell(1, 1).div().css({ 'paddingRight': '10px' });
 
                                 subExtEl.data = [groupProp];
                                 cswPrivate.renderPropDiv(tabid, node, groupProp, propDiv);

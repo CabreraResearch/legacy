@@ -218,25 +218,26 @@ namespace ChemSW.Nbt.WebServices
 
         private void _addNodeTypeAttributes( CswNbtMetaDataNodeType NodeType, JObject ReturnVal )
         {
-            CswNbtMetaDataObjectClass ObjectClass = NodeType.getObjectClass();
+            CswEnumNbtObjectClass ObjectClass = NodeType.getObjectClassValue();
             string NtName = "nodetype_" + NodeType.NodeTypeId;
             ReturnVal[NtName] = new JObject();
             ReturnVal[NtName]["id"] = NodeType.NodeTypeId;
             ReturnVal[NtName]["name"] = NodeType.NodeTypeName;
             ReturnVal[NtName]["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.IconFileName;
-            ReturnVal[NtName]["objectclass"] = ObjectClass.ObjectClass.ToString();
-            ReturnVal[NtName]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
+            ReturnVal[NtName]["objectclass"] = ObjectClass.ToString();
+            ReturnVal[NtName]["objectclassid"] = NodeType.ObjectClassId.ToString();
 
-            switch( ObjectClass.ObjectClass )
+            switch( ObjectClass )
             {
-                case CswEnumNbtObjectClass.InspectionDesignClass:
-                    CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
-                    ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
-                    if( InspectionTargetNTP.FKType == CswEnumNbtViewPropIdType.NodeTypePropId.ToString() )
-                    {
-                        ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
-                    }
-                    break;
+                // This is expensive, and as far as I can tell, not used by anyone
+                //case CswEnumNbtObjectClass.InspectionDesignClass:
+                //    CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
+                //    ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
+                //    if( InspectionTargetNTP.FKType == CswEnumNbtViewPropIdType.NodeTypePropId.ToString() )
+                //    {
+                //        ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
+                //    }
+                //    break;
                 case CswEnumNbtObjectClass.NonChemicalClass:
                 case CswEnumNbtObjectClass.ChemicalClass:
                     ReturnVal["action"] = CswEnumNbtActionName.Create_Material;
