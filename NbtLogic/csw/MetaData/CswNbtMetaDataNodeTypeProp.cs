@@ -97,12 +97,12 @@ namespace ChemSW.Nbt.MetaData
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this, TabId );
         }
-        public void removeFromAllLayouts( Int32 TabId = Int32.MinValue )
+        public void removeFromAllLayouts()
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Add, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Edit, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Preview, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Table, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Add, this, Int32.MinValue );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Edit, this, Int32.MinValue );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Preview, this, Int32.MinValue );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Table, this, Int32.MinValue );
         }
 
 

@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.Actions
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() { CompliantAnswers };
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers].AsText.Text = AllowedAnswers;
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer].AsList.Value = PreferredAnswer;
-                                ThisQuestion.DesignNode.postChanges( false );
+                                ThisQuestion.DesignNode.postOnlyChanges( false );
 
                                 ThisQuestion.removeFromLayout( CswEnumNbtLayoutType.Add );
                                 RetCount += 1;
