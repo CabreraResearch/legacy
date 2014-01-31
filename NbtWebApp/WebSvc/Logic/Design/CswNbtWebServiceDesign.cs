@@ -51,6 +51,9 @@ namespace ChemSW.Nbt.WebServices
 
             [DataMember]
             public string NodeTypeName = string.Empty;
+            
+            [DataMember]
+            public string IconFileName = string.Empty;
 
             [DataMember]
             public Int32 ObjectClassId = Int32.MinValue;
@@ -72,6 +75,7 @@ namespace ChemSW.Nbt.WebServices
                     DesignResponse.NodeKey = DesignNodeType.Node.NodeLink;
                     DesignResponse.NodeTypeId = DesignNodeType.NodeTypeId;
                     DesignResponse.NodeTypeName = DesignNodeType.NodeTypeName.Text;
+                    DesignResponse.IconFileName = CswNbtMetaDataObjectClass.IconPrefix18 + DesignNodeType.IconFileName.Value.ToString();
                     DesignResponse.ObjectClassId = DesignNodeType.ObjectClass.ObjectClassId;
                     Return.Data = DesignResponse;
                 }

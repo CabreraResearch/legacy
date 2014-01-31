@@ -81,6 +81,24 @@ namespace ChemSW.Nbt.ObjClasses
         }//postChanges()
 
         /// <summary>
+        /// Post node property changes to the database.  
+        /// Does NOT execute base event logic (for performance).
+        /// TODO - Case 31708: fix performance issues on writeNode event logic and remove this function
+        /// </summary>
+        /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
+        public void postOnlyChanges( bool ForceUpdate )
+        {
+            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+            {
+                OverrideUniqueValidation = true,
+                OverrideMailReportEvents = true,
+                Creating = true,
+                ForceUpdate = ForceUpdate
+            };
+            NodePersistStrategy.postChanges( _CswNbtNode );
+        }//postChanges()
+
+        /// <summary>
         /// Converts a temp node to a real one.  
         /// Creates INSERT audit records for current values of all properties.
         /// Thus, make sure all other property modifications have been posted before calling this.
@@ -145,11 +163,14 @@ namespace ChemSW.Nbt.ObjClasses
         public void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             beforeWriteNodeLogic( Creating );
-            foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+            if( false == Creating )
             {
-                if( false == Creating && CurrentProp.wasAnySubFieldModified() )
+                foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
                 {
-                    _updateExternalRelatedProps( CurrentProp );
+                    if( CurrentProp.wasAnySubFieldModified() )
+                    {
+                        _updateExternalRelatedProps( CurrentProp );
+                    }
                 }
             }
             if( false == OverrideUniqueValidation )

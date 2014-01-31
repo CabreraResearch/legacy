@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                 RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
 
                 // Add default layout entry for new property
-                if( CswEnumTristate.True == Required.Checked )
+                if( CswEnumTristate.True == Required.Checked && false == RelationalNodeTypeProp.HasDefaultValue())
                 {
                     _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false );
                 }
