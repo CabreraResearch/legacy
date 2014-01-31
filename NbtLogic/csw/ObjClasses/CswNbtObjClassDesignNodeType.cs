@@ -861,7 +861,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         Prop.QuestionNo.Value = CurrentQuestionNo;
                         Prop.SubQuestionNo.Value = Int32.MinValue;
-                        Prop.postChanges( false );
+                        Prop.postOnlyChanges( false );
                         PropQuestionNumbers[Prop.NodeId] = CurrentQuestionNo;
                         CurrentQuestionNo++;
                     }
@@ -885,7 +885,7 @@ namespace ChemSW.Nbt.ObjClasses
                             Int32 ParentPropQuestionNo = PropQuestionNumbers[Prop.DisplayConditionProperty.RelatedNodeId];
                             Prop.QuestionNo.Value = ParentPropQuestionNo;
                             Prop.SubQuestionNo.Value = SubQuestionNos[ParentPropQuestionNo];
-                            Prop.postChanges( false );
+                            Prop.postOnlyChanges( false );
                             SubQuestionNos[ParentPropQuestionNo] += 1;
                         }
                     }

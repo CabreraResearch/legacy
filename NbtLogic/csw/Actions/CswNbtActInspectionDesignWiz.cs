@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.Actions
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() { CompliantAnswers };
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers].AsText.Text = AllowedAnswers;
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer].AsList.Value = PreferredAnswer;
-                                ThisQuestion.DesignNode.postChanges( false );
+                                ThisQuestion.DesignNode.postOnlyChanges( false );
 
                                 ThisQuestion.removeFromLayout( CswEnumNbtLayoutType.Add );
                                 RetCount += 1;
@@ -491,12 +491,12 @@ namespace ChemSW.Nbt.Actions
         {
             //NodeType.AuditLevel = CswEnumAuditLevel.PlainAudit;
             NodeType.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
-            NodeType.DesignNode.postChanges( false );
+            NodeType.DesignNode.postOnlyChanges( false );
             foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
             {
                 //Prop.AuditLevel = CswEnumAuditLevel.PlainAudit;
                 Prop.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.AuditLevel].AsList.Value = CswEnumAuditLevel.PlainAudit;
-                Prop.DesignNode.postChanges( false );
+                Prop.DesignNode.postOnlyChanges( false );
             }
         }
 

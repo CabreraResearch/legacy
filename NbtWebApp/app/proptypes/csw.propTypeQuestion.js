@@ -119,9 +119,6 @@
 
                 table.cell(1, 1).text('Answer');
                 cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
-                if (Csw.isNullOrEmpty(cswPrivate.answer)) {
-                    cswPrivate.splitAnswers.push('');
-                }
 
                 cswPrivate.answerSel = table.cell(1, 2)
                     .select({
