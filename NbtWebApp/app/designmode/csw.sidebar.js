@@ -367,45 +367,16 @@
 
                         break;
                     case buttons.newBtn:
-
-                        cswPrivate.extWindowNew = Csw.composites.window(cswParent, {
+                        
+                        Csw.dialogs.addnode({
+                            nodetypeid: cswPrivate.designNodeType.nodetypeid,
+                            relatednodeid: cswPrivate.designNodeType.nodeid,
+                            relatednodetypeid: cswPrivate.designNodeType.nodetypeid,
+                            relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                             title: 'New Design NodeType',
-                            y: posY,
-                            x: posX,
-                            height: 325,
-                            width: 500,
-                            layout: 'fit',
-                            buttons: [
-                                {
-                                    text: 'Cancel', handler: function () {
-                                        cswPrivate.extWindowNew.close();
-                                    }
-                                }
-                            ]
-                        });
-
-                        var table = cswPrivate.extWindowNew.attachToMe().table({
-                            name: 'table',
-                            width: '100%'
-                        });
-
-                        cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(table.cell(1, 1), {
-                            name: 'tabsAndProps',
-                            tabState: {
-                                ShowAsReport: false,
-                                nodetypeid: cswPrivate.designNodeType.nodetypeid,
-                                relatednodeid: cswPrivate.designNodeType.nodeid,
-                                relatednodename: cswPrivate.tabState.nodetypename,
-                                relatednodetypeid: cswPrivate.designNodeType.nodetypeid,
-                                relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
+                            onAddNode: function (nodeid, nodekey, nodename, nodelink, relationalid) {
                                 cswPrivate.createTempNode(relationalid);
-                                cswPrivate.extWindowNew.close();
-                            },
-                            onInitFinish: function () { }
+                            }
                         });
 
                         break;

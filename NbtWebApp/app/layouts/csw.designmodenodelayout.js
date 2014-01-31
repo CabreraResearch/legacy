@@ -67,7 +67,7 @@
                 layout = Csw.layouts.previewNode(cswPrivate);
             }
             
-            if (null !== layout) {
+            if (null !== layout ) {
                 layout.render(cswPrivate.contentDiv);
             } else {
                 Csw.error.showError({
