@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( _ConfigMode || Tab.getNodeTypePropsByDisplayOrder().Any() )
                 {
-                    _makeTabObj( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout, Tab.DesignNode.NodeId.ToString() );
+                    _makeTabObj( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout, Tab.DesignNodeId.ToString() );
                 }
             }
         }
@@ -496,7 +496,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             JProperty ret = new JProperty( "prop_" + PropIdAttr, PropObj );
             CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
-            PropObj["propnodeid"] = Prop.DesignNode.NodeId.ToString();
+            PropObj["propnodeid"] = Prop.DesignNodeId.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
             if( null != PropWrapper )
             {

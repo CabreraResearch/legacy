@@ -154,6 +154,11 @@ namespace ChemSW.Nbt.MetaData
             get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", PropId ) ); }
         }
 
+        public CswPrimaryKey DesignNodeId
+        {
+            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeIdByRelationalId( new CswPrimaryKey( "nodetype_props", PropId ) ); }
+        }
+
         public object this[CswEnumNbtPropertyAttributeColumn Column]
         {
             get { return _DataRow[Column.ToString()]; }
