@@ -220,7 +220,7 @@
                                 tabState: {
                                     nodeid: cswPrivate.designNodeType.nodeid,
                                     ShowAsReport: false,
-                                    nodetypeid: cswPrivate.designNodeType.nodetypeid,
+                                    nodetypeid: cswPrivate.tabState.nodetypeid,
                                     EditMode: Csw.enums.editMode.Table, //Note: Design NodeType nodes Table layout is configured specifically for the sidebar
                                     ReadOnly: true //Note: We want this to be readonly because users need to click the edit button to edit the nodetype
                                 },
@@ -405,7 +405,7 @@
                                 nodetypeid: cswPrivate.designNodeType.nodetypeid,
                                 relatednodeid: cswPrivate.designNodeType.nodeid,
                                 relatednodename: cswPrivate.designNodeType.nodetypename,
-                                relatednodetypeid: cswPrivate.designNodeType.nodetypeid,
+                                relatednodetypeid: cswPrivate.tabState.nodetypeid,
                                 relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                                 EditMode: Csw.enums.editMode.Add
                             },
@@ -528,7 +528,7 @@
                         urlMethod: 'Design/updateLayout',
                         data: {
                             layout: cswPrivate.nodeLayout.getActiveLayout(),
-                            nodetypeid: cswPrivate.designNodeType.nodetypeid,
+                            nodetypeid: cswPrivate.tabState.nodetypeid,
                             tabid: tabid,
                             props: [{
                                 nodetypepropid: cswPrivate.existingPropIdToAdd
@@ -684,7 +684,7 @@
                                             urlMethod: 'Design/updateLayout',
                                             data: {
                                                 layout: cswPrivate.nodeLayout.getActiveLayout(),
-                                                nodetypeid: cswPrivate.designNodeType.nodetypeid,
+                                                nodetypeid: cswPrivate.tabState.nodetypeid,
                                                 tabid: tabid,
                                                 props: [{
                                                     nodetypepropid: relationalid,
