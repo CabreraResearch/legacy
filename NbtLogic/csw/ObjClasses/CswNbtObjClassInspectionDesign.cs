@@ -175,8 +175,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>
-        public override void beforePropertySetWriteNode()
+        public override void beforePropertySetWriteNode( bool Creating )
         {
+            if( Creating )
+            {
+                Status.Value = CswEnumNbtInspectionStatus.Pending;
+            }
+
             _setDefaultValues();
 
             _InspectionState = new InspectionState( this );
