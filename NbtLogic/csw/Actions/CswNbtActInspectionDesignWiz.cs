@@ -491,12 +491,12 @@ namespace ChemSW.Nbt.Actions
         {
             //NodeType.AuditLevel = CswEnumAuditLevel.PlainAudit;
             NodeType.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
-            NodeType.DesignNode.postChanges( false );
+            NodeType.DesignNode.postOnlyChanges( false );
             foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
             {
                 //Prop.AuditLevel = CswEnumAuditLevel.PlainAudit;
                 Prop.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.AuditLevel].AsList.Value = CswEnumAuditLevel.PlainAudit;
-                Prop.DesignNode.postChanges( false );
+                Prop.DesignNode.postOnlyChanges( false );
             }
         }
 
