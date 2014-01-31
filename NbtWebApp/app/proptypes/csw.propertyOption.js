@@ -118,6 +118,7 @@
                     Csw.unsubscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabid, null, cswPrivate.renderer);
                     Csw.unsubscribe('initPropertyTearDown', null, cswPrivate.tearDown);
                     Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, null, cswPrivate.tearDown);
+                    Csw.unsubscribe('initPropertyTearDown_' + cswPublic.propid, null, cswPrivate.tearDown);
                     if (cswPrivate.issaveprop) {
                         Csw.unsubscribe('triggerSave_' + cswPublic.tabState.nodeid);
                     }
@@ -163,6 +164,7 @@
                 Csw.subscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabid, cswPrivate.renderer);
                 Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
                 Csw.subscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
+                Csw.subscribe('initPropertyTearDown_' + cswPublic.propid, cswPrivate.tearDown);
             };
 
             if (false === Csw.isNullOrEmpty(cswPublic.propDiv)) {
