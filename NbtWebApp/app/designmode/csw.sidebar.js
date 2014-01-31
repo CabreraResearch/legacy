@@ -329,14 +329,14 @@
                         });
                         
                         cswPrivate.extWindowCopy.attachToMe().div({
-                            text: 'Copying ' + cswPrivate.designNodeType.nodetypename
+                            text: 'Copying ' + cswPrivate.tabState.nodetypename
                         });
 
                         break;
                     case buttons.deleteBtn:
 
                         cswPrivate.extWindowDelete = Csw.composites.window(cswParent, {
-                            title: 'Delete ' + cswPrivate.designNodeType.nodetypename,
+                            title: 'Delete ' + cswPrivate.tabState.nodetypename,
                             y: posY,
                             x: posX,
                             height: 150,
@@ -369,8 +369,8 @@
                         });
 
                         cswPrivate.extWindowDelete.attachToMe().div({
-                            text: 'Are you sure you want to delete the "' + cswPrivate.designNodeType.nodetypename +
-                                '" nodetype?  All instances of "' + cswPrivate.designNodeType.nodetypename + '" will be deleted.' +
+                            text: 'Are you sure you want to delete the "' + cswPrivate.tabState.nodetypename +
+                                '" nodetype?  All instances of "' + cswPrivate.tabState.nodetypename + '" will be deleted.' +
                                 '<br/><br/>Warning: this action <strong>cannot</strong> be undone.'
                         });
 
@@ -404,7 +404,7 @@
                                 ShowAsReport: false,
                                 nodetypeid: cswPrivate.designNodeType.nodetypeid,
                                 relatednodeid: cswPrivate.designNodeType.nodeid,
-                                relatednodename: cswPrivate.designNodeType.nodetypename,
+                                relatednodename: cswPrivate.tabState.nodetypename,
                                 relatednodetypeid: cswPrivate.tabState.nodetypeid,
                                 relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                                 EditMode: Csw.enums.editMode.Add
