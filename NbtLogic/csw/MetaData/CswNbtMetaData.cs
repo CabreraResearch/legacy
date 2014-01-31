@@ -1139,6 +1139,12 @@ namespace ChemSW.Nbt.MetaData
 
             refreshAll();
 
+            CswNbtMetaDataNodeTypeProp SaveProp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClass.PropertyName.Save );
+            if( null != SaveProp )
+            {
+                SaveProp.updateLayout( CswEnumNbtLayoutType.Edit, false, NewTabNode.RelationalNodeTypeTab.TabId );
+            }
+
             return NewTabNode.RelationalNodeTypeTab;
         } // makeNewTab()
 
