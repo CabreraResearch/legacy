@@ -90,7 +90,6 @@
                     tools.push({
                         xtype: 'button',
                         text: 'Rearrange Properties',
-                        tooltip: 'Rearrange sub properties',
                         handler: params.onRearrange
                     });
                 }
@@ -98,7 +97,6 @@
                     tools.push({
                         xtype: 'button',
                         text: 'Configure Property',
-                        tooltip: 'Configure property',
                         handler: function () {
                             params.onConfigure(extRenderTo);
                         }
@@ -108,7 +106,6 @@
                     tools.push({
                         xtype: 'button',
                         text: 'Remove From Layout',
-                        tooltip: 'Remove from layout',
                         handler: function () {
                             params.onClose(extRenderTo);
                         }

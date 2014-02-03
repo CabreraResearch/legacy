@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             
             ForceUpdate = true;
             IsCopy = false;
-            OverrideUniqueValidation = false;
+            OverrideUniqueValidation = true;
             SkipEvents = false;
             AllowAuditing = false;
             Creating = true;

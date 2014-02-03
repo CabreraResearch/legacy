@@ -48,7 +48,9 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                RateInterval = new CswRateInterval( _CswNbtResources );
+                // Bypass RateInterval's set method to prevent it from appearing to be modified, 
+                // and thus preventing default value from being set (case 31797)
+                _RateInterval = new CswRateInterval( _CswNbtResources );
             }
         }
 

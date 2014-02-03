@@ -760,23 +760,25 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
 
-                    string SQLQuery = @"with pval as (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid, ocp.propname
-                                                    from jct_propertyset_ocprop jpocp
+                    // This performs better than having it in its own 'with' query in large scale data, 
+                    // because it avoids a full table scan on jct_nodes_props.
+                    string pvalQuery = @"from jct_propertyset_ocprop jpocp
                                                     join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
                                                     join nodetype_props ntp on ntp.objectclasspropid = ocp.objectclasspropid
                                                     join jct_nodes_props j on j.nodetypepropid = ntp.nodetypepropid
-                                                   where jpocp.propertysetid = :permsetid),
-                                         perms as (select n.nodeid,
-                                                          (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :roleocp) userrole,
-                                                          (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :workunitocp) userworkunit,
-                                                          (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :permgroupocp) userpermgroup,
-                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallrolesocp) applyallroles,
-                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallworkunitsocp) applyallworkunits,
-                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :editocp) edit
-                                                     from nodes n
-                                                     join nodetypes nt on n.nodetypeid = nt.nodetypeid
-                                                     join object_class oc on nt.objectclassid = oc.objectclassid
-                                                    where n.istemp = 0";
+                                                   where jpocp.propertysetid = :permsetid";
+
+                    string SQLQuery = @"with perms as (select n.nodeid,
+                                                              (select j.field1_fk " + pvalQuery + @" and j.nodeid = n.nodeid and ocp.propname = :roleocp) userrole,
+                                                              (select j.field1_fk " + pvalQuery + @" and j.nodeid = n.nodeid and ocp.propname = :workunitocp) userworkunit,
+                                                              (select j.field1_fk " + pvalQuery + @" and j.nodeid = n.nodeid and ocp.propname = :permgroupocp) userpermgroup,
+                                                              (select j.field1 " + pvalQuery + @" and j.nodeid = n.nodeid and ocp.propname = :applyallrolesocp) applyallroles,
+                                                              (select j.field1 " + pvalQuery + @" and j.nodeid = n.nodeid and ocp.propname = :applyallworkunitsocp) applyallworkunits,
+                                                              (select j.field1 " + pvalQuery + @" and j.nodeid = n.nodeid and ocp.propname = :editocp) edit
+                                                         from nodes n
+                                                         join nodetypes nt on n.nodetypeid = nt.nodetypeid
+                                                         join object_class oc on nt.objectclassid = oc.objectclassid
+                                                        where n.istemp = 0";
                     if( null != PermObjectClass )
                     {
                         CswNbtMetaDataObjectClass PermOC = _CswNbtResources.MetaData.getObjectClass( PermObjectClass );

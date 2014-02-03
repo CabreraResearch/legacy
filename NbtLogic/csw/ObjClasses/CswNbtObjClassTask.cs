@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode()
+        public override void beforePropertySetWriteNode( bool Creating )
         {
             setDoneOnDate();
             // Set the IsFuture flag = false if the node is modified

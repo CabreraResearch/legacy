@@ -199,14 +199,25 @@ namespace ChemSW.Nbt
         public CswNbtNode getNodeByRelationalId( CswPrimaryKey RelationalId )
         {
             CswNbtNode ret = null;
-            CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "getNodeByRelationalId", "nodes" );
-            DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString() {"nodeid"}, "where relationaltable = '" + RelationalId.TableName + "' and relationalid='" + RelationalId.PrimaryKey.ToString() + "'" );
-            if( NodesTable.Rows.Count > 0 )
+            CswPrimaryKey pk = getNodeIdByRelationalId( RelationalId );
+            if( null != pk )
             {
-                ret = GetNode( new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] ) ) );
+                ret = GetNode( pk );
             }
             return ret;
         } // getNodeByRelationalId()
+
+        public CswPrimaryKey getNodeIdByRelationalId( CswPrimaryKey RelationalId )
+        {
+            CswPrimaryKey ret = null;
+            CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "getNodeByRelationalId", "nodes" );
+            DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString() { "nodeid" }, "where relationaltable = '" + RelationalId.TableName + "' and relationalid='" + RelationalId.PrimaryKey.ToString() + "'" );
+            if( NodesTable.Rows.Count > 0 )
+            {
+                ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] ) );
+            }
+            return ret;
+        } // getNodeIdByRelationalId()
 
 
         /// <summary>
@@ -436,8 +447,17 @@ namespace ChemSW.Nbt
             {
                 NodePersistStrategy = new CswNbtNodePersistStrategyCreateTemp( _CswNbtResources );
             }
-            NodePersistStrategy.IsCopy = IsCopy;
-            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
+            
+            // only override the defaults on these if they are true
+            if( OverrideUniqueValidation )
+            {
+                NodePersistStrategy.OverrideUniqueValidation = true;
+            }
+            if( IsCopy )
+            {
+                NodePersistStrategy.IsCopy = true;
+            }
+            
             NodePersistStrategy.postChanges( Node );
 
             return ( Node );

@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                 RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
 
                 // Add default layout entry for new property
-                if( CswEnumTristate.True == Required.Checked )
+                if( CswEnumTristate.True == Required.Checked && false == RelationalNodeTypeProp.HasDefaultValue())
                 {
                     _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false );
                 }
@@ -985,6 +985,10 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
                             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                        }
+                        else if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.LegacyId ) ) //case 31583 - LegacyId hidden by default
+                        {
+                            _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( RelationalNodeTypeProp );
                         }
                         else
                         {

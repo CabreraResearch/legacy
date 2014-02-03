@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.PropTypes
             base.ToJSON( ParentObject );  // FIRST
 
             ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
-            ParentObject["allowedanswers"] = AllowedAnswersString;
+            ParentObject["allowedanswers"] = ","+AllowedAnswersString;
             ParentObject["compliantanswers"] = CompliantAnswersString;
             ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
             ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;

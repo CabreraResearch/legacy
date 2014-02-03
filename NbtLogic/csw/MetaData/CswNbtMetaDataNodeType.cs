@@ -38,6 +38,10 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NodeTypeId ) ); }
         }
+        public CswPrimaryKey DesignNodeId
+        {
+            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeIdByRelationalId( new CswPrimaryKey( "nodetypes", NodeTypeId ) ); }
+        }
 
         private Int32 _UniqueId;
         public Int32 UniqueId

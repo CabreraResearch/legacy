@@ -908,15 +908,15 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( null != Location.SelectedNodeId )
                 {
-                    if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
-                    {
+                    //if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
+                    //{
                         CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
                         CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
                         if( null != InvGroupNode )
                         {
                             LotControlled.Checked = InvGroupNode.Central.Checked == CswEnumTristate.True ? CswEnumTristate.True : CswEnumTristate.False;
                         }
-                    }
+                    //}
                     else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                     {
                         CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Move );
@@ -1005,7 +1005,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( LotControlled.Checked == CswEnumTristate.True )
             {
                 //DispenseForCertificate.RelatedNodeId = null;//TODO - uncomment when DispenseForCertificate is created
-                Status.Value = String.Empty;
+                
+                //Status.Value = String.Empty;
+                Status.Value = CswEnumNbtContainerStatuses.LabUseOnly; // this'll need to be changed eventually but see case 31646
             }
             else if( LotControlled.Checked == CswEnumTristate.False )
             {

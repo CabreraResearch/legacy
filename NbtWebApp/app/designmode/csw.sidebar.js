@@ -9,8 +9,8 @@
         collapsible: true,
         collapseDirection: 'left',
         collapsed: true,
+        animCollapse: true,
         expandOnShow: false,
-        //hideCollapseTool: false,
         closable: false,
         items: [
             { //This is the empty component that you can attach outside elements to
@@ -21,14 +21,7 @@
         initComponent: function () {
             this.callParent();
         },
-        //header: false,
-        bodyStyle: {
-            background: '#164399',
-            color: '#FFFFFF'
-        },
-        listeners: {
-            beforeclose: null
-        }
+        bodyCls: 'CswDesignMode',
     });
     
     // This needs to be defined globally. It should only be defined once and then 
@@ -56,6 +49,7 @@
                     nodekey: '',
                     nodetypeid: '',
                     nodetypename: '',
+                    iconfilename: '',
                     objectclassid: ''
                 },
                 designNodeTypeProp: {
@@ -124,7 +118,7 @@
                             cswPublic.tearDown();
                         }
                     }
-                }).toggleCollapse();
+                }); // toggleCollapse();
 
                 cswPublic.componentItem = Csw.domNode({
                     el: cswPrivate.newSidebar.items.items[0].getEl().dom,
@@ -140,8 +134,7 @@
                 /// </summary>
 
                 // Add the title
-                cswPrivate.nodetypeNameDiv = cswPublic.componentItem.div({ text: cswPrivate.tabState.nodetypename, cssclass: 'CswDesignMode_NTName' });
-                cswPrivate.nodetypeNameDiv.br({ number: 2 });
+                cswPrivate.nodetypeNameDiv = cswPublic.componentItem.div({ cssclass: 'CswDesignMode_NTName' });
 
                 //#region Buttons
                 var btnTbl = cswPublic.componentItem.table({
@@ -209,17 +202,33 @@
                         if (false === Csw.isNullOrEmpty(data)) {
                             cswPrivate.designNodeType.nodeid = data.NodePk;
                             cswPrivate.designNodeType.nodetypeid = data.NodeTypeId;
+                            cswPrivate.designNodeType.nodetypename = data.NodeTypeName;
+                            cswPrivate.designNodeType.objectclassid = data.ObjectClassId;
+                            cswPrivate.designNodeType.iconfilename = data.IconFileName;
+
+                            cswPrivate.nodetypeNameDiv.img({
+                                height: 18,
+                                width: 18,
+                                src: cswPrivate.designNodeType.iconfilename
+                            }).css({
+                                marginRight: '5px',
+                            });
+                            cswPrivate.nodetypeNameDiv.span({ text: cswPrivate.designNodeType.nodetypename });
+                            cswPrivate.nodetypeNameDiv.br({ number: 2 });
 
                             cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(nodeTypePropsDiv, {
                                 tabState: {
                                     nodeid: cswPrivate.designNodeType.nodeid,
                                     ShowAsReport: false,
-                                    nodetypeid: cswPrivate.designNodeType.nodetypeid,
+                                    nodetypeid: cswPrivate.tabState.nodetypeid,
                                     EditMode: Csw.enums.editMode.Table, //Note: Design NodeType nodes Table layout is configured specifically for the sidebar
                                     ReadOnly: true //Note: We want this to be readonly because users need to click the edit button to edit the nodetype
                                 },
                                 ReloadTabOnSave: false,
-                                async: false
+                                async: false,
+                                onInitFinish: function() {
+                                    cswPrivate.newSidebar.toggleCollapse();
+                                }
                             });//cswPrivate.tabsAndProps
 
                             editButtonDiv.buttonExt({
@@ -367,45 +376,16 @@
 
                         break;
                     case buttons.newBtn:
-
-                        cswPrivate.extWindowNew = Csw.composites.window(cswParent, {
+                        
+                        Csw.dialogs.addnode({
+                            nodetypeid: cswPrivate.designNodeType.nodetypeid,
+                            relatednodeid: cswPrivate.designNodeType.nodeid,
+                            relatednodetypeid: cswPrivate.designNodeType.nodetypeid,
+                            relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                             title: 'New Design NodeType',
-                            y: posY,
-                            x: posX,
-                            height: 325,
-                            width: 500,
-                            layout: 'fit',
-                            buttons: [
-                                {
-                                    text: 'Cancel', handler: function () {
-                                        cswPrivate.extWindowNew.close();
-                                    }
-                                }
-                            ]
-                        });
-
-                        var table = cswPrivate.extWindowNew.attachToMe().table({
-                            name: 'table',
-                            width: '100%'
-                        });
-
-                        cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(table.cell(1, 1), {
-                            name: 'tabsAndProps',
-                            tabState: {
-                                ShowAsReport: false,
-                                nodetypeid: cswPrivate.designNodeType.nodetypeid,
-                                relatednodeid: cswPrivate.designNodeType.nodeid,
-                                relatednodename: cswPrivate.tabState.nodetypename,
-                                relatednodetypeid: cswPrivate.designNodeType.nodetypeid,
-                                relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
+                            onAddNode: function (nodeid, nodekey, nodename, nodelink, relationalid) {
                                 cswPrivate.createTempNode(relationalid);
-                                cswPrivate.extWindowNew.close();
-                            },
-                            onInitFinish: function () { }
+                            }
                         });
 
                         break;
@@ -660,7 +640,7 @@
                                         ShowAsReport: false,
                                         nodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
                                         relatednodeid: cswPrivate.designNodeType.nodeid,
-                                        relatednodename: cswPrivate.tabState.nodetypename,
+                                        relatednodename: cswPrivate.designNodeType.nodetypename,
                                         relatednodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
                                         relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                                         EditMode: Csw.enums.editMode.Add
@@ -725,15 +705,15 @@
                 cswPrivate.onTearDown();
             };
 
-            cswPublic.close = function () {
-                cswParent.$.animate({ "left": "-=320px" }, "slow");
-                cswParent.data('hidden', true);
-            };
+//            cswPublic.close = function () {
+//                cswParent.$.animate({ "left": "-=320px" }, "slow");
+//                cswParent.data('hidden', true);
+//            };
 
-            cswPublic.open = function () {
-                cswParent.$.animate({ "left": "+=320px" }, "slow");
-                cswParent.data('hidden', false);
-            };
+//            cswPublic.open = function () {
+//                cswParent.$.animate({ "left": "+=320px" }, "slow");
+//                cswParent.data('hidden', false);
+//            };
 
             cswPublic.setNodeLayout = function(nodeLayout) {
                 cswPrivate.nodeLayout = nodeLayout;

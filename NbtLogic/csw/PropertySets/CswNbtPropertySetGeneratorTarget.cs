@@ -54,11 +54,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public virtual void beforePropertySetWriteNode() {}
+        public virtual void beforePropertySetWriteNode( bool Creating ) { }
 
         protected override void beforeWriteNodeLogic( bool Creating )
         {
-            beforePropertySetWriteNode();
+            beforePropertySetWriteNode( Creating );
 
             if( DateTime.MinValue == CreatedDate.DateTimeValue )
             {
