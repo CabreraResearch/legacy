@@ -1514,7 +1514,6 @@
     <Compile Include="csw\Statistics\CswNbtStatisticsEntry.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsEvents.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsStorageDb.cs" />
-    <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
     <Compile Include="csw\Tree\CswNbtNodeCollection.cs" />
     <Compile Include="csw\Tree\CswNbtNodeKey.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropColl.cs" />
