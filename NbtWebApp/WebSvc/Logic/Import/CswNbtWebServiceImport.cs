@@ -313,7 +313,8 @@ namespace ChemSW.Nbt.WebServices
                                     'Liters', 'lb', 'gal', 'cu.ft.', 'CISPro_Admin',
                                     'CISPro_General', 'Default Jurisdiction')
                                 and t.nodetypeid not in
-                                    (1130, 1212, 1329, 1330, 1369, 33, 114, 659, 1052, 1053, 1290, 1291, 1292, 1293, 1211)" );
+                                    (1130, 1212, 1329, 1330, 1369, 33, 114, 659, 1052, 1053, 1290, 1291, 1292, 1293, 1211)
+                                and nodetypename not like 'Design%'" );
 
             DataTable NodesTbl = NodeTblSelect.getTable();
             foreach( DataRow Row in NodesTbl.Rows )

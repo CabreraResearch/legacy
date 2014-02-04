@@ -874,7 +874,7 @@ SELECT PACKAGEID,
                    WHEN s.ENGLISH IS NULL THEN 'Warning'
                    ELSE s.ENGLISH
                  END AS signal,
-                 ph.DELETED
+				 least(nvl(ph.deleted, 0), nvl(pc.deleted, 0), nvl(s.deleted, 0)) deleted
            FROM   phrases ph
                   full outer join pictos pc
                                ON ( pc.MATERIALID = ph.MATERIALID
@@ -882,8 +882,8 @@ SELECT PACKAGEID,
                   full outer join signals s
                                ON ( s.MATERIALID = ph.MATERIALID
                                     AND s.REGION = ph.REGION )
-                  join packages p
-                    ON ( p.MATERIALID = ph.MATERIALID ));
+                  left outer join packages p
+                    ON ( p.MATERIALID = coalesce(ph.MATERIALID, pc.materialid, s.materialid )));
 					
 --Reglists
 CREATE OR replace VIEW reglists_view 

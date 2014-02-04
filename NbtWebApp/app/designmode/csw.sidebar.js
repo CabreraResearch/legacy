@@ -615,38 +615,15 @@
                             if (false === Csw.isNullOrEmpty(data)) {
                                 cswPrivate.designNodeTypeProp.nodetypeid = data.NodeTypeId;
 
-                                cswPrivate.extWindowNew = Csw.composites.window(cswParent, {
+
+                                Csw.dialogs.addnode({
+                                    nodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
+                                    relatednodeid: cswPrivate.designNodeType.nodeid,
+                                    relatednodename: cswPrivate.designNodeType.nodetypename,
+                                    relatednodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
+                                    relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                                     title: 'Add New Property',
-                                    y: posY,
-                                    x: posX,
-                                    height: 325,
-                                    width: 500,
-                                    layout: 'fit',
-                                    buttons: [{
-                                        text: 'Cancel', handler: function () {
-                                            cswPrivate.extWindowNew.close();
-                                        }
-                                    }]
-                                });
-
-                                var table = cswPrivate.extWindowNew.attachToMe().table({
-                                    name: 'table',
-                                    width: '100%'
-                                });
-
-                                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(table.cell(1, 1), {
-                                    name: 'tabsAndProps',
-                                    tabState: {
-                                        ShowAsReport: false,
-                                        nodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
-                                        relatednodeid: cswPrivate.designNodeType.nodeid,
-                                        relatednodename: cswPrivate.designNodeType.nodetypename,
-                                        relatednodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
-                                        relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
-                                        EditMode: Csw.enums.editMode.Add
-                                    },
-                                    ReloadTabOnSave: false,
-                                    onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
+                                    onAddNode: function(nodeid, nodekey, nodename, nodelink, relationalid) {
                                         var tabid = cswPrivate.nodeLayout.getActiveTabId();
                                         if (isIdentityTab) {
                                             tabid = cswPrivate.nodeLayout.getIdentityTabId();
@@ -664,11 +641,10 @@
                                             }
                                         });
                                         cswPrivate.nodeLayout.refresh();
-                                        cswPrivate.extWindowNew.close();
-                                    },
-                                    onInitFinish: function () { }
+                                    }
                                 });
                             }
+                            
                         }
                     });
                 };
