@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -1077,11 +1078,21 @@ namespace ChemSW.Nbt
 
             if( ConfigVariable.VariableName.Equals( CswEnumNbtConfigurationVariables.arielmodules.ToString().ToLower() ) )
             {
-                // If the value is empty or doesn't exist in the list of options, we set the value to the default value
-                if( string.IsNullOrEmpty( ConfigVariable.VariableValue )
-                    || false == CswNbtObjClassRegulatoryList.ArielRegionOptions.ContainsKey( ConfigVariable.VariableValue ) )
+                // If the value is empty, we set the value to the default value
+                if( string.IsNullOrEmpty( ConfigVariable.VariableValue ) )
                 {
                     ConfigVariable.VariableValue = "NA,EU";
+                }
+                else
+                {
+                    // We need to make sure the options provided are actual Ariel Regions
+                    CswCommaDelimitedString SanitizedConfigVarValue = new CswCommaDelimitedString();
+                    foreach( string Region in ConfigVariable.VariableValue.Split( ',' ).Where( Region => CswNbtObjClassRegulatoryList.ArielRegionOptions.ContainsKey( Region ) ) )
+                    {
+                        SanitizedConfigVarValue.Add( Region );
+                    }
+
+                    ConfigVariable.VariableValue = SanitizedConfigVarValue.ToString();
                 }
             }//if (ConfigVariable.VariableName.Equals(CswEnumNbtConfigurationVariables.arielmodules.ToString().ToLower()))
 
