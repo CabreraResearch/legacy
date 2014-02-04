@@ -164,31 +164,6 @@ namespace ChemSW.Nbt
 
         public CswEnumNbtNodeEditMode EditMode = CswEnumNbtNodeEditMode.Edit;
 
-        /// <summary>
-        /// Access to the node factory.  Consider using Nodes instead.
-        /// </summary>
-        public CswNbtNodeFactory CswNbtNodeFactory
-        {
-            get
-            {
-                CswNbtNodeFactory ret = null;
-                if( _CswNbtNodeCollection != null )
-                    ret = _CswNbtNodeCollection.CswNbtNodeFactory;
-                return ret;
-            }
-        }
-        //private CswNbtTreeCache _CswNbtTreeCache = null;
-        ///// <summary>
-        ///// Access to all trees loaded during this session
-        ///// </summary>
-        //public CswNbtTreeCache Trees
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtTreeCache );
-        //    }
-        //}
-
         private CswNbtTreeBuilder _CswNbtTreeBuilder = null;
         public CswNbtTreeBuilder Trees
         {

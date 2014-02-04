@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -11,86 +12,11 @@ namespace ChemSW.Nbt
     public class CswNbtNodeReader
     {
         private CswNbtResources _CswNbtResources = null;
-        private CswNbtColumnNames _CswNbtColumnNames = new CswNbtColumnNames();
-
+        
         public CswNbtNodeReader( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CswNbtNodeReaderDataNative = new CswNbtNodeReaderDataNative( CswNbtResources );
-            //_CswNbtNodeReaderDataRelationalDb = new CswNbtNodeReaderDataRelationalDb( CswNbtResources );
         }//CswNbtNodeReader()
-
-
-        private CswNbtNodeReaderDataNative _CswNbtNodeReaderDataNative = null;
-        //private CswNbtNodeReaderDataRelationalDb _CswNbtNodeReaderDataRelationalDb = null;
-        private ICswNbtNodeReaderData this[CswPrimaryKey NodeKey]
-        {
-            get
-            {
-                ICswNbtNodeReaderData ReturnVal = null;
-                //if( "nodes" == NodeKey.TableName.ToLower() )
-                //{
-                    ReturnVal = _CswNbtNodeReaderDataNative;
-                //}
-                //else
-                //{
-                //    ReturnVal = _CswNbtNodeReaderDataRelationalDb;
-                //}
-
-                return ( ReturnVal );
-            }//get
-        }
-
-        public CswNbtResources CswNbtResources
-        {
-            get
-            {
-                return ( _CswNbtResources );
-            }
-        }
-
-        private Object _extractCol( DataRow DataRow, string ColName, bool ThrowOnNotExists, bool ThrowOnNull )
-        {
-            Object ReturnVal = null;
-
-            if( DataRow.Table.Columns.Contains( ColName ) )
-            {
-                if( !DataRow.IsNull( ColName ) )
-                {
-                    ReturnVal = DataRow[ColName];
-                }
-                else
-                {
-                    if( !ThrowOnNull )
-                    {
-                        string EmptyString = "";
-                        ReturnVal = EmptyString;
-                    }
-                    else
-                    {
-                        throw ( new CswDniException( CswEnumErrorType.Error, "A data error occurred", "Column value is null: " + ColName ) );
-                    }
-
-                }//if-else val is null
-
-            }
-            else
-            {
-                if( !ThrowOnNotExists )
-                {
-                    string EmptyString = "";
-                    ReturnVal = EmptyString;
-                }
-                else
-                {
-                    throw ( new CswDniException( CswEnumErrorType.Error, "A data error occurred", "Column does not exist: " + ColName ) );
-                }
-
-            }//if-else table contains column
-
-            return ( ReturnVal );
-
-        }//_extractCol()
 
         //bz # 7816: Don't throw if you cannot find the node data
         public void completeNodeData( CswNbtNode CswNbtNode, CswDateTime Date )
@@ -100,29 +26,37 @@ namespace ChemSW.Nbt
                 //bool NodeInfoFetched = false;
                 if( CswNbtNode.NodeId != null && ( CswNbtNode.NodeTypeId <= 0 || CswNbtNode.NodeName == String.Empty ) )
                 {
-
-                    if( this[CswNbtNode.NodeId].fetchNodeInfo( CswNbtNode, Date ) )
+                    DataTable NodesTable = null;
+                    if( CswTools.IsDate( Date ) )
                     {
-                        CswTimer Timer = new CswTimer();
-                        //this[ CswNbtNode.NodeId ].fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
-                        _CswNbtResources.logTimerResult( "completeNodeData about to call fillFromNodeTypeId() on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
-                        fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId, Date );
-                        _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
-                        if( CswNbtNode.getNodeType() != null )
-                            CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
-
-                        _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
-
-                        if( CswTools.IsDate( Date ) )
-                        {
-                            CswNbtNode.setReadOnly( value: true, SaveToDb: false );
-                        }
+                        string NodesSql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "nodes", Date, CswNbtNode.NodeId.PrimaryKey );
+                        CswArbitrarySelect NodesTableSelect = _CswNbtResources.makeCswArbitrarySelect( "fetchNodeInfo_Select", NodesSql );
+                        NodesTable = NodesTableSelect.getTable();
                     }
-                    // BZ 8117 - This is actually possibly expected behavior now when we delete a node
-                    //else
-                    //{
-                    //    _CswNbtResources.logError( new CswDniException( "No node information is available for node : " + CswNbtNode.NodeId.ToString() ) );
-                    //}
+                    else
+                    {
+                        CswTableSelect NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo", "nodes" );
+                        NodesTable = NodesTableSelect.getTable( "nodeid", CswNbtNode.NodeId.PrimaryKey );
+                    }
+                    if( NodesTable.Rows.Count > 0 )
+                    {
+                        CswNbtNode.read( NodesTable.Rows[0] );
+                        CswNbtNode.RelationalId = new CswPrimaryKey( NodesTable.Rows[0]["relationaltable"].ToString(), CswConvert.ToInt32( NodesTable.Rows[0]["relationalid"] ) );
+                    }
+
+                    CswTimer Timer = new CswTimer();
+                    _CswNbtResources.logTimerResult( "completeNodeData about to call fillFromNodeTypeId() on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+                    fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId, Date );
+                    _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+                    if( CswNbtNode.getNodeType() != null )
+                        CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
+
+                    _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
+
+                    if( CswTools.IsDate( Date ) )
+                    {
+                        CswNbtNode.setReadOnly( value: true, SaveToDb: false );
+                    }
                 }
             }
 

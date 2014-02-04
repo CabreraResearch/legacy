@@ -867,7 +867,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NodeAction.addNodeProps( Node, PropsObj, Tab );
 
                 /* Case 8517 - this sets sequences that have setvalonadd = 0 */
-                _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
+                Node.setSequenceValues();
 
                 ICswNbtTree Tree;
                 if( View != null )

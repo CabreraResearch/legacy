@@ -157,8 +157,8 @@ namespace ChemSW.Nbt.WebPages
                 // Setup statistics events
                 OnEndOfPageLifeCycle += new EndOfPageLifeCycleHandler( _CswNbtStatisticsEvents.OnEndOfPageLifeCycle );
 
-                CswNbtResources.CswNbtNodeFactory.OnWriteNode += new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtStatisticsEvents.OnWriteNode );
-                CswNbtResources.CswNbtNodeFactory.OnDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( _CswNbtStatisticsEvents.OnDeleteNode );
+                //CswNbtResources.CswNbtNodeFactory.OnWriteNode += new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtStatisticsEvents.OnWriteNode );
+                //CswNbtResources.CswNbtNodeFactory.OnDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( _CswNbtStatisticsEvents.OnDeleteNode );
 
 
 

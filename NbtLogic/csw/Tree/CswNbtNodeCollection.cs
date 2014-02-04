@@ -20,46 +20,26 @@ namespace ChemSW.Nbt
     {
         private Dictionary<NodeHashKey, CswNbtNode> _NodeHash;
         private CswNbtResources _CswNbtResources;
-        //private ICswNbtObjClassFactory _ICswNbtObjClassFactory;
-        //private CswNbtNodeReader _CswNbtNodeReader;
-        //private CswNbtNodeWriter _CswNbtNodeWriter;
-
-        public CswNbtNodeFactory CswNbtNodeFactory { get { return _CswNbtNodeFactory; } }
+        private CswNbtNodeReader _CswNbtNodeReader;
+        private CswNbtNodeWriter _CswNbtNodeWriter;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtNodeCollection( CswNbtResources CswNbtResources ) // , ICswNbtObjClassFactory ICswNbtObjClassFactory )
+        public CswNbtNodeCollection( CswNbtResources CswNbtResources )
         {
 
             _CswNbtResources = CswNbtResources;
-            //_ICswNbtObjClassFactory = ICswNbtObjClassFactory;
-            //_CswNbtNodeReader = new CswNbtNodeReader( _CswNbtResources );
-            //_CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
+            _CswNbtNodeReader = new CswNbtNodeReader( _CswNbtResources );
+            _CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
 
             _NodeHash = new Dictionary<NodeHashKey, CswNbtNode>();
         }
 
-
-        //necessary to allow clearing of node factory in order to avoid memory leak
-        private CswNbtNodeFactory __CswNbtNodeFactory = null;
-        private CswNbtNodeFactory _CswNbtNodeFactory
-        {
-            get
-            {
-                if( null == __CswNbtNodeFactory )
-                {
-                    __CswNbtNodeFactory = new CswNbtNodeFactory( _CswNbtResources ); //, ICswNbtObjClassFactory );
-                }
-
-                return ( __CswNbtNodeFactory );
-            }
-        }//_CswNbtNodeFactory
-
         public void Clear()
         {
             _NodeHash.Clear();
-            _CswNbtNodeFactory.CswNbtNodeWriter.clear();
+            _CswNbtNodeWriter.clear();
         }
 
         #region Getting Nodes
@@ -379,7 +359,7 @@ namespace ChemSW.Nbt
         private CswNbtNode _getExistingNode( NodeHashKey HashKey, Int32 NodeTypeId, CswDateTime Date )
         {
             CswTimer Timer = new CswTimer();
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, _NodeHash.Count, Date );
+            CswNbtNode Node = new CswNbtNode( _CswNbtResources, _CswNbtNodeReader, _CswNbtNodeWriter, NodeTypeId, CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, _NodeHash.Count, Date );
 
             //bz # 7816 -- only add to the collection if the node got filled
             Node.fill( Date );
@@ -390,7 +370,6 @@ namespace ChemSW.Nbt
                     _NodeHash.Add( HashKey, Node );
                 }
                 _CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
-                Node.OnRequestDeleteNode += OnAfterDeleteNode;
             }
             else
             {
@@ -399,7 +378,7 @@ namespace ChemSW.Nbt
             return Node;
         }
 
-        private void OnAfterDeleteNode( CswNbtNode Node )
+        public void removeFromCache( CswNbtNode Node )
         {
             _NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
@@ -419,13 +398,12 @@ namespace ChemSW.Nbt
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false, bool IsCopy = false )
         {
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp: true );  // temp here for auditing, but see below
+            CswNbtNode Node = new CswNbtNode( _CswNbtResources, _CswNbtNodeReader, _CswNbtNodeWriter, NodeTypeId, CswEnumNbtNodeSpecies.Plain, null, _NodeHash.Count, null, IsTemp: true ); // temp here for auditing, but see below
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
-            Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
 
-            _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node );
-            _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+            _CswNbtNodeWriter.makeNewNodeEntry( Node );
+            _CswNbtNodeWriter.setDefaultPropertyValues( Node );
 
             if( null != OnAfterMakeNode )
             {

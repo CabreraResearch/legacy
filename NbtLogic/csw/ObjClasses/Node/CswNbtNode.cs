@@ -63,14 +63,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
-        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents );
-        public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
-        public delegate void OnRequestFillHandler( CswNbtNode Node, CswDateTime Date );
-        public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
-        public event OnRequestWriteNodeHandler OnRequestWriteNode = null;
-        public event OnRequestDeleteNodeHandler OnRequestDeleteNode = null;
-        public event OnRequestFillHandler OnRequestFill = null;
-        public event OnRequestFillFromNodeTypeIdHandler OnRequestFillFromNodeTypeId = null;
 
         private CswNbtNodePropColl _CswNbtNodePropColl = null;
         private CswNbtObjClass __CswNbtObjClass = null;
@@ -89,17 +81,20 @@ namespace ChemSW.Nbt.ObjClasses
         public CswDateTime _Date;
         private CswNbtResources _CswNbtResources;
         private CswNbtNodeWriter _CswNbtNodeWriter;
-        public CswNbtNode( CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp )
+        private CswNbtNodeReader _CswNbtNodeReader;
+        public CswNbtNode( CswNbtResources CswNbtResources, CswNbtNodeReader CswNbtNodeReader, CswNbtNodeWriter CswNbtNodeWriter, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp = false )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtNodeReader = CswNbtNodeReader;
             _CswNbtNodeWriter = CswNbtNodeWriter;
             _UniqueId = UniqueId;
             _NodeId = NodeId;
             _NodeTypeId = NodeTypeId;
-            _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null );
             _NodeSpecies = NodeSpecies;
             _IsTemp = IsTemp;
             _Date = Date;
+
+            _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this );
         }//ctor()
 
         private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
@@ -282,7 +277,7 @@ namespace ChemSW.Nbt.ObjClasses
             set
             {
                 _RelationalId = value;
-                Properties._RelationalId = _RelationalId;
+                //Properties.RelationalId = _RelationalId;
             }
         }//RelationalId
 
@@ -416,16 +411,9 @@ namespace ChemSW.Nbt.ObjClasses
             NodePersistStrategy.postChanges( this );
         }
 
-        public void checkWriter()
-        {
-            if( null == OnRequestWriteNode )
-                throw ( new CswDniException( "There is no write handler" ) );
-        }
-
         public void requestWrite( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
         {
-            checkWriter();
-            OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+            _CswNbtNodeWriter.write( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
         }
 
         public void setModificationState( String ModState )
@@ -460,10 +448,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="OverridePermissions">For internal use only. When set to true, ignores user permissions.</param>
         public void delete( bool DeleteAllRequiredRelatedNodes = false, bool OverridePermissions = false, bool ValidateRequiredRelationships = true )
         {
-            if( null == OnRequestDeleteNode )
-            {
-                throw ( new CswDniException( "There is no delete handler" ) );
-            }
             CswNbtMetaDataNodeType thisNT = this.getNodeType();
             if( false == OverridePermissions && false == _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Delete, thisNT ) )
             {
@@ -475,7 +459,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
             }
 
-            OnRequestDeleteNode( this );
+            _CswNbtNodeWriter.delete( this );
 
             if( null != _CswNbtObjClass )
             {
@@ -484,40 +468,28 @@ namespace ChemSW.Nbt.ObjClasses
 
             _NodeModificationState = CswEnumNbtNodeModificationState.Deleted;
 
+            _CswNbtResources.Nodes.removeFromCache( this );
+
         }//delete()
 
         public void fill( CswDateTime Date )
         {
-            if( null == OnRequestFill )
-                throw ( new CswDniException( "There is no fill handler" ) );
-
-            OnRequestFill( this, Date );
-
+            _CswNbtNodeReader.completeNodeData( this, Date );
             _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
-
         }//fill() 
 
 
         public void fillFromNodeTypeId( Int32 NodeTypeId )
         {
-            if( null == OnRequestFillFromNodeTypeId )
-                throw ( new CswDniException( "There is no fill handler" ) );
-
-            OnRequestFillFromNodeTypeId( this, NodeTypeId );
-
+            _CswNbtNodeReader.fillFromNodeTypeIdWithProps( this, NodeTypeId );
             _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
-
         }//fillFromNodeTypeId()
 
 
         public void cancelChanges()
         {
-            Int32 NodeTypeId = _NodeTypeId;
-
-            OnRequestFillFromNodeTypeId( this, NodeTypeId );
-
+            _CswNbtNodeReader.fillFromNodeTypeId( this, _NodeTypeId );
             _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
-
         }//cancelChanges()
 
 
@@ -645,6 +617,15 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion Methods
+
+        public void updateRelationsToThisNode()
+        {
+            _CswNbtNodeWriter.updateRelationsToThisNode( this );
+        }
+        public void setSequenceValues()
+        {
+            _CswNbtNodeWriter.setSequenceValues( this );
+        }
 
     }//CswNbtNode
 

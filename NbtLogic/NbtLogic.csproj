@@ -1522,14 +1522,10 @@
     <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
     <Compile Include="csw\Tree\CswNbtLocationTreeDeprecated.cs" />
     <Compile Include="csw\Tree\CswNbtNodeCollection.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeFactory.cs" />
     <Compile Include="csw\Tree\CswNbtNodeKey.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropColl.cs" />
-    <Compile Include="csw\Tree\CswNbtNodePropCollDataNative.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropCollDataRelational.cs" />
     <Compile Include="csw\Tree\CswNbtNodeReader.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeReaderDataNative.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeReaderDataRelationalDb.cs" />
     <Compile Include="csw\Tree\CswNbtNodeTypeProp.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriter.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />

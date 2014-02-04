@@ -248,7 +248,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Location &&
                 CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
             {
-                _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
+                _CswNbtNode.updateRelationsToThisNode();
             }
         }
 

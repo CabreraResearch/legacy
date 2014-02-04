@@ -38,8 +38,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswEnumNbtNodeModificationState.Modified == Node.ModificationState || ForceUpdate )
             {
-                Node.checkWriter();
-
                 if( null != Node.ObjClass )
                 {
                     Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );

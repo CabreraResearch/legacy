@@ -48,7 +48,6 @@ namespace ChemSW.Nbt
                                             IsCopy: false,
                                             OverrideUniqueValidation: false,
                                             Creating: false,
-                                            Date: null,
                                             AllowAuditing: true,
                                             SkipEvents: false );
                 }

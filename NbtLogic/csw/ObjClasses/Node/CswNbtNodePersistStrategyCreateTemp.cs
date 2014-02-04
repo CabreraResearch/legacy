@@ -36,8 +36,6 @@ namespace ChemSW.Nbt.ObjClasses
         
         public void postChanges( CswNbtNode Node )
         {
-            Node.checkWriter();
-
             if( null != Node.ObjClass )
             {
                 Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
