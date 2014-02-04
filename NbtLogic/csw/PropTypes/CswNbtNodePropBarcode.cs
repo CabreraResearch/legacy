@@ -125,17 +125,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void Copy( CswNbtNodePropData Source )
         {
-            // BZ 10498 - Don't copy, just generate a new value
-            // Waiting on disucssion w/ TDU
-            //String Barcode = Source.NodeTypeProp.DefaultValue.AsBarcode.Barcode.ToString();
-            //if( string.IsNullOrEmpty( Barcode ) )
-            //{
-            setBarcodeValue();
-            //}
-            //else // Case 20784
-            //{
-            //    setBarcodeValueOverride( Barcode, false );
-            //}
+            if( false == _Node.IsTemp )
+            {
+                setBarcodeValue();
+            }
         }
 
         // ReadXml()
