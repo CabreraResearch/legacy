@@ -1526,7 +1526,6 @@
     <Compile Include="csw\Tree\CswNbtTreeLoader.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeModEventArgs.cs" />
     <Compile Include="csw\Tree\ICswNbtTree.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitConversion.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitViewBuilder.cs" />
