@@ -732,14 +732,14 @@ namespace ChemSW.Nbt.ObjClasses
                             }
 
                             // Label Codes
-                            List<string> GHSPharses = C3ExtChemData.ExtensionData1.PcidData.GHS.CODES.ToList();
+                            List<string> GHSPhrases = C3ExtChemData.ExtensionData1.PcidData.GHS.CODES.ToList();
                             CswCommaDelimitedString GHSPhraseNodeIds = new CswCommaDelimitedString();
 
                             CswNbtMetaDataObjectClass GHSPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
                             Dictionary<CswPrimaryKey, string> GHSPhraseNodes = GHSPhraseOC.getNodeIdAndNames( false, false );
                             foreach( KeyValuePair<CswPrimaryKey, string> KeyValuePair in GHSPhraseNodes )
                             {
-                                foreach( string GHSPhrase in GHSPharses )
+                                foreach( string GHSPhrase in GHSPhrases )
                                 {
                                     if( KeyValuePair.Value.Equals( GHSPhrase ) )
                                     {
