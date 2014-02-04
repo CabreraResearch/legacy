@@ -548,28 +548,32 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( SearchResults.ExtChemDataResults.Length > 0 )
                         {
-                            ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
+                            CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
 
-                            // NFPA
-                            if( string.IsNullOrEmpty( this.NFPA.Red ) )
+                            #region NFPA
+
+                            if( string.IsNullOrEmpty( NFPA.Red ) )
                             {
                                 NFPA.Red = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaFire );
                             }
-                            if( string.IsNullOrEmpty( this.NFPA.Yellow ) )
+                            if( string.IsNullOrEmpty( NFPA.Yellow ) )
                             {
                                 NFPA.Yellow = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaReact );
                             }
-                            if( string.IsNullOrEmpty( this.NFPA.Blue ) )
+                            if( string.IsNullOrEmpty( NFPA.Blue ) )
                             {
                                 NFPA.Blue = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaHealth );
                             }
-                            if( string.IsNullOrEmpty( this.NFPA.White ) )
+                            if( string.IsNullOrEmpty( NFPA.White ) )
                             {
                                 string NFPASpecificRating = _NFPASpecificRatingNumberToText( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaSpecific );
                                 NFPA.White = NFPASpecificRating;
                             }
 
-                            // PPE
+                            #endregion
+
+                            #region PPE
+
                             CswCommaDelimitedString CurrentPPEOptions = new CswCommaDelimitedString();
                             CurrentPPEOptions = this.PPE.Value;
 
@@ -592,6 +596,8 @@ namespace ChemSW.Nbt.ObjClasses
                             // Set the value of the property to the new list
                             this.PPE.Value = UpdatedPPEOptions;
 
+                            #endregion
+
                             // Storage Compatibility
                             if( StorageCompatibility.Value.IsEmpty )
                             {
@@ -600,6 +606,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 StorageCompatValue.Add( StorageCompatImagePath );
                                 StorageCompatibility.Value = StorageCompatValue;
                             }
+
+                            #region Additional Properties
 
                             // Additional properties ONLY IF they have an empty value. For now the following- structure, formula, density, mp, bp, physical description, tier II
                             foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
@@ -700,13 +708,359 @@ namespace ChemSW.Nbt.ObjClasses
 
                             } //foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
 
+                            #endregion
+
+                            #region GHS
+
+                            CswNbtMetaDataObjectClass GHSCOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+
+                            // Classifications
+                            CswCommaDelimitedString GHSClassifications = _mapC3GHSClassificationsToNBT( C3ExtChemData.ExtensionData1.PcidData.GHS );
+                            CswCommaDelimitedString GHSClassNodeIds = new CswCommaDelimitedString();
+
+                            CswNbtMetaDataObjectClass GHSClassOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClassificationClass );
+                            Dictionary<CswPrimaryKey, string> NamesAndIds = GHSClassOC.getNodeIdAndNames( false, false );
+                            foreach( KeyValuePair<CswPrimaryKey, string> KeyValuePair in NamesAndIds )
+                            {
+                                foreach( string Name in GHSClassifications )
+                                {
+                                    if( KeyValuePair.Value.Equals( Name ) )
+                                    {
+                                        GHSClassNodeIds.Add( KeyValuePair.Key.ToString() );
+                                    }
+                                }
+                            }
+
+                            // Label Codes
+                            List<string> GHSPharses = C3ExtChemData.ExtensionData1.PcidData.GHS.CODES.ToList();
+                            CswCommaDelimitedString GHSPhraseNodeIds = new CswCommaDelimitedString();
+
+                            CswNbtMetaDataObjectClass GHSPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
+                            Dictionary<CswPrimaryKey, string> GHSPhraseNodes = GHSPhraseOC.getNodeIdAndNames( false, false );
+                            foreach( KeyValuePair<CswPrimaryKey, string> KeyValuePair in GHSPhraseNodes )
+                            {
+                                foreach( string GHSPhrase in GHSPharses )
+                                {
+                                    if( KeyValuePair.Value.Equals( GHSPhrase ) )
+                                    {
+                                        GHSPhraseNodeIds.Add( KeyValuePair.Key.ToString() );
+                                    }
+                                }
+                            }
+
+                            CswNbtObjClassGHS GHSNode = _getDefaultJurisdictionGHSNode();
+                            if( null != GHSNode )
+                            {
+                                CswCommaDelimitedString UpdatedClassifications = new CswCommaDelimitedString();
+                                CswCommaDelimitedString CurrentClassifications = GHSNode.Classifications.Value;
+                                UpdatedClassifications = CurrentClassifications;
+                                foreach( string NodeId in GHSClassNodeIds )
+                                {
+                                    if( false == UpdatedClassifications.Contains( NodeId ) )
+                                    {
+                                        UpdatedClassifications.Add( NodeId );
+                                    }
+                                }
+                                GHSNode.Classifications.Value = UpdatedClassifications;
+
+                                foreach( string GHSPhraseNodeId in GHSPhraseNodeIds )
+                                {
+                                    if( false == GHSNode.LabelCodes.Value.Contains( GHSPhraseNodeId ) )
+                                    {
+                                        GHSNode.LabelCodes.AddValue( GHSPhraseNodeId );
+                                    }
+                                }
+
+                                GHSNode.postChanges( true );
+                            }
+                            else
+                            {
+                                // Get nodeid for Default Jurisdiction node
+                                CswNbtMetaDataObjectClass JurisdictionOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.JurisdictionClass );
+                                Dictionary<CswPrimaryKey, string> JurisdictionNodes = JurisdictionOC.getNodeIdAndNames( false, false );
+                                CswPrimaryKey DefaultJurisdictionNodeId = null;
+                                foreach( KeyValuePair<CswPrimaryKey, string> JurisdictionNode in JurisdictionNodes.Where( JurisdictionNode => JurisdictionNode.Value == "Default Jurisdiction" ) )
+                                {
+                                    DefaultJurisdictionNodeId = JurisdictionNode.Key;
+                                }
+
+                                // Get nodeid for Warning node
+                                CswNbtMetaDataObjectClass SignalWordOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSSignalWordClass );
+                                Dictionary<CswPrimaryKey, string> SignalWordNodes = SignalWordOC.getNodeIdAndNames( false, false );
+                                CswPrimaryKey WarningWordNodeId = null;
+                                foreach( KeyValuePair<CswPrimaryKey, string> SignalWordNode in SignalWordNodes.Where( SignalWordNode => SignalWordNode.Value == "Warning" ) )
+                                {
+                                    WarningWordNodeId = SignalWordNode.Key;
+                                }
+
+                                // Create a new GHS node with Default Jurisidiction
+                                CswNbtMetaDataNodeType GHSNT = GHSCOC.FirstNodeType;
+                                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( GHSNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                    {
+                                        CswNbtObjClassGHS NewGHSNode = NewNode;
+                                        NewGHSNode.Material.RelatedNodeId = this.NodeId;
+                                        NewGHSNode.Jurisdiction.RelatedNodeId = DefaultJurisdictionNodeId;
+                                        NewGHSNode.Classifications.Value = GHSClassNodeIds;
+                                        NewGHSNode.SignalWord.RelatedNodeId = WarningWordNodeId;
+                                        NewGHSNode.LabelCodes.Value = GHSPhraseNodeIds;
+                                    } );
+
+                            }
+
+                            #endregion GHS
+
                         } //if( SearchResults.ExtChemDataResults.Length > 0 )
 
                     } //if( null != SearchResults.ExtChemDataResults )
 
-                }
+                }//if( null != C3SearchClient )
 
             }//if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.PCIDSync ) )
+        }
+
+        private CswCommaDelimitedString _mapC3GHSClassificationsToNBT( CswC3ExtChemData.PCID.GHSClass GHSData )
+        {
+            CswCommaDelimitedString Ret = new CswCommaDelimitedString();
+
+            if( false == string.IsNullOrEmpty( GHSData.EXPLOSIVES ) )
+            {
+                Ret.Add( "Explosives (Division " + GHSData.EXPLOSIVES + ")" );
+            }
+            if( false == string.IsNullOrEmpty( GHSData.FLAMMABLEGASES ) )
+            {
+                Ret.Add( "Flammable Gas (Category " + GHSData.FLAMMABLEGASES + ")" );
+            }
+            if( false == string.IsNullOrEmpty( GHSData.FLAMMABLEAEROSOLS ) )
+            {
+                Ret.Add( "Flammable Aerosols (Category " + GHSData.FLAMMABLEAEROSOLS + ")" );
+            }
+
+            if( GHSData.OXIDIZINGGASES == 1 )
+            {
+                Ret.Add( "Oxidizing Gases" );
+            }
+
+            if( GHSData.PRESSUREGASESCOMPRESSEDGASES == 1 )
+            {
+                Ret.Add( "Gases Under Pressure (Compressed gas)" );
+            }
+            if( GHSData.PRESSUREGASESLIQUEFIEDGASES == 1 )
+            {
+                Ret.Add( "Gases Under Pressure (Liquefied gas)" );
+            }
+            if( GHSData.PRESSUREGASESREFRIGERATEDLIQUE == 1 )
+            {
+                Ret.Add( "Gases Under Pressure (Refrigerated liquefied gas)" );
+            }
+            if( GHSData.PRESSUREGASESDISSOLVEDGASES == 1 )
+            {
+                Ret.Add( "Gases Under Pressure (Dissolved gas)" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.FLAMMABLELIQUIDS ) )
+            {
+                Ret.Add( "Flammable Liquids (Category " + GHSData.FLAMMABLELIQUIDS + ")" );
+            }
+            if( false == string.IsNullOrEmpty( GHSData.FLAMMABLESOLIDS ) )
+            {
+                Ret.Add( "Flammable Solids (Category " + GHSData.FLAMMABLESOLIDS + ")" );
+            }
+            if( false == string.IsNullOrEmpty( GHSData.SELFREACTIVESUBSTANCES ) )
+            {
+                Ret.Add( "Self-Reactive Substances and Mixtures (Type " + GHSData.SELFREACTIVESUBSTANCES + ")" );
+            }
+
+            if( GHSData.PYROPHORICLIQUIDS == 1 )
+            {
+                Ret.Add( "Pyrophoric Liquids" );
+            }
+            if( GHSData.PYROPHORICSOLIDS == 1 )
+            {
+                Ret.Add( "Pyrophoric Solids" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.SELFHEATINGSUBSTANCES ) )
+            {
+                Ret.Add( "Self-Heating Substances and Mixtures (Category " + GHSData.SELFHEATINGSUBSTANCES + ")" );
+            }
+            if( false == string.IsNullOrEmpty( GHSData.WATERREACTIVEFLAMMABLEGAS ) )
+            {
+                Ret.Add( "Substances and Mixtures, which on Contact with Water, Emit Flammable Gases (Category " + GHSData.WATERREACTIVEFLAMMABLEGAS + ")" );
+            }
+
+            if( GHSData.OXIDIZINGLIQUIDS != 0 )
+            {
+                Ret.Add( "Oxidizing Liquids (Category " + GHSData.OXIDIZINGLIQUIDS + ")" );
+            }
+            if( GHSData.OXIDIZINGSOLIDS != 0 )
+            {
+                Ret.Add( "Oxidizing Solids (Category " + GHSData.OXIDIZINGLIQUIDS + ")" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.ORGANICPEROXIDES ) )
+            {
+                Ret.Add( "Organic Peroxides (Type " + GHSData.ORGANICPEROXIDES + ")" );
+            }
+
+            if( GHSData.CORROSIVETOMETALS == 1 )
+            {
+                Ret.Add( "Corrosive to Metal" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.ACUTETOXICITY ) )
+            {
+                Ret.Add( "Acute Toxicity (Category " + GHSData.ACUTETOXICITY + ")" );
+            }
+
+            if( GHSData.SKINCORROSION == 1 )
+            {
+                Ret.Add( "Skin Corrosion/Irritation (Category 1A)" );
+            }
+            if( GHSData.SKINIRRITATION == 1 )
+            {
+                Ret.Add( "Skin Corrosion/Irritation (Category 2)" );
+            }
+            if( GHSData.SERIOUSEYEDAMAGE == 1 )
+            {
+                Ret.Add( "Serious Eye Damage/Eye Irritation (Category 1)" );
+            }
+            if( GHSData.EYEIRRITATION == 1 )
+            {
+                Ret.Add( "Serious Eye Damage/Eye Irritation (Category 2A)" );
+            }
+            if( GHSData.RESPIRATORYSENSITIZER == 1 )
+            {
+                Ret.Add( "Respiratory Sensitization" );
+            }
+            if( GHSData.SKINSENSITIZER == 1 )
+            {
+                Ret.Add( "Skin Sensitization" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.GERMCELLMUTAGENICITY ) )
+            {
+                if( GHSData.GERMCELLMUTAGENICITY.Equals( "1" ) )
+                {
+                    Ret.Add( "Germ Cell Mutagenicity (Category 1A)" );
+                }
+                if( GHSData.GERMCELLMUTAGENICITY.Equals( "2" ) )
+                {
+                    Ret.Add( "Germ Cell Mutagenicity (Category 1B)" );
+                }
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.CARCINOGENICITY ) )
+            {
+                if( GHSData.CARCINOGENICITY.Equals( "1" ) )
+                {
+                    Ret.Add( "Carcinogenicity (Category 1A)" );
+                }
+                if( GHSData.CARCINOGENICITY.Equals( "2" ) )
+                {
+                    Ret.Add( "Carcinogenicity (Category 1B)" );
+                }
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.REPRODUCTIVETOXICITY ) )
+            {
+                if( GHSData.REPRODUCTIVETOXICITY.Equals( "1" ) )
+                {
+                    Ret.Add( "Reproductive Toxicity (Category 1A)" );
+                }
+                if( GHSData.REPRODUCTIVETOXICITY.Equals( "2" ) )
+                {
+                    Ret.Add( "Reproductive Toxicity (Category 1B)" );
+                }
+                if( GHSData.REPRODUCTIVETOXICITY.Equals( "3" ) )
+                {
+                    Ret.Add( "Reproductive Toxicity (Category 2)" );
+                }
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.TOSTSINGLEEXPOSURE ) )
+            {
+                Ret.Add( "Specific Target Organ Toxicity (Single Exposure) (Category " + GHSData.TOSTSINGLEEXPOSURE + ")" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.TOSTREPEATEDEXPOSURE ) )
+            {
+                Ret.Add( "Specific Target Organ Toxicity (Repeated Exposure) (Category " + GHSData.TOSTREPEATEDEXPOSURE + ")" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.ASPIRATIONHAZARD ) )
+            {
+                Ret.Add( "Aspiration Toxicity (Category " + GHSData.ASPIRATIONHAZARD + ")" );
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.ACUTEAQUATICTOXICITY ) )
+            {
+                if( GHSData.ACUTEAQUATICTOXICITY.Equals( "1" ) || GHSData.ACUTEAQUATICTOXICITY.Equals( "I" ) )
+                {
+                    Ret.Add( "Aquatic Toxicity (Acute) (Category I)" );
+                }
+                else if( GHSData.ACUTEAQUATICTOXICITY.Equals( "2" ) || GHSData.ACUTEAQUATICTOXICITY.Equals( "II" ) )
+                {
+                    Ret.Add( "Aquatic Toxicity (Acute) (Category II)" );
+                }
+                else if( GHSData.ACUTEAQUATICTOXICITY.Equals( "3" ) || GHSData.ACUTEAQUATICTOXICITY.Equals( "III" ) )
+                {
+                    Ret.Add( "Aquatic Toxicity (Acute) (Category III)" );
+                }
+            }
+
+            if( false == string.IsNullOrEmpty( GHSData.CHRONICAQUATICTOXICITY ) )
+            {
+                if( GHSData.CHRONICAQUATICTOXICITY.Equals( "1" ) || GHSData.CHRONICAQUATICTOXICITY.Equals( "I" ) )
+                {
+                    Ret.Add( "Aquatic Toxicity (Chronic) (Category I)" );
+                }
+                else if( GHSData.CHRONICAQUATICTOXICITY.Equals( "2" ) || GHSData.CHRONICAQUATICTOXICITY.Equals( "II" ) )
+                {
+                    Ret.Add( "Aquatic Toxicity (Chronic) (Category II)" );
+                }
+                else if( GHSData.CHRONICAQUATICTOXICITY.Equals( "3" ) || GHSData.CHRONICAQUATICTOXICITY.Equals( "III" ) )
+                {
+                    Ret.Add( "Aquatic Toxicity (Chronic) (Category III)" );
+                }
+                else if( GHSData.CHRONICAQUATICTOXICITY.Equals( "4" ) || GHSData.CHRONICAQUATICTOXICITY.Equals( "IV" ) )
+                {
+                    Ret.Add( "Aquatic Toxicity (Chronic) (Category IV)" );
+                }
+            }
+
+            return Ret;
+        }
+
+        private CswNbtObjClassGHS _getDefaultJurisdictionGHSNode()
+        {
+            CswNbtObjClassGHS Ret = null;
+
+            CswNbtMetaDataObjectClass JurisdictionOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.JurisdictionClass );
+            CswNbtMetaDataObjectClassProp NameOCP = JurisdictionOC.getObjectClassProp( CswNbtObjClassJurisdiction.PropertyName.Name );
+            CswNbtView View1 = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship View1Parent = View1.AddViewRelationship( JurisdictionOC, true );
+            View1.AddViewPropertyAndFilter( View1Parent, NameOCP, "Default Jurisdiction", CswEnumNbtSubFieldName.Text );
+            ICswNbtTree View1Tree = _CswNbtResources.Trees.getTreeFromView( View1, false, false, false );
+            if( View1Tree.getChildNodeCount() > 0 )
+            {
+                View1Tree.goToNthChild( 0 );
+
+                CswNbtMetaDataObjectClass GHSOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+                CswNbtMetaDataObjectClassProp MaterialOCP = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+                CswNbtMetaDataObjectClassProp JurisdictionOCP = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
+                CswNbtView View2 = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship Parent = View2.AddViewRelationship( GHSOC, true );
+                View2.AddViewPropertyAndFilter( Parent, MaterialOCP, NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                View2.AddViewPropertyAndFilter( Parent, JurisdictionOCP, View1Tree.getNodeForCurrentPosition().NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                ICswNbtTree View2Tree = _CswNbtResources.Trees.getTreeFromView( View2, false, false, false );
+                if( View2Tree.getChildNodeCount() > 0 )
+                {
+                    View2Tree.goToNthChild( 0 );
+                    Ret = View2Tree.getNodeForCurrentPosition();
+                }
+            }
+
+            return Ret;
         }
 
         private string _getStorageCompatImagePath( Int32 StorageCompatibility )
