@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNodePropColl.CreatedFromNodeTypeId );
+                return ( _CswNbtNodePropColl.New );
             }
         }//New
 
@@ -496,12 +496,9 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     CswTimer Timer = new CswTimer();
-                    //_CswNbtResources.logTimerResult( "CswNbtNode.fill() about to call fillFromNodeTypeId() on node (" + NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
-                    //fillFromNodeTypeId();
-                    //_CswNbtResources.logTimerResult( "CswNbtNode.fill() called fillFromNodeTypeId(), finished on node (" + NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
                     if( getNodeType() != null )
                     {
-                        Properties.fillFromNodePk( NodeId, NodeTypeId, _Date );
+                        Properties.fill( false );
                     }
                     _CswNbtResources.logTimerResult( "Filled in node property data for node (" + NodeId.ToString() + "): " + NodeName, Timer.ElapsedDurationInSecondsAsString );
 
@@ -518,8 +515,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void fillFromNodeTypeId()
         {
-            //Properties.fillFromNodePk( NodeId, NodeTypeId, _Date );
-            Properties.fillFromNodeTypeId( NodeTypeId );
+            Properties.fill( true );
             _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
         }//fillFromNodeTypeId()
 

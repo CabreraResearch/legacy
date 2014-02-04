@@ -42,7 +42,7 @@ namespace ChemSW.Nbt
             }
         }//Modified
 
-        public bool CreatedFromNodeTypeId = false;
+        public bool New = false;
 
         public void clearModifiedFlag()
         {
@@ -53,21 +53,21 @@ namespace ChemSW.Nbt
 
         }//_clearModifiedFlag()
 
-        private void _clear()
-        {
-            _Props.Clear();
+        //private void _clear()
+        //{
+        //    _Props.Clear();
 
-            _PropsIndexByFirstVersionPropId.Clear();
-            _PropsIndexByNodeTypePropId.Clear();
-            _PropsIndexByObjectClassPropName.Clear();
+        //    _PropsIndexByFirstVersionPropId.Clear();
+        //    _PropsIndexByNodeTypePropId.Clear();
+        //    _PropsIndexByObjectClassPropName.Clear();
 
-            if( null != _PropsTable )
-            {
-                _PropsTable.Clear();
-            }
-            _Filled = false;
+        //    if( null != _PropsTable )
+        //    {
+        //        _PropsTable.Clear();
+        //    }
+        //    _Filled = false;
 
-        }//clear()
+        //}//clear()
 
 
         private bool _Filled = false;
@@ -89,36 +89,16 @@ namespace ChemSW.Nbt
         }//Count
 
 
-        public void fillFromNodePk( CswPrimaryKey NodePk, Int32 NodeTypeId, CswDateTime Date )
+        public void fill( bool IsNew )
         {
-            if( NodePk != null )
-            {
-                CswTimer Timer = new CswTimer();
-                _populateProps( Date );
-                _CswNbtResources.logTimerResult( "Fetched node (" + _CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+            New = IsNew;
 
-                _Filled = true;
-            }
-        }//fillFromNodePk()
-
-
-        public void fillFromNodeTypeId( Int32 NodeTypeId )
-        {
-            CreatedFromNodeTypeId = true;
-            _clear();
-            _populateProps( null );
-            _Filled = true;
-        }//fillFromNodeTypeId()
-
-        
-        private void _populateProps( CswDateTime Date )// CswPrimaryKey NodePk, Int32 NodeTypeId )
-        {
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtNode.getNodeType();
             foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
             {
                 DataRow PropRow = PropsTable.Rows.Cast<DataRow>().FirstOrDefault( CurrentRow => CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() );
 
-                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropsTable, _CswNbtNode, MetaDataProp, Date );
+                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropsTable, _CswNbtNode, MetaDataProp, _CswNbtNode._Date );
 
                 _Props.Add( AddedProp );
                 Int32 PropsIdx = _Props.Count - 1;
@@ -136,9 +116,9 @@ namespace ChemSW.Nbt
             {
                 _CswNbtNode.ObjClass.triggerAfterPopulateProps();
             }
-
-            //SuspendModifyTracking = false;
-        }//_populateProps()
+            
+            _Filled = true;
+        }//fill()
 
 
         private DataTable _PropsTable = null;
