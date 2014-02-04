@@ -2308,6 +2308,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
             private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.AdditionalProperty[] AdditionalPropertiesField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.GHSClass GHSField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
             private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.NFPAClass NFPAField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -2337,6 +2340,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                     if ((object.ReferenceEquals(this.AdditionalPropertiesField, value) != true)) {
                         this.AdditionalPropertiesField = value;
                         this.RaisePropertyChanged("AdditionalProperties");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.GHSClass GHS {
+                get {
+                    return this.GHSField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.GHSField, value) != true)) {
+                        this.GHSField = value;
+                        this.RaisePropertyChanged("GHS");
                     }
                 }
             }
@@ -2399,6 +2415,594 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
                 if ((propertyChanged != null)) {
                     propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                }
+            }
+            
+            [System.Diagnostics.DebuggerStepThroughAttribute()]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+            [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ExtChemData.PCID.GHSClass", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+            [System.SerializableAttribute()]
+            public partial class GHSClass : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+                
+                [System.NonSerializedAttribute()]
+                private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string ACUTEAQUATICTOXICITYField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string ACUTETOXICITYField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string ASPIRATIONHAZARDField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string CARCINOGENICITYField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string CHRONICAQUATICTOXICITYField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string[] CODESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int CORROSIVETOMETALSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string EXPLOSIVESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int EYEIRRITATIONField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string FLAMMABLEAEROSOLSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string FLAMMABLEGASESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string FLAMMABLELIQUIDSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string FLAMMABLESOLIDSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string GERMCELLMUTAGENICITYField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string ORGANICPEROXIDESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int OXIDIZINGGASESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int OXIDIZINGLIQUIDSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int OXIDIZINGSOLIDSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int PRESSUREGASESCOMPRESSEDGASESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int PRESSUREGASESDISSOLVEDGASESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int PRESSUREGASESLIQUEFIEDGASESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int PRESSUREGASESREFRIGERATEDLIQUEField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int PYROPHORICLIQUIDSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int PYROPHORICSOLIDSField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string REPRODUCTIVETOXICITYField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int RESPIRATORYSENSITIZERField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string SELFHEATINGSUBSTANCESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string SELFREACTIVESUBSTANCESField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int SERIOUSEYEDAMAGEField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int SKINCORROSIONField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int SKINIRRITATIONField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private int SKINSENSITIZERField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string TOSTREPEATEDEXPOSUREField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string TOSTSINGLEEXPOSUREField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string WATERREACTIVEFLAMMABLEGASField;
+                
+                public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+                    get {
+                        return this.extensionDataField;
+                    }
+                    set {
+                        this.extensionDataField = value;
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string ACUTEAQUATICTOXICITY {
+                    get {
+                        return this.ACUTEAQUATICTOXICITYField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.ACUTEAQUATICTOXICITYField, value) != true)) {
+                            this.ACUTEAQUATICTOXICITYField = value;
+                            this.RaisePropertyChanged("ACUTEAQUATICTOXICITY");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string ACUTETOXICITY {
+                    get {
+                        return this.ACUTETOXICITYField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.ACUTETOXICITYField, value) != true)) {
+                            this.ACUTETOXICITYField = value;
+                            this.RaisePropertyChanged("ACUTETOXICITY");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string ASPIRATIONHAZARD {
+                    get {
+                        return this.ASPIRATIONHAZARDField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.ASPIRATIONHAZARDField, value) != true)) {
+                            this.ASPIRATIONHAZARDField = value;
+                            this.RaisePropertyChanged("ASPIRATIONHAZARD");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string CARCINOGENICITY {
+                    get {
+                        return this.CARCINOGENICITYField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.CARCINOGENICITYField, value) != true)) {
+                            this.CARCINOGENICITYField = value;
+                            this.RaisePropertyChanged("CARCINOGENICITY");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string CHRONICAQUATICTOXICITY {
+                    get {
+                        return this.CHRONICAQUATICTOXICITYField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.CHRONICAQUATICTOXICITYField, value) != true)) {
+                            this.CHRONICAQUATICTOXICITYField = value;
+                            this.RaisePropertyChanged("CHRONICAQUATICTOXICITY");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string[] CODES {
+                    get {
+                        return this.CODESField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.CODESField, value) != true)) {
+                            this.CODESField = value;
+                            this.RaisePropertyChanged("CODES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int CORROSIVETOMETALS {
+                    get {
+                        return this.CORROSIVETOMETALSField;
+                    }
+                    set {
+                        if ((this.CORROSIVETOMETALSField.Equals(value) != true)) {
+                            this.CORROSIVETOMETALSField = value;
+                            this.RaisePropertyChanged("CORROSIVETOMETALS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string EXPLOSIVES {
+                    get {
+                        return this.EXPLOSIVESField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.EXPLOSIVESField, value) != true)) {
+                            this.EXPLOSIVESField = value;
+                            this.RaisePropertyChanged("EXPLOSIVES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int EYEIRRITATION {
+                    get {
+                        return this.EYEIRRITATIONField;
+                    }
+                    set {
+                        if ((this.EYEIRRITATIONField.Equals(value) != true)) {
+                            this.EYEIRRITATIONField = value;
+                            this.RaisePropertyChanged("EYEIRRITATION");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string FLAMMABLEAEROSOLS {
+                    get {
+                        return this.FLAMMABLEAEROSOLSField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.FLAMMABLEAEROSOLSField, value) != true)) {
+                            this.FLAMMABLEAEROSOLSField = value;
+                            this.RaisePropertyChanged("FLAMMABLEAEROSOLS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string FLAMMABLEGASES {
+                    get {
+                        return this.FLAMMABLEGASESField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.FLAMMABLEGASESField, value) != true)) {
+                            this.FLAMMABLEGASESField = value;
+                            this.RaisePropertyChanged("FLAMMABLEGASES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string FLAMMABLELIQUIDS {
+                    get {
+                        return this.FLAMMABLELIQUIDSField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.FLAMMABLELIQUIDSField, value) != true)) {
+                            this.FLAMMABLELIQUIDSField = value;
+                            this.RaisePropertyChanged("FLAMMABLELIQUIDS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string FLAMMABLESOLIDS {
+                    get {
+                        return this.FLAMMABLESOLIDSField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.FLAMMABLESOLIDSField, value) != true)) {
+                            this.FLAMMABLESOLIDSField = value;
+                            this.RaisePropertyChanged("FLAMMABLESOLIDS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string GERMCELLMUTAGENICITY {
+                    get {
+                        return this.GERMCELLMUTAGENICITYField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.GERMCELLMUTAGENICITYField, value) != true)) {
+                            this.GERMCELLMUTAGENICITYField = value;
+                            this.RaisePropertyChanged("GERMCELLMUTAGENICITY");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string ORGANICPEROXIDES {
+                    get {
+                        return this.ORGANICPEROXIDESField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.ORGANICPEROXIDESField, value) != true)) {
+                            this.ORGANICPEROXIDESField = value;
+                            this.RaisePropertyChanged("ORGANICPEROXIDES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int OXIDIZINGGASES {
+                    get {
+                        return this.OXIDIZINGGASESField;
+                    }
+                    set {
+                        if ((this.OXIDIZINGGASESField.Equals(value) != true)) {
+                            this.OXIDIZINGGASESField = value;
+                            this.RaisePropertyChanged("OXIDIZINGGASES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int OXIDIZINGLIQUIDS {
+                    get {
+                        return this.OXIDIZINGLIQUIDSField;
+                    }
+                    set {
+                        if ((this.OXIDIZINGLIQUIDSField.Equals(value) != true)) {
+                            this.OXIDIZINGLIQUIDSField = value;
+                            this.RaisePropertyChanged("OXIDIZINGLIQUIDS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int OXIDIZINGSOLIDS {
+                    get {
+                        return this.OXIDIZINGSOLIDSField;
+                    }
+                    set {
+                        if ((this.OXIDIZINGSOLIDSField.Equals(value) != true)) {
+                            this.OXIDIZINGSOLIDSField = value;
+                            this.RaisePropertyChanged("OXIDIZINGSOLIDS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int PRESSUREGASESCOMPRESSEDGASES {
+                    get {
+                        return this.PRESSUREGASESCOMPRESSEDGASESField;
+                    }
+                    set {
+                        if ((this.PRESSUREGASESCOMPRESSEDGASESField.Equals(value) != true)) {
+                            this.PRESSUREGASESCOMPRESSEDGASESField = value;
+                            this.RaisePropertyChanged("PRESSUREGASESCOMPRESSEDGASES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int PRESSUREGASESDISSOLVEDGASES {
+                    get {
+                        return this.PRESSUREGASESDISSOLVEDGASESField;
+                    }
+                    set {
+                        if ((this.PRESSUREGASESDISSOLVEDGASESField.Equals(value) != true)) {
+                            this.PRESSUREGASESDISSOLVEDGASESField = value;
+                            this.RaisePropertyChanged("PRESSUREGASESDISSOLVEDGASES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int PRESSUREGASESLIQUEFIEDGASES {
+                    get {
+                        return this.PRESSUREGASESLIQUEFIEDGASESField;
+                    }
+                    set {
+                        if ((this.PRESSUREGASESLIQUEFIEDGASESField.Equals(value) != true)) {
+                            this.PRESSUREGASESLIQUEFIEDGASESField = value;
+                            this.RaisePropertyChanged("PRESSUREGASESLIQUEFIEDGASES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int PRESSUREGASESREFRIGERATEDLIQUE {
+                    get {
+                        return this.PRESSUREGASESREFRIGERATEDLIQUEField;
+                    }
+                    set {
+                        if ((this.PRESSUREGASESREFRIGERATEDLIQUEField.Equals(value) != true)) {
+                            this.PRESSUREGASESREFRIGERATEDLIQUEField = value;
+                            this.RaisePropertyChanged("PRESSUREGASESREFRIGERATEDLIQUE");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int PYROPHORICLIQUIDS {
+                    get {
+                        return this.PYROPHORICLIQUIDSField;
+                    }
+                    set {
+                        if ((this.PYROPHORICLIQUIDSField.Equals(value) != true)) {
+                            this.PYROPHORICLIQUIDSField = value;
+                            this.RaisePropertyChanged("PYROPHORICLIQUIDS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int PYROPHORICSOLIDS {
+                    get {
+                        return this.PYROPHORICSOLIDSField;
+                    }
+                    set {
+                        if ((this.PYROPHORICSOLIDSField.Equals(value) != true)) {
+                            this.PYROPHORICSOLIDSField = value;
+                            this.RaisePropertyChanged("PYROPHORICSOLIDS");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string REPRODUCTIVETOXICITY {
+                    get {
+                        return this.REPRODUCTIVETOXICITYField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.REPRODUCTIVETOXICITYField, value) != true)) {
+                            this.REPRODUCTIVETOXICITYField = value;
+                            this.RaisePropertyChanged("REPRODUCTIVETOXICITY");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int RESPIRATORYSENSITIZER {
+                    get {
+                        return this.RESPIRATORYSENSITIZERField;
+                    }
+                    set {
+                        if ((this.RESPIRATORYSENSITIZERField.Equals(value) != true)) {
+                            this.RESPIRATORYSENSITIZERField = value;
+                            this.RaisePropertyChanged("RESPIRATORYSENSITIZER");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string SELFHEATINGSUBSTANCES {
+                    get {
+                        return this.SELFHEATINGSUBSTANCESField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.SELFHEATINGSUBSTANCESField, value) != true)) {
+                            this.SELFHEATINGSUBSTANCESField = value;
+                            this.RaisePropertyChanged("SELFHEATINGSUBSTANCES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string SELFREACTIVESUBSTANCES {
+                    get {
+                        return this.SELFREACTIVESUBSTANCESField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.SELFREACTIVESUBSTANCESField, value) != true)) {
+                            this.SELFREACTIVESUBSTANCESField = value;
+                            this.RaisePropertyChanged("SELFREACTIVESUBSTANCES");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int SERIOUSEYEDAMAGE {
+                    get {
+                        return this.SERIOUSEYEDAMAGEField;
+                    }
+                    set {
+                        if ((this.SERIOUSEYEDAMAGEField.Equals(value) != true)) {
+                            this.SERIOUSEYEDAMAGEField = value;
+                            this.RaisePropertyChanged("SERIOUSEYEDAMAGE");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int SKINCORROSION {
+                    get {
+                        return this.SKINCORROSIONField;
+                    }
+                    set {
+                        if ((this.SKINCORROSIONField.Equals(value) != true)) {
+                            this.SKINCORROSIONField = value;
+                            this.RaisePropertyChanged("SKINCORROSION");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int SKINIRRITATION {
+                    get {
+                        return this.SKINIRRITATIONField;
+                    }
+                    set {
+                        if ((this.SKINIRRITATIONField.Equals(value) != true)) {
+                            this.SKINIRRITATIONField = value;
+                            this.RaisePropertyChanged("SKINIRRITATION");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public int SKINSENSITIZER {
+                    get {
+                        return this.SKINSENSITIZERField;
+                    }
+                    set {
+                        if ((this.SKINSENSITIZERField.Equals(value) != true)) {
+                            this.SKINSENSITIZERField = value;
+                            this.RaisePropertyChanged("SKINSENSITIZER");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string TOSTREPEATEDEXPOSURE {
+                    get {
+                        return this.TOSTREPEATEDEXPOSUREField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.TOSTREPEATEDEXPOSUREField, value) != true)) {
+                            this.TOSTREPEATEDEXPOSUREField = value;
+                            this.RaisePropertyChanged("TOSTREPEATEDEXPOSURE");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string TOSTSINGLEEXPOSURE {
+                    get {
+                        return this.TOSTSINGLEEXPOSUREField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.TOSTSINGLEEXPOSUREField, value) != true)) {
+                            this.TOSTSINGLEEXPOSUREField = value;
+                            this.RaisePropertyChanged("TOSTSINGLEEXPOSURE");
+                        }
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string WATERREACTIVEFLAMMABLEGAS {
+                    get {
+                        return this.WATERREACTIVEFLAMMABLEGASField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.WATERREACTIVEFLAMMABLEGASField, value) != true)) {
+                            this.WATERREACTIVEFLAMMABLEGASField = value;
+                            this.RaisePropertyChanged("WATERREACTIVEFLAMMABLEGAS");
+                        }
+                    }
+                }
+                
+                public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+                
+                protected void RaisePropertyChanged(string propertyName) {
+                    System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+                    if ((propertyChanged != null)) {
+                        propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                    }
                 }
             }
             
