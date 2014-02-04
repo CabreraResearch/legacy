@@ -53,41 +53,16 @@ namespace ChemSW.Nbt
 
         }//_clearModifiedFlag()
 
-        //private void _clear()
-        //{
-        //    _Props.Clear();
-
-        //    _PropsIndexByFirstVersionPropId.Clear();
-        //    _PropsIndexByNodeTypePropId.Clear();
-        //    _PropsIndexByObjectClassPropName.Clear();
-
-        //    if( null != _PropsTable )
-        //    {
-        //        _PropsTable.Clear();
-        //    }
-        //    _Filled = false;
-
-        //}//clear()
-
-
         private bool _Filled = false;
         public bool Filled
         {
-            get
-            {
-                return ( _Filled );
-            }//get
-
-        }//Filled
+            get { return ( _Filled ); }
+        }
 
         public int Count
         {
-            get
-            {
-                return ( _Props.Count );
-            }//Get
-        }//Count
-
+            get { return ( _Props.Count ); }
+        }
 
         public void fill( bool IsNew )
         {
@@ -116,7 +91,7 @@ namespace ChemSW.Nbt
             {
                 _CswNbtNode.ObjClass.triggerAfterPopulateProps();
             }
-            
+
             _Filled = true;
         }//fill()
 
@@ -174,23 +149,27 @@ namespace ChemSW.Nbt
         public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
         {
             // Do BeforeUpdateNodePropRow on each row
-
             //Case 29857 - we have to use a traditional for-loop here. onBeforeUpdateNodePropRow() can cause new rows in PropCollData.PropsTable to be created
             // see Document.ArchivedDate
             for( int i = 0; i < PropsTable.Rows.Count; i++ )
             {
                 DataRow CurrentRow = PropsTable.Rows[i];
-
                 if( CurrentRow.IsNull( "nodetypepropid" ) )
+                {
                     throw ( new CswDniException( "A node prop row is missing its nodetypepropid" ) );
-                //bz # 6542
-                //CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
-
-                //if( null != CswNbtMetaDataNodeTypeProp )
-                //    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+                }
                 if( false == SkipEvents )
                 {
                     this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation, Creating );
+                }
+            }
+
+            // Sync GestaltSearch (this has to be done after -- see case 31586)
+            foreach( CswNbtNodePropWrapper CurrentProp in _Props )
+            {
+                if( CurrentProp.wasAnySubFieldModified() )
+                {
+                    CurrentProp.SyncGestaltSearch();
                 }
             }
 

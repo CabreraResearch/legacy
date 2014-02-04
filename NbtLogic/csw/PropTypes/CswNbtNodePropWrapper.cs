@@ -260,7 +260,6 @@ namespace ChemSW.Nbt.PropTypes
             throw new NotImplementedException( "ToXML is not implemented." );
         }
 
-
         /// <summary>
         /// Returns defined Field Type attributes/subfields as JToken class JObject
         /// </summary>
@@ -356,6 +355,11 @@ namespace ChemSW.Nbt.PropTypes
         public void SyncGestalt()
         {
             _CswNbtNodeProp.SyncGestalt();
+        }
+
+        public void SyncGestaltSearch()
+        {
+            _CswNbtNodeProp.SyncGestaltSearch();
         }
 
         /// <summary>
@@ -717,7 +721,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropReportLink) _CswNbtNodeProp );
             }
         }//Relationship
-        
+
         public CswNbtNodePropScientific AsScientific
         {
             get
@@ -798,7 +802,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//View
 
-        
+
         /// <summary>
         /// Properties of various field types that reference nodes
         /// </summary>
