@@ -10,12 +10,13 @@ namespace ChemSW.Nbt
 
     public class CswNbtTreeBuilder
     {
-        CswNbtResources _CswNbtResources = null;
-        ICswNbtTreeFactory _CswNbtTreeFactory = null;
-        public CswNbtTreeBuilder( CswNbtResources CswNbtResources, ICswNbtTreeFactory CswNbtTreeFactory )
+        private CswNbtResources _CswNbtResources = null;
+        private CswNbtNodeCollection _CswNbtNodeCollection = null;
+
+        public CswNbtTreeBuilder( CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection )
         {
             _CswNbtResources = CswNbtResources;
-            _CswNbtTreeFactory = CswNbtTreeFactory;
+            _CswNbtNodeCollection = CswNbtNodeCollection;
         }//ctor
 
         private string _SchemaPath = "";
@@ -52,19 +53,10 @@ namespace ChemSW.Nbt
         }
 
 
-
-
-        private CswEnumNbtTreeMode _TreeMode = CswEnumNbtTreeMode.DomProxy;
         private ICswNbtTree _makeTree( CswNbtView View, bool IsFullyPopulated )
         {
-            return ( _CswNbtTreeFactory.makeTree( _TreeMode, View, IsFullyPopulated ) );
-
-        }//_makeTree()
-        private ICswNbtTree _makeTree( bool IsFullyPopulated )
-        {
-            return ( _CswNbtTreeFactory.makeTree( _TreeMode, null, IsFullyPopulated ) );
-
-        }//_makeTree()
+            return new CswNbtTreeNodes( "", View, _CswNbtResources, _CswNbtNodeCollection, IsFullyPopulated );
+        }
 
         /// <summary>
         /// Instance a Tree from a View
@@ -104,8 +96,7 @@ namespace ChemSW.Nbt
         public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause,
                                               bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool SingleNodetype, bool OnlyMergeableNodeTypes, Int32 PerLevelNodeLimit = Int32.MinValue, List<string> ExcludeNodeIds = null )
         {
-            ICswNbtTree ReturnVal = _makeTree( true );
-
+            ICswNbtTree ReturnVal = _makeTree( null, true );
             CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, SearchType, WhereClause,
                                                                                                   IncludeSystemNodes, IncludeHiddenNodes, SingleNodetype, OnlyMergeableNodeTypes, ExcludeNodeIds );
             TreeLoader.load( RequireViewPermissions, PerLevelNodeLimit );

@@ -45,7 +45,6 @@ namespace ChemSW.Nbt
         private CswNbtNodeCollection _CswNbtNodeCollection = null;
         private CswNbtActionCollection _ActionCollection;
         public CswNbtPermit Permit = null;
-        private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
         public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
@@ -425,34 +424,19 @@ namespace ChemSW.Nbt
             }
         } // AccessId
 
-
-        public void SetDbResources( CswEnumPooledConnectionState PooledConnectionState )
-        {
-            _CswResources.SetDbResources( PooledConnectionState );
-        }//SetDbResources
-
-
         /// <summary>
         /// During initialization, allows setting database resources
         /// </summary>
-        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, CswEnumPooledConnectionState PooledConnectionState )
+        public void SetDbResources( CswEnumPooledConnectionState PooledConnectionState )
         {
-            _CswNbtNodeCollection = new CswNbtNodeCollection( this ); //, _ICswNbtObjClassFactory );
-            _CswNbtTreeFactory = CswNbtTreeFactory;
-            _CswNbtTreeFactory.CswNbtResources = this;
-            _CswNbtTreeFactory.CswNbtNodeCollection = _CswNbtNodeCollection;
-            //_CswNbtTreeCache = new CswNbtTreeCache( this, _CswNbtTreeFactory );
-
-            _CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory );
+            _CswNbtNodeCollection = new CswNbtNodeCollection( this );
+            _CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtNodeCollection );
             _CswResources.SetDbResources( PooledConnectionState );
-
             _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
 
         private void handleGetAuditLevel( DataRow DataRow, ref string ReturnVal )
         {
-
-
             // case 22542
             // Override jct_nodes_props audit level with level set on nodetype prop
             if( DataRow.Table.TableName == "jct_nodes_props" )
