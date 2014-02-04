@@ -38,7 +38,6 @@ namespace ChemSW.Nbt
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Kiosk_Mode );
-            _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
 
             //Mail Reports
             _CswNbtResources.Modules.ToggleNode( false, "New Assembly Problem Notification", CswEnumNbtObjectClass.MailReportClass );
