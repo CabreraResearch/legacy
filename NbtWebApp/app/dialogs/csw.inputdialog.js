@@ -41,9 +41,11 @@
                 });
             }//for each field
 
-            inputDialog.div.button({
+            cswPrivate.okButton = inputDialog.div.button({
                 enabledText: 'OK',
-                onClick: function () { cswPrivate.onOk(fieldElements); },
+                onClick: function () {
+                    cswPrivate.onOk(fieldElements);
+                },
             });
 
             inputDialog.div.button({
@@ -54,6 +56,10 @@
             });
 
             inputDialog.open();
+
+            inputDialog.enableOk = function() {
+                cswPrivate.okButton.enable();
+            };
             
             return inputDialog;
         }());
