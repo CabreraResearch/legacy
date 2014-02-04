@@ -1520,12 +1520,10 @@
     <Compile Include="csw\Statistics\CswNbtStatisticsStorageDb.cs" />
     <Compile Include="csw\TreeEvents\ICswNbtTreeRule.cs" />
     <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
-    <Compile Include="csw\Tree\CswNbtLocationTreeDeprecated.cs" />
     <Compile Include="csw\Tree\CswNbtNodeCollection.cs" />
     <Compile Include="csw\Tree\CswNbtNodeKey.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropColl.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropCollDataRelational.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeTypeProp.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriter.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />
     <Compile Include="csw\Tree\CswNbtPropEnmrtrFiltered.cs" />
