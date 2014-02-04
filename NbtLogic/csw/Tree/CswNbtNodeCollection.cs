@@ -20,7 +20,6 @@ namespace ChemSW.Nbt
     {
         private Dictionary<NodeHashKey, CswNbtNode> _NodeHash;
         private CswNbtResources _CswNbtResources;
-        private CswNbtNodeReader _CswNbtNodeReader;
         private CswNbtNodeWriter _CswNbtNodeWriter;
 
         /// <summary>
@@ -30,7 +29,6 @@ namespace ChemSW.Nbt
         {
 
             _CswNbtResources = CswNbtResources;
-            _CswNbtNodeReader = new CswNbtNodeReader( _CswNbtResources );
             _CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
 
             _NodeHash = new Dictionary<NodeHashKey, CswNbtNode>();
@@ -359,10 +357,10 @@ namespace ChemSW.Nbt
         private CswNbtNode _getExistingNode( NodeHashKey HashKey, Int32 NodeTypeId, CswDateTime Date )
         {
             CswTimer Timer = new CswTimer();
-            CswNbtNode Node = new CswNbtNode( _CswNbtResources, _CswNbtNodeReader, _CswNbtNodeWriter, NodeTypeId, CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, _NodeHash.Count, Date );
+            CswNbtNode Node = new CswNbtNode( _CswNbtResources, _CswNbtNodeWriter, NodeTypeId, CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, _NodeHash.Count, Date );
 
             //bz # 7816 -- only add to the collection if the node got filled
-            Node.fill( Date );
+            Node.fill();
             if( Node.Filled )
             {
                 if( !_NodeHash.ContainsKey( HashKey ) )
@@ -398,9 +396,9 @@ namespace ChemSW.Nbt
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false, bool IsCopy = false )
         {
-            CswNbtNode Node = new CswNbtNode( _CswNbtResources, _CswNbtNodeReader, _CswNbtNodeWriter, NodeTypeId, CswEnumNbtNodeSpecies.Plain, null, _NodeHash.Count, null, IsTemp: true ); // temp here for auditing, but see below
+            CswNbtNode Node = new CswNbtNode( _CswNbtResources, _CswNbtNodeWriter, NodeTypeId, CswEnumNbtNodeSpecies.Plain, null, _NodeHash.Count, null, IsTemp: true ); // temp here for auditing, but see below
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
-            Node.fillFromNodeTypeId( NodeTypeId );
+            Node.fillFromNodeTypeId();
 
             _CswNbtNodeWriter.makeNewNodeEntry( Node );
             _CswNbtNodeWriter.setDefaultPropertyValues( Node );

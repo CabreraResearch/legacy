@@ -81,11 +81,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswDateTime _Date;
         private CswNbtResources _CswNbtResources;
         private CswNbtNodeWriter _CswNbtNodeWriter;
-        private CswNbtNodeReader _CswNbtNodeReader;
-        public CswNbtNode( CswNbtResources CswNbtResources, CswNbtNodeReader CswNbtNodeReader, CswNbtNodeWriter CswNbtNodeWriter, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp = false )
+        public CswNbtNode( CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp = false )
         {
             _CswNbtResources = CswNbtResources;
-            _CswNbtNodeReader = CswNbtNodeReader;
             _CswNbtNodeWriter = CswNbtNodeWriter;
             _UniqueId = UniqueId;
             _NodeId = NodeId;
@@ -472,25 +470,58 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//delete()
 
-        public void fill( CswDateTime Date )
+        public void fill()
         {
-            _CswNbtNodeReader.completeNodeData( this, Date );
+            if( NodeSpecies == CswEnumNbtNodeSpecies.Plain )
+            {
+                //bool NodeInfoFetched = false;
+                if( CswTools.IsPrimaryKey( NodeId ) && ( NodeTypeId <= 0 || NodeName == String.Empty ) )
+                {
+                    DataTable NodesTable = null;
+                    if( CswTools.IsDate( _Date ) )
+                    {
+                        string NodesSql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "nodes", _Date, NodeId.PrimaryKey );
+                        CswArbitrarySelect NodesTableSelect = _CswNbtResources.makeCswArbitrarySelect( "fetchNodeInfo_Select", NodesSql );
+                        NodesTable = NodesTableSelect.getTable();
+                    }
+                    else
+                    {
+                        CswTableSelect NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNode.fill_nodes", "nodes" );
+                        NodesTable = NodesTableSelect.getTable( "nodeid", NodeId.PrimaryKey );
+                    }
+                    if( NodesTable.Rows.Count > 0 )
+                    {
+                        read( NodesTable.Rows[0] );
+                        RelationalId = new CswPrimaryKey( NodesTable.Rows[0]["relationaltable"].ToString(), CswConvert.ToInt32( NodesTable.Rows[0]["relationalid"] ) );
+                    }
+
+                    CswTimer Timer = new CswTimer();
+                    //_CswNbtResources.logTimerResult( "CswNbtNode.fill() about to call fillFromNodeTypeId() on node (" + NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+                    //fillFromNodeTypeId();
+                    //_CswNbtResources.logTimerResult( "CswNbtNode.fill() called fillFromNodeTypeId(), finished on node (" + NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+                    if( getNodeType() != null )
+                    {
+                        Properties.fillFromNodePk( NodeId, NodeTypeId, _Date );
+                    }
+                    _CswNbtResources.logTimerResult( "Filled in node property data for node (" + NodeId.ToString() + "): " + NodeName, Timer.ElapsedDurationInSecondsAsString );
+
+                    if( CswTools.IsDate( _Date ) )
+                    {
+                        setReadOnly( value: true, SaveToDb: false );
+                    }
+                }
+            }
+
             _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
         }//fill() 
 
 
-        public void fillFromNodeTypeId( Int32 NodeTypeId )
+        public void fillFromNodeTypeId()
         {
-            _CswNbtNodeReader.fillFromNodeTypeIdWithProps( this, NodeTypeId );
+            //Properties.fillFromNodePk( NodeId, NodeTypeId, _Date );
+            Properties.fillFromNodeTypeId( NodeTypeId );
             _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
         }//fillFromNodeTypeId()
-
-
-        public void cancelChanges()
-        {
-            _CswNbtNodeReader.fillFromNodeTypeId( this, _NodeTypeId );
-            _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
-        }//cancelChanges()
 
 
         /// <summary>

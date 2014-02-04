@@ -1525,7 +1525,6 @@
     <Compile Include="csw\Tree\CswNbtNodeKey.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropColl.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropCollDataRelational.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeReader.cs" />
     <Compile Include="csw\Tree\CswNbtNodeTypeProp.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriter.cs" />
     <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />
