@@ -122,38 +122,43 @@
                                         'Name': Csw.enums.inputTypes.text,
                                     },
                                     onOk: function (fields) {
-                                        Csw.ajaxWcf.post({
-                                            urlMethod: 'Design/createNewTab',
-                                            data: {
-                                                NodetypeId: cswPrivate.nodeTypeId,
-                                                Name: fields['Name'].val(),
-                                                Order: tab.ownerCt.items.length,
-                                            },
-                                            success: function (data) {
-                                                var newTab = tab.ownerCt.add({
-                                                    title: fields['Name'].val(),
-                                                    id: data.TabId,
-                                                    listeners: {
-                                                        activate: clickTab,
-                                                        beforeclose: beforeCloseTab,
-                                                    },//listeners
-                                                    closable: true,
-                                                });
-                                                tab.ownerCt.setActiveTab(newTab);
-                                                inputDialog.close();
-                                                //if there was previously only 1 tab, re-insert the little [X]
-                                                if (tab.ownerCt.items.length == 3) {
-                                                    tab.ownerCt.items.items.forEach( function(eachTab) {
-                                                        if (eachTab !== tab) {//ignore the 'New Tab (+)' tab
-                                                            eachTab.tab.setClosable(true);
-                                                        }
+                                        if (Csw.isNullOrEmpty(fields['Name'].val())) {
+                                            Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'You must provide a valid name for this tab.', ''));
+                                            setTimeout(inputDialog.enableOk, 100);
+                                        } else {
+                                            Csw.ajaxWcf.post({
+                                                urlMethod: 'Design/createNewTab',
+                                                data: {
+                                                    NodetypeId: cswPrivate.nodeTypeId,
+                                                    Name: fields['Name'].val(),
+                                                    Order: tab.ownerCt.items.length,
+                                                },
+                                                success: function(data) {
+                                                    var newTab = tab.ownerCt.add({
+                                                        title: fields['Name'].val(),
+                                                        id: data.TabId,
+                                                        listeners: {
+                                                            activate: clickTab,
+                                                            beforeclose: beforeCloseTab,
+                                                        },//listeners
+                                                        closable: true,
                                                     });
-                                                }
-                                            }
-                                        });
-                                    },
-                                });
-                            }
+                                                    tab.ownerCt.setActiveTab(newTab);
+                                                    inputDialog.close();
+                                                    //if there was previously only 1 tab, re-insert the little [X]
+                                                    if (tab.ownerCt.items.length == 3) {
+                                                        tab.ownerCt.items.items.forEach(function(eachTab) {
+                                                            if (eachTab !== tab) { //ignore the 'New Tab (+)' tab
+                                                                eachTab.tab.setClosable(true);
+                                                            }
+                                                        });
+                                                    }
+                                                }//on successful web request
+                                            });//ajaxWcf.post
+                                        }//else when tab name is not null
+                                    },//on clicking Ok
+                                });//input dialog
+                            }//on activating the new tab
                         }, //listeners
                         reorderable: false
                     });

@@ -69,9 +69,7 @@ namespace ChemSW.Nbt
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Kiosk_Mode );
-            _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
-
-
+            
             //Show Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( false, CswEnumNbtModuleName.Containers );
 
