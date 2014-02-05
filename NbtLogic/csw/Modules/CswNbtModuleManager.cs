@@ -169,13 +169,15 @@ namespace ChemSW.Nbt
                 row["enabled"] = CswConvert.ToDbVal( Enable );
                 _ModuleRules[Module].Enabled = Enable;
             }
-            ModuleUpdate.update( ModulesTbl );
 
             //Case 31546 - if we're DISABLING a module, we have to call Disable() BEFORE reseting available metadata or metadata objects hidden by the module will not be fetchable in the toggle events
             if( false == Enable && ModuleEnabled )
             {
                 _ModuleRules[Module].Disable();
             }
+
+            ModuleUpdate.update( ModulesTbl );
+
             _CswNbtResources.MetaData.ResetEnabledNodeTypes();
             _CswNbtResources.finalize();
             _CswNbtResources.MetaData.refreshAll();

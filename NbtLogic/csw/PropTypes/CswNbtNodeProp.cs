@@ -401,7 +401,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Prop-specific event which fires before the node prop data row is written to the database
         /// </summary>
-        public virtual void onBeforeUpdateNodePropRow(){}
+        public virtual void onBeforeUpdateNodePropRowLogic() { }
 
         /// <summary>
         /// Event which fires before the node prop data row is written to the database
@@ -409,23 +409,29 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            onBeforeUpdateNodePropRow();
+            onBeforeUpdateNodePropRowLogic();
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
-                if( IsUnique() && wasAnySubFieldModified() && !OverrideUniqueValidation )
+                if( IsUnique() && wasAnySubFieldModified() && false == OverrideUniqueValidation )
                 {
                     CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                     CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
 
                     CswNbtViewRelationship ViewRel = null;
                     if( NodeTypeProp.IsGlobalUnique() ) // BZ 9754
+                    {
                         ViewRel = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeProp.NodeTypeId ), false );
+                    }
                     else
+                    {
                         ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.getNodeType(), false );
+                    }
 
                     if( NodeId != null )
+                    {
                         ViewRel.NodeIdsToFilterOut.Add( NodeId );
+                    }
 
                     //bz# 5959
                     CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, NodeTypeProp );
@@ -464,12 +470,12 @@ namespace ChemSW.Nbt.PropTypes
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
             if( _CswNbtNodePropData.wasAnySubFieldModified() )
             {
-                string GestaltSearchValue = _CswNbtNodePropData.Gestalt.ToLower();
-                if( GestaltSearchValue.Length > 508 )  // why 508, not 512?  see case 31525.
-                {
-                    GestaltSearchValue = GestaltSearchValue.Substring( 0, 508 ); 
-                }
-                SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
+                //string GestaltSearchValue = _CswNbtNodePropData.Gestalt.ToLower();
+                //if( GestaltSearchValue.Length > 508 )  // why 508, not 512?  see case 31525.
+                //{
+                //    GestaltSearchValue = GestaltSearchValue.Substring( 0, 508 );
+                //}
+                //SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
 
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
                 if( null != OnPropChange )
@@ -477,8 +483,7 @@ namespace ChemSW.Nbt.PropTypes
                     OnPropChange( this, Creating );
                 }
             }
-
-        }
+        } // onBeforeUpdateNodePropRow()
 
         protected bool SetPropRowValue( CswNbtSubField SubField, object value, bool IsNonModifying = false )
         {
@@ -525,7 +530,7 @@ namespace ChemSW.Nbt.PropTypes
 
             CswEnumNbtFieldType FieldType = Source.getFieldTypeValue();
             ICswNbtFieldTypeRule FieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldType );
-            
+
             foreach( CswNbtSubField SubField in FieldTypeRule.SubFields )
             {
                 if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
@@ -642,9 +647,19 @@ namespace ChemSW.Nbt.PropTypes
 
         public abstract void SyncGestalt();
 
-        public string OtherPropGestalt( Int32 NodeTypePropId )
+        public string OtherPropGestalt( Int32 propId )
         {
-            return _CswNbtNodePropData.OtherPropGestalt( NodeTypePropId );
+            return _CswNbtNodePropData.OtherPropGestalt( propId );
+        }
+
+        public void SyncGestaltSearch()
+        {
+            string GestaltSearchValue = Gestalt.ToLower();
+            if( GestaltSearchValue.Length > 508 ) // why 508, not 512?  see case 31525.
+            {
+                GestaltSearchValue = GestaltSearchValue.Substring( 0, 508 );
+            }
+            SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
         }
 
         /// <summary>
@@ -704,6 +719,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
             set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
         }
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

@@ -37,7 +37,6 @@ namespace ChemSW.Nbt.ObjClasses
         public void postChanges( CswNbtNode Node )
         {
             Node.removeTemp();
-            Node.checkWriter();
 
             if( null != Node.ObjClass )
             {

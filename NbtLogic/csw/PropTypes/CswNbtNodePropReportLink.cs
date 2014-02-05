@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             base.ToJSON( ParentObject );  // FIRST
-            ParentObject["reportid"] = new CswPrimaryKey( "nodes", this.NodeTypeProp.FKValue ).ToString();
+            ParentObject["reportid"] = NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleReportLink.AttributeName.Target );
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

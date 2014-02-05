@@ -1,7 +1,6 @@
 using ChemSW.Config;
 using ChemSW.Log;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.TreeEvents;
 
 namespace ChemSW.Nbt
 {
@@ -38,7 +37,7 @@ namespace ChemSW.Nbt
             CswDbCfgInfo ConfigInfo = new CswDbCfgInfo( SetupMode );
             
             CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, CswSuperCycleCache, CswResourcesMaster, CswLogger );
-            ReturnVal.SetDbResources( new CswNbtTreeFactory(), PooledConnectionState );
+            ReturnVal.SetDbResources( PooledConnectionState );
 
             ////bz # 9896: This events must only be assigned when we first instance the class;
             ////if we also assign them to cached resources, we get duplicate events occuring :-(

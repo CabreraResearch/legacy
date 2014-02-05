@@ -46,7 +46,6 @@ namespace ChemSW.Nbt
         private CswNbtNodeCollection _CswNbtNodeCollection = null;
         private CswNbtActionCollection _ActionCollection;
         public CswNbtPermit Permit = null;
-        private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
         public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
@@ -164,31 +163,6 @@ namespace ChemSW.Nbt
         #region Nodes and Trees
 
         public CswEnumNbtNodeEditMode EditMode = CswEnumNbtNodeEditMode.Edit;
-
-        /// <summary>
-        /// Access to the node factory.  Consider using Nodes instead.
-        /// </summary>
-        public CswNbtNodeFactory CswNbtNodeFactory
-        {
-            get
-            {
-                CswNbtNodeFactory ret = null;
-                if( _CswNbtNodeCollection != null )
-                    ret = _CswNbtNodeCollection.CswNbtNodeFactory;
-                return ret;
-            }
-        }
-        //private CswNbtTreeCache _CswNbtTreeCache = null;
-        ///// <summary>
-        ///// Access to all trees loaded during this session
-        ///// </summary>
-        //public CswNbtTreeCache Trees
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtTreeCache );
-        //    }
-        //}
 
         private CswNbtTreeBuilder _CswNbtTreeBuilder = null;
         public CswNbtTreeBuilder Trees
@@ -451,34 +425,19 @@ namespace ChemSW.Nbt
             }
         } // AccessId
 
-
-        public void SetDbResources( CswEnumPooledConnectionState PooledConnectionState )
-        {
-            _CswResources.SetDbResources( PooledConnectionState );
-        }//SetDbResources
-
-
         /// <summary>
         /// During initialization, allows setting database resources
         /// </summary>
-        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, CswEnumPooledConnectionState PooledConnectionState )
+        public void SetDbResources( CswEnumPooledConnectionState PooledConnectionState )
         {
-            _CswNbtNodeCollection = new CswNbtNodeCollection( this ); //, _ICswNbtObjClassFactory );
-            _CswNbtTreeFactory = CswNbtTreeFactory;
-            _CswNbtTreeFactory.CswNbtResources = this;
-            _CswNbtTreeFactory.CswNbtNodeCollection = _CswNbtNodeCollection;
-            //_CswNbtTreeCache = new CswNbtTreeCache( this, _CswNbtTreeFactory );
-
-            _CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory );
+            _CswNbtNodeCollection = new CswNbtNodeCollection( this );
+            _CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtNodeCollection );
             _CswResources.SetDbResources( PooledConnectionState );
-
             _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
 
         private void handleGetAuditLevel( DataRow DataRow, ref string ReturnVal )
         {
-
-
             // case 22542
             // Override jct_nodes_props audit level with level set on nodetype prop
             if( DataRow.Table.TableName == "jct_nodes_props" )
