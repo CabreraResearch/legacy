@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.MetaData
               { Precision                     , Precision                     }, 
               { PreferredAnswer               , PreferredAnswer               }, 
               { Prefix                        , Prefix                        }, 
+              { QuantityOptional              , QuantityOptional              },
               { ReadOnlyDelimiter             , ReadOnlyDelimiter             }, 
               { ReadOnlyHideThreshold         , ReadOnlyHideThreshold         }, 
               { Regex                         , Regex                         }, 
@@ -199,6 +200,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Precision = "Precision";
         public const string PreferredAnswer = "Preferred Answer";
         public const string Prefix = "Prefix";
+        public const string QuantityOptional = "Quantity Optional";
         public const string ReadOnlyDelimiter = "ReadOnly Delimiter";
         public const string ReadOnlyHideThreshold = "ReadOnly Hide Threshold";
         public const string Regex = "Regex";
