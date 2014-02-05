@@ -869,56 +869,74 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        private CswNbtNodePropWrapper _DefaultValue = null;
-        private DataRow _DefaultValueRow = null;
+        //private CswNbtNodePropWrapper _DefaultValue = null;
+        //private DataRow _DefaultValueRow = null;
 
-        private void _initDefaultValue( bool CreateMissingRow )
-        {
-            if( _DefaultValue == null )
-            {
-                if( _DefaultValueRow == null )
-                {
-                    if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
-                    {
-                        if( _NodeTypePropRow["defaultvalueid"] != null && CswTools.IsInteger( _NodeTypePropRow["defaultvalueid"] ) )
-                        {
-                            DataTable DefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getTable( "jctnodepropid", CswConvert.ToInt32( _NodeTypePropRow["defaultvalueid"] ) );
-                            if( DefaultValueTable.Rows.Count > 0 )
-                                _DefaultValueRow = DefaultValueTable.Rows[0];
-                        }
-                        else if( CreateMissingRow )
-                        {
-                            DataTable NewDefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getEmptyTable();
-                            _DefaultValueRow = NewDefaultValueTable.NewRow();
-                            _DefaultValueRow["nodetypepropid"] = CswConvert.ToDbVal( this.PropId );
-                            NewDefaultValueTable.Rows.Add( _DefaultValueRow );
-                            _NodeTypePropRow["defaultvalueid"] = _DefaultValueRow["jctnodepropid"];
-                        }
-                    } // if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
-                } // if( _DefaultValueRow == null )
+        //private void _initDefaultValue( bool CreateMissingRow )
+        //{
+        //    if( _DefaultValue == null )
+        //    {
+        //        if( _DefaultValueRow == null )
+        //        {
+        //            if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
+        //            {
+        //                if( _NodeTypePropRow["defaultvalueid"] != null && CswTools.IsInteger( _NodeTypePropRow["defaultvalueid"] ) )
+        //                {
+        //                    DataTable DefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getTable( "jctnodepropid", CswConvert.ToInt32( _NodeTypePropRow["defaultvalueid"] ) );
+        //                    if( DefaultValueTable.Rows.Count > 0 )
+        //                        _DefaultValueRow = DefaultValueTable.Rows[0];
+        //                }
+        //                else if( CreateMissingRow )
+        //                {
+        //                    DataTable NewDefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getEmptyTable();
+        //                    _DefaultValueRow = NewDefaultValueTable.NewRow();
+        //                    _DefaultValueRow["nodetypepropid"] = CswConvert.ToDbVal( this.PropId );
+        //                    NewDefaultValueTable.Rows.Add( _DefaultValueRow );
+        //                    _NodeTypePropRow["defaultvalueid"] = _DefaultValueRow["jctnodepropid"];
+        //                }
+        //            } // if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
+        //        } // if( _DefaultValueRow == null )
 
-                if( _DefaultValueRow != null )
-                {
-                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
-                }
+        //        if( _DefaultValueRow != null )
+        //        {
+        //            _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
+        //        }
 
-            } // if( _DefaultValue == null )
-        }
+        //    } // if( _DefaultValue == null )
+        //}
 
-        public bool HasDefaultValue()
-        {
-            _initDefaultValue( false );
-            return !( _DefaultValue == null || _DefaultValue.Empty );
-        }
+        //public bool HasDefaultValue()
+        //{
+        //    _initDefaultValue( false );
+        //    return !( _DefaultValue == null || _DefaultValue.Empty );
+        //}
+
+        //public CswNbtNodePropWrapper DefaultValue
+        //{
+        //    get
+        //    {
+        //        _initDefaultValue( true );
+        //        return _DefaultValue;
+        //    }
+        //    // NO SET...interact with the CswNbtNodePropWrapper instead
+        //}
 
         public CswNbtNodePropWrapper DefaultValue
         {
             get
             {
-                _initDefaultValue( true );
-                return _DefaultValue;
+                CswNbtNodePropWrapper ret = null;
+                if( DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.DefaultValue ) )
+                {
+                    ret=DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.DefaultValue];
+                }
+                return ret;
             }
-            // NO SET...interact with the CswNbtNodePropWrapper instead
+        }
+
+        public bool HasDefaultValue()
+        {
+            return ( DefaultValue != null && false == DefaultValue.Empty );
         }
 
         public Int32 FirstPropVersionId
@@ -1010,31 +1028,31 @@ namespace ChemSW.Nbt.MetaData
                         //ViewCopy.save();
                         NewPropRow[PropColumn.ColumnName] = CswConvert.ToDbVal( ViewCopy.ViewId.get() );
                     }
-                    else if( PropColumn.ColumnName.ToLower() == "defaultvalueid" && CswTools.IsInteger( _NodeTypePropRow[PropColumn.ColumnName].ToString() ) )
-                    {
-                        // BZ 10242
-                        // Same problem -- copy the default value record
-                        CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "CopyPropToNewNodeTypePropRow_JNP_Update", "jct_nodes_props" );
-                        JctNodesPropsUpdate.AllowBlobColumns = true;
-                        DataTable JNPTable = JctNodesPropsUpdate.getTable( "jctnodepropid", CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) );
-                        if( JNPTable.Rows.Count > 0 )
-                        {
-                            DataRow ExistingJNPRow = JNPTable.Rows[0];
-                            DataRow NewJNPRow = JNPTable.NewRow();
-                            NewJNPRow["nodetypepropid"] = NewPropRow["nodetypepropid"];
-                            foreach( DataColumn JctColumn in JNPTable.Columns )
-                            {
-                                if( JctColumn.ColumnName != "jctnodepropid" &&
-                                    JctColumn.ColumnName != "nodetypepropid" )
-                                {
-                                    NewJNPRow[JctColumn] = ExistingJNPRow[JctColumn];
-                                }
-                            }
-                            JNPTable.Rows.Add( NewJNPRow );
-                            JctNodesPropsUpdate.update( JNPTable );
-                            NewPropRow[PropColumn.ColumnName] = NewJNPRow["jctnodepropid"];
-                        }
-                    }
+                    //else if( PropColumn.ColumnName.ToLower() == "defaultvalueid" && CswTools.IsInteger( _NodeTypePropRow[PropColumn.ColumnName].ToString() ) )
+                    //{
+                    //    // BZ 10242
+                    //    // Same problem -- copy the default value record
+                    //    CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "CopyPropToNewNodeTypePropRow_JNP_Update", "jct_nodes_props" );
+                    //    JctNodesPropsUpdate.AllowBlobColumns = true;
+                    //    DataTable JNPTable = JctNodesPropsUpdate.getTable( "jctnodepropid", CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) );
+                    //    if( JNPTable.Rows.Count > 0 )
+                    //    {
+                    //        DataRow ExistingJNPRow = JNPTable.Rows[0];
+                    //        DataRow NewJNPRow = JNPTable.NewRow();
+                    //        NewJNPRow["nodetypepropid"] = NewPropRow["nodetypepropid"];
+                    //        foreach( DataColumn JctColumn in JNPTable.Columns )
+                    //        {
+                    //            if( JctColumn.ColumnName != "jctnodepropid" &&
+                    //                JctColumn.ColumnName != "nodetypepropid" )
+                    //            {
+                    //                NewJNPRow[JctColumn] = ExistingJNPRow[JctColumn];
+                    //            }
+                    //        }
+                    //        JNPTable.Rows.Add( NewJNPRow );
+                    //        JctNodesPropsUpdate.update( JNPTable );
+                    //        NewPropRow[PropColumn.ColumnName] = NewJNPRow["jctnodepropid"];
+                    //    }
+                    //}
                     else if( PropColumn.ColumnName.ToLower() != "nodetypeid" &&
                              PropColumn.ColumnName.ToLower() != "nodetypetabsetid" &&
                              PropColumn.ColumnName.ToLower() != "nodetypepropid" &&
