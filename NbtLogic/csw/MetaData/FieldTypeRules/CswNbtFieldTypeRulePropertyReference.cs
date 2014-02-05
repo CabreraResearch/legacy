@@ -265,7 +265,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             public const string RelatedPropType = CswEnumNbtPropertyAttributeName.RelatedPropType;
             public const string UseSequence = CswEnumNbtPropertyAttributeName.UseSequence;
             public const string Sequence = CswEnumNbtPropertyAttributeName.Sequence;
-            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+            //public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
         }
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
