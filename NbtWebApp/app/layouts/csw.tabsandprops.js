@@ -871,16 +871,20 @@
                         false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                     cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                 }
+                
+                if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
+                    cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp &&
+                    cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+                    formTable.cell(1, 2).favoriteButton({
+                        name: cswPrivate.name + '_favBtn',
+                        nodeid: cswPrivate.tabState.nodeid,
+                        isFavorite: cswPrivate.tabState.isFavorite,
+                        onClick: function(isFavorite) {
+                            cswPrivate.tabState.isFavorite = isFavorite;
+                        }
+                    });
+                }
 
-                formTable.cell(1, 2).favoriteButton({
-                    name: cswPrivate.name + '_favBtn',
-                    nodeid: cswPrivate.tabState.nodeid,
-                    isFavorite: cswPrivate.tabState.isFavorite,
-                    onClick: function(isFavorite) {
-                        cswPrivate.tabState.isFavorite = isFavorite;
-                    }
-                });
-                    
                 if (Csw.bool(cswPrivate.tabState.Config)) {
                     cswPrivate.layoutTable.configOn();
                 } else if (Csw.isNullOrEmpty(cswPrivate.tabState.date) &&
