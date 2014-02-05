@@ -192,15 +192,19 @@ namespace ChemSW.Nbt
 
             if( canView )
             {
-                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) )
+                CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+                if( null != ContainerClass )
                 {
-                    CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-                    if( null != ContainerClass )
+                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
+                    if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
-                        CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
-                        if( NTProp.ObjectClassPropId == RequestProp.PropId )
+                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) )
                         {
                             canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], PermissionGroupId );
+                        }
+                        else
+                        {
+                            canView = false; // case 31851
                         }
                     }
                 }
