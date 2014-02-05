@@ -27,7 +27,9 @@
                 selectedSizeId: '',
                 customBarcodes: false,
                 nodetypename: '',
-                canAddSDS: true,
+                sdsModuleEnabled: false,
+                addSDSPermission: false,
+                //canAddSDS: true,
                 canAddCofA: false,
                 sdsDocs: [{
                     revisiondate: '',
@@ -108,7 +110,7 @@
             }
             setWizardStep(cswPrivate.wizardStepCreateContainers);
             setWizardStep(cswPrivate.wizardStepContainerProps);
-            if (cswPrivate.state.canAddSDS) {
+            if (cswPrivate.state.sdsModuleEnabled) {
                 setWizardStep(cswPrivate.wizardStepAttachSDS);
             }
             setWizardStep(cswPrivate.wizardStepPrintLabels);
@@ -356,27 +358,34 @@
                             SDSGridCell = SDSTable.cell(1, 2).css({ width: '550px' }),
                             attachSDSTable = SDSAddCell.table();
 
-                        attachSDSTable.cell(1, 1).a({
-                            text: 'Add a new SDS Document',
-                            onClick: function () {
-                                attachSDSTable.cell(1, 1).hide();
-                                attachSDSTable.cell(1, 2).show();
-                            }
-                        });
-                        attachSDSTable.cell(1, 2).hide();
+                        if (cswPrivate.state.addSDSPermission) {
+                            attachSDSTable.cell(1, 1).a({
+                                text: 'Add a new SDS Document',
+                                onClick: function() {
+                                    attachSDSTable.cell(1, 1).hide();
+                                    attachSDSTable.cell(1, 2).show();
+                                }
+                            });
+                            attachSDSTable.cell(1, 2).hide();
 
-                        cswPrivate.sdsDocTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                            tabState: {
-                                excludeOcProps: ['owner', 'save'],
-                                ShowAsReport: false,
-                                nodetypeid: cswPrivate.state.sdsDocTypeId,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onNodeIdSet: function (sdsDocId) {
-                                cswPrivate.state.sdsDocId = sdsDocId;
-                            }
-                        });
+
+                            cswPrivate.sdsDocTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                                tabState: {
+                                    excludeOcProps: ['owner', 'save'],
+                                    ShowAsReport: false,
+                                    nodetypeid: cswPrivate.state.sdsDocTypeId,
+                                    EditMode: Csw.enums.editMode.Add
+                                },
+                                ReloadTabOnSave: false,
+                                onNodeIdSet: function(sdsDocId) {
+                                    cswPrivate.state.sdsDocId = sdsDocId;
+                                }
+                            });
+                        } else {
+                            SDSAddCell.span({
+                                text: 'You do not have permission to create an SDS Document.'
+                            }).css({ 'color': 'red' });
+                        }
 
                         if (cswPrivate.state.sdsDocs.length > 0) {
                             SDSGridCell.span().setLabelText('Existing SDS Documents:').br({ number: 2 });

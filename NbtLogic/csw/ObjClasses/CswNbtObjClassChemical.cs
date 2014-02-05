@@ -11,6 +11,7 @@ using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -219,13 +220,16 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onReceiveButtonClick( NbtButtonData ButtonData )
         {
-            bool canAddSDS = false;
+            bool sdsModuleEnabled = false;
+            bool addSDSPermission = false;
+            //bool canAddSDS = false;
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
                 CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
                 CswNbtMetaDataNodeType SDSNodeType = SDSDocOC.FirstNodeType;
-                canAddSDS = null != SDSNodeType;
-                if( canAddSDS )
+                //canAddSDS = null != SDSNodeType;
+                sdsModuleEnabled = null != SDSNodeType;
+                if( sdsModuleEnabled )
                 {
                     ButtonData.Data["state"]["sdsDocTypeId"] = SDSNodeType.NodeTypeId;
                     CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
@@ -277,9 +281,18 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
                         }//if( Tree.getChildNodeCount() > 0 )
                     }
+
+                    // Does the current User have permission to create SDS Documents?
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SDSNodeType ) )
+                    {
+                        addSDSPermission = true;
+                    }
                 }
             }
-            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
+
+            ButtonData.Data["state"]["sdsModuleEnabled"] = sdsModuleEnabled;
+            ButtonData.Data["state"]["addSDSPermission"] = addSDSPermission;
+            //ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
         }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
