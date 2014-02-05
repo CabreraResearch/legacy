@@ -169,11 +169,12 @@
         //#region ctor preInit
         (function _pre() {
             if (options) {
-                Csw.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options, true);
             }
             if (Csw.isNullOrEmpty(cswParent)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a parent.', '', 'csw.receivematerial.js', 57));
             }
+           
             cswPrivate.validateState();
         }());
         //#endregion ctor preInit

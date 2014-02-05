@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-        override public void onBeforeUpdateNodePropRow()
+        override public void onBeforeUpdateNodePropRowLogic()
         {
             if( false == _Node.IsTemp )
             {

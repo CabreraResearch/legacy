@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-        public override void onBeforeUpdateNodePropRow()
+        public override void onBeforeUpdateNodePropRowLogic()
         {
             setSequenceValue();
         }

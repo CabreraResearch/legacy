@@ -133,9 +133,6 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Kiosk_Mode );
             }
-            {
-                _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
-            }
 
             //Hide Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( true, CswEnumNbtModuleName.Containers );

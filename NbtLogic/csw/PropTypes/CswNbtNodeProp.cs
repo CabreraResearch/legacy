@@ -401,7 +401,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Prop-specific event which fires before the node prop data row is written to the database
         /// </summary>
-        public virtual void onBeforeUpdateNodePropRow() { }
+        public virtual void onBeforeUpdateNodePropRowLogic() { }
 
         /// <summary>
         /// Event which fires before the node prop data row is written to the database
@@ -409,7 +409,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            onBeforeUpdateNodePropRow();
+            onBeforeUpdateNodePropRowLogic();
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686

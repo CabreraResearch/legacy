@@ -339,10 +339,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                bool ReturnVal = ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) );
-
+                bool ReturnVal = ( null == _CswNbtResources.CurrentNbtUser ) || 
+                                   ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && 
+                                     ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) );
                 return ( ReturnVal );
-
             }//get
 
         }//IsPasswordReadOnly
