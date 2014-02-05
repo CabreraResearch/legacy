@@ -905,17 +905,15 @@ namespace ChemSW.Nbt.Actions
                     CopyInspectionNameFinal = CopyInspectionNameOrig + " " + Iterator;
                 }
                 //CswNbtMetaDataNodeType CopiedInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( InspectionDesignNt, CopyInspectionNameFinal );
-                InspectionDesignNt.DesignNode.CopyNode( false, delegate( CswNbtNode CopiedNode )
-                    {
-                        CswNbtMetaDataNodeType CopiedInspectionDesignNt = ( (CswNbtObjClassDesignNodeType) CopiedNode ).RelationalNodeType;
-                        CswNbtMetaDataNodeType InspectionTargetGroupNt;
-                        CswNbtMetaDataNodeType InspectionTargetNt;
-                        _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category, out InspectionTargetNt, out InspectionTargetGroupNt );
-                        _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );
-                        _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
+                CswNbtObjClassDesignNodeType CopiedNode = InspectionDesignNt.DesignNode.CopyNode();
+                CswNbtMetaDataNodeType CopiedInspectionDesignNt = CopiedNode.RelationalNodeType;
+                CswNbtMetaDataNodeType InspectionTargetGroupNt;
+                CswNbtMetaDataNodeType InspectionTargetNt;
+                _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category, out InspectionTargetNt, out InspectionTargetGroupNt );
+                _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );
+                _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
-                        RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt, InspectionTargetGroupNt );
-                    } );
+                RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt, InspectionTargetGroupNt );
             }
             return RetObj;
         }
