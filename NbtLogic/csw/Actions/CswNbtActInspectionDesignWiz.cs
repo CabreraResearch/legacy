@@ -327,14 +327,14 @@ namespace ChemSW.Nbt.Actions
             InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
             Category = _guaranteeCategoryName( Category, InspectionTargetNt, InspectionDesignNt, InspectionTargetName );
 
-            InspectionTargetGroupNt = null;
-            //This is a New Target
             if( null == InspectionTargetNt )
             {
+                //This is a New Target
                 _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt, out InspectionTargetNt, out InspectionTargetGroupNt );
             }
             else
             {
+                InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName + " Group" );
                 _targetAlreadyExists = true;
                 _updateInspectionsGridView( InspectionDesignNt, InspectionTargetNt );
             }
