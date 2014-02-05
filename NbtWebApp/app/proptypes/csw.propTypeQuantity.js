@@ -62,7 +62,6 @@
             quantity.maxvalue = Csw.number(nodeProperty.propData.values.maxvalue);
             quantity.excludeRangeLimits = nodeProperty.propData.values.excludeRangeLimits;
             quantity.fractional = nodeProperty.propData.values.fractional;
-            quantity.quantityoptional = nodeProperty.propData.values.quantityoptional;
             quantity.cellCol = 1;
             quantity.name = nodeProperty.name;
             quantity.onChange = nodeProperty.onChange;

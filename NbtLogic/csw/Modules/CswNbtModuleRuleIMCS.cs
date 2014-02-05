@@ -73,10 +73,6 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Kiosk_Mode );
             }
-            else
-            {
-                _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
-            }
 
             //Mail Reports
             _CswNbtResources.Modules.ToggleNode( true, "New Assembly Problem Notification", CswEnumNbtObjectClass.MailReportClass );

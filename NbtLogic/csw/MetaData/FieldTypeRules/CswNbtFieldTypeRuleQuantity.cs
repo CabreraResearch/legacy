@@ -152,7 +152,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             public const string UnitTarget = CswEnumNbtPropertyAttributeName.UnitTarget;
             public const string UnitView = CswEnumNbtPropertyAttributeName.UnitView;
             public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
-            public const string QuantityOptional = CswEnumNbtPropertyAttributeName.QuantityOptional;
             public const string ExcludeRangeLimits = CswEnumNbtPropertyAttributeName.ExcludeRangeLimits;
         }
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
@@ -209,13 +208,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.Quantity
-            } );
-            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-            {
-                OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                Name = AttributeName.QuantityOptional,
-                Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
-                AttributeFieldType = CswEnumNbtFieldType.Logical
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {

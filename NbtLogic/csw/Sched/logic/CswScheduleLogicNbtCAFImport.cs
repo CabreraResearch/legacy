@@ -242,6 +242,22 @@ namespace ChemSW.Nbt.Sched
             maxInventoryRow["pkcolumnname"] = "inventorybasicid";
             ImportDefinitionsTable.Rows.Add( maxInventoryRow );
 
+
+            DataRow GHSPictosRow = ImportDefinitionsTable.NewRow();
+            GHSPictosRow["tablename"] = "jct_ghspictos_matsite";
+            GHSPictosRow["sourcename"] = "ghs_view";
+            GHSPictosRow["pkcolumnname"] = "materialid";
+            ImportDefinitionsTable.Rows.Add(GHSPictosRow);
+
+
+            DataRow GHSSignalRow = ImportDefinitionsTable.NewRow();
+            GHSSignalRow["tablename"] = "jct_ghssignal_matsite";
+            GHSSignalRow["sourcename"] = "ghs_view";
+            GHSSignalRow["pkcolumnname"] = "materialid";
+            ImportDefinitionsTable.Rows.Add(GHSSignalRow);
+
+
+
             foreach( DataRow Row in ImportDefinitionsTable.Rows )
             {
                 //we cannot check a view that references the target table from within the trigger, so we need to set values for multiplexed tables and views
@@ -249,6 +265,7 @@ namespace ChemSW.Nbt.Sched
                 string ItemSubquery = "";
                 string TriggerName = Row["sourcename"].ToString();
                 string TableName = Row["tablename"].ToString();
+                string DeleteSubquery = "";
                 switch( TableName )
                 {
                     //max inventory and min inventory are in the same view, but actually require two separate triggers on different source tables
@@ -266,7 +283,19 @@ namespace ChemSW.Nbt.Sched
                         ItemSubquery = "select :new.documentid || '_' || :new.packageid as primarykey from dual where :new.packageid is not null UNION select :new.documentid || '_' || p.packageid as primarykey from packages p where :new.packageid is null and :new.materialid = p.materialid ";
                         break;
                     case "jct_ghsphrase_matsite":
+                        DeleteSubquery = "select count(*) into deletecount from (select materialid, siteid from jct_ghspictos_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0 UNION select materialid, siteid from jct_ghssignal_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0);";
                         ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
+                        TriggerName = "jct_phrase";
+                        break;
+                    case "jct_ghspictos_matsite":
+                        DeleteSubquery = "select count(*) into deletecount from (select materialid, siteid from jct_ghsphrase_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0 UNION select materialid, siteid from jct_ghssignal_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0);";
+                        ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
+                        TriggerName = "jct_picto";
+                        break;
+                    case "jct_ghssignal_matsite":
+                        DeleteSubquery = "select count(*) into deletecount from (select materialid, siteid from jct_ghspictos_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0 UNION select materialid, siteid from jct_ghsphrase_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0);";
+                        ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
+                        TriggerName = "jct_signal";
                         break;
                     case "materials_synonyms":
                         ItemSubquery = "select :new.materialsynonymid || '_' || packageid as primarykey from packages p where :new.materialid = p.materialid";
@@ -312,12 +341,15 @@ namespace ChemSW.Nbt.Sched
                 if( false == String.IsNullOrEmpty( WhenClause ) ) { Ret += "  when (" + WhenClause + ")\r\n"; }
 
                 // Case 31062
-                Ret += @"declare statestr varchar(1);
-                       begin
+                Ret += @"declare 
+    statestr varchar(1);
+    deletecount integer := 0;
+              begin
                           if inserting then
                             statestr := 'I';
                           elsif updating then
-                            if :new.deleted = 1 then
+                            " + DeleteSubquery + @"
+                            if :new.deleted = 1 and deletecount = 0 then
                               statestr := 'D';
                             else
                               statestr := 'U';

@@ -30,7 +30,6 @@
             cswPrivate.maxvalue = options.maxvalue || '';
             cswPrivate.excludeRangeLimits = options.excludeRangeLimits || false;
             cswPrivate.fractional = options.fractional || false;
-            cswPrivate.quantityoptional = options.quantityoptional || false;
             cswPrivate.cellCol = options.cellCol || 1;
             cswPrivate.isMulti = options.isMulti || false;
             cswPrivate.isRequired = options.isRequired || false;
@@ -63,7 +62,7 @@
                 size: 6,
                 Precision: cswPrivate.precision,
                 ReadOnly: cswPrivate.isReadOnly,
-                isRequired: cswPrivate.isRequired && false === cswPrivate.quantityoptional,
+                isRequired: cswPrivate.isRequired,
                 onChange: cswPrivate.onNumberChange
             });
             cswPrivate.cellCol++;
@@ -142,17 +141,15 @@
             cswPrivate.selectBox.addClass(validateUnitPresentClassName);
 
             // cswPrivate.validatorMethods.validateQuantityPresent
-            if (false === cswPrivate.quantityoptional) {
-                cswPrivate.numberTextBox.required(cswPrivate.isRequired);
-                cswPrivate.validatorMethods.validateQuantityPresent = function () {
-                    return (false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
-                };
-                var validateQuantityPresentClassName = 'validateQuantityPresent_' + cswPrivate.selectBox.getId() + '_' + cswPrivate.numberTextBox.getId();
-                $.validator.addMethod(validateQuantityPresentClassName, function (value, element) {
-                    return Csw.tryExec(cswPrivate.validatorMethods.validateQuantityPresent);
-                }, 'Quantity must have a value if Unit is selected.');
-                cswPrivate.selectBox.addClass(validateQuantityPresentClassName);
-            }
+            cswPrivate.numberTextBox.required(cswPrivate.isRequired);
+            cswPrivate.validatorMethods.validateQuantityPresent = function () {
+                return (false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
+            };
+            var validateQuantityPresentClassName = 'validateQuantityPresent_' + cswPrivate.selectBox.getId() + '_' + cswPrivate.numberTextBox.getId();
+            $.validator.addMethod(validateQuantityPresentClassName, function (value, element) {
+                return Csw.tryExec(cswPrivate.validatorMethods.validateQuantityPresent);
+            }, 'Quantity must have a value if Unit is selected.');
+            cswPrivate.selectBox.addClass(validateQuantityPresentClassName);
         };
         //#endregion Control Construction
 

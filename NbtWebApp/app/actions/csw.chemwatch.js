@@ -172,8 +172,6 @@
                 }).css({ width: '30px' });
                 var langDiv = lngCntryOptsTbl.cell(1, 2).empty().css({ width: '150px' });
                 langDiv.div();
-
-                // TODO: Get select language options from server
                 
                 cswPrivate.langMultiSelect = langDiv.multiSelect({
                     name: 'cw_lang_select',
@@ -204,8 +202,6 @@
                 lngCntryOptsTbl.cell(1, 3).span({
                     text: '&nbsp;&nbsp;&nbsp;'
                 });
-                
-                // TODO: Get select country options from server
                 
                 //#region Country
                 lngCntryOptsTbl.cell(1, 4).empty().span({
@@ -239,18 +235,6 @@
                     }
                 });
                 //#endregion Country
-
-                // Document Search button
-                cswPrivate.documentSrchBtn = stepTwoTable.cell(4, 1).buttonExt({
-                    name: 'searchDocumentsBtn',
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
-                    enabledText: 'Search Documents',
-                    disableOnClick: false,
-                    onClick: function () {
-                        // Search for documents related to selected material
-                        cswPrivate.makeStepThree();
-                    }
-                });
 
                 stepTwoTable.cell(5, 1).div({
                     text: '<br/>'
@@ -405,7 +389,10 @@
             var materialList = cswPrivate.OperationData.Materials;
             cswPrivate.materialSelectCell = table.cell(2, 1).empty();
             cswPrivate.materialSelect = cswPrivate.materialSelectCell.select({
-                values: materialList
+                values: materialList,
+                onChange: function() {
+                    cswPrivate.makeStepThree();
+                }
             });
         }//makeMaterialSelect()
 
