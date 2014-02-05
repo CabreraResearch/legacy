@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.PropTypes
             return Succeeded;
         }
 
-        override public void onBeforeUpdateNodePropRow()
+        override public void onBeforeUpdateNodePropRowLogic()
         {
             if( false == _Node.IsTemp )
             {
