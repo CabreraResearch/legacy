@@ -869,41 +869,40 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        //private CswNbtNodePropWrapper _DefaultValue = null;
-        //private DataRow _DefaultValueRow = null;
+        private CswNbtNodePropWrapper _DefaultValue = null;
+        private DataRow _DefaultValueRow = null;
 
-        //private void _initDefaultValue( bool CreateMissingRow )
-        //{
-        //    if( _DefaultValue == null )
-        //    {
-        //        if( _DefaultValueRow == null )
-        //        {
-        //            if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
-        //            {
-        //                if( _NodeTypePropRow["defaultvalueid"] != null && CswTools.IsInteger( _NodeTypePropRow["defaultvalueid"] ) )
-        //                {
-        //                    DataTable DefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getTable( "jctnodepropid", CswConvert.ToInt32( _NodeTypePropRow["defaultvalueid"] ) );
-        //                    if( DefaultValueTable.Rows.Count > 0 )
-        //                        _DefaultValueRow = DefaultValueTable.Rows[0];
-        //                }
-        //                else if( CreateMissingRow )
-        //                {
-        //                    DataTable NewDefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getEmptyTable();
-        //                    _DefaultValueRow = NewDefaultValueTable.NewRow();
-        //                    _DefaultValueRow["nodetypepropid"] = CswConvert.ToDbVal( this.PropId );
-        //                    NewDefaultValueTable.Rows.Add( _DefaultValueRow );
-        //                    _NodeTypePropRow["defaultvalueid"] = _DefaultValueRow["jctnodepropid"];
-        //                }
-        //            } // if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
-        //        } // if( _DefaultValueRow == null )
-
-        //        if( _DefaultValueRow != null )
-        //        {
-        //            _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
-        //        }
-
-        //    } // if( _DefaultValue == null )
-        //}
+        private CswNbtNodePropWrapper _initDefaultValueDeprecated( bool CreateMissingRow )
+        {
+            if( _DefaultValue == null )
+            {
+                if( _DefaultValueRow == null )
+                {
+                    if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
+                    {
+                        if( _NodeTypePropRow["defaultvalueid"] != null && CswTools.IsInteger( _NodeTypePropRow["defaultvalueid"] ) )
+                        {
+                            DataTable DefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getTable( "jctnodepropid", CswConvert.ToInt32( _NodeTypePropRow["defaultvalueid"] ) );
+                            if( DefaultValueTable.Rows.Count > 0 )
+                                _DefaultValueRow = DefaultValueTable.Rows[0];
+                        }
+                        else if( CreateMissingRow )
+                        {
+                            DataTable NewDefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getEmptyTable();
+                            _DefaultValueRow = NewDefaultValueTable.NewRow();
+                            _DefaultValueRow["nodetypepropid"] = CswConvert.ToDbVal( this.PropId );
+                            NewDefaultValueTable.Rows.Add( _DefaultValueRow );
+                            _NodeTypePropRow["defaultvalueid"] = _DefaultValueRow["jctnodepropid"];
+                        }
+                    } // if( _NodeTypePropRow.Table.Columns.Contains( "defaultvalueid" ) )
+                } // if( _DefaultValueRow == null )
+                if( _DefaultValueRow != null )
+                {
+                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
+                }
+            } // if( _DefaultValue == null )
+            return _DefaultValue;
+        }
 
         //public bool HasDefaultValue()
         //{
@@ -926,9 +925,18 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 CswNbtNodePropWrapper ret = null;
-                if( DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.DefaultValue ) )
+                if( null != DesignNode )
                 {
-                    ret=DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.DefaultValue];
+                    if( DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.DefaultValue ) )
+                    {
+                        ret = DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.DefaultValue];
+                    }
+                }
+
+                if( ret == null || ret.Empty )
+                {
+                    // DEPRECATED support of old default values.  Should be able to be removed in Larch.
+                    ret = _initDefaultValueDeprecated( true );
                 }
                 return ret;
             }
@@ -936,7 +944,13 @@ namespace ChemSW.Nbt.MetaData
 
         public bool HasDefaultValue()
         {
-            return ( DefaultValue != null && false == DefaultValue.Empty );
+            bool ret = false;
+            CswNbtNodePropWrapper defval = DefaultValue;
+            if( null != defval )
+            {
+                ret = ( false == defval.Empty );
+            }
+            return ret;
         }
 
         public Int32 FirstPropVersionId

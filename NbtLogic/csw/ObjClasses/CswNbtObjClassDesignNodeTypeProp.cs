@@ -434,10 +434,13 @@ namespace ChemSW.Nbt.ObjClasses
                     if( Int32.MinValue != selectedOcpId )
                     {
                         CswNbtMetaDataObjectClassProp selectedOCP = _CswNbtResources.MetaData.getObjectClassProp( selectedOcpId );
-                        Options.Override( new Collection<CswNbtNodeTypePropListOption>()
-                            {
-                                new CswNbtNodeTypePropListOption( selectedOCP.PropName, selectedOCP.PropId.ToString() )
-                            } );
+                        if( null != selectedOCP )
+                        {
+                            Options.Override( new Collection<CswNbtNodeTypePropListOption>()
+                                {
+                                    new CswNbtNodeTypePropListOption( selectedOCP.PropName, selectedOCP.PropId.ToString() )
+                                } );
+                        }
                     }
                     return Options;
                 };
