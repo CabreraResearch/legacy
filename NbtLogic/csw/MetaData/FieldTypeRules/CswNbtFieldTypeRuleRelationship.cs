@@ -106,33 +106,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public void onSetFk( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            Collection<CswNbtFieldTypeAttribute> Attributes = getAttributes();
-            CswNbtFieldTypeAttribute FkTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fktype );
-            if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
+            CswNbtNodePropMetaDataList FkProp = DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList;
+            CswNbtNodePropViewReference ViewProp = DesignNTPNode.AttributeProperty[AttributeName.View].AsViewReference;
+            if( null != FkProp && FkProp.wasAnySubFieldModified() &&
+                null != ViewProp && false == ViewProp.wasSubFieldModified( CswNbtFieldTypeRuleViewReference.SubFieldName.ViewID ) )  // don't override if view was also modified, case 31812
             {
-                CswNbtNodePropWrapper FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name];
-                if( null != FkTypeProp && FkTypeProp.wasAnySubFieldModified( false ) )
+                CswNbtView View = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( ViewProp.ViewId );
+                if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
                 {
-                    CswNbtNodePropMetaDataList FkProp = FkTypeProp.AsMetaDataList;
-                    CswNbtViewId ViewId = DesignNTPNode.AttributeProperty[AttributeName.View].AsViewReference.ViewId;
-                    CswNbtView View = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( ViewId );
-                    if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
-                    {
-                        //We have valid values that are different that what is currently set
-                        CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode, View, FkProp.Type, FkProp.Id, false );
-                    }
-                    else
-                    {
-                        //Make sure a default view is set
-                        CswEnumNbtViewRelatedIdType TargetType = DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList.Type;
-                        Int32 TargetId = DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList.Id;
-                        if( CswEnumNbtViewRelatedIdType.Unknown != TargetType && Int32.MinValue != TargetId )
-                        {
-                            CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode, View, TargetType, TargetId, true );
-                        }
-                    }
+                    //We have valid values that are different that what is currently set
+                    CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode, View, FkProp.Type, FkProp.Id, false );
                 }
-            } // if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
+            }
         } // onSetFk()
 
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
