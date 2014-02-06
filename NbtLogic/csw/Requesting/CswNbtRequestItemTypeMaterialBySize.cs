@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.Requesting
                     SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ), FilterMode: CswEnumNbtFilterMode.NotNull, SubFieldName: CswEnumNbtSubFieldName.Value );
                     SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount ), FilterMode: CswEnumNbtFilterMode.NotNull );
                     SizeView.save();
+                    _RequestItem.Size.OverrideView( SizeView );
                     break;
             }
             if( IsVisible && _RequestItem.IsRecurring.Checked == CswEnumTristate.True )
