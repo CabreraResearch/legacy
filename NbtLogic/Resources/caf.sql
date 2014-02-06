@@ -880,8 +880,8 @@ SELECT PACKAGEID,
                                ON ( pc.MATERIALID = ph.MATERIALID
                                     AND pc.REGION = ph.REGION )
                   full outer join signals s
-                               ON ( s.MATERIALID = ph.MATERIALID
-                                    AND s.REGION = ph.REGION )
+                               ON ( s.MATERIALID = coalesce(ph.MATERIALID, pc.MATERIALID)
+                                    AND s.REGION = coalesce(ph.REGION, pc.REGION) )
                   join packages p
                     ON ( p.MATERIALID = coalesce(ph.MATERIALID, pc.materialid, s.materialid )));
 					
