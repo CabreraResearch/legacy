@@ -882,7 +882,7 @@ SELECT PACKAGEID,
                   full outer join signals s
                                ON ( s.MATERIALID = ph.MATERIALID
                                     AND s.REGION = ph.REGION )
-                  left outer join packages p
+                  join packages p
                     ON ( p.MATERIALID = coalesce(ph.MATERIALID, pc.materialid, s.materialid )));
 					
 --Reglists
