@@ -282,18 +282,20 @@ namespace ChemSW.Nbt.Sched
                     case "documents":
                         ItemSubquery = "select :new.documentid || '_' || :new.packageid as primarykey from dual where :new.packageid is not null UNION select :new.documentid || '_' || p.packageid as primarykey from packages p where :new.packageid is null and :new.materialid = p.materialid ";
                         break;
+
+                    //[3:55:59 PM] Steven Salter: we can interpret all deletes and updates as updates for this one case, the point is just for NBT to re-import the GHS node
                     case "jct_ghsphrase_matsite":
-                        DeleteSubquery = "select count(*) into deletecount from (select materialid, siteid from jct_ghspictos_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0 UNION select materialid, siteid from jct_ghssignal_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0);";
+                        DeleteSubquery = "select 1 into deletecount from dual;";
                         ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
                         TriggerName = "jct_phrase";
                         break;
                     case "jct_ghspictos_matsite":
-                        DeleteSubquery = "select count(*) into deletecount from (select materialid, siteid from jct_ghsphrase_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0 UNION select materialid, siteid from jct_ghssignal_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0);";
+                        DeleteSubquery = "select 1 into deletecount from dual;";
                         ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
                         TriggerName = "jct_picto";
                         break;
                     case "jct_ghssignal_matsite":
-                        DeleteSubquery = "select count(*) into deletecount from (select materialid, siteid from jct_ghspictos_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0 UNION select materialid, siteid from jct_ghsphrase_matsite where materialid=:new.materialid and siteid=:new.siteid and deleted=0);";
+                        DeleteSubquery = "select 1 into deletecount from dual;";
                         ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
                         TriggerName = "jct_signal";
                         break;

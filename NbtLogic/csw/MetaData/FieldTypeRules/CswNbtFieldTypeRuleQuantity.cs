@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
             Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( Val_kg_SubField, true );
+            SubFields.add( Val_kg_SubField );
 
             Val_Liters_SubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3_Numeric, CswEnumNbtSubFieldName.Val_Liters, true );
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( Val_Liters_SubField, true );
+            SubFields.add( Val_Liters_SubField );
 
         }//ctor
 
@@ -152,6 +152,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             public const string UnitTarget = CswEnumNbtPropertyAttributeName.UnitTarget;
             public const string UnitView = CswEnumNbtPropertyAttributeName.UnitView;
             public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+            public const string QuantityOptional = CswEnumNbtPropertyAttributeName.QuantityOptional;
             public const string ExcludeRangeLimits = CswEnumNbtPropertyAttributeName.ExcludeRangeLimits;
         }
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
@@ -208,6 +209,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.Quantity
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                Name = AttributeName.QuantityOptional,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {

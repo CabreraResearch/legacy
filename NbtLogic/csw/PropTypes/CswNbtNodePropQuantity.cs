@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return false == CswTools.IsDouble( Quantity );
+                return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
 
@@ -107,6 +107,18 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        /// <summary>
+        /// When set to true, quantity can be blank even if the field is required.
+        /// </summary>
+        public bool QuantityOptional
+        {
+            get
+            {
+                //return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleQuantity.AttributeName.QuantityOptional] );
+            }
+        }
+
         public Collection<CswNbtNode> UnitNodes
         {
             get
@@ -141,6 +153,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( Double.IsNaN( value ) )
                 {
                     if( Required &&
+                        false == QuantityOptional &&
                         false == _AllowSetNull )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
@@ -428,6 +441,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision;
             ParentObject["excludeRangeLimits"] = ExcludeRangeLimits;
+            ParentObject["quantityoptional"] = QuantityOptional;
 
             ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = string.Empty;
             CswNbtNode RelatedNode = null;
