@@ -220,16 +220,14 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onReceiveButtonClick( NbtButtonData ButtonData )
         {
-            bool sdsModuleEnabled = false;
+            bool canAddSDS = false;
             bool addSDSPermission = false;
-            //bool canAddSDS = false;
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
                 CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
                 CswNbtMetaDataNodeType SDSNodeType = SDSDocOC.FirstNodeType;
-                //canAddSDS = null != SDSNodeType;
-                sdsModuleEnabled = null != SDSNodeType;
-                if( sdsModuleEnabled )
+                canAddSDS = null != SDSNodeType;
+                if( canAddSDS )
                 {
                     ButtonData.Data["state"]["sdsDocTypeId"] = SDSNodeType.NodeTypeId;
                     CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
@@ -288,11 +286,11 @@ namespace ChemSW.Nbt.ObjClasses
                         addSDSPermission = true;
                     }
                 }
-            }
 
-            ButtonData.Data["state"]["sdsModuleEnabled"] = sdsModuleEnabled;
+            }//if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
+
+            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
             ButtonData.Data["state"]["addSDSPermission"] = addSDSPermission;
-            //ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
         }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }

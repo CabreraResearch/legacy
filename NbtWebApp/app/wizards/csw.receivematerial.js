@@ -27,9 +27,8 @@
                 selectedSizeId: '',
                 customBarcodes: false,
                 nodetypename: '',
-                sdsModuleEnabled: false,
                 addSDSPermission: false,
-                //canAddSDS: true,
+                canAddSDS: true,
                 canAddCofA: false,
                 sdsDocs: [{
                     revisiondate: '',
@@ -110,7 +109,7 @@
             }
             setWizardStep(cswPrivate.wizardStepCreateContainers);
             setWizardStep(cswPrivate.wizardStepContainerProps);
-            if (cswPrivate.state.sdsModuleEnabled) {
+            if (cswPrivate.state.canAddSDS) {
                 setWizardStep(cswPrivate.wizardStepAttachSDS);
             }
             setWizardStep(cswPrivate.wizardStepPrintLabels);
