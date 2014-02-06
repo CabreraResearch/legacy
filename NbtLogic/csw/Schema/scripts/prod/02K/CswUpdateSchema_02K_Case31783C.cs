@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "alter table layout_property add foreign key (column_id) references layout_column (layout_column_id)" );
         } // update()
 
     } // class CswUpdateSchema_02K_Case31783

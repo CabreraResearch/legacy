@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -33,12 +35,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswTableUpdate LayoutColumnUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "layout_column_update", "layout_column" );
-            DataTable LayoutColumnTable = LayoutColumnUpdate.getEmptyTable();
-            CswTableUpdate LayoutPropsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "layout_property_update", "layout_property" );
-            DataTable LayoutPropsTable = LayoutPropsUpdate.getEmptyTable();
-            CswArbitrarySelect OldLayoutPropsSelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "layout_column_update",
-@"with layouttabs as
+            string SQLQuery = @"with layouttabs as
 (select lt.*,
   case lt.layout_type
     when 'edit' then lt.tab_name
@@ -64,62 +61,68 @@ oldlayouttabs as
   end as tabtype
 from nodetype_layout l
 left join nodetype_tabset t on l.nodetypetabsetid = t.nodetypetabsetid)
-select 
-  l.layouttype, 
-  l.tabname, 
-  l.tabgroup, 
-  l.taborder,
-  l.display_row, 
+select
+  l.layouttype,
+  l.tabname,
   l.display_column,
-  n2.nodename nodetype_propname,
-  l.nodetypeid, 
-  n.nodeid design_nodetype_nodeid,
+  ntp.propname,
   l.nodetypepropid, 
   n2.nodeid design_nodetypeprop_nodeid,
-  l.nodetypetabsetid, 
-  n3.nodeid design_nodetypetab_nodeid,
-  lt.layout_tab_id,
-  lt.metadata_nodetypeid,
-  lt.design_nodetypetab_nodeid,
-  lt.uniquename,
-  l.tabtype
+  lt.layout_tab_id
 from oldlayouttabs l
-left join nodes n on n.relationalid = l.nodetypeid and n.relationaltable = 'nodetypes'
+join nodetype_props ntp on l.nodetypepropid = ntp.nodetypepropid
 left join nodes n2 on n2.relationalid = l.nodetypepropid and n2.relationaltable = 'nodetype_props'
 left join nodes n3 on n3.relationalid = l.nodetypetabsetid and n3.relationaltable = 'nodetype_tabset'
 left join layouttabs lt on 
       lt.layout_type = lower(decode(l.layouttype, 'Table', 'search', l.layouttype)) 
       and lt.metadata_nodetypeid = l.nodetypeid 
 where lt.uniquename = l.tabtype
-order by l.nodetypeid asc, l.layouttype asc, l.tabgroup desc, l.tabname, l.display_column asc, l.display_row asc" );
-            //DataTable OldLayoutPropsTable = OldLayoutPropsSelect.getTable();
-            //foreach( DataRow OldLayoutPropRow in OldLayoutPropsTable.Rows )
-            //{
-            //    DataRow LayoutPropRow = LayoutPropsTable.NewRow();
-            //    DataRow LayoutColumnRow = LayoutTabTable.NewRow();
-            //    LayoutColumnRow["layout_type"] = OldLayoutRow["layouttype"].ToString().ToLower();
-            //    if( LayoutColumnRow["layout_type"].ToString() == "table" )
-            //    {
-            //        LayoutColumnRow["layout_type"] = "search";
-            //    }
-            //    LayoutColumnRow["tab_type"] = "main";
-            //    if( OldLayoutRow["tabname"].ToString() == "Identity" )
-            //    {
-            //        LayoutColumnRow["tab_type"] = "identity";
-            //    }
-            //    LayoutColumnRow["tab_name"] = OldLayoutRow["tabname"];
-            //    LayoutColumnRow["tab_order"] = OldLayoutRow["taborder"];
-            //    if( LayoutColumnRow["tab_order"].ToString() == "" )
-            //    {
-            //        LayoutColumnRow["tab_order"] = 1;
-            //    }
-            //    LayoutColumnRow["metadata_nodetypeid"] = OldLayoutRow["nodetypeid"];
-            //    LayoutColumnRow["design_nodetype_nodeid"] = OldLayoutRow["design_nodetype_nodeid"];
-            //    LayoutColumnRow["design_nodetypetab_nodeid"] = OldLayoutRow["design_nodetypetab_nodeid"];
-            //    LayoutColumnTable.Rows.Add( LayoutColumnRow );
-            //}
-            //LayoutColumnUpdate.update( LayoutColumnTable );
-            //LayoutPropsUpdate.update( LayoutPropsTable );
+and l.tabgroup is null
+order by l.nodetypeid, l.layouttype, l.taborder, l.display_column, l.display_row";
+            CswTableUpdate LayoutColumnUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "layout_column_update", "layout_column" );
+            DataTable LayoutColumnTable = LayoutColumnUpdate.getEmptyTable();
+            CswTableUpdate LayoutPropsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "layout_property_update", "layout_property" );
+            DataTable LayoutPropsTable = LayoutPropsUpdate.getEmptyTable();
+            CswArbitrarySelect OldLayoutPropsSelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "layout_column_update", SQLQuery );
+            DataTable OldLayoutPropsTable = OldLayoutPropsSelect.getTable();
+            int colpk = 1;
+            int rownum = 1;
+            int colnum = 1;
+            string layouttype = "";
+            string tabname = "";
+            foreach( DataRow OldLayoutPropRow in OldLayoutPropsTable.Rows )
+            {
+                if( CswConvert.ToInt32( OldLayoutPropRow["display_column"] ) != colnum ||
+                    OldLayoutPropRow["layouttype"].ToString() != layouttype ||
+                    OldLayoutPropRow["tabname"].ToString() != tabname )
+                {
+                    DataRow LayoutColumnRow = LayoutColumnTable.NewRow();
+                    //LayoutColumnRow["column_name"] = OldLayoutPropRow["layouttype"].ToString().ToLower();
+                    LayoutColumnRow["column_order"] = OldLayoutPropRow["display_column"];
+                    LayoutColumnRow["parent_id"] = OldLayoutPropRow["layout_tab_id"];
+                    LayoutColumnRow["parent_type"] = "tab";
+                    LayoutColumnTable.Rows.Add( LayoutColumnRow );
+                    colnum = CswConvert.ToInt32( OldLayoutPropRow["display_column"] );
+                    colpk = CswConvert.ToInt32( LayoutColumnRow["layout_column_id"] );
+                    rownum = 1;
+                    layouttype = OldLayoutPropRow["layouttype"].ToString();
+                    tabname = OldLayoutPropRow["tabname"].ToString();
+                }
+                
+                DataRow LayoutPropRow = LayoutPropsTable.NewRow();
+                LayoutPropRow["prop_order"] = rownum;
+                if( OldLayoutPropRow["propname"].ToString() == "Save" )
+                {
+                    LayoutPropRow["prop_order"] = Int32.MaxValue;
+                }
+                LayoutPropRow["column_id"] = colpk;
+                LayoutPropRow["metadata_nodetypepropid"] = OldLayoutPropRow["nodetypepropid"];
+                LayoutPropRow["design_nodetypeprop_nodeid"] = OldLayoutPropRow["design_nodetypeprop_nodeid"];
+                LayoutPropsTable.Rows.Add( LayoutPropRow );
+                rownum++;
+            }
+            LayoutColumnUpdate.update( LayoutColumnTable );
+            LayoutPropsUpdate.update( LayoutPropsTable );
 
         } // update()
 

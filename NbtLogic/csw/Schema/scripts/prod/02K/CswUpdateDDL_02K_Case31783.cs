@@ -52,8 +52,8 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addStringColumn( LayoutColumnTableName, "column_name", "The name of the column", false, 100 );
                 _CswNbtSchemaModTrnsctn.addNumberColumn( LayoutColumnTableName, "column_order", "The order in which to display this column with respect to other members of the same parent", true );
                 _CswNbtSchemaModTrnsctn.addNumberColumn( LayoutColumnTableName, "parent_id", "The id of the parent", true );
-                _CswNbtSchemaModTrnsctn.addNumberColumn( LayoutColumnTableName, "parent_type", "The type of the parent", true );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "alter table " + LayoutColumnTableName + " add constraint check_parent_type check (parent_type in ('tab','column'))" );
+                _CswNbtSchemaModTrnsctn.addStringColumn( LayoutColumnTableName, "parent_type", "The type of the parent", true, 100 );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "alter table " + LayoutColumnTableName + " add constraint check_parent_type check (parent_type in ('tab','column','property'))" );
             }
 
             const string LayoutPropertyTableName = "layout_property";
@@ -63,7 +63,8 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.addNumberColumn( LayoutPropertyTableName, "prop_order", "The order in which to display this property with respect to other members of the same parent column", true );
                 _CswNbtSchemaModTrnsctn.addNumberColumn( LayoutPropertyTableName, "column_id", "The id of the parent column", true );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "alter table " + LayoutPropertyTableName + " add foreign key (column_id) references layout_column (layout_column_id)" );
+                //Needs to be added after the migration
+                //_CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "alter table " + LayoutPropertyTableName + " add foreign key (column_id) references layout_column (layout_column_id)" );
                 _CswNbtSchemaModTrnsctn.addNumberColumn( LayoutPropertyTableName, "metadata_nodetypepropid", "The nodetypepropid to which this property relates", true );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "alter table " + LayoutPropertyTableName + " add foreign key (metadata_nodetypepropid) references nodetype_props (nodetypepropid)" );
                 _CswNbtSchemaModTrnsctn.addNumberColumn( LayoutPropertyTableName, "design_nodetypeprop_nodeid", "The nodeid of the design nodetypeprop node to which this property relates", true );
