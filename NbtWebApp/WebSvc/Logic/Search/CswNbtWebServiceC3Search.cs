@@ -447,13 +447,16 @@ namespace ChemSW.Nbt.WebServices
         public static void GetSearchProperties( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-
-            List<string> SearchProperties = ( from CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) select SearchType.ToString() ).ToList();
-
-            // TODO: Remove when we implement Structure Search in ACD
+            List<string> SearchProperties = new List<string>()
+                ;
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
             {
-                SearchProperties.Remove( CswC3SearchParams.SearchFieldType.Structure.ToString() );
+                SearchProperties = ( from ACDSearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( ACDSearchParams.SearchFieldType ) ) select SearchType.ToString() ).ToList();
+            }
+
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3Products ) )
+            {
+                SearchProperties = ( from C3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( C3SearchParams.SearchFieldType ) ) select SearchType.ToString() ).ToList();
             }
 
             Return.Data.SearchProperties = SearchProperties;
@@ -519,8 +522,8 @@ namespace ChemSW.Nbt.WebServices
             CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
             CswC3Product C3ProductDetails = new CswC3Product();
 
-            CswC3SearchParams.Field = "ProductId";
-            CswC3SearchParams.Query = CswConvert.ToString( Request.C3ProductId );
+            CswC3SearchParams.C3SearchParams = new C3SearchParams();
+            CswC3SearchParams.C3SearchParams.ProductId = CswConvert.ToInt32( Request.C3ProductId );
 
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
             SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
