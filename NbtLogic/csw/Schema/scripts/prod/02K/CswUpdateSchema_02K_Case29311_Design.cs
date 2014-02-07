@@ -656,7 +656,17 @@ namespace ChemSW.Nbt.Schema
                                     CswNbtNodePropWrapper wrapper = node.Node.Properties[prop];
                                     if( Attr.Name != CswEnumNbtPropertyAttributeName.NodeTypeValue ) // this would set the nodetypeid to be the prop's nodetypeid, rather than the nodetypevalue.
                                     {
-                                        wrapper.SetSubFieldValue( Attr.SubFieldName, thisProp[Attr.Column] );
+                                        if( Attr.Name == CswEnumNbtPropertyAttributeName.DefaultValue )
+                                        {
+                                            if( thisProp.HasDefaultValue() )
+                                            {
+                                                wrapper.copy( thisProp.DefaultValue );
+                                            }
+                                        }
+                                        else
+                                        {
+                                            wrapper.SetSubFieldValue( Attr.SubFieldName, thisProp[Attr.Column] );
+                                        }
 
 
                                         switch( Attr.AttributeFieldType )
