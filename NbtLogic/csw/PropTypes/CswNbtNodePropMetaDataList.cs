@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.PropTypes
 
 
                     Collection<CswNbtNodeTypePropListOption> newOptions = new Collection<CswNbtNodeTypePropListOption>();
-                    if( string.Empty == ConstrainToObjectClass )
+                    if( string.Empty == ConstrainToObjectClass || ConstrainToObjectClass == "Unknown")
                     {
                         // The cheaper way
 
