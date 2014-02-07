@@ -52,8 +52,8 @@
                 dispenseTypes: {
                     Dispense: 'Dispense into a Child Container',
                     Use: 'Dispense for Use',
-                    Add: 'Add Material to Container',
-                    Waste: 'Waste Material'
+                    Add: 'Add Material to this Container',
+                    Waste: 'Waste/Discard Material'
                 },
                 divStep1: '',
                 divStep2: '',
