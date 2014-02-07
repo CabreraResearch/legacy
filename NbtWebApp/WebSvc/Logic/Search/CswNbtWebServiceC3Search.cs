@@ -190,6 +190,9 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember]
                 public string sdsDocId = string.Empty;
 
+                [DataMember]
+                public SDS sds = new SDS();
+
                 [DataContract]
                 public class MaterialType
                 {
@@ -259,6 +262,13 @@ namespace ChemSW.Nbt.WebServices
                         public bool hidden = false;
 
                     }
+                }
+
+                [DataContract]
+                public class SDS
+                {
+                    [DataMember]
+                    public string sdsDocId = string.Empty;
                 }
 
             }
@@ -570,7 +580,7 @@ namespace ChemSW.Nbt.WebServices
                             State.sizes = ProductSizes;
                             if( null != SDSDocumentNodeId )
                             {
-                                State.sdsDocId = SDSDocumentNodeId.ToString();
+                                State.sds.sdsDocId = SDSDocumentNodeId.ToString();
                             }
 
                             Return.Data.state = State;

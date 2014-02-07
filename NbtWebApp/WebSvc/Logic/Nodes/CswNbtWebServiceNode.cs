@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class CopyDataReturn: CswWebSvcReturn
+        public class CopyDataReturn : CswWebSvcReturn
         {
             public CopyDataReturn()
             {
@@ -215,14 +215,14 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     SDSTree.goToNthChild( i );
                                     CswNbtObjClassSDSDocument SDSDoc = SDSTree.getNodeForCurrentPosition();
-                                    CswNbtObjClassSDSDocument SDSCopy = SDSDoc.CopyNode( IsNodeTemp : true );
+                                    CswNbtObjClassSDSDocument SDSCopy = SDSDoc.CopyNode( IsNodeTemp: true );
 
                                     SDSCopy.Owner.RelatedNodeId = MaterialCopy.NodeId;
                                     SDSCopy.postChanges( false );
 
                                     if( i == 0 )
                                     {
-                                        Copy.Data.Create_Material.state.sdsDocId = SDSCopy.NodeId.ToString();
+                                        Copy.Data.Create_Material.state.sds.sdsDocId = SDSCopy.NodeId.ToString();
                                     }
                                     SDSTree.goToParentNode();
                                 }
@@ -462,10 +462,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView sizesView = new CswNbtView( NbtResources );
                     CswNbtViewRelationship parent = sizesView.AddViewRelationship( sizeOC, true );
                     sizesView.AddViewPropertyAndFilter( parent,
-                        MetaDataProp : materialOCP,
-                        Value : pk.PrimaryKey.ToString(),
+                        MetaDataProp: materialOCP,
+                        Value: pk.PrimaryKey.ToString(),
                         SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                        FilterMode : CswEnumNbtFilterMode.Equals );
+                        FilterMode: CswEnumNbtFilterMode.Equals );
 
                     ICswNbtTree tree = NbtResources.Trees.getTreeFromView( sizesView, true, false, false );
                     for( int i = 0; i < tree.getChildNodeCount(); i++ )
