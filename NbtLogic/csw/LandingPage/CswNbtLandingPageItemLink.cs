@@ -44,12 +44,12 @@ namespace ChemSW.Nbt.LandingPage
                     if( _CswNbtResources.Permit.can( ThisAction.Name ) )
                     {
                         _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
+                        _ItemData.ActionId = ActionId.ToString();
+                        _ItemData.ActionName = ThisAction.Name.ToString();
+                        _ItemData.ActionUrl = ThisAction.Url;
+                        _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisAction.IconFileName;
+                        _ItemData.Type = "action";
                     }
-                    _ItemData.ActionId = ActionId.ToString();
-                    _ItemData.ActionName = ThisAction.Name.ToString();
-                    _ItemData.ActionUrl = ThisAction.Url;
-                    _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisAction.IconFileName;
-                    _ItemData.Type = "action";
                 }
             }
             Int32 ReportId = CswConvert.ToInt32( LandingPageRow["to_reportid"] );
