@@ -183,13 +183,12 @@ namespace ChemSW.Nbt.WebServices
         public JArray getFieldTypes( string LayoutType )
         {
             JArray ret = new JArray();
-            //todo: Standard mode vs Inspection mode?? Adding 'Question' to list of fieldtypes
-            //foreach
-            //create jobject and add to it
 
             foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes() )
             {
-                if( FieldType.IsLayoutCompatible( LayoutType ) )
+                if( FieldType.IsLayoutCompatible( LayoutType ) &&
+                    //Case 31808: This is not in IsLayoutCompatible because we only want to prevent adding new Button props (not exisitng)
+                    FieldType.FieldType != CswEnumNbtFieldType.Button )
                 {
                     JObject ThisFieldTypeObj = new JObject();
                     ThisFieldTypeObj["fieldtypeid"] = FieldType.FieldTypeId.ToString();
