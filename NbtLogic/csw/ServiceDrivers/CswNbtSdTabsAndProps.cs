@@ -958,7 +958,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                             select Prop )
                 {
                     // case 24179
-                    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) )
+                    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) && false == Prop.IsSaveProp )
                     {
                         JObject ThisPropObj = new JObject();
                         ThisPropObj["propid"] = Prop.PropId.ToString();

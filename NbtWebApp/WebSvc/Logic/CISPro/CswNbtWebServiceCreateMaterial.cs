@@ -134,20 +134,18 @@ namespace ChemSW.Nbt.WebServices
                 bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS );
                 if( SDSEnabled )
                 {
+                    MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep()
+                        {
+                            StepNo = StepNo,
+                            StepName = "Attach SDS"
+                        };
+                    Response.Data.Steps.Add( AttachSDS );
+
+                    // Permission is a separate check now because we still want to show the Attach SDS step
+                    // even if the User doesn't have permission. If they don't have permission, we display
+                    // a message on the client.
                     CswNbtMetaDataNodeType SDSNT = NbtResources.MetaData.getNodeType( "SDS Document" );
-                    if( null != SDSNT && NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SDSNT ) )
-                    {
-                        MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep()
-                            {
-                                StepNo = StepNo,
-                                StepName = "Attach SDS"
-                            };
-                        Response.Data.Steps.Add( AttachSDS );
-                    }
-                    else
-                    {
-                        SDSEnabled = false;
-                    }
+                    Response.Data.addSDSPermission = null != SDSNT && NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SDSNT );
                 }
                 Response.Data.SDSModuleEnabled = SDSEnabled;
 

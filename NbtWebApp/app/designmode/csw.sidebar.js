@@ -259,7 +259,7 @@
                 existingProperties.div = cswPublic.componentItem.div({ align: 'center' });
 
                 newProperties.div = cswPublic.componentItem.div({ align: 'center' });
-                cswPrivate.loadNewProperties();
+                cswPrivate.loadNewProperties('Edit');
                 
                 //#endregion Add Properties
             };
@@ -549,7 +549,7 @@
             
             //#region New Properties
             
-            cswPrivate.loadNewProperties = function () {
+            cswPrivate.loadNewProperties = function (layoutType) {
                 newProperties.dataStore = Ext.create('Ext.data.ArrayStore', {
                     fields: ['value', 'display'],
                     data: [],
@@ -558,6 +558,9 @@
 
                 cswPrivate.ajax.fieldTypes = Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getFieldTypes',
+                    data: {
+                        LayoutType: layoutType
+                    },
                     success: function (data) {
                         var fieldTypes = [];
                         Csw.each(data.fieldtypes, function (f) {
@@ -710,6 +713,14 @@
                     TabId: Csw.string(tabid),
                     LayoutType: layoutMode
                 });
+            };
+            
+            cswPublic.refreshNewProperties = function (layoutMode) {
+                if (Csw.isNullOrEmpty(layoutMode)) {
+                    layoutMode = 'Edit';
+                }
+                newProperties.div.empty();
+                cswPrivate.loadNewProperties(layoutMode);
             };
 
             cswPublic.toggleIdentityTabOption = function(on) {
