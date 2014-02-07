@@ -199,10 +199,10 @@
             if (false === checkBox.$.is(':hidden')) {
                 var selectedVal = cswPrivate.ctrlOpts[page + "_" + idx].val;
                 var selectedIdx = cswPrivate.selected.indexOf(selectedVal);
-                document.getElementById(checkBox.getId()).checked = isChecked;
+                checkBox.checked(isChecked);
                 Csw.clientChanges.setChanged();
                 if (checkBox.checked()) {
-                    if (false == (selectedIdx > -1)) {
+                    if (selectedIdx == -1) {
                         cswPrivate.selected.push(selectedVal);
                     }
                 } else {
