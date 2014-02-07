@@ -92,9 +92,7 @@
 
                     cswPrivate.pagingTbl.cell(1, 1).buttonExt({
                         enabledText: 'Previous',
-                        onClick: function() {
-                            onPrevious();
-                        }
+                        onClick: onPrevious,
                     });
 
                     cswPrivate.pagingTbl.cell(1, 2).span({
@@ -103,9 +101,7 @@
 
                     cswPrivate.pagingTbl.cell(1, 3).buttonExt({
                         enabledText: 'Next',
-                        onClick: function() {
-                            onNext();
-                        }
+                        onClick: onNext,
                     });
 
                     cswPrivate.pagingTbl.cell(1, 3).span({
