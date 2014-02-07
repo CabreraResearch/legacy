@@ -175,6 +175,10 @@ namespace ChemSW.Nbt.PropTypes
         public const string ObjectClassPrefix = "oc_";
         public const string PropertySetPrefix = "ps_";
 
+        public void clearCachedOptions()
+        {
+            _CswNbtNodeTypePropListOptions = null;
+        }
 
         private CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = null;
         public CswNbtNodeTypePropListOptions Options
