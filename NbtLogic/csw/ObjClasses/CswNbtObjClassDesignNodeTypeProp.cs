@@ -448,24 +448,15 @@ namespace ChemSW.Nbt.ObjClasses
             if( FieldTypeValue == CswEnumNbtFieldType.Question )
             {
                 // Options for Compliant Answer
-                CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers.ToString() );
-                if( null != CompliantAnswersNTP )
+                if( AttributeProperty.ContainsKey( CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers ) )
                 {
-                    CswNbtNodePropWrapper CompliantAnswersProp = Node.Properties[CompliantAnswersNTP];
-                    if( null != CompliantAnswersProp )
-                    {
-                        CompliantAnswersProp.AsMultiList.InitOptions = _initCompliantAnswerOptions;
-                    }
+                    AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers].AsMultiList.InitOptions = _initCompliantAnswerOptions;
                 }
+
                 // Options for Preferred Answer
-                CswNbtMetaDataNodeTypeProp PreferredAnswerNTP = this.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer.ToString() );
-                if( null != PreferredAnswerNTP )
+                if( AttributeProperty.ContainsKey( CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer ) )
                 {
-                    CswNbtNodePropWrapper PreferredAnswerProp = Node.Properties[PreferredAnswerNTP];
-                    if( null != PreferredAnswerProp )
-                    {
-                        PreferredAnswerProp.AsList.InitOptions = _initPreferredAnswerOptions;
-                    }
+                    AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer].AsList.InitOptions = _initPreferredAnswerOptions;
                 }
             } // if( FieldTypeValue == CswEnumNbtFieldType.Question )
 
@@ -631,27 +622,26 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // Default value
-            CswNbtMetaDataNodeTypeProp DefaultValueNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultValue );
-            if( null != DefaultValueNTP )
+            if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.DefaultValue ) )
             {
-                CswNbtNodePropWrapper defaultValueWrapper = this.Node.Properties[DefaultValueNTP];
+                CswNbtNodePropWrapper defaultValueWrapper = AttributeProperty[CswEnumNbtPropertyAttributeName.DefaultValue];
                 foreach( CswNbtFieldTypeAttribute attribute in defaultValueWrapper.getFieldType().getFieldTypeRule().getAttributes() )
                 {
-                    if( attribute.Name != CswEnumNbtPropertyAttributeName.DefaultValue ) // god save us
+                    if( attribute.Name != CswEnumNbtPropertyAttributeName.DefaultValue && // prevent infinite recursion
+                        attribute.Name != CswEnumNbtPropertyAttributeName.Required && // never make default values required
+                        AttributeProperty.ContainsKey( attribute.Name ) )
                     {
                         // Override the attribute on the default value with what is defined on this property
-                        // Example: list options
-                        CswNbtMetaDataNodeTypeProp attrNTP = NodeType.getNodeTypeProp( attribute.Name );
-                        if( this.Node.Properties.Contains( attrNTP ) &&
-                            attribute.Name != CswEnumNbtPropertyAttributeName.Required ) // never make default values required
-                        {
-                            defaultValueWrapper[attribute.Name] = this.Node.Properties[attrNTP].Gestalt;
-                        }
+                        // For Example: list options
+                        defaultValueWrapper[attribute.Name] = AttributeProperty[attribute.Name].Gestalt;
                     }
                 }
             }
             //_CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
+
+
+
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
@@ -789,18 +779,13 @@ namespace ChemSW.Nbt.ObjClasses
         public Dictionary<string, string> _initCompliantAnswerOptions()
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
-            CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() );
-            if( null != PossibleAnswersNTP )
+            if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.PossibleAnswers ) )
             {
-                CswNbtNodePropWrapper PossibleAnswersProp = Node.Properties[PossibleAnswersNTP];
-                if( null != PossibleAnswersProp )
+                CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                PossibleAnswers.FromString( AttributeProperty[CswEnumNbtPropertyAttributeName.PossibleAnswers].AsText.Text );
+                foreach( string Answer in PossibleAnswers )
                 {
-                    CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
-                    PossibleAnswers.FromString( PossibleAnswersProp.AsText.Text );
-                    foreach( string Answer in PossibleAnswers )
-                    {
-                        ret.Add( Answer, Answer );
-                    }
+                    ret.Add( Answer, Answer );
                 }
             }
             return ret;
@@ -809,18 +794,13 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodeTypePropListOptions _initPreferredAnswerOptions()
         {
             CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, false );
-            CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() );
-            if( null != PossibleAnswersNTP )
+            if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.PossibleAnswers ) )
             {
-                CswNbtNodePropWrapper PossibleAnswersProp = Node.Properties[PossibleAnswersNTP];
-                if( null != PossibleAnswersProp )
+                CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                PossibleAnswers.FromString( AttributeProperty[CswEnumNbtPropertyAttributeName.PossibleAnswers].AsText.Text );
+                foreach( string Answer in PossibleAnswers )
                 {
-                    CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
-                    PossibleAnswers.FromString( PossibleAnswersProp.AsText.Text );
-                    foreach( string Answer in PossibleAnswers )
-                    {
-                        ret.Options.Add( new CswNbtNodeTypePropListOption( Answer, Answer ) );
-                    }
+                    ret.Options.Add( new CswNbtNodeTypePropListOption( Answer, Answer ) );
                 }
             }
             return ret;
@@ -858,12 +838,12 @@ namespace ChemSW.Nbt.ObjClasses
                         ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
                         foreach( CswNbtFieldTypeAttribute a in RelationalRule.getAttributes() )
                         {
-                            CswNbtMetaDataNodeTypeProp AttributeProp = this.NodeType.getNodeTypeProp( a.Name );
-                            if( null != AttributeProp )
+                            CswNbtMetaDataNodeTypeProp AttributePropNTP = this.NodeType.getNodeTypeProps().FirstOrDefault( p => p.PropName == a.Name );
+                            if( null != AttributePropNTP )
                             {
                                 if( false == _AttributeProperty.ContainsKey( a.Name ) )
                                 {
-                                    _AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
+                                    _AttributeProperty.Add( a.Name, this.Node.Properties[AttributePropNTP] );
                                 }
                             }
                         }
