@@ -1427,7 +1427,16 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string CasNoField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string CatalogNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string CatalogNoField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string[] CatalogNumbersField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int CdbregnoField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string DescriptionField;
@@ -1507,6 +1516,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string CatalogName {
+            get {
+                return this.CatalogNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CatalogNameField, value) != true)) {
+                    this.CatalogNameField = value;
+                    this.RaisePropertyChanged("CatalogName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string CatalogNo {
             get {
                 return this.CatalogNoField;
@@ -1515,6 +1537,32 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.CatalogNoField, value) != true)) {
                     this.CatalogNoField = value;
                     this.RaisePropertyChanged("CatalogNo");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] CatalogNumbers {
+            get {
+                return this.CatalogNumbersField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CatalogNumbersField, value) != true)) {
+                    this.CatalogNumbersField = value;
+                    this.RaisePropertyChanged("CatalogNumbers");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Cdbregno {
+            get {
+                return this.CdbregnoField;
+            }
+            set {
+                if ((this.CdbregnoField.Equals(value) != true)) {
+                    this.CdbregnoField = value;
+                    this.RaisePropertyChanged("Cdbregno");
                 }
             }
         }

@@ -187,6 +187,7 @@ namespace ChemSW.Nbt.WebServices
             public CswNbtNodeKey NodeKey;
             public CswNbtMetaDataNodeType NodeType;
             public Int32 C3ProductId;
+            public Int32 ACDCdbregno;
             public string NodeName;
             public bool Locked;
             public bool Disabled;
@@ -223,6 +224,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 NodeObj["nodelink"] = CswNbtNode.getNodeLink( NodeId, NodeName );
                 NodeObj["c3productid"] = C3ProductId.ToString();
+                NodeObj["acdcdbregno"] = ACDCdbregno.ToString();
                 NodeObj["locked"] = Locked.ToString().ToLower();
                 NodeObj["disabled"] = Disabled.ToString().ToLower();
                 NodeObj["isFavorite"] = IsFavorite.ToString().ToLower();
@@ -451,6 +453,11 @@ namespace ChemSW.Nbt.WebServices
                         if( prop.Name == "ProductId" )
                         {
                             thisNode.C3ProductId = CswConvert.ToInt32( prop.Value );
+                        }
+
+                        if( prop.Name == "Cdbregno" )
+                        {
+                            thisNode.ACDCdbregno = CswConvert.ToInt32( prop.Value );
                         }
 
                         TableProp thisProp = new TableProp();
