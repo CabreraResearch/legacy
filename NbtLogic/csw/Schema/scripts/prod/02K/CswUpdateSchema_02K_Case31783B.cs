@@ -83,7 +83,7 @@ order by l.nodetypeid, l.layouttype, l.taborder, l.display_column, l.display_row
             DataTable LayoutColumnTable = LayoutColumnUpdate.getEmptyTable();
             CswTableUpdate LayoutPropsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "layout_property_update", "layout_property" );
             DataTable LayoutPropsTable = LayoutPropsUpdate.getEmptyTable();
-            CswArbitrarySelect OldLayoutPropsSelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "layout_column_update", SQLQuery );
+            CswArbitrarySelect OldLayoutPropsSelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "old_layout_props_select", SQLQuery );
             DataTable OldLayoutPropsTable = OldLayoutPropsSelect.getTable();
             int colpk = 1;
             int rownum = 1;
