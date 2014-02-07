@@ -11,6 +11,7 @@ using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -220,6 +221,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void onReceiveButtonClick( NbtButtonData ButtonData )
         {
             bool canAddSDS = false;
+            bool addSDSPermission = false;
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
                 CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
@@ -277,9 +279,18 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
                         }//if( Tree.getChildNodeCount() > 0 )
                     }
+
+                    // Does the current User have permission to create SDS Documents?
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SDSNodeType ) )
+                    {
+                        addSDSPermission = true;
+                    }
                 }
-            }
+
+            }//if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
+
             ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
+            ButtonData.Data["state"]["addSDSPermission"] = addSDSPermission;
         }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }

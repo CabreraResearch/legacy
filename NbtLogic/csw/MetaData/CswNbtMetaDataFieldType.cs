@@ -142,6 +142,13 @@ namespace ChemSW.Nbt.MetaData
             {
                 ret = ( FieldType != CswEnumNbtFieldType.Grid );
             }
+            if( LayoutType == CswEnumNbtLayoutType.Table )
+            {
+                if( FieldType == CswEnumNbtFieldType.Image || FieldType == CswEnumNbtFieldType.MOL )
+                {
+                    ret = false;
+                }
+            }
             return ret;
         } // IsLayoutCompatible()
 

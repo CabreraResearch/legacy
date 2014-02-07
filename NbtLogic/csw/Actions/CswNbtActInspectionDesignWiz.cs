@@ -315,6 +315,7 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
             }
+            InspectionDesignNt.DesignNode.RecalculateQuestionNumbers();
             return RetCount;
         }
 
