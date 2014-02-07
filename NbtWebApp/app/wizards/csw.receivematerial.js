@@ -30,11 +30,11 @@
                 addSDSPermission: false,
                 canAddSDS: true,
                 canAddCofA: false,
-                sdsDocs: [{
-                    revisiondate: '',
-                    displaytext: '',
-                    linktext: ''
-                }],
+                //sdsDocs: [{//Case 31855 - this is the object structure, but we shouldn't add it to the parent state
+                //    revisiondate: '',
+                //    displaytext: '',
+                //    linktext: ''
+                //}],
                 sdsDocTypeId: '',
                 sdsDocId: '',
                 cofaDocTypeId: '',
