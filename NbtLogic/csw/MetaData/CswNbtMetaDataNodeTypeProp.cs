@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.MetaData
                     _NodeTypePropRow["filtermode"] = string.Empty;
                     _NodeTypePropRow["filtervalue"] = string.Empty;
                     _NodeTypePropRow["filterpropid"] = CswConvert.ToDbVal( Int32.MinValue );
-                    if( this.DefaultValue.Empty )
+                    if( HasDefaultValue( false ) )
                     {
                         //If the prop isn't on the Add layout, Add it.
                         if( false == ExistsOnLayout( CswEnumNbtLayoutType.Add ) )
@@ -633,7 +633,7 @@ namespace ChemSW.Nbt.MetaData
             if( LayoutType == CswEnumNbtLayoutType.Add )
             {
                 ret = ret && ( IsSaveProp || getFieldType().FieldType != CswEnumNbtFieldType.Button ) &&
-                             ( ( IsRequired && ( null == DefaultValue || DefaultValue.Empty ) ) ||
+                             ( ( IsRequired && false == HasDefaultValue( false ) ) ||
                                CswConvert.ToBoolean( Node.Properties[this][CswEnumNbtPropertyAttributeName.Required] ) ||
                                AddLayout != null );
             }
@@ -920,38 +920,35 @@ namespace ChemSW.Nbt.MetaData
         //    // NO SET...interact with the CswNbtNodePropWrapper instead
         //}
 
-        public CswNbtNodePropWrapper DefaultValue
+        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing, bool AllowDeprecated )
         {
-            get
+            CswNbtNodePropWrapper ret = null;
+            if( null != DesignNode )
             {
-                CswNbtNodePropWrapper ret = null;
-                if( null != DesignNode )
+                if( DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.DefaultValue ) )
                 {
-                    if( DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.DefaultValue ) )
-                    {
-                        ret = DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.DefaultValue];
-                    }
+                    ret = DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.DefaultValue];
                 }
-
-                if( ret == null || ret.Empty )
-                {
-                    // DEPRECATED support of old default values.  Should be able to be removed in Larch.
-                    ret = _initDefaultValueDeprecated( true );
-                }
-                return ret;
             }
-        }
 
-        public bool HasDefaultValue()
+            if( AllowDeprecated && ( ret == null || ret.Empty ) )
+            {
+                // DEPRECATED support of old default values.  Should be able to be removed in Larch.
+                ret = _initDefaultValueDeprecated( CreateIfMissing );
+            }
+            return ret;
+        } // getDefaultValue()
+
+        public bool HasDefaultValue( bool AllowDeprecated )
         {
             bool ret = false;
-            CswNbtNodePropWrapper defval = DefaultValue;
+            CswNbtNodePropWrapper defval = getDefaultValue( false, AllowDeprecated );
             if( null != defval )
             {
                 ret = ( false == defval.Empty );
             }
             return ret;
-        }
+        } // HasDefaultValue()
 
         public Int32 FirstPropVersionId
         {

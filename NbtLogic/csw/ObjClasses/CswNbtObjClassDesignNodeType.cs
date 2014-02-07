@@ -634,7 +634,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 // Set 'Name' default value = nodetypename
                 CswNbtMetaDataNodeTypeProp NameProp = RelationalNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
-                NameProp.DefaultValue.AsText.Text = RelationalNodeType.NodeTypeName;
+                NameProp.getDefaultValue( true, true ).AsText.Text = RelationalNodeType.NodeTypeName;
             }
             if( false == CswTools.IsValidName( NodeTypeName.Text ) )
             {

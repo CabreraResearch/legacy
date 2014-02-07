@@ -240,17 +240,17 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// The default value of the property
         /// </summary>
-        public CswNbtNodePropWrapper DefaultValue
+        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing, bool AllowDeprecated )
         {
-            get { return ( _CswNbtMetaDataNodeTypeProp.DefaultValue ); }
+            return _CswNbtMetaDataNodeTypeProp.getDefaultValue( CreateIfMissing, AllowDeprecated );
         }
 
         /// <summary>
         /// Whether a default value of the property is defined
         /// </summary>
-        public bool HasDefaultValue()
+        public bool HasDefaultValue( bool AllowDeprecated )
         {
-            return ( _CswNbtMetaDataNodeTypeProp.HasDefaultValue() );
+            return ( _CswNbtMetaDataNodeTypeProp.HasDefaultValue( AllowDeprecated ) );
         }
 
         /// <summary>
@@ -538,9 +538,9 @@ namespace ChemSW.Nbt.PropTypes
                     //Implementing FieldType specific behavior here. Blame Steve.
                     if( FieldType == CswEnumNbtFieldType.ViewReference )
                     {
-                        if( null != Source.DefaultValue )
+                        if( Source.HasDefaultValue( true ) )
                         {
-                            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.DefaultValue.AsViewReference.ViewId );
+                            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.getDefaultValue( false, true ).AsViewReference.ViewId );
                             CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
                             ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                             SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );

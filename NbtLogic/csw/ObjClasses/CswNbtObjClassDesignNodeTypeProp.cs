@@ -13,9 +13,9 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassDesignNodeTypeProp: CswNbtObjClass
+    public class CswNbtObjClassDesignNodeTypeProp : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;
             public const string CompoundUnique = CswEnumNbtPropertyAttributeName.CompoundUnique; //"Compound Unique";
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // Copy values from ObjectClassProp
                     _syncFromObjectClassProp( InsertedRow );
-                    postChanges( false, SkipEvents : true );
+                    postChanges( false, SkipEvents: true );
 
                     ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
                     InsertedRow["isquicksearch"] = CswConvert.ToDbVal( RelationalRule.SearchAllowed );
@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                 RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
 
                 // Add default layout entry for new property
-                if( CswEnumTristate.True == Required.Checked && false == RelationalNodeTypeProp.HasDefaultValue())
+                if( CswEnumTristate.True == Required.Checked && false == RelationalNodeTypeProp.HasDefaultValue( false ) )
                 {
                     _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false );
                 }
@@ -623,9 +623,9 @@ namespace ChemSW.Nbt.ObjClasses
                 addTemplateView.AddViewPropertyAndFilter( PropRel1,
                                                           NodeTypeValue.NodeTypeProp,
                                                           CswEnumNbtFilterConjunction.And,
-                                                          FilterMode : CswEnumNbtFilterMode.Equals,
-                                                          SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                                                          Value : this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
+                                                          FilterMode: CswEnumNbtFilterMode.Equals,
+                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                          Value: this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
                 CswNbtNodePropRelationship AddToTemplateProp = AttributeProperty[CswNbtFieldTypeRuleComposite.AttributeName.AddToTemplate].AsRelationship;
                 AddToTemplateProp.OverrideView( addTemplateView );
             }
@@ -745,9 +745,9 @@ namespace ChemSW.Nbt.ObjClasses
                 DispCondView.AddViewPropertyAndFilter( PropRel1,
                                                        NodeTypeValue.NodeTypeProp,
                                                        CswEnumNbtFilterConjunction.And,
-                                                       FilterMode : CswEnumNbtFilterMode.Equals,
-                                                       SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                                                       Value : this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
+                                                       FilterMode: CswEnumNbtFilterMode.Equals,
+                                                       SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                       Value: this.NodeTypeValue.RelatedNodeId.PrimaryKey.ToString() );
                 DisplayConditionProperty.OverrideView( DispCondView );
 
 
@@ -1008,7 +1008,7 @@ namespace ChemSW.Nbt.ObjClasses
                     } // if( null != RelationalNodeType )
 
                     // Handle default values from ObjectClassProp
-                    _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp );
+                    _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp, false );
                 } // if( null != OCProp )
             } // if( DerivesFromObjectClassProp )
         } // syncFromObjectClass()

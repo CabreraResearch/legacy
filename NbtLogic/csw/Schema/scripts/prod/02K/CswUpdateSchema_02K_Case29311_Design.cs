@@ -423,8 +423,8 @@ namespace ChemSW.Nbt.Schema
 
 
                     // Set default value of "Field Type" to this fieldtype
-                    NTPFieldTypeNTP.DefaultValue.AsList.Value = FieldType.FieldTypeId.ToString();
-                    NTPFieldTypeNTP.DefaultValue.AsList.Text = FieldType.FieldType.ToString();
+                    NTPFieldTypeNTP.getDefaultValue( true, true ).AsList.Value = FieldType.FieldTypeId.ToString();
+                    NTPFieldTypeNTP.getDefaultValue( true, true ).AsList.Text = FieldType.FieldType.ToString();
                     NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
 
 
@@ -502,12 +502,12 @@ namespace ChemSW.Nbt.Schema
                         case CswEnumNbtFieldType.Location:
                             CswNbtMetaDataNodeTypeProp locfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKType.ToString() );
                             locfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                            locfktypeNTP.DefaultValue.AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
+                            locfktypeNTP.getDefaultValue( true, true ).AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                             locfktypeNTP.removeFromAllLayouts();
 
                             CswNbtMetaDataNodeTypeProp locfkvalueNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKValue.ToString() );
                             locfkvalueNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                            locfkvalueNTP.DefaultValue.AsNumber.Value = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).ObjectClassId;
+                            locfkvalueNTP.getDefaultValue( true, true ).AsNumber.Value = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).ObjectClassId;
                             locfkvalueNTP.removeFromAllLayouts();
                             break;
 
@@ -535,7 +535,7 @@ namespace ChemSW.Nbt.Schema
 
                             CswNbtMetaDataNodeTypeProp ntsfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.FKType.ToString() );
                             ntsfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                            ntsfktypeNTP.DefaultValue.AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
+                            ntsfktypeNTP.getDefaultValue( true, true ).AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                             ntsfktypeNTP.removeFromAllLayouts();
 
                             CswNbtMetaDataNodeTypeProp ntsfkvalueNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.ConstrainToObjectClass.ToString() );
@@ -591,7 +591,7 @@ namespace ChemSW.Nbt.Schema
                         case CswEnumNbtFieldType.ReportLink:
                             // FKType is nodeid, servermanaged
                             CswNbtMetaDataNodeTypeProp rlFkTypeNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleReportLink.AttributeName.FKType.ToString() );
-                            rlFkTypeNTP.DefaultValue.AsText.Text = "nodeid";
+                            rlFkTypeNTP.getDefaultValue( true, true ).AsText.Text = "nodeid";
                             rlFkTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                             rlFkTypeNTP.removeFromAllLayouts();
 
@@ -658,9 +658,9 @@ namespace ChemSW.Nbt.Schema
                                     {
                                         if( Attr.Name == CswEnumNbtPropertyAttributeName.DefaultValue )
                                         {
-                                            if( thisProp.HasDefaultValue() )
+                                            if( thisProp.HasDefaultValue( true ) )
                                             {
-                                                wrapper.copy( thisProp.DefaultValue );
+                                                wrapper.copy( thisProp.getDefaultValue( false, true ) );
                                             }
                                         }
                                         else
@@ -883,7 +883,7 @@ namespace ChemSW.Nbt.Schema
                 if( ColumnName == CswEnumNbtPropertyAttributeColumn.Isfk )
                 {
                     newNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                    newNTP.DefaultValue.AsLogical.Checked = CswEnumTristate.True;
+                    newNTP.getDefaultValue( true, true ).AsLogical.Checked = CswEnumTristate.True;
                     newNTP.removeFromAllLayouts();
                 }
             }

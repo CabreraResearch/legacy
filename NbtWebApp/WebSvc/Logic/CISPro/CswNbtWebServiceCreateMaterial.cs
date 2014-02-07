@@ -164,7 +164,8 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeTypeProp IsConstituentNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.IsConstituent );
                     // Yes this is a weird way to know whether a nodetype is a Constituent nodetype, 
                     // but as long as this property remains servermanaged, this will work
-                    if( CswEnumTristate.True == IsConstituentNTP.DefaultValue.AsLogical.Checked )
+                    if( IsConstituentNTP.HasDefaultValue( false ) &&
+                        CswEnumTristate.True == IsConstituentNTP.getDefaultValue( false, false ).AsLogical.Checked )
                     {
                         ConstituentNodeTypeIds.Add( ChemicalNT.NodeTypeId.ToString() );
                     }
