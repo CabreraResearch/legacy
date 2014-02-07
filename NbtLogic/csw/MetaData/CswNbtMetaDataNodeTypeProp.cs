@@ -149,9 +149,18 @@ namespace ChemSW.Nbt.MetaData
             //set { _NodeTypePropRow = value; }
         }
 
+        private CswNbtObjClassDesignNodeTypeProp _DesignNode = null;
         public CswNbtObjClassDesignNodeTypeProp DesignNode
         {
-            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", PropId ) ); }
+            get
+            {
+                if( null == _DesignNode )
+                {
+                    _DesignNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", PropId ) );
+                    _CswNbtMetaDataResources.addDesignNodeForFinalization( _DesignNode.Node );
+                }
+                return _DesignNode;
+            }
         }
 
         public CswPrimaryKey DesignNodeId

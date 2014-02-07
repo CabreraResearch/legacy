@@ -34,9 +34,18 @@ namespace ChemSW.Nbt.MetaData
             get { return _NodeTypeRow; }
         }
 
+        private CswNbtObjClassDesignNodeType _DesignNode = null;
         public CswNbtObjClassDesignNodeType DesignNode
         {
-            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NodeTypeId ) ); }
+            get
+            {
+                if( null == _DesignNode )
+                {
+                    _DesignNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NodeTypeId ) );
+                    _CswNbtMetaDataResources.addDesignNodeForFinalization( _DesignNode.Node );
+                }
+                return _DesignNode;
+            }
         }
         public CswPrimaryKey DesignNodeId
         {
