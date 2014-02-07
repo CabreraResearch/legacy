@@ -54,6 +54,9 @@ namespace NbtWebApp.Services
             public bool SDSModuleEnabled = true;
 
             [DataMember]
+            public bool addSDSPermission = true;
+
+            [DataMember]
             public string PhysicalState = string.Empty;
 
             [DataMember]

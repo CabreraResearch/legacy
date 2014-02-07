@@ -23,42 +23,45 @@
             showQuantityEditable: false,
             showDispensable: false,
             state: {
+                addNewC3Supplier: false,
                 chemCatCentralImport: false,
-                request: {},
-                sizeNodeTypeId: '',
-                relatedNodeId: null,
-                materialId: '',
+                c3SupplierName: '',
+                chemicalObjClassId: '',
+                constituentNtIds: '',
+                containerlimit: 25,
                 documentTypeId: '',
-                sdsDocId: '',
+                materialId: '',
                 materialType: {
                     name: '',
                     val: '',
                     objclassid: '',
                     readOnly: false
                 },
-                tradeName: '',
+                partNo: '',
+                physicalState: 'liquid',
+                properties: {},
+                relatedNodeId: null,
+                request: {},
+                sds: {
+                    canAddSDS: true, // Dependent on type of material
+                    addSDSPermission: false, // Does User have permission?
+                    sdsDocId: '',
+                },
+                showOriginalUoM: false,
+                sizes: [],
+                sizeNodeTypeId: '',
                 supplier: {
                     name: '',
                     val: '',
                     nodelink: '',
                     corporate: false
                 },
-                c3SupplierName: '',
-                addNewC3Supplier: false,
-                partNo: '',
-                properties: {},
-                useExistingTempNode: false,
-                physicalState: 'liquid',
-                sizes: [],
-                canAddSDS: true,
-                showOriginalUoM: false,
-                chemicalObjClassId: '',
-                constituentNtIds: '',
-                containerlimit: 25
+                tradeName: '',
+                useExistingTempNode: false
             },
             physicalStateModified: false,
             containersModuleEnabled: true,
-            SDSModuleEnabled: true,
+            SDSModuleEnabled: true, // Is SDS module enabled?
             AllowSupplierAdd: true,
             sizesGrid: null,
 
@@ -188,7 +191,7 @@
         };
 
         cswPrivate.isLastStep = function () {
-            return ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
+            return ((false === cswPrivate.state.sds.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
                         (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
         };
         //#endregion Wizard Functions
@@ -214,14 +217,14 @@
                         // the Material Type is rendered as readOnly. Hence, we need to account for this when
                         // checking if we should add the Attach SDS step.
                         if (false == cswPrivate.state.chemCatCentralImport) {
-                            cswPrivate.state.canAddSDS =
+                            cswPrivate.state.sds.canAddSDS =
                                 cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
                                     && false === cswPrivate.isConstituent();
                         } else {
-                            cswPrivate.state.canAddSDS = (Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId) && false === cswPrivate.isConstituent());
+                            cswPrivate.state.sds.canAddSDS = (Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId) && false === cswPrivate.isConstituent());
                         }
 
-                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeAttachSDSStep.stepNo, cswPrivate.state.canAddSDS);
+                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeAttachSDSStep.stepNo, cswPrivate.state.sds.canAddSDS);
                         if (cswPrivate.containersModuleEnabled) {
                             cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeSizesStep.stepNo, false == cswPrivate.isConstituent());
                         }
@@ -628,7 +631,7 @@
                 return function (StepNo) {
                     var div, selectDiv;
 
-                    var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled);
+                    var isLastStep = Csw.bool(false === cswPrivate.state.sds.canAddSDS || false === cswPrivate.SDSModuleEnabled);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
 
@@ -741,38 +744,46 @@
                         cswPrivate.setStepHeader(StepNo, 'Define a Safety Data Sheet to attach to this material.');
 
                         var attachSDSTable = cswPrivate['divStep' + StepNo].table();
-                        attachSDSTable.cell(1, 1).a({
-                            text: 'Add a new SDS Document',
-                            onClick: function () {
+                        
+                        if (cswPrivate.state.sds.addSDSPermission) {
+                            
+                            attachSDSTable.cell(1, 1).a({
+                                text: 'Add a new SDS Document',
+                                onClick: function() {
+                                    attachSDSTable.cell(1, 1).hide();
+                                    attachSDSTable.cell(1, 2).show();
+                                }
+                            });
+
+                            // If an SDS document already exists, hide the option to add
+                            // a new one and send the Temp edit mode so a new one isn't created
+                            var editMode;
+                            if (Csw.isNullOrEmpty(cswPrivate.state.sds.sdsDocId)) {
+                                attachSDSTable.cell(1, 2).hide();
+                                editMode = Csw.enums.editMode.Add;
+                            } else {
                                 attachSDSTable.cell(1, 1).hide();
-                                attachSDSTable.cell(1, 2).show();
+                                editMode = Csw.enums.editMode.Temp;
                             }
-                        });
 
-                        // If an SDS document already exists, hide the option to add
-                        // a new one and send the Temp edit mode so a new one isn't created
-                        var editMode;
-                        if (Csw.isNullOrEmpty(cswPrivate.state.sdsDocId)) {
-                            attachSDSTable.cell(1, 2).hide();
-                            editMode = Csw.enums.editMode.Add;
+                            cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                                tabState: {
+                                    excludeOcProps: ['owner', 'save'],
+                                    ShowAsReport: false,
+                                    nodeid: cswPrivate.state.sds.sdsDocId,
+                                    nodetypeid: cswPrivate.state.documentTypeId,
+                                    EditMode: editMode
+                                },
+                                ReloadTabOnSave: false,
+                                onNodeIdSet: function(sdsDocId) {
+                                    cswPrivate.state.sds.sdsDocId = sdsDocId;
+                                }
+                            });
                         } else {
-                            attachSDSTable.cell(1, 1).hide();
-                            editMode = Csw.enums.editMode.Temp;
+                            attachSDSTable.span({
+                                text: 'You do not have permission to create an SDS Document.'
+                            }).css({ 'color': 'red' });
                         }
-
-                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                            tabState: {
-                                excludeOcProps: ['owner', 'save'],
-                                ShowAsReport: false,
-                                nodeid: cswPrivate.state.sdsDocId,
-                                nodetypeid: cswPrivate.state.documentTypeId,
-                                EditMode: editMode
-                            },
-                            ReloadTabOnSave: false,
-                            onNodeIdSet: function (sdsDocId) {
-                                cswPrivate.state.sdsDocId = sdsDocId;
-                            }
-                        });
 
                         cswPrivate['step' + StepNo + 'Complete'] = true;
                     }
@@ -824,7 +835,7 @@
 
                 //From step 4: material document
                 if (cswPrivate.wizard.isStepVisible(cswPrivate.makeAttachSDSStep.stepNo)) {
-                    createMaterialDef.sdsDocId = cswPrivate.state.sdsDocId;
+                    createMaterialDef.sdsDocId = cswPrivate.state.sds.sdsDocId;
                     if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
                         createMaterialDef.sdsDocProperties = cswPrivate.documentTabsAndProps.getProps();
                     }
@@ -870,6 +881,9 @@
                     cswPrivate.state.chemicalObjClassId = data.ChemicalObjClassId;
                     cswPrivate.state.constituentNtIds = data.ConstituentNodeTypeIds;
                     cswPrivate.state.containerlimit = data.ContainerLimit;
+                    
+                    //set addSDSPermission
+                    cswPrivate.state.sds.addSDSPermission = data.addSDSPermission;
 
                     cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
                     cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;
