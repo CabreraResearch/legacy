@@ -144,7 +144,7 @@ namespace NbtWebApp
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3SearchParams>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetC3ProductDetails,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.RunC3FilteredSearch,
                 ParamObj: CswC3SearchParams
                 );
 

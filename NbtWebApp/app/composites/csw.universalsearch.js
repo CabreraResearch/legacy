@@ -195,20 +195,12 @@
                             $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                             break;
                         case 'ChemCatCentral Search':
-                            
                             Csw.dialogs.c3SearchDialog({
                                 c3searchterm: cswPrivate.searchinput.val(),
                                 c3handleresults: cswPublic.handleResults,
                                 clearview: cswPrivate.onBeforeSearch,
                                 loadView: cswPrivate.onLoadView
                             });
-
-                            //$.CswDialog('C3SearchDialog', {
-                            //    loadView: cswPrivate.onLoadView,
-                            //    c3searchterm: cswPrivate.searchinput.val(),
-                            //    c3handleresults: cswPublic.handleResults,
-                            //    clearview: cswPrivate.onBeforeSearch
-                            //});
                             break;
                         default:
                             Csw.publish('initPropertyTearDown');
@@ -405,6 +397,12 @@
                     },
                     tabledata: data.table,
                     chemCatConfig: {
+                        dataservice: data.c3dataservice, //either 'C3' or 'ACD'
+                        filtered: data.filtered,         //Was this data from ACD filtered?
+                        onMoreResultsClick: function (filteredData) {
+                            //cswPrivate.onBeforeSearch();
+                            cswPublic.handleResults(filteredData);
+                        },
                         importMenuItems: data.table.importmenu || []
                     },
                     //columns: columns,
