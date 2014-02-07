@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
             Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( Val_kg_SubField, true );
+            SubFields.add( Val_kg_SubField );
 
             Val_Liters_SubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3_Numeric, CswEnumNbtSubFieldName.Val_Liters, true );
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( Val_Liters_SubField, true );
+            SubFields.add( Val_Liters_SubField );
 
         }//ctor
 

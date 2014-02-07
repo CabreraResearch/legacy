@@ -571,46 +571,45 @@
                     } // renderer()
                 }; // newcol
                 gridopts.columns.splice(0, 0, newcol);
+            
+                //Render buttons in a callback
+                if (false === cswPrivate.showCheckboxes &&
+                    cswPrivate.rows.buttons &&
+                    cswPrivate.rows.buttons.length > 0) {
+
+                    var colNames = Csw.delimitedString('', { spaceToDelimiter: false });
+                    Csw.each(cswPrivate.rows.buttons, function (val, key) {
+                        //Get the column names, delimitedString will handle dupes for us automatically
+                        colNames.add(val.selectedtext);
+                    });
+
+                    var cols = cswPrivate.columns.filter(function (col) {
+                        return colNames.contains(col.header);
+                    });
+
+                    Csw.iterate(cols, function (colObj, key) {
+                        colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            //NOTE: this can now be moved to the viewrender event. See action column logic.
+                            var divId = cswPrivate.name + 'button' + rowIndex + colIndex;
+                            var thisBtn = cswPrivate.rows.buttons.filter(function (btn) {
+                                return btn.index === colObj.dataIndex && btn.propattr.startsWith(record.raw.nodeid);
+                            });
+                            if (thisBtn.length === 1) {
+                                Csw.defer(function _tryMakeBtn() {
+                                    //Case 28343. The problem here is that 
+                                    // a) our div is not in the DOM until this method returns and 
+                                    // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
+                                    if (Csw.isElementInDom(divId)) {
+                                        var div = Csw.domNode({ ID: divId });
+                                        cswPrivate.onButtonRender(div, colObj, thisBtn);
+                                    }
+                                }, 100);
+                            }
+                            return '<div id="' + divId + '"></div>';
+                        };
+                    });
+                }
             } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
-
-            //Render buttons in a callback
-            if (false === cswPrivate.showCheckboxes &&
-                cswPrivate.rows.buttons &&
-                cswPrivate.rows.buttons.length > 0) {
-
-                var colNames = Csw.delimitedString('', { spaceToDelimiter: false });
-                Csw.each(cswPrivate.rows.buttons, function (val, key) {
-                    //Get the column names, delimitedString will handle dupes for us automatically
-                    colNames.add(val.selectedtext);
-                });
-
-                var cols = cswPrivate.columns.filter(function (col) {
-                    return colNames.contains(col.header);
-                });
-
-                Csw.iterate(cols, function (colObj, key) {
-                    colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-                        //NOTE: this can now be moved to the viewrender event. See action column logic.
-                        var divId = cswPrivate.name + 'button' + rowIndex + colIndex;
-                        var thisBtn = cswPrivate.rows.buttons.filter(function (btn) {
-                            return btn.index === colObj.dataIndex && btn.propattr.startsWith(record.raw.nodeid);
-                        });
-                        if (thisBtn.length === 1) {
-                            Csw.defer(function _tryMakeBtn() {
-                                //Case 28343. The problem here is that 
-                                // a) our div is not in the DOM until this method returns and 
-                                // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
-                                if (Csw.isElementInDom(divId)) {
-                                    var div = Csw.domNode({ ID: divId });
-                                    cswPrivate.onButtonRender(div, colObj, thisBtn);
-                                }
-                            }, 100);
-                        }
-                        return '<div id="' + divId + '"></div>';
-                    };
-                });
-
-            }
 
             if (true === cswPrivate.makeCustomColumns &&
                 cswPrivate.customColumns &&

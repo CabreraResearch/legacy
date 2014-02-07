@@ -464,7 +464,7 @@
                 });
             }
 
-            if (cswPrivate.isRequired && false === cswPrivate.overrideNodelinkValidation) {
+            if (cswPrivate.nameSpan && cswPrivate.isRequired && false === cswPrivate.overrideNodelinkValidation) {
                 cswPrivate.validateNodeLink(cswPrivate.nameSpan.text());
             }
 
