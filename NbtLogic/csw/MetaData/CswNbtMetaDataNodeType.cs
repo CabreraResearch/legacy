@@ -42,7 +42,10 @@ namespace ChemSW.Nbt.MetaData
                 if( null == _DesignNode )
                 {
                     _DesignNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NodeTypeId ) );
-                    _CswNbtMetaDataResources.addDesignNodeForFinalization( _DesignNode.Node );
+                    if( null != _DesignNode )
+                    {
+                        _CswNbtMetaDataResources.addDesignNodeForFinalization( _DesignNode.Node );
+                    }
                 }
                 return _DesignNode;
             }
