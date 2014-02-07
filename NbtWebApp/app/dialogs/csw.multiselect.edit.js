@@ -219,7 +219,7 @@
             var opts = [];
 
             if (cswPrivate.usePaging) {
-                var start = (cswPrivate.currentPage - 1) * (cswPrivate.itemsPerPage + 1);
+                var start = (cswPrivate.currentPage - 1) * (cswPrivate.itemsPerPage);
                 var end = start + cswPrivate.itemsPerPage - 1;
 
                 if (cswPrivate.currentPage === cswPrivate.totalPages) {
