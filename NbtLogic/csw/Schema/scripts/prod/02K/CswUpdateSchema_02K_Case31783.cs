@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -23,59 +25,68 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Migrate Layout Data - Layout Tab"; }
+            get { return "Migrate Layout Data Prep - Fix FireClassExemptAmount Layout"; }
         }
 
         public override string AppendToScriptName()
         {
-            return "A";
+            return "Pre";
         }
 
         public override void update()
         {
-            CswTableUpdate LayoutTabUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "layout_tab_update", "layout_tab" );
-            DataTable LayoutTabTable = LayoutTabUpdate.getEmptyTable();
-            CswArbitrarySelect OldLayoutTabsSelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "layout_tab_update", 
-@"select 
-  l.layouttype, 
-  t.tabname, 
-  t.taborder,
-  l.nodetypeid, 
-  n.nodeid design_nodetype_nodeid,
-  l.nodetypetabsetid, 
-  n3.nodeid design_nodetypetab_nodeid
-from nodetype_layout l
-left join nodetype_tabset t on l.nodetypetabsetid = t.nodetypetabsetid
-left join nodes n on n.relationalid = l.nodetypeid and n.relationaltable = 'nodetypes'
-left join nodes n3 on n3.relationalid = l.nodetypetabsetid and n3.relationaltable = 'nodetype_tabset'
-group by l.layouttype, t.tabname, t.taborder, l.nodetypeid, l.nodetypetabsetid, n.nodeid, n3.nodeid
-order by l.nodetypeid, l.layouttype" );
-            DataTable OldLayoutTabsTable = OldLayoutTabsSelect.getTable();
-            foreach( DataRow OldLayoutRow in OldLayoutTabsTable.Rows )
+            CswNbtMetaDataObjectClass FCEAOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
+            foreach( CswNbtMetaDataNodeType FCEANt in FCEAOC.getNodeTypes() )
             {
-                DataRow LayoutTabRow = LayoutTabTable.NewRow();
-                LayoutTabRow["layout_type"] = OldLayoutRow["layouttype"].ToString().ToLower();
-                if( LayoutTabRow["layout_type"].ToString() == "table" )
-                {
-                    LayoutTabRow["layout_type"] = "search";
-                }
-                LayoutTabRow["tab_type"] = "main";
-                if( OldLayoutRow["tabname"].ToString() == "Identity" )
-                {
-                    LayoutTabRow["tab_type"] = "identity";
-                }
-                LayoutTabRow["tab_name"] = OldLayoutRow["tabname"];
-                LayoutTabRow["tab_order"] = OldLayoutRow["taborder"];
-                if( LayoutTabRow["tab_order"].ToString() == "" )
-                {
-                    LayoutTabRow["tab_order"] = 1;
-                }
-                LayoutTabRow["metadata_nodetypeid"] = OldLayoutRow["nodetypeid"];
-                LayoutTabRow["design_nodetype_nodeid"] = OldLayoutRow["design_nodetype_nodeid"];
-                LayoutTabRow["design_nodetypetab_nodeid"] = OldLayoutRow["design_nodetypetab_nodeid"];
-                LayoutTabTable.Rows.Add( LayoutTabRow );
+                CswNbtMetaDataNodeTypeProp ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.StorageSolidExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 7 + ", display_column = " + 1 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.StorageSolidExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 8 + ", display_column = " + 1 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.StorageLiquidExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 9 + ", display_column = " + 1 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.StorageLiquidExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 10 + ", display_column = " + 1 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.StorageGasExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 11 + ", display_column = " + 1 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.StorageGasExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 12 + ", display_column = " + 1 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedSolidExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 7 + ", display_column = " + 2 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedSolidExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 8 + ", display_column = " + 2 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedLiquidExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 9 + ", display_column = " + 2 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedLiquidExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 10 + ", display_column = " + 2 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedGasExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 11 + ", display_column = " + 2 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedGasExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 12 + ", display_column = " + 2 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.OpenSolidExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 7 + ", display_column = " + 3 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.OpenSolidExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 8 + ", display_column = " + 3 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.OpenLiquidExemptAmount );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 9 + ", display_column = " + 3 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
+                ExemptAmountNTP = FCEANt.getNodeTypePropByObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.OpenLiquidExemptFootnotes );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    "update nodetype_layout set display_row = " + 10 + ", display_column = " + 3 + " where nodetypepropid = " + ExemptAmountNTP.PropId );
             }
-            LayoutTabUpdate.update( LayoutTabTable );
         } // update()
 
     } // class CswUpdateSchema_02K_Case31783
