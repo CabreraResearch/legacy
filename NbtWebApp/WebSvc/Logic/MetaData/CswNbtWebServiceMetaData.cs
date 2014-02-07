@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         //Get fieldtypes
-        public JArray getFieldTypes()
+        public JArray getFieldTypes( string LayoutType )
         {
             JArray ret = new JArray();
             //todo: Standard mode vs Inspection mode?? Adding 'Question' to list of fieldtypes
@@ -189,10 +189,13 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes() )
             {
-                JObject ThisFieldTypeObj = new JObject();
-                ThisFieldTypeObj["fieldtypeid"] = FieldType.FieldTypeId.ToString();
-                ThisFieldTypeObj["fieldtypename"] = FieldType.FieldType.ToString();
-                ret.Add( ThisFieldTypeObj );
+                if( FieldType.IsLayoutCompatible( LayoutType ) )
+                {
+                    JObject ThisFieldTypeObj = new JObject();
+                    ThisFieldTypeObj["fieldtypeid"] = FieldType.FieldTypeId.ToString();
+                    ThisFieldTypeObj["fieldtypename"] = FieldType.FieldType.ToString();
+                    ret.Add( ThisFieldTypeObj );
+                }
             }
 
             return ret;
