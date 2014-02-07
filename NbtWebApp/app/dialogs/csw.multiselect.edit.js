@@ -178,7 +178,7 @@
 
                 // Hide all of the options from last page
                 Csw.iterate(cswPrivate.ctrlOpts, function (item) {
-                    if (item.page = currentPage) {
+                    if (item.page == currentPage) {
                         item.ctrl.ctrlDiv.hide();
                     }
                 });
