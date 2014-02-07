@@ -248,9 +248,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
             CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
 
-            //// Set 'Name' default value = nodetypename
-            //NameProp.DefaultValue.AsText.Text = NewNodeType.NodeTypeName;
-
+            // Set 'Name' default value = nodetypename
+            NameProp.getDefaultValue( true, false ).AsText.Text = NewNodeType.NodeTypeName;
+            
             // The following changes for new forms only
             if( NewNodeType.VersionNo == 1 && false == InternalCreate )
             {
