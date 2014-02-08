@@ -91,20 +91,32 @@ namespace ChemSW.Nbt
                                             }
                                             else if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Defaultvalueid )
                                             {
-                                                // Special case: we need to sync the jctnodepropid row, not the value
+                                                // Special case for Default Value: we need to sync the jctnodepropid row, not the value
                                                 DataRow[_CswNbtResources.DataDictionary.ColumnName] = CurrentRow["jctnodepropid"];
                                             }
                                             else
                                             {
                                                 object value = CurrentRow[CurrentSubField.Column.ToString()];
-
+                                                
+                                                // Special case for Multi: translate "Single" and "Multiple" to 0 and 1 resp.
+                                                if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Multi )
+                                                {
+                                                    if( value.ToString() == CswEnumNbtPropertySelectMode.Single.ToString() )
+                                                    {
+                                                        value = 1;
+                                                    }
+                                                    else
+                                                    {
+                                                        value = 0;
+                                                    }
+                                                }
                                                 // Special case for booleans and tristates
-                                                if( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
+                                                else if( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                                                 {
                                                     value = CswConvert.TristateToDbVal( CswConvert.ToTristate( CurrentRow[CurrentSubField.Column.ToString()] ) );
                                                 }
                                                 // Special case for relationships and locations, if the related entity is also relational
-                                                if( CurrentSubField.Name == CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID &&
+                                                else if( CurrentSubField.Name == CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID &&
                                                     ( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
                                                       thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Location ) )
                                                 {
