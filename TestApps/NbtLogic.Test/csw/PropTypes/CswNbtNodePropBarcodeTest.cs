@@ -136,6 +136,20 @@ namespace ChemSW.Nbt.Test.PropTypes
             Barcodes.Add( "testbarcode2" );
 
             int NumContainers = 2;
+            CswNbtAmountsGridQuantity Quantity = new CswNbtAmountsGridQuantity()
+            {
+                NumContainers = NumContainers,
+                Quantity = 10,
+                SizeName = Size.NodeName,
+                SizeNodeId = Size.NodeId,
+                UnitNodeId = GramNode.NodeId,
+                ContainerIds = new Collection<string>() { InitialContainer.NodeId.ToString() },
+            };
+            foreach( string Barcode in Barcodes )
+            {
+                Quantity.AddBarcode( Barcode );
+            }
+
             CswNbtReceivingDefinition ReceiptDef = new CswNbtReceivingDefinition()
             {
                 ContainerNodeId = InitialContainer.NodeId,
@@ -144,16 +158,7 @@ namespace ChemSW.Nbt.Test.PropTypes
                 MaterialNodeId = ChemicalNode.NodeId,
                 Quantities = new Collection<CswNbtAmountsGridQuantity>()
                         {
-                            new CswNbtAmountsGridQuantity()
-                                {
-                                    NumContainers = NumContainers,
-                                    Quantity = 10,
-                                    SizeName = Size.NodeName,
-                                    SizeNodeId = Size.NodeId,
-                                    UnitNodeId = GramNode.NodeId,
-                                    ContainerIds = new Collection<string>() { InitialContainer.NodeId.ToString() },
-                                    Barcodes =  Barcodes
-                                }
+                            Quantity
                         }
             };
 

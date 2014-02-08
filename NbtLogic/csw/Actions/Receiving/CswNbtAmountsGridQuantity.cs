@@ -64,7 +64,7 @@ namespace NbtWebApp.Actions.Receiving
         }
 
         private CswCommaDelimitedString _Barcodes = null;
-        public CswCommaDelimitedString Barcodes
+        private CswCommaDelimitedString Barcodes
         {
             get
             {
@@ -80,6 +80,19 @@ namespace NbtWebApp.Actions.Receiving
                 _Barcodes = value;
                 _BarcodesStr = _Barcodes.ToString();
             }
+        }
+        public CswCommaDelimitedString getBarcodes()
+        {
+            return Barcodes;
+        }
+        public void AddBarcode( string Barcode )
+        {
+            Barcodes.Add( Barcode, false );
+            _BarcodesStr = Barcodes.ToString();
+        }
+        public int getNumBarcodes()
+        {
+            return Barcodes.Count;
         }
 
         private string _BarcodesStr = string.Empty;

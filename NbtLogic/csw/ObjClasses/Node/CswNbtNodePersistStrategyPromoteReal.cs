@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Node.removeTemp();
 
-            if( null != Node.ObjClass )
+            if( null != Node.ObjClass && false == SkipEvents )
             {
                 Node.ObjClass.beforePromoteNode( OverrideUniqueValidation: OverrideUniqueValidation );
                 Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
-            if( null != Node.ObjClass )
+            if( null != Node.ObjClass && false == SkipEvents )
             {
                 Node.ObjClass.afterPromoteNode();
                 Node.ObjClass.afterWriteNode( OverrideMailReportEvents );

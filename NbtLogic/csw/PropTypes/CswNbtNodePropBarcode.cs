@@ -167,10 +167,10 @@ namespace ChemSW.Nbt.PropTypes
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Barcode );
         }
 
-        public override bool onBeforeSetDefault()
-        {
-            return DefaultValue.AsBarcode.Barcode != AutoSignal;
-        }
+        //public override bool onBeforeSetDefault()
+        //{
+        //    return HasDefaultValue( false ) && getDefaultValue( false, false ).AsBarcode.Barcode != AutoSignal;
+        //}
 
     }//CswNbtNodePropQuantity
 

@@ -138,8 +138,15 @@ namespace ChemSW.Nbt.PropTypes
         /// Determines whether to treat the property as required, temporarily
         /// </summary>
         //public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
-        public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.DefaultValue ); } }
-        public bool HasDefaultValue() { return ( _CswNbtNodeProp.HasDefaultValue() ); }
+        //public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.getDefaultValue() ); } }
+        /// <summary>
+        /// The default value of the property
+        /// </summary>
+        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing, bool AllowDeprecated )
+        {
+            return _CswNbtNodeProp.getDefaultValue( CreateIfMissing, AllowDeprecated );
+        }
+        public bool HasDefaultValue( bool AllowDeprecated ) { return ( _CswNbtNodeProp.HasDefaultValue( AllowDeprecated ) ); }
 
         public void setPendingUpdate( bool value ) { _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.PendingUpdate, CswEnumNbtPropColumn.PendingUpdate, value ); }
         public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } } // set { _CswNbtNodePropData.PendingUpdate = value; } }
@@ -344,9 +351,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             bool DoCopy = _CswNbtNodeProp.onBeforeSetDefault();
 
-            if( DoCopy && this.HasDefaultValue() )
+            if( DoCopy && this.HasDefaultValue( true ) )
             {
-                this.copy( this.DefaultValue );
+                this.copy( this.getDefaultValue( false, true ) );
                 _CswNbtNodeProp.onAfterSetDefault();
             }
 

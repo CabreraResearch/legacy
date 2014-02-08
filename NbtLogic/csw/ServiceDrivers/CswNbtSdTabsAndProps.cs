@@ -648,7 +648,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue() )
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue( false ) )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, Prop.PropName + " may not be removed", Prop.PropName + " is required and has no unique value, and therefore cannot be removed from 'Add' layouts" );
                     }
@@ -958,7 +958,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                             select Prop )
                 {
                     // case 24179
-                    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) )
+                    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) && false == Prop.IsSaveProp )
                     {
                         JObject ThisPropObj = new JObject();
                         ThisPropObj["propid"] = Prop.PropId.ToString();

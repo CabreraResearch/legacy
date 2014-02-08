@@ -175,6 +175,10 @@ namespace ChemSW.Nbt.PropTypes
         public const string ObjectClassPrefix = "oc_";
         public const string PropertySetPrefix = "ps_";
 
+        public void clearCachedOptions()
+        {
+            _CswNbtNodeTypePropListOptions = null;
+        }
 
         private CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = null;
         public CswNbtNodeTypePropListOptions Options
@@ -189,7 +193,7 @@ namespace ChemSW.Nbt.PropTypes
 
 
                     Collection<CswNbtNodeTypePropListOption> newOptions = new Collection<CswNbtNodeTypePropListOption>();
-                    if( string.Empty == ConstrainToObjectClass )
+                    if( string.Empty == ConstrainToObjectClass || ConstrainToObjectClass == "Unknown")
                     {
                         // The cheaper way
 

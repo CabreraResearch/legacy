@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Test.Actions
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, CswEnumTristate.True );
             CswNbtNode ContainerNode = TestData.Nodes.createContainerNode( "Container", 0.5, LiterNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
-            string DispenseType = "Add Material to Container";
+            string DispenseType = "Add Material to this Container";
             JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Test.Actions
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, CswEnumTristate.True );
             CswNbtNode ContainerNode = TestData.Nodes.createContainerNode( "Container", 0.5, LiterNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
-            string DispenseType = "Add Material to Container";
+            string DispenseType = "Add Material to this Container";
             CswNbtNode MilliliterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Milliliters", 1.0, -3, CswEnumTristate.True );
             JObject obj = wiz.dispenseSourceContainer( DispenseType, "500", MilliliterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.Test.Actions
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( "Chemical", "Liquid", .1 );
             CswNbtNode ContainerNode = TestData.Nodes.createContainerNode( "Container", 0.5, LiterNode, ChemicalNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
-            string DispenseType = "Add Material to Container";
+            string DispenseType = "Add Material to this Container";
             CswNbtNode GramNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "g", 1.0, -3, CswEnumTristate.True );
             JObject obj = wiz.dispenseSourceContainer( DispenseType, "50", GramNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Test.Actions
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( "Chemical", "Liquid", .1 );
             CswNbtNode ContainerNode = TestData.Nodes.createContainerNode( "Container", 0.5, KilogramNode, ChemicalNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
-            string DispenseType = "Add Material to Container";
+            string DispenseType = "Add Material to this Container";
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, CswEnumTristate.True );
             JObject obj = wiz.dispenseSourceContainer( DispenseType, "5", LiterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Test.Actions
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, CswEnumTristate.True );
             CswNbtNode ContainerNode = TestData.Nodes.createContainerNode( "Container", 1.5, LiterNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
-            string DispenseType = "Waste Material";
+            string DispenseType = "Waste/Discard Material";
             JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );

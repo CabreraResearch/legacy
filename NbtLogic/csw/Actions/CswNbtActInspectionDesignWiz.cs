@@ -315,6 +315,7 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
             }
+            InspectionDesignNt.DesignNode.RecalculateQuestionNumbers();
             return RetCount;
         }
 
@@ -388,7 +389,9 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
                 //ItInspectionGroupNtp.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
                 //ItInspectionGroupNtp.PropName = InspectionGroupName;
-                ItInspectionGroupNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList.setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, InspectionTargetGroupNt.NodeTypeId );
+                CswNbtNodePropMetaDataList TargetProp = ItInspectionGroupNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList;
+                TargetProp.clearCachedOptions();
+                TargetProp.setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, InspectionTargetGroupNt.NodeTypeId );
                 ItInspectionGroupNtp.DesignNode.PropName.Text = InspectionGroupName;
                 ItInspectionGroupNtp.DesignNode.postChanges( false );
 
@@ -521,11 +524,18 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
             IdTargetNtp.updateLayout( CswEnumNbtLayoutType.Add, true );
             IdTargetNtp._DataRow["isrequired"] = CswConvert.ToDbVal( true );
-            IdTargetNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.NodeTypeId );
+            //IdTargetNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.NodeTypeId );
+            CswNbtNodePropMetaDataList TargetTargetProp = IdTargetNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList;
+            TargetTargetProp.clearCachedOptions();
+            TargetTargetProp.setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, InspectionTargetNt.NodeTypeId );
 
             CswNbtMetaDataNodeTypeProp ITargetLocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Location );
             CswNbtMetaDataNodeTypeProp IDesignLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Location );
-            IDesignLocationNtp.SetFKDeprecated( CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), ITargetLocationNtp.PropId );
+            //IDesignLocationNtp.SetFKDeprecated( CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), ITargetLocationNtp.PropId );
+            IDesignLocationNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.FKType].AsText.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+            IDesignLocationNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship].AsList.Value = IdTargetNtp.PropId.ToString();
+            IDesignLocationNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedPropType].AsText.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+            IDesignLocationNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty].AsList.Value = ITargetLocationNtp.PropId.ToString();
 
             //Inspection Design Generator is SI Inspection Schedule
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
@@ -535,7 +545,11 @@ namespace ChemSW.Nbt.Actions
             if( IdGeneratorNtp.FKType != CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() &&
                 IdGeneratorNtp.FKValue != GeneratorNt.NodeTypeId )
             {
-                IdGeneratorNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
+                //IdGeneratorNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
+                CswNbtNodePropMetaDataList GeneratorTargetProp = IdGeneratorNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList;
+                GeneratorTargetProp.clearCachedOptions();
+                GeneratorTargetProp.setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, GeneratorNt.NodeTypeId );
+
                 IdGeneratorNtp._DataRow["propname"] = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
             }
 
@@ -552,9 +566,12 @@ namespace ChemSW.Nbt.Actions
 
             if( OwnerNtp.FKType != CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
             {
-                OwnerNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                //OwnerNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
                 // twice to set the view
-                OwnerNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                //OwnerNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                CswNbtNodePropMetaDataList GeneratorTargetProp = OwnerNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList;
+                GeneratorTargetProp.clearCachedOptions();
+                GeneratorTargetProp.setValue( CswEnumNbtViewRelatedIdType.ObjectClassId, GroupOC.ObjectClassId );
             }
 
         }

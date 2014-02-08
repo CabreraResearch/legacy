@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
         
         public void postChanges( CswNbtNode Node )
         {
-            if( null != Node.ObjClass )
+            if( null != Node.ObjClass && false == SkipEvents )
             {
                 Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
             }
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
-            if( null != Node.ObjClass )
+            if( null != Node.ObjClass && false == SkipEvents )
             {
                 Node.ObjClass.afterWriteNode( OverrideMailReportEvents );
             }

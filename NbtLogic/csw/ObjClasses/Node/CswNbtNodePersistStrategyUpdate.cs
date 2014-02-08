@@ -38,14 +38,14 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswEnumNbtNodeModificationState.Modified == Node.ModificationState || ForceUpdate )
             {
-                if( null != Node.ObjClass )
+                if( null != Node.ObjClass && false == SkipEvents)
                 {
                     Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
                 }
 
                 Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing && ( false == Node.IsTemp ), SkipEvents );
 
-                if( null != Node.ObjClass )
+                if( null != Node.ObjClass && false == SkipEvents )
                 {
                     Node.ObjClass.afterWriteNode( OverrideMailReportEvents );
                 }

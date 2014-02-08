@@ -764,8 +764,8 @@ namespace ChemSW.Nbt.MetaData
                 NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 4, DisplayColumn: 1 );
 
                 // Set default value of "Field Type" to this fieldtype
-                NTPFieldTypeNTP.DefaultValue.AsList.Value = FieldTypeId.ToString();
-                NTPFieldTypeNTP.DefaultValue.AsList.Text = FieldType.ToString();
+                NTPFieldTypeNTP.getDefaultValue( true, false ).AsList.Value = FieldTypeId.ToString();
+                NTPFieldTypeNTP.getDefaultValue( true, false ).AsList.Text = FieldType.ToString();
                 //NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                 NTPFieldTypeNTP.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
 
@@ -774,12 +774,12 @@ namespace ChemSW.Nbt.MetaData
                 //NTPQuestionNoNTP.DesignNode.DisplayConditionSubfield.Value = CswNbtFieldTypeRuleLogical.SubFieldName.Checked.ToString();
                 //NTPQuestionNoNTP.DesignNode.DisplayConditionFilterMode.Value = CswEnumNbtFilterMode.Equals.ToString();
                 //NTPQuestionNoNTP.DesignNode.DisplayConditionValue.Text = CswEnumTristate.True.ToString();
-                
+
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionProperty.RelatedNodeId = NTPUseNumberingNTP.DesignNode.NodeId;
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionSubfield.Value = CswNbtFieldTypeRuleLogical.SubFieldName.Checked.ToString();
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionFilterMode.Value = CswEnumNbtFilterMode.Equals.ToString();
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionValue.Text = CswEnumTristate.True.ToString();
-                
+
                 ICswNbtFieldTypeRule Rule = getFieldTypeRule( FieldType );
 
                 // Make all the attribute properties
@@ -795,7 +795,7 @@ namespace ChemSW.Nbt.MetaData
                         if( Attr.Column == CswEnumNbtPropertyAttributeColumn.Isfk )
                         {
                             thisNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                            thisNTP.DefaultValue.AsLogical.Checked = CswEnumTristate.True;
+                            thisNTP.getDefaultValue( true, false ).AsLogical.Checked = CswEnumTristate.True;
                             thisNTP.removeFromAllLayouts();
                         }
                     }
@@ -1020,7 +1020,7 @@ namespace ChemSW.Nbt.MetaData
                 }
 
                 // Handle default values
-                CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
+                CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp, true );
 
                 NewProp._DataRow["isquicksearch"] = CswConvert.ToDbVal( NewProp.getFieldTypeRule().SearchAllowed );
 
@@ -1462,7 +1462,7 @@ namespace ChemSW.Nbt.MetaData
 
             if( NtpModel.ObjectClassPropToCopy != null )
             {
-                CopyNodeTypePropDefaultValueFromObjectClassProp( NtpModel.ObjectClassPropToCopy, NewProp );
+                CopyNodeTypePropDefaultValueFromObjectClassProp( NtpModel.ObjectClassPropToCopy, NewProp, true );
                 NtpModel.ObjectClassPropToCopy.setNodeTypePropFKDeprecated();
                 NtpModel.ObjectClassPropToCopy.setNodeTypePropFiltersDeprecated();
             }
@@ -1854,11 +1854,11 @@ namespace ChemSW.Nbt.MetaData
         }
 
         // Handle the object class prop's default value
-        public void CopyNodeTypePropDefaultValueFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public void CopyNodeTypePropDefaultValueFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataNodeTypeProp NodeTypeProp, bool AllowDeprecated )
         {
             if( ObjectClassProp.HasDefaultValue() )
             {
-                NodeTypeProp.DefaultValue.copy( ObjectClassProp.DefaultValue );
+                NodeTypeProp.getDefaultValue( true, AllowDeprecated ).copy( ObjectClassProp.DefaultValue );
             }
         }
 

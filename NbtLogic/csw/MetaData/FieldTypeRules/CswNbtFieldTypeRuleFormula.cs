@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 OwnerFieldType = CswEnumNbtFieldType.Formula,
                 Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
-                AttributeFieldType = CswEnumNbtFieldType.Text
+                AttributeFieldType = CswEnumNbtFieldType.Formula
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {

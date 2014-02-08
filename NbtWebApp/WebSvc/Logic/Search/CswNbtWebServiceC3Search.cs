@@ -287,7 +287,8 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtMetaDataNodeType CurrentNT in ObjectClass.getNodeTypes() )
                 {
                     CswNbtMetaDataNodeTypeProp IsConstituentNTP = CurrentNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent );
-                    if( CswEnumTristate.False == IsConstituentNTP.DefaultValue.AsLogical.Checked )
+                    if( IsConstituentNTP.HasDefaultValue( false ) &&
+                        CswEnumTristate.False == IsConstituentNTP.getDefaultValue( false, false ).AsLogical.Checked )
                     {
                         JObject NodeType = new JObject();
                         ImportableNodeTypes[CurrentNT.NodeTypeName] = NodeType;

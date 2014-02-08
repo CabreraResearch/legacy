@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -139,28 +140,47 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        private Collection<CswNbtNode> _DesignNodesToFinalize = new Collection<CswNbtNode>();
+        public void addDesignNodeForFinalization( CswNbtNode designNode )
+        {
+            _DesignNodesToFinalize.Add( designNode );
+        }
+
         public void finalize()
         {
             bool ChangesMade = false;
             if( NodeTypeTableUpdate != null )
-                ChangesMade = NodeTypeTableUpdate.updateAll() || ChangesMade;
-            if( NodeTypeTabTableUpdate != null )
-                ChangesMade = NodeTypeTabTableUpdate.updateAll() || ChangesMade;
-            if( NodeTypePropTableUpdate != null )
-                ChangesMade = NodeTypePropTableUpdate.updateAll() || ChangesMade;
-            if( JctNodesPropsTableUpdate != null )
-                ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
-
-            if( ChangesMade )
             {
-                CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-                //_CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
+                ChangesMade = NodeTypeTableUpdate.updateAll() || ChangesMade;
             }
+            if( NodeTypeTabTableUpdate != null )
+            {
+                ChangesMade = NodeTypeTabTableUpdate.updateAll() || ChangesMade;
+            }
+            if( NodeTypePropTableUpdate != null )
+            {
+                ChangesMade = NodeTypePropTableUpdate.updateAll() || ChangesMade;
+            }
+            if( JctNodesPropsTableUpdate != null )
+            {
+                ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
+            }
+            foreach( CswNbtNode designNode in _DesignNodesToFinalize )
+            {
+                designNode.postChanges( false );
+            }
+
+            //if( ChangesMade )
+            //{
+            //    CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            //    //_CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
+            //}
         }
 
         public ICswNbtFieldTypeRule makeFieldTypeRule( CswEnumNbtFieldType FieldType )
         {
             return CswNbtFieldTypeRuleFactory.makeRule( CswNbtFieldResources, FieldType );
         }
+
     }
 }

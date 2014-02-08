@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Actions
                     for( int i = 0; i < Quant.NumContainers; i++ )
                     {
                         Dictionary<string, string> vals = InitialContainer.Node.getPropertiesAndValues();
-                        vals[InitialContainer.Barcode.PropName] = Quant.Barcodes[i];
+                        vals[InitialContainer.Barcode.PropName] = Quant.getBarcodes()[i];
                         vals[InitialContainer.Quantity.PropName] = Quant.Quantity + " " + UoMNode.BaseUnit.Text;
                         PropVals.Add( vals );
                     }
