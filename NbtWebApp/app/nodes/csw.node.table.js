@@ -258,8 +258,25 @@
                     });
                     Csw.publish('render_' + nodeid + '_' + tabid);
 
+                    //Button visibility default behavoir
+                    var showMoreInfoButton = Csw.bool(cswPrivate.compactResults);
+                    var showDetailsButton = Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit));
+                    var showDeleteButton = false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete);
+                    var showExtraActionButton = false === Csw.isNullOrEmpty(cswPrivate.extraAction);
+                    var showFavoriteButton = cswPrivate.searchTarget != "chemcatcentral";
+                    var showImportButton = false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport);
+                    var showMoreAcdResultsButton = false;
+                    
+                    //Button visibility behavoir when C3 is enabled
+                    if (cswPrivate.searchTarget === "chemcatcentral") {
+                        var isFilteredSearch = ('ACD' === cswPrivate.chemCatConfig.dataservice && cswPrivate.chemCatConfig.filtered) || 'C3' === cswPrivate.chemCatConfig.dataservice;
+                        showDetailsButton = isFilteredSearch;
+                        showImportButton = isFilteredSearch;
+                        showMoreAcdResultsButton = 'ACD' === cswPrivate.chemCatConfig.dataservice && false == cswPrivate.chemCatConfig.filtered;
+                    }
+
                     // System Buttons
-                    if (Csw.bool(cswPrivate.compactResults)) {
+                    if (showMoreInfoButton) {
                         btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
                             width: ('More Info'.length * 8) + 16,
@@ -274,7 +291,7 @@
                     }
 
                     //Details Button
-                    if (Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
+                    if (showDetailsButton) {
                         btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'editbtn').string('_'),
                             width: ('Details'.length * 7) + 16,
@@ -314,7 +331,7 @@
                     } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                     //Delete Button
-                    if (false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
+                    if (showDeleteButton) {
                         var deleteBtn = btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
                             width: ('Delete'.length * 8) + 16,
@@ -335,49 +352,49 @@
                         btncol += 1;
                     } // if (nodeObj.allowdelete)
 
-                    //Details Button
-                    //if (Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
-                    btnTable.cell(1, btncol).buttonExt({
-                        name: Csw.delimitedString(cswPrivate.name, nodeid, 'moreResultsBtn').string('_'),
-                        width: ('More Results'.length * 7) + 16,
-                        enabledText: 'More Results',
-                        disableOnClick: false,
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
-                        onClick: function () {
+                    //More Results Button (when doing a C3:ACD search)
+                    if (showMoreAcdResultsButton) {
+                        btnTable.cell(1, btncol).buttonExt({
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'moreResultsBtn').string('_'),
+                            width: ('More Results'.length * 7) + 16,
+                            enabledText: 'More Results',
+                            disableOnClick: false,
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                            onClick: function () {
 
-                            // Search C3 ACD again
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'ChemCatCentral/runC3FilteredSearch',
-                                data: {
-                                    ACDSearchParams: {
-                                        Cdbregno: nodeObj.acdcdbregno
+                                // Search C3 ACD again
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'ChemCatCentral/runC3FilteredSearch',
+                                    data: {
+                                        ACDSearchParams: {
+                                            Cdbregno: nodeObj.acdcdbregno
+                                        }
+                                    },
+                                    success: function (data) {
+                                        var parsedData = JSON.parse(data.SearchResults);
+                                        cswPrivate.chemCatConfig.onMoreResultsClick(parsedData);
+                                    },
+                                    error: function (data) {
+                                        // Re-enable all import buttons
+                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                            button.enable();
+                                        });
+                                    },
+                                    complete: function (data) {
+                                        // Re-enable all import buttons
+                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                            button.enable();
+                                        });
                                     }
-                                },
-                                success: function (data) {
-                                    //
-                                },
-                                error: function (data) {
-                                    // Re-enable all import buttons
-                                    Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
-                                        button.enable();
-                                    });
-                                },
-                                complete: function (data) {
-                                    // Re-enable all import buttons
-                                    Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
-                                        button.enable();
-                                    });
-                                }
-                            }); // ajaxWcf
+                                }); // ajaxWcf
 
-                        } // onClick
-                    }); // CswButton
-                    btncol += 1;
-                    // } // if (nodeObj.allowview || nodeObj.allowedit) 
+                            } // onClick
+                        }); // CswButton
+                        btncol += 1;
+                    } // 
 
                     //Import Button
-                    if (false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport)) {
-
+                    if (showImportButton) {
                         var importMenuItems = [];
                         Csw.each(cswPrivate.chemCatConfig.importMenuItems, function (nt) {
                             if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
@@ -399,14 +416,16 @@
                                 button.disable();
                             });
 
+                            var ajaxData = {
+                                C3ProductId: nodeObj.c3productid,
+                                Cdbregno: nodeObj.acdcdbregno,
+                                NodeTypeName: nodetypename,
+                                NodeTypeId: nodetypeid
+                            };
 
                             Csw.ajaxWcf.post({
                                 urlMethod: 'ChemCatCentral/importProduct',
-                                data: {
-                                    C3ProductId: nodeObj.c3productid,
-                                    NodeTypeName: nodetypename,
-                                    NodeTypeId: nodetypeid
-                                },
+                                data: ajaxData,
                                 success: function (data) {
                                     Csw.publish(Csw.enums.events.main.handleAction, data);
                                 },
@@ -444,7 +463,7 @@
 
 
 
-                    if (false === Csw.isNullOrEmpty(cswPrivate.extraAction)) {
+                    if (showExtraActionButton) {
                         Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');
 
                         btnTable.cell(1, btncol).buttonExt({
@@ -462,7 +481,7 @@
                     } // if (nodeObj.allowdelete)
 
                     //Favorite Button
-                    if (cswPrivate.searchTarget != "chemcatcentral") {
+                    if (showFavoriteButton) {
                         btnTable.cell(1, btncol).favoriteButton({
                             name: nodeid + '_favBtn',
                             nodeid: nodeid,
