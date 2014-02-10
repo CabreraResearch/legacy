@@ -137,16 +137,19 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.UnitType );
-                CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
-                if( _physicalStateMatchesUnitType( PhysicalState, UnitType, ExcludeEach ) )
+                if( UnitTypeProp.HasDefaultValue( false ) )
                 {
-                    if( UnitType == CswEnumNbtUnitTypes.Each )
+                    CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.getDefaultValue( false, false ).AsList.Value;
+                    if( _physicalStateMatchesUnitType( PhysicalState, UnitType, ExcludeEach ) )
                     {
-                        EachNT = UnitOfMeasureNodeType;
-                    }
-                    else
-                    {
-                        UnitView.AddViewRelationship( UnitOfMeasureNodeType, true );
+                        if( UnitType == CswEnumNbtUnitTypes.Each )
+                        {
+                            EachNT = UnitOfMeasureNodeType;
+                        }
+                        else
+                        {
+                            UnitView.AddViewRelationship( UnitOfMeasureNodeType, true );
+                        }
                     }
                 }
             }

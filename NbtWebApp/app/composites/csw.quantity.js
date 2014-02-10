@@ -110,10 +110,12 @@
 
         /// Add validators
         cswPrivate.addValidators = function () {
+            var ignoreEmptyQty = false == cswPrivate.isRequired || cswPrivate.quantityoptional;
 
             // cswPrivate.validatorMethods.validateInteger
             cswPrivate.validatorMethods.validateInteger = function () {
-                return (cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val())) || false == cswPrivate.isRequired;
+                return (cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val())) || 
+                    (cswPrivate.numberTextBox.val() === '' && ignoreEmptyQty);
             };
             var validateIntegerClassName = 'validateInteger_' + cswPrivate.numberTextBox.getId();
             $.validator.addMethod(validateIntegerClassName, function (value, element) {
@@ -123,7 +125,8 @@
 
             // cswPrivate.validatorMethods.validateGreaterThanZero
             cswPrivate.validatorMethods.validateGreaterThanZero = function () {
-                return (Csw.validateGreaterThanZero(cswPrivate.numberTextBox.val()) || false == cswPrivate.isRequired);
+                return Csw.validateGreaterThanZero(cswPrivate.numberTextBox.val()) ||
+                    (cswPrivate.numberTextBox.val() === '' && ignoreEmptyQty);
             };
             var validateGreaterThanZeroClassName = 'validateGreaterThanZero_' + cswPrivate.numberTextBox.getId();
             $.validator.addMethod(validateGreaterThanZeroClassName, function (value, element) {

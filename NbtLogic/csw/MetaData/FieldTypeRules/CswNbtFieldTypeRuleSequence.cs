@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
             public const string Sequence = CswEnumNbtPropertyAttributeName.Sequence;
-            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+            //public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
         }
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
@@ -105,13 +105,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
                     SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-                {
-                    OwnerFieldType = CswEnumNbtFieldType.Sequence,
-                    Name = AttributeName.DefaultValue,
-                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
-                    AttributeFieldType = CswEnumNbtFieldType.Text
-                } );
+            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            //    {
+            //        OwnerFieldType = CswEnumNbtFieldType.Sequence,
+            //        Name = AttributeName.DefaultValue,
+            //        Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+            //        AttributeFieldType = CswEnumNbtFieldType.Sequence
+            //    } );
             return ret;
         }
 

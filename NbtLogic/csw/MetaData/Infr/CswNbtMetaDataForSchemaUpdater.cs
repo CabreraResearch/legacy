@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.MetaData
                             if( DoSync )
                             {
                                 CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNTP._DataRow );
-                                CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNTP );
+                                CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNTP, AllowDeprecated: true );
                             }
 
                         } // if( MatchingNodeTypeProp == null )
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.MetaData
             // Delete the Object Class Prop
             ObjectClassProp._DataRow.Delete();
             _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
-            
+
             return Ret;
         } // DeleteObjectClassProp()
 
@@ -323,7 +323,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     //NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
                     //NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value );
-                    NodeTypeProp.DefaultValue.SetSubFieldValue( SubFieldName, Value );
+                    NodeTypeProp.getDefaultValue( true, true ).SetSubFieldValue( SubFieldName, Value );
                 }
             }
         }

@@ -1,3 +1,4 @@
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -185,14 +186,31 @@ namespace ChemSW.Nbt
             return ret;
         } // getNodeByRelationalId()
 
+        private Dictionary<CswPrimaryKey, CswPrimaryKey> _NodeIdByRelationalIdDict = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
         public CswPrimaryKey getNodeIdByRelationalId( CswPrimaryKey RelationalId )
         {
             CswPrimaryKey ret = null;
-            CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "getNodeByRelationalId", "nodes" );
-            DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString() { "nodeid" }, "where relationaltable = '" + RelationalId.TableName + "' and relationalid='" + RelationalId.PrimaryKey.ToString() + "'" );
-            if( NodesTable.Rows.Count > 0 )
+            if( _NodeIdByRelationalIdDict.ContainsKey( RelationalId ) )
             {
-                ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] ) );
+                ret = _NodeIdByRelationalIdDict[RelationalId];
+            }
+            else
+            {
+                CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "getNodeByRelationalId", "nodes" );
+                DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString() { "nodeid", "relationalid" }, "where relationaltable = '" + RelationalId.TableName + "'" ); //" and relationalid='" + RelationalId.PrimaryKey.ToString() + "'" );
+                foreach( DataRow row in NodesTable.Rows )
+                {
+                    CswPrimaryKey thisRelId = new CswPrimaryKey( RelationalId.TableName, CswConvert.ToInt32( row["relationalid"] ) );
+                    CswPrimaryKey thisNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( row["nodeid"] ) );
+                    if( false == _NodeIdByRelationalIdDict.ContainsKey( thisRelId ) )
+                    {
+                        _NodeIdByRelationalIdDict.Add( thisRelId, thisNodeId );
+                    }
+                    if( thisRelId == RelationalId )
+                    {
+                        ret = thisNodeId;
+                    }
+                }
             }
             return ret;
         } // getNodeIdByRelationalId()
@@ -216,7 +234,7 @@ namespace ChemSW.Nbt
                 SQLQuery += " (select nodeid, 'nodes' tablename ";
                 SQLQuery += "    from jct_nodes_props ";
                 SQLQuery += "   where nodetypepropid = " + MetaDataProp.PropId.ToString() + " ";
-                    SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
+                SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
                 //}
                 //else
                 //{
@@ -423,7 +441,7 @@ namespace ChemSW.Nbt
             {
                 NodePersistStrategy = new CswNbtNodePersistStrategyCreateTemp( _CswNbtResources );
             }
-            
+
             // only override the defaults on these if they are true
             if( OverrideUniqueValidation )
             {
@@ -433,7 +451,7 @@ namespace ChemSW.Nbt
             {
                 NodePersistStrategy.IsCopy = true;
             }
-            
+
             NodePersistStrategy.postChanges( Node );
 
             return ( Node );

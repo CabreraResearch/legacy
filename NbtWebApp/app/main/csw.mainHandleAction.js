@@ -366,7 +366,10 @@
                     onInit: function () {
                         Csw.main.universalsearch.disable();
                     },
-                    onCancel: onCancel
+                    onCancel: function () {
+                        Csw.main.universalsearch.enable();
+                        onCancel();
+                    }
                 });
             });
             actionHandler.add('default', defaultAct);

@@ -91,17 +91,17 @@ namespace ChemSW.Nbt.Actions
                 for( int i = 0; i < ReceiptDefinition.Quantities.Count; i++ )
                 {
                     CswNbtAmountsGridQuantity quantity = ReceiptDefinition.Quantities[i];
-                    while( quantity.Barcodes.Count < quantity.NumContainers )
+                    while( quantity.getNumBarcodes() < quantity.NumContainers )
                     {
-                        if( quantity.Barcodes.Count == 0 && i == 0 ) //special case: the Initial Container node already has a barcode, so insert that one if a user didn't specify a custom barcode
+                        if( quantity.getNumBarcodes() == 0 && i == 0 && false == String.IsNullOrEmpty( InitialContainerNode.Barcode.Barcode ) ) //special case: the Initial Container node already has a barcode, so insert that one if a user didn't specify a custom barcode
                         {
-                            quantity.Barcodes.Add( InitialContainerNode.Barcode.Barcode );
+                            quantity.AddBarcode( InitialContainerNode.Barcode.Barcode );
                         }
                         else
                         {
                             if( null != BarcodeProp.Sequence )
                             {
-                                quantity.Barcodes.Add( BarcodeProp.Sequence.getNext() );
+                                quantity.AddBarcode( BarcodeProp.Sequence.getNext() );
                             }
                         }
                     }
@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.Actions
                 Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassContainer thisContainer = NewNode;
-                    if( QuantityDef.Barcodes.Count <= QuantityDef.NumContainers && false == string.IsNullOrEmpty( Barcode ) )
+                    if( QuantityDef.getNumBarcodes() <= QuantityDef.NumContainers && false == string.IsNullOrEmpty( Barcode ) )
                     {
                         thisContainer.Barcode.setBarcodeValueOverride( Barcode, false );
                     }
@@ -192,7 +192,8 @@ namespace ChemSW.Nbt.Actions
                         {
                             ContainerId = CswConvert.ToPrimaryKey( QuantityDef.ContainerIds[C] );
                         }
-                        Barcode = ( QuantityDef.Barcodes.Count > C ? QuantityDef.Barcodes[C] : string.Empty );
+                        CswCommaDelimitedString Barcodes = QuantityDef.getBarcodes();
+                        Barcode = ( QuantityDef.getNumBarcodes() > C ? Barcodes[C] : string.Empty );
 
                         if( null == ContainerId ) //only create a container if we haven't already
                         {

@@ -108,11 +108,17 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             CswNbtNodePropMetaDataList FkProp = DesignNTPNode.AttributeProperty[AttributeName.Target].AsMetaDataList;
             CswNbtNodePropViewReference ViewProp = DesignNTPNode.AttributeProperty[AttributeName.View].AsViewReference;
-            if( null != FkProp && FkProp.wasAnySubFieldModified() &&
-                null != ViewProp && false == ViewProp.wasSubFieldModified( CswNbtFieldTypeRuleViewReference.SubFieldName.ViewID ) )  // don't override if view was also modified, case 31812
+            if( null != FkProp &&
+                null != ViewProp &&
+                ( FkProp.wasSubFieldModified( CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type ) ||
+                  FkProp.wasSubFieldModified( CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id ) ) &&
+                CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type &&
+                Int32.MinValue != FkProp.Id )
             {
                 CswNbtView View = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( ViewProp.ViewId );
-                if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
+                // don't override if view was also modified (case 31812)
+                // but still override if the view is empty, to handle brand new properties (case 31858)
+                if( View.IsEmpty() || false == ViewProp.wasSubFieldModified( CswNbtFieldTypeRuleViewReference.SubFieldName.ViewID ) )
                 {
                     //We have valid values that are different that what is currently set
                     CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtFieldResources.CswNbtResources.MetaData, DesignNTPNode, View, FkProp.Type, FkProp.Id, false );

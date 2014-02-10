@@ -2224,7 +2224,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getFieldTypes()
+        public string getFieldTypes( string LayoutType )
         {
             JObject ReturnVal = new JObject();
 
@@ -2237,7 +2237,7 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceMetaData ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal["fieldtypes"] = ws.getFieldTypes();
+                    ReturnVal["fieldtypes"] = ws.getFieldTypes( LayoutType );
                 }
 
                 _deInitResources();

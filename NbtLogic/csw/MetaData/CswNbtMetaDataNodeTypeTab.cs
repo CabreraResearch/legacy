@@ -27,10 +27,23 @@ namespace ChemSW.Nbt.MetaData
             get { return _NodeTypeTabRow; }
         }
 
+        private CswNbtObjClassDesignNodeTypeTab _DesignNode = null;
         public CswNbtObjClassDesignNodeTypeTab DesignNode
         {
-            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_tabset", TabId ) ); }
+            get
+            {
+                if( null == _DesignNode )
+                {
+                    _DesignNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_tabset", TabId ) );
+                    if( null != _DesignNode )
+                    {
+                        _CswNbtMetaDataResources.addDesignNodeForFinalization( _DesignNode.Node );
+                    }
+                }
+                return _DesignNode;
+            }
         }
+
         public CswPrimaryKey DesignNodeId
         {
             get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeIdByRelationalId( new CswPrimaryKey( "nodetype_tabset", TabId ) ); }
