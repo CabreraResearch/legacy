@@ -18,7 +18,7 @@
             'use strict';
 
             var editViewRootDialog = Csw.layouts.dialog({
-                title: cswPrivate.propertyNode.TextLabel,
+                title: 'Add to Root',
                 width: 700,
                 height: 160,
                 onOpen: function () {

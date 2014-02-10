@@ -18,7 +18,7 @@
             'use strict';
 
             var editViewFilterDialog = Csw.layouts.dialog({
-                title: cswPrivate.propertyNode.TextLabel,
+                title: cswPrivate.filterNode.TextLabel,
                 width: 600,
                 height: 270,
                 onOpen: function () {

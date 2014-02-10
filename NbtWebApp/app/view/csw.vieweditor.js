@@ -1094,7 +1094,7 @@
                         },
                         success: function (response) {
                             if (false === Csw.isNullOrEmpty(response.Step6.FilterNode)) {
-                                $.CswDialog('ViewEditorFilterEdit', {
+                                Csw.dialogs.editviewfilter({
                                     filterNode: response.Step6.FilterNode,
                                     view: cswPrivate.View,
                                     onBeforeFilterEdit: function () {
@@ -1106,7 +1106,7 @@
                                     }
                                 });
                             } else if (false === Csw.isNullOrEmpty(response.Step6.RelationshipNode)) {
-                                $.CswDialog('ViewEditorRelationshipEdit', {
+                                Csw.dialogs.editviewrelationship({
                                     relationshipNode: response.Step6.RelationshipNode,
                                     view: cswPrivate.View,
                                     findRelationshipByArbitraryId: cswPrivate.findRelationshipByArbitraryId,
@@ -1137,7 +1137,7 @@
                                     }
                                 });
                             } else if (false == Csw.isNullOrEmpty(response.Step6.RootNode)) {
-                                $.CswDialog('ViewEditorRootEdit', {
+                                Csw.dialogs.editviewroot({
                                     relationships: response.Step6.Relationships,
                                     view: cswPrivate.View,
                                     onBeforeRelationshipAdd: function () {

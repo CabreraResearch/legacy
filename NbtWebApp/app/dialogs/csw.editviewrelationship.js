@@ -22,7 +22,7 @@
             'use strict';
 
             var editViewRelationshipDialog = Csw.layouts.dialog({
-                title: cswPrivate.propertyNode.TextLabel,
+                title: cswPrivate.relationshipNode.TextLabel,
                 width: 800,
                 height: 350,
                 onOpen: function () {
@@ -141,7 +141,7 @@
                                 success: function (response) {
                                     cswPrivate.view = response.CurrentView;
                                     Csw.tryExec(cswPrivate.onRelationshipEdit, cswPrivate.view);
-                                    
+                                    editViewRelationshipDialog.close();
                                 }
                             });
                         }
