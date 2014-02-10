@@ -876,9 +876,9 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Ret.Add( "Flammable Solids (Category " + GHSData.FLAMMABLESOLIDS + ")" );
             }
-            if( false == string.IsNullOrEmpty( GHSData.SELFREACTIVESUBSTANCES ) )
+            if( false == string.IsNullOrEmpty( GHSData.SELFREACTIVESUBSTANCES ) && false == GHSData.SELFHEATINGSUBSTANCES.Equals( "1" ) )
             {
-                Ret.Add( "Self-Reactive Substances and Mixtures (Type " + GHSData.SELFREACTIVESUBSTANCES + ")" );
+                Ret.Add( "Self-Reactive Substances and Mixtures (" + GHSData.SELFREACTIVESUBSTANCES + ")" );
             }
 
             if( GHSData.PYROPHORICLIQUIDS == 1 )
@@ -910,7 +910,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( false == string.IsNullOrEmpty( GHSData.ORGANICPEROXIDES ) )
             {
-                Ret.Add( "Organic Peroxides (Type " + GHSData.ORGANICPEROXIDES + ")" );
+                Ret.Add( "Organic Peroxides (" + GHSData.ORGANICPEROXIDES + ")" );
             }
 
             if( GHSData.CORROSIVETOMETALS == 1 )

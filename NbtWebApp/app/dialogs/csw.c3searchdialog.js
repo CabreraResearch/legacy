@@ -28,6 +28,29 @@
                 }
             });
         }
+        
+        function createSearchParamsObj() {
+            var CswC3SearchParams = {
+                Field: cswPrivate.searchTypeSelect.selectedVal(),
+                Query: $.trim(cswPrivate.searchTermField.val()),
+                SearchOperator: cswPrivate.searchOperatorSelect.selectedVal()
+            };
+            
+            if (cswPrivate.searchTypeSelect.selectedText() == "Structure") {
+                CswC3SearchParams.Query = $.trim(cswPrivate.molSearchField.val());
+            }
+
+            if (cswPrivate.c3dataservice === 'ACD') {
+                CswC3SearchParams.ACDSearchParams = {};
+                CswC3SearchParams["ACDSearchParams"]["CompanyIds"] = cswPrivate.vendorOptions.selectedVal();
+            }
+            if (cswPrivate.c3dataservice === 'C3') {
+                CswC3SearchParams.C3SearchParams = {};
+                CswC3SearchParams["C3SearchParams"]["DataSources"] = cswPrivate.vendorOptions.selectedVal();
+            }
+
+            return CswC3SearchParams;
+        }
 
         return (function () {
             'use strict';
@@ -52,15 +75,15 @@
                             onChange: function (event) {
                                 if (cswPrivate.searchTypeSelect.selectedText() == "Structure") {
                                     cswPrivate.searchOperatorSelect.removeOption('begins');
-                                    searchTermField.hide();
+                                    cswPrivate.searchTermField.hide();
                                     molSearchText.show();
-                                    molSearchField.show();
+                                    cswPrivate.molSearchField.show();
                                     molImageCell.show();
                                 } else if (cswPrivate.searchOperatorSelect[0].length == 2) {
                                     cswPrivate.searchOperatorSelect.addOption({ display: 'Begins', value: 'begins' });
-                                    searchTermField.show();
+                                    cswPrivate.searchTermField.show();
                                     molSearchText.hide();
-                                    molSearchField.hide();
+                                    cswPrivate.molSearchField.hide();
                                     molImageCell.hide();
                                 }
                             }// onChange
@@ -76,6 +99,8 @@
                         setVendorOpts();
 
                     };//function onOpen() 
+                    
+
                     
                     // Create the actual dialog
                     cswPrivate.c3SearchDialog = Csw.layouts.dialog({
@@ -108,12 +133,12 @@
                     cswPrivate.searchOperatorSelect.option({ display: 'Contains', value: 'contains' });
                     cswPrivate.searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
 
-                    var searchTermField = tableInner.cell(1, 4).input({
+                    cswPrivate.searchTermField = tableInner.cell(1, 4).input({
                         value: cswPrivate.c3searchterm,
                         onKeyUp: function (keyCode) {
                             // If the key pressed is NOT the 'Enter' key
                             if (keyCode != 13) {
-                                if (Csw.isNullOrEmpty(searchTermField.val())) {
+                                if (Csw.isNullOrEmpty(cswPrivate.searchTermField.val())) {
                                     searchButton.disable();
                                 } else {
                                     searchButton.enable();
@@ -126,7 +151,7 @@
                     var molSearchText = tableInner.cell(2, 1).div({
                         text: "<b>Paste MOL data from clipboard:</b>"
                     });
-                    var molSearchField = tableInner.cell(2, 1).textArea({
+                    cswPrivate.molSearchField = tableInner.cell(2, 1).textArea({
                         rows: 8,
                         cols: 35
                     });
@@ -142,24 +167,24 @@
                         }
                     };
                     
-                    molSearchField.bind('keyup', function () {
-                        if (Csw.isNullOrEmpty(molSearchField.val())) {
+                    cswPrivate.molSearchField.bind('keyup', function () {
+                        if (Csw.isNullOrEmpty(cswPrivate.molSearchField.val())) {
                             searchButton.disable();
                         } else {
                             searchButton.enable();
-                            Csw.getMolImgFromText('', molSearchField.val(), displayMolThumbnail);
+                            Csw.getMolImgFromText('', cswPrivate.molSearchField.val(), displayMolThumbnail);
                         }
                     });
                     
                     tableInner.cell(2, 1).propDom('colspan', 3);
                     molImageCell.propDom('colspan', 2);
                     molSearchText.hide();
-                    molSearchField.hide();
+                    cswPrivate.molSearchField.hide();
                     molImageCell.hide();
 
                     //#endregion MOL
 
-                    var enableSearchButton = !(Csw.isNullOrEmpty(searchTermField.val()));
+                    var enableSearchButton = !(Csw.isNullOrEmpty(cswPrivate.searchTermField.val()));
 
                     var searchButton = tableInner.cell(1, 5).button({
                         name: 'c3SearchBtn',
@@ -168,17 +193,19 @@
                         isEnabled: enableSearchButton,
                         onClick: function () {
 
-                            var CswC3SearchParams = {
-                                Field: cswPrivate.searchTypeSelect.selectedVal(),
-                                Query: $.trim(searchTermField.val()),
-                                SearchOperator: cswPrivate.searchOperatorSelect.selectedVal(),
-                                SourceName: cswPrivate.vendorOptions.selectedVal(),
-                                ACDCompanyIds: cswPrivate.vendorOptions.selectedVal()
-                            };
+                            //var CswC3SearchParams = {
+                            //    Field: cswPrivate.searchTypeSelect.selectedVal(),
+                            //    Query: $.trim(cswPrivate.searchTermField.val()),
+                            //    SearchOperator: cswPrivate.searchOperatorSelect.selectedVal(),
+                            //    SourceName: cswPrivate.vendorOptions.selectedVal(),
+                            //    ACDCompanyIds: cswPrivate.vendorOptions.selectedVal()
+                            //};
 
-                            if (cswPrivate.searchTypeSelect.selectedText() == "Structure") {
-                                CswC3SearchParams.Query = $.trim(molSearchField.val());
-                            }
+                            //if (cswPrivate.searchTypeSelect.selectedText() == "Structure") {
+                            //    CswC3SearchParams.Query = $.trim(cswPrivate.molSearchField.val());
+                            //}
+
+                            var CswC3SearchParams = createSearchParamsObj();
 
                             Csw.ajaxWcf.post({
                                 urlMethod: 'ChemCatCentral/Search',

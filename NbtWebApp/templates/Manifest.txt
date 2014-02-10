@@ -51,7 +51,7 @@ CACHE:
 #images
 
 <%
-    var imageFiles = grunt.file.expand(grunt.config('imageResources'));
+    var imageFiles = grunt.file.expand('Images/newicons/16/*');
     for(var i = 0, len = imageFiles.length; i < len; i += 1) {
         print('../' + imageFiles[i] + '\n');
     }

@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         /// <param name="C3SearchResultsObj"></param>
         /// <returns></returns>
-        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField )
+        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField, string DataService, bool filtered = false )
         {
 
             JObject ret = new JObject();
@@ -114,11 +114,25 @@ namespace ChemSW.Nbt.WebServices
                 PropsToHide.Add( Property );
             }
 
-            PropsToHide.Remove( "SourceName" );
-            PropsToHide.Remove( "SupplierName" );
             PropsToHide.Remove( SearchField );
 
-            ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide );
+            if( "ACD" == DataService )
+            {
+                if( filtered )
+                {
+                    PropsToHide.Remove( "CatalogName" );
+                    PropsToHide.Remove( "CatalogNumbers" );
+                    PropsToHide.Remove( "SupplierName" );
+                }
+                PropsToHide.Remove( "Formula" );
+            }
+            else
+            {
+                PropsToHide.Remove( "SourceName" );
+                PropsToHide.Remove( "SupplierName" );
+            }
+
+            ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide, DataService );
 
             return ret;
         }
@@ -162,13 +176,13 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="C3SearchResultsObj"></param>
         /// <param name="PropsToHide"></param>
         /// <returns></returns>
-        public JObject makeTableFromWebServiceObj( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide )
+        public JObject makeTableFromWebServiceObj( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide, string DataService )
         {
             JObject ret = new JObject();
 
             if( C3SearchResultsObj != null )
             {
-                Int32 results = _populateDictionary( C3SearchResultsObj, PropsToHide );
+                Int32 results = _populateDictionary( C3SearchResultsObj, PropsToHide, DataService );
 
                 ret["results"] = results;
                 ret["nodetypecount"] = _TableDict.Keys.Count;
@@ -187,11 +201,13 @@ namespace ChemSW.Nbt.WebServices
             public CswNbtNodeKey NodeKey;
             public CswNbtMetaDataNodeType NodeType;
             public Int32 C3ProductId;
+            public Int32 ACDCdbregno;
             public string NodeName;
             public bool Locked;
             public bool Disabled;
             public bool IsFavorite;
             public string ThumbnailUrl;
+            public string ThumbnailBase64Str;
 
             public bool AllowView;
             public bool AllowEdit;
@@ -223,12 +239,14 @@ namespace ChemSW.Nbt.WebServices
                 }
                 NodeObj["nodelink"] = CswNbtNode.getNodeLink( NodeId, NodeName );
                 NodeObj["c3productid"] = C3ProductId.ToString();
+                NodeObj["acdcdbregno"] = ACDCdbregno.ToString();
                 NodeObj["locked"] = Locked.ToString().ToLower();
                 NodeObj["disabled"] = Disabled.ToString().ToLower();
                 NodeObj["isFavorite"] = IsFavorite.ToString().ToLower();
                 NodeObj["nodetypeid"] = NodeType.NodeTypeId;
                 NodeObj["nodetypename"] = NodeType.NodeTypeName;
                 NodeObj["thumbnailurl"] = ThumbnailUrl;
+                NodeObj["thumbnailbase64str"] = ThumbnailBase64Str;
                 NodeObj["allowview"] = AllowView;
                 NodeObj["allowedit"] = AllowEdit;
                 NodeObj["allowdelete"] = AllowDelete;
@@ -401,7 +419,13 @@ namespace ChemSW.Nbt.WebServices
             return results;
         } // _populateDictionary()
 
-        private Int32 _populateDictionary( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide )
+        /// <summary>
+        /// FOR DISPLAYING CHEMCAT RESULTS
+        /// </summary>
+        /// <param name="C3SearchResultsObj"></param>
+        /// <param name="PropsToHide"></param>
+        /// <returns></returns>
+        private Int32 _populateDictionary( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide, string DataService )
         {
             Int32 results = 0;
 
@@ -453,6 +477,11 @@ namespace ChemSW.Nbt.WebServices
                             thisNode.C3ProductId = CswConvert.ToInt32( prop.Value );
                         }
 
+                        if( prop.Name == "Cdbregno" )
+                        {
+                            thisNode.ACDCdbregno = CswConvert.ToInt32( prop.Value );
+                        }
+
                         TableProp thisProp = new TableProp();
                         if( PropsToHide == null || false == PropsToHide.Contains( name ) )
                         {
@@ -465,20 +494,26 @@ namespace ChemSW.Nbt.WebServices
 
                     }
 
-                    // If there is a generated molimage, display it
-                    if( false == String.IsNullOrEmpty( product.MolImage ) )
+                    // Thumbnail image -- set to molimage if we have one
+                    if( DataService.Equals( "C3" ) && false == String.IsNullOrEmpty( product.MolImage ) )
                     {
-                        thisNode.ThumbnailUrl = "data:image/jpeg;base64," + product.MolImage;
+                        thisNode.ThumbnailBase64Str = "data:image/jpeg;base64," + product.MolImage;
                     }
-
+                    else if( DataService.Equals( "ACD" ) )
+                    {
+                        thisNode.ThumbnailUrl = "Services/BlobData/getExternalImage?cdbregno=" + thisNode.ACDCdbregno + "&productid=" + product.ProductId + "&uid=" + CswRandom.RandomString();
+                    }
 
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
                     {
                         _TableDict.Add( thisNode.NodeType, new Collection<TableNode>() );
                     }
                     _TableDict[thisNode.NodeType].Add( thisNode );
+
                     results++;
+
                 }//if (null != thisNode.NodeType)
+
             }//for( int i = 0; i < C3SearchResultsObj.CswC3SearchResults.Count(); i++ )
 
             return results;
