@@ -187,10 +187,10 @@
                         texttable.hide();
                         imgheight = '18px';
                     }
-
+                    
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                         thumbnailCell.img({
-                            src: nodeObj.thumbnailurl
+                            src: Csw.hrefString(nodeObj.thumbnailurl) //TODO: does wrapping this in HREFstring break other searches?
                         }).css({
                             height: imgheight,
                             maxWidth: '100px'
@@ -303,7 +303,8 @@
                                 if (cswPrivate.searchTarget === "chemcatcentral") {
                                     $.CswDialog('C3DetailsDialog', {
                                         nodeObj: nodeObj,
-                                        onEditNode: cswPrivate.onEditNode
+                                        onEditNode: cswPrivate.onEditNode,
+                                        c3dataservice: cswPrivate.chemCatConfig.dataservice
                                     });
                                 } else {
                                     Csw.dialogs.editnode({

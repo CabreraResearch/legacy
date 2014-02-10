@@ -403,6 +403,12 @@ namespace ChemSW.Nbt.WebServices
             return results;
         } // _populateDictionary()
 
+        /// <summary>
+        /// FOR DISPLAYING CHEMCAT RESULTS
+        /// </summary>
+        /// <param name="C3SearchResultsObj"></param>
+        /// <param name="PropsToHide"></param>
+        /// <returns></returns>
         private Int32 _populateDictionary( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide )
         {
             Int32 results = 0;
@@ -473,10 +479,11 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     // If there is a generated molimage, display it
-                    if( false == String.IsNullOrEmpty( product.MolImage ) )
-                    {
-                        thisNode.ThumbnailUrl = "data:image/jpeg;base64," + product.MolImage;
-                    }
+                    //if( false == String.IsNullOrEmpty( product.MolImage ) )
+                    //{
+                    thisNode.ThumbnailUrl = "Services/BlobData/getExternalImage?cdbregno=" + thisNode.ACDCdbregno + "&productid=" + product.ProductId;
+                    //thisNode.ThumbnailUrl = "data:image/png;base64," + product.MolImage;
+                    //}
 
 
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
