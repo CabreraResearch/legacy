@@ -16,7 +16,6 @@
                 MovePropUrlMethod: 'moveProp',
                 RemovePropUrlMethod: 'removeProp',
                 CopyPropValuesUrlMethod: 'copyPropValues',
-                NodePreviewUrlMethod: 'getNodePreview'
             },
             tabState: {
                 selectedNodeKeys: Csw.delimitedString(),
@@ -566,6 +565,7 @@
                     cswPrivate.tabState.nodelink = node.nodelink;
                     cswPrivate.tabState.nodetypeid = node.nodetypeid;
                     cswPrivate.tabState.relationalid = node.relationalid;
+                    cswPrivate.tabState.isFavorite = Csw.bool(node.isFavorite);
                 }
             }
             return nodeid;
@@ -938,6 +938,7 @@
                         if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
                             cswPrivate.onEmptyProps();
                         }
+                        cswPrivate.tabState.isFavorite = Csw.bool(data.node.isFavorite);
                         cswPrivate.setNode(data.node);
                         cswPrivate.tabState.propertyData = data.properties;
                         makePropLayout();

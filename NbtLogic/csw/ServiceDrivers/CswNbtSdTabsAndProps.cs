@@ -297,6 +297,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret["node"]["nodelink"] = Node.NodeLink;
                     Ret["node"]["nodename"] = Node.NodeName;
                     Ret["node"]["nodetypeid"] = Node.NodeTypeId;
+                    Ret["node"]["isFavorite"] = Node.isFavorite();
                     if( null != Node.RelationalId && CswTools.IsPrimaryKey( Node.RelationalId ) )
                     {
                         Ret["node"]["relationalid"] = Node.RelationalId.PrimaryKey.ToString();
