@@ -270,7 +270,7 @@
                         disabledText: 'Upload',
                         disableOnClick: false,
                         onClick: function () {
-                            $.CswDialog('FileUploadDialog', {
+                            Csw.dialogs.fileUpload({
                                 urlMethod: 'Services/Import/uploadImportData',
                                 params: {
                                     defname: cswPrivate.selDefName.val(),
@@ -282,7 +282,7 @@
                                     cswPrivate.selectedJobId = Csw.number(Csw.getPropFromIFrame(response, 'jobid', false), Csw.int32MinVal);
                                     cswPrivate.makeStatusTable();
                                 }
-                            });
+                            }).open();
                         }
                     });
                 }
@@ -445,7 +445,7 @@
                 onClick: function () {
                     var name = cswPrivate.txtDefName.val();
                     if (false === Csw.isNullOrEmpty(name)) {
-                        $.CswDialog('FileUploadDialog', {
+                        Csw.dialogs.fileUpload({
                             urlMethod: 'Services/Import/uploadImportDefinition',
                             params: {
                                 defname: name
@@ -456,7 +456,7 @@
                                 cswPrivate.makeUploadDataTable();
                                 cswPrivate.txtDefName.val('');
                             }
-                        });
+                        }).open();
                     } else {
                         alert('Import Definition Name is required.');
                     }

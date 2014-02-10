@@ -702,45 +702,6 @@
             });
             openDialog(div, 600, 400, null, 'About');
         }, // AboutDialog
-        FileUploadDialog: function (options) {
-            'use strict';
-            var o = {
-                urlMethod: 'fileForProp',
-                url: '',
-                dataType: '',
-                forceIframeTransport: '',
-                params: {},
-                onSuccess: function () { }
-            };
-            if (options) {
-                Csw.extend(o, options);
-            }
-
-            var div = Csw.literals.div();
-
-            div.fileUpload({
-                uploadUrl: o.urlMethod,
-                url: o.url,
-                dataType: o.dataType,
-                forceIframeTransport: o.forceIframeTransport,
-                params: o.params,
-                onSuccess: function (data) {
-                    div.$.dialog('close');
-                    Csw.tryExec(o.onSuccess, data);
-                }
-            });
-
-            div.button({
-                name: 'fileupload_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    div.$.dialog('close');
-                }
-            });
-
-            openDialog(div, 400, 300, null, 'Upload');
-        }, // FileUploadDialog
         C3DetailsDialog: function (options) {
             'use strict';
             var cswPrivate = {
@@ -1742,34 +1703,6 @@
             openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
-        ConfirmDialog: function (message, title, okFunc, cancelFunc) {
-            'use strict';
-            var div = Csw.literals.div({
-                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
-                text: message,
-                align: 'center'
-            });
-
-            div.br();
-
-            div.button({
-                enabledText: 'OK',
-                onClick: function () {
-                    Csw.tryExec(okFunc);
-                    div.$.dialog('close');
-                }
-            });
-
-            div.button({
-                enabledText: 'Cancel',
-                onClick: function () {
-                    Csw.tryExec(cancelFunc);
-                    div.$.dialog('close');
-                }
-            });
-
-            openDialog(div, 400, 150, null, title);
-        },
         NavigationSelectDialog: function (options) {
             'use strict';
             var o = {

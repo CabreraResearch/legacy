@@ -37,16 +37,6 @@
                 onClose: cswPrivate.onClose
             });
 
-            /*editImageDialog.div.span({ text: cswPrivate.message, align: 'center' });
-            editImageDialog.div.br({ number: 2 });
-            editImageDialog.div.button({
-                enabledText: 'OK',
-                onClick: function () {
-                    editImageDialog.close();
-                }
-            });
-            */
-
             var div = editImageDialog.div;
 
             var tbl = div.table({
@@ -72,7 +62,7 @@
                     hovertext: 'Edit this image',
                     isButton: true,
                     onClick: function() {
-                        $.CswDialog('FileUploadDialog', {
+                        Csw.dialogs.fileUpload({
                             urlMethod: cswPrivate.saveImgUrl,
                             params: {
                                 propid: cswPrivate.propid,
@@ -100,7 +90,7 @@
                                 makeBtns();
                                 cswPrivate.onEditImg(newImg);
                             }
-                        });
+                        }).open();
                     }
                 });
                 if (false == Csw.isNullOrEmpty(cswPrivate.selectedImg.BlobDataId)) {

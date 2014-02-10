@@ -241,7 +241,7 @@
                     enabledText: 'Add Image',
                     disableOnClick: false,
                     onClick: function () {
-                        $.CswDialog("FileUploadDialog", {
+                        Csw.dialogs.fileUpload({
                             urlMethod: cswPrivate.saveImageUrl,
                             params: {
                                 propid: cswPrivate.propid
@@ -258,7 +258,7 @@
                                 cswPrivate.onEditImage(newImg);
                                 cswPrivate.uploadImgDialog(newImg.BlobUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
                             }
-                        });
+                        }).open();
                     },
                 }).css('padding', '3px');
                 cswPrivate.addBtn.hide(); //case 30570: button will start hidden until cswPrivate.toggleAddBtn() is called later in page load 

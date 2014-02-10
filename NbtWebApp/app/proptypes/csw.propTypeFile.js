@@ -57,7 +57,7 @@
                         size: 16,
                         isButton: true,
                         onClick: function () {
-                            $.CswDialog('FileUploadDialog', {
+                            Csw.dialogs.fileUpload({
                                 urlMethod: 'Services/BlobData/SaveFile',
                                 params: {
                                     propid: nodeProperty.propData.id,
@@ -73,7 +73,7 @@
                                     };
                                     onChange(val);
                                 }
-                            });
+                            }).open();
                         }
                     });
                     //Clear button
