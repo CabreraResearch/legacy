@@ -505,13 +505,23 @@ namespace ChemSW.Nbt.WebServices
 
         public static void getExternalImage( ICswResources CswResources, ExternalImageRet Return, ACDSearchParams ACDSearchParams )
         {
-            CswC3SearchParams ProductDetailParams = new CswC3SearchParams();
-            ProductDetailParams.ACDSearchParams = ACDSearchParams;
-            CswNbtC3SearchReturn ProdDetailsReturn = new CswNbtC3SearchReturn();
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+            CswC3SearchParams.ACDSearchParams = ACDSearchParams;
+            CswC3Product C3ProductDetails = new CswC3Product();
 
-            GetC3ProductDetails( CswResources, ProdDetailsReturn, ProductDetailParams );
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+            SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            if( null != C3SearchClient )
+            {
+                CswRetObjSearchResults SearchResults = C3SearchClient.getACDMolImage( CswC3SearchParams );
+                if( SearchResults.CswC3SearchResults.Length > 0 )
+                {
+                    C3ProductDetails = SearchResults.CswC3SearchResults[0];
+                }
+            }
 
-            Return.Data = Convert.FromBase64String( ProdDetailsReturn.Data.ProductDetails.MolImage );
+            Return.Data = Convert.FromBase64String( C3ProductDetails.MolImage );
         }
 
         public static void importC3Product( ICswResources CswResources, CswNbtC3CreateMaterialReturn Return, CswNbtC3Import.Request Request )

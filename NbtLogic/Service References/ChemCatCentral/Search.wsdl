@@ -200,6 +200,15 @@
   <wsdl:message name="Search_getACDSuppliers_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q21="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q21:SampleFaultException" />
   </wsdl:message>
+  <wsdl:message name="Search_getACDMolImage_InputMessage">
+    <wsdl:part name="parameters" element="tns:getACDMolImage" />
+  </wsdl:message>
+  <wsdl:message name="Search_getACDMolImage_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getACDMolImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getACDMolImage_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q22="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q22:SampleFaultException" />
+  </wsdl:message>
   <wsdl:portType name="Search">
     <wsdl:operation name="canConnect">
       <wsdl:input wsaw:Action="http://tempuri.org/Search/canConnect" message="tns:Search_canConnect_InputMessage" />
@@ -305,6 +314,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getACDSuppliers" message="tns:Search_getACDSuppliers_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/Search/getACDSuppliersResponse" message="tns:Search_getACDSuppliers_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/getACDSuppliersSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getACDSuppliers_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getACDMolImage">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getACDMolImage" message="tns:Search_getACDMolImage_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getACDMolImageResponse" message="tns:Search_getACDMolImage_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getACDMolImageSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getACDMolImage_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:service name="Search" />

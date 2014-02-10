@@ -4429,6 +4429,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getACDSuppliers", ReplyAction="http://tempuri.org/Search/getACDSuppliersResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getACDSuppliersSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getACDSuppliers(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getACDMolImage", ReplyAction="http://tempuri.org/Search/getACDMolImageResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getACDMolImageSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getACDMolImage(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -4540,6 +4544,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getACDSuppliers(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
             return base.Channel.getACDSuppliers(CswC3Params);
+        }
+        
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getACDMolImage(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {
+            return base.Channel.getACDMolImage(CswC3SearchParams);
         }
     }
 }
