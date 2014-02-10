@@ -80,13 +80,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                //Int32 ret = Int32.MinValue;
-                //if( null != _CswNbtMetaDataNodeTypeProp )
-                //{
-                //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                //}
-                //return ret;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.HeightInPixels] );
+                Int32 ret = Int32.MinValue;
+                if( null != _CswNbtNodePropData )
+                {
+                    ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.HeightInPixels] );
+                }
+                return ret;
             }
             private set
             {
@@ -99,13 +98,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                //Int32 ret = Int32.MinValue;
-                //if( null != _CswNbtMetaDataNodeTypeProp )
-                //{
-                //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
-                //}
-                //return ret;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.WidthInPixels] );
+                Int32 ret = Int32.MinValue;
+                if( null != _CswNbtNodePropData )
+                {
+                    ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.WidthInPixels] );
+                }
+                return ret;
             }
             private set
             {
