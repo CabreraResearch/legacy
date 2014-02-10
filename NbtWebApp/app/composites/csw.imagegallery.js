@@ -10,7 +10,7 @@
         'use strict';
         var cswPrivate = {
             saveImageUrl: 'Services/BlobData/SaveFile',
-            saveCaptionUrl: 'BlobData/SaveCaption',
+            saveCaptionUrl: 'BlobData/saveCaption',
             deleteUrl: 'BlobData/clearImage',
             readOnly: false,
             maxImages: 1,
@@ -75,7 +75,7 @@
             };
 
             cswPrivate.uploadImgDialog = function (BlobUrl, FileName, BlobDataId, Caption) {
-                $.CswDialog('EditImageDialog', {
+                Csw.dialogs.editImage({
                     selectedImg: {
                         BlobUrl: BlobUrl,
                         FileName: FileName,
@@ -83,7 +83,7 @@
                         Caption: Caption
                     },
                     placeholder: cswPrivate.placeholder,
-                    height: cswPrivate.height,
+                    imgHeight: cswPrivate.height,
                     deleteUrl: cswPrivate.deleteUrl,
                     saveCaptionUrl: cswPrivate.saveCaptionUrl,
                     saveImgUrl: cswPrivate.saveImageUrl,
@@ -109,7 +109,7 @@
                         });
                         cswPrivate.makeThumbnails(cswPrivate.images);
                     }
-                });
+                }).open();
             };
 
             cswPrivate.makeSelectedImg = function (src, alt, id, caption) {
