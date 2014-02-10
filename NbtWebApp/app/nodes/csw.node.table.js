@@ -108,267 +108,280 @@
 
         cswPrivate.makeNodeCell = function (nodeObj) {
             var nodeid = nodeObj.nodeid;
-                if (cswPrivate.c <= cswPrivate.columns) {
-                    if ((false == cswPrivate.singleColumn || // paging handled in makeTable()
-                        cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
-                        (cswPrivate.pagenodecount < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
+            if (cswPrivate.c <= cswPrivate.columns) {
+                if ((false == cswPrivate.singleColumn || // paging handled in makeTable()
+                    cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
+                    (cswPrivate.pagenodecount < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
 
 
-                        var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
-                        var textwidth = (1 / (cswPrivate.columns + 1) * 100) + '%';
-                        var imgheight = '';
-                        var thumbverticalAlign = 'middle';
-                        var thumbhorizontalAlign = 'center';
-                        var thumbBackgroundColor = '#ffffff';
-                        var cellpad = cswPrivate.rowpadding + 'px';
-                        if (cswPrivate.singleColumn) {
-                            textwidth = '75%';
-                            cellpad = '10px';
-                            thumbverticalAlign = 'top';
-                            thumbhorizontalAlign = '';
-                            thumbBackgroundColor = '';
-                        }
-                        if (Csw.bool(cswPrivate.compactResults)) {
-                            cellpad = '0px';
-                        }
+                    var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
+                    var textwidth = (1 / (cswPrivate.columns + 1) * 100) + '%';
+                    var imgheight = '';
+                    var thumbverticalAlign = 'middle';
+                    var thumbhorizontalAlign = 'center';
+                    var thumbBackgroundColor = '#ffffff';
+                    var cellpad = cswPrivate.rowpadding + 'px';
+                    if (cswPrivate.singleColumn) {
+                        textwidth = '75%';
+                        cellpad = '10px';
+                        thumbverticalAlign = 'top';
+                        thumbhorizontalAlign = '';
+                        thumbBackgroundColor = '';
+                    }
+                    if (Csw.bool(cswPrivate.compactResults)) {
+                        cellpad = '0px';
+                    }
 
-                        var thumbnailCell = cswPrivate.getThumbnailCell(cellSet)
-                            .css({
-                                verticalAlign: thumbverticalAlign,
-                                backgroundColor: thumbBackgroundColor,
-                                textAlign: thumbhorizontalAlign,
-                                paddingTop: cellpad,
-                                maxWidth: '100px'
-                            });
-                        var textCell = cswPrivate.getTextCell(cellSet)
-                            .css({
-                                width: textwidth,
-                                paddingTop: cellpad
-                            });
-                        if (cswPrivate.singleColumn) {
-                            thumbnailCell.css({
-                                paddingBottom: cellpad
-                            });
-                            textCell.css({
-                                paddingBottom: cellpad
-                            });
-                        }
-                        var btncell = cswPrivate.getButtonCell(cellSet)
-                            .css({
-                                paddingBottom: cellpad
-                            });
-
-                        // Banding
-                        if (cswPrivate.singleColumn) {
-                            if (cswPrivate.r % 2 === 1) {
-                                thumbnailCell.addClass('NodeTableOddRow');
-                                textCell.addClass('NodeTableOddRow');
-                                btncell.addClass('NodeTableOddRow');
-                            } else {
-                                thumbnailCell.addClass('NodeTableEvenRow');
-                                textCell.addClass('NodeTableEvenRow');
-                                btncell.addClass('NodeTableEvenRow');
-                            }
-                        }
-
-                        textCell.append('<b>' + nodeObj.nodename + '</b>');
-                        if (Csw.bool(nodeObj.locked)) {
-                            textCell.img({
-                                src: 'Images/quota/lock.gif',
-                                title: 'Quota exceeded'
-                            });
-                        }
-                        textCell.br();
-                        var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
-                        cswPrivate.texttables.push(texttable);
-
-                        if (Csw.bool(cswPrivate.compactResults)) {
-                            texttable.css({ paddingBottom: '10px' });
-                            texttable.hide();
-                            imgheight = '18px';
-                        }
-
-                        if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                            thumbnailCell.img({
-                                src: nodeObj.thumbnailurl
-                            }).css({
-                                height: imgheight,
-                                maxWidth: '100px'
-                            });
-                        }
-
-                        thumbnailCell.$.hover(
-                            function (event) {
-                                Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell });
-                            },
-                            function (event) {
-                                Csw.nodeHoverOut();
-                            });
-                        textCell.$.hover(
-                            function (event) {
-                                Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell }); // yes, thumbnailCell.
-                            },
-                            function (event) {
-                                Csw.nodeHoverOut();
-                            });
-
-                        var btnTable = btncell.table({
-                            name: cswPrivate.name + '_' + nodeid + '_btntbl',
-                            cellspacing: '5px'
+                    var thumbnailCell = cswPrivate.getThumbnailCell(cellSet)
+                        .css({
+                            verticalAlign: thumbverticalAlign,
+                            backgroundColor: thumbBackgroundColor,
+                            textAlign: thumbhorizontalAlign,
+                            paddingTop: cellpad,
+                            maxWidth: '100px'
                         });
-                        var btncol = 1;
-                        var row = 1;
-                        var tabid = window.Ext.id();
-                        // Props
-                        Csw.iterate(nodeObj.props, function (propObj) {
-                            if (propObj.fieldtype === "Button") {
-                                if (false == Csw.bool(cswPrivate.suppressButtons)) {
-                                    // Object Class Buttons
-                                    propObj.size = 'small';
-                                    propObj.nodeid = nodeid;
-                                    propObj.tabState = propObj.tabState || {};
-                                    propObj.tabState.nodeid = nodeid;
-                                    propObj.tabState.tabid = tabid;
-                                    propObj.tabid = tabid;
-                                    propObj.name = propObj.propname;
-                                    propObj.EditMode = Csw.enums.editMode.Table;
-                                    propObj.onRefresh = cswPrivate.onEditNode;
-
-                                    var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14);
-                                    var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': width });
-                                    var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
-
-                                    Csw.nbt.property(fieldOpt);
-
-                                    btncol += 1;
-                                }
-                            } else {
-                                var propCell = texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1));
-                                var cssclass = 'searchResult';
-                                if (propObj.source === 'Results') {
-                                    cssclass = 'searchResultDeemph';
-                                }
-                                propCell.span({
-                                    text: propObj.propname + ': ' + propObj.gestalt,
-                                    cssclass: cssclass
-                                });
-                                row += 1;
-                                //maintextcell.br();
-                            }
+                    var textCell = cswPrivate.getTextCell(cellSet)
+                        .css({
+                            width: textwidth,
+                            paddingTop: cellpad
                         });
-                        Csw.publish('render_' + nodeid + '_' + tabid);
+                    if (cswPrivate.singleColumn) {
+                        thumbnailCell.css({
+                            paddingBottom: cellpad
+                        });
+                        textCell.css({
+                            paddingBottom: cellpad
+                        });
+                    }
+                    var btncell = cswPrivate.getButtonCell(cellSet)
+                        .css({
+                            paddingBottom: cellpad
+                        });
 
-                        // System Buttons
-                        if (Csw.bool(cswPrivate.compactResults)) {
-                            btnTable.cell(1, btncol).buttonExt({
-                                name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
-                                width: ('More Info'.length * 8) + 16,
-                                enabledText: 'More Info',
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.info),
-                                disableOnClick: false,
-                                onClick: function () {
-                                    texttable.toggle();
-                                } // onClick
-                            }); // CswButton
-                            btncol += 1;
+                    // Banding
+                    if (cswPrivate.singleColumn) {
+                        if (cswPrivate.r % 2 === 1) {
+                            thumbnailCell.addClass('NodeTableOddRow');
+                            textCell.addClass('NodeTableOddRow');
+                            btncell.addClass('NodeTableOddRow');
+                        } else {
+                            thumbnailCell.addClass('NodeTableEvenRow');
+                            textCell.addClass('NodeTableEvenRow');
+                            btncell.addClass('NodeTableEvenRow');
                         }
+                    }
 
-                        //Details Button
-                        if (Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
-                            btnTable.cell(1, btncol).buttonExt({
-                                name: Csw.delimitedString(cswPrivate.name, nodeid, 'editbtn').string('_'),
-                                width: ('Details'.length * 7) + 16,
-                                enabledText: 'Details',
-                                disableOnClick: false,
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                                onClick: function () {
-                                    //If C3 search {} else if Universal search {}
-                                    if (cswPrivate.searchTarget === "chemcatcentral") {
-                                        $.CswDialog('C3DetailsDialog', {
-                                            nodeObj: nodeObj,
-                                            onEditNode: cswPrivate.onEditNode
-                                        });
-                                    } else {
-                                        Csw.dialogs.editnode({
-                                            currentNodeId: nodeid,
-                                            currentNodeKey: nodeObj.nodekey,
-                                            nodenames: [nodeObj.nodename],
-                                            ReadOnly: (false === nodeObj.allowedit),
-                                            onEditNode: cswPrivate.onEditNode,
-                                            onEditView: function (viewid) {
-                                                Csw.main.handleAction({
-                                                    actionname: 'Edit_View',
-                                                    ActionOptions: {
-                                                        viewid: viewid,
-                                                        viewmode: Csw.enums.viewMode.grid.name,
-                                                        startingStep: 2,
-                                                        IgnoreReturn: true
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    } // CswDialog
-                                } // onClick
-                            }); // CswButton
-                            btncol += 1;
-                        } // if (nodeObj.allowview || nodeObj.allowedit) 
+                    textCell.append('<b>' + nodeObj.nodename + '</b>');
+                    if (Csw.bool(nodeObj.locked)) {
+                        textCell.img({
+                            src: 'Images/quota/lock.gif',
+                            title: 'Quota exceeded'
+                        });
+                    }
+                    textCell.br();
+                    var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
+                    cswPrivate.texttables.push(texttable);
 
-                        //Delete Button
-                        if (false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
-                            var deleteBtn = btnTable.cell(1, btncol).buttonExt({
-                                name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
-                                width: ('Delete'.length * 8) + 16,
-                                enabledText: 'Delete',
-                                disabledOnClick: false,
-                                //tooltip: { title: 'Delete' },
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
-                                onClick: Csw.method(function () {
-                                    $.CswDialog('DeleteNodeDialog', {
-                                        nodenames: [nodeObj.nodename],
-                                        nodeids: [nodeid],
-                                        cswnbtnodekeys: [nodeObj.nodekey],
-                                        onDeleteNode: cswPrivate.onDeleteNode
-                                    }); // CswDialog
-                                    deleteBtn.enable();
-                                }) // onClick
-                            }); // CswButton
-                            btncol += 1;
-                        } // if (nodeObj.allowdelete)
+                    if (Csw.bool(cswPrivate.compactResults)) {
+                        texttable.css({ paddingBottom: '10px' });
+                        texttable.hide();
+                        imgheight = '18px';
+                    }
 
-                        //Import Button
-                        if (false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport)) {
+                    if (false === Csw.isNullOrEmpty(nodeObj.thumbnailbase64str)) {
+                        thumbnailCell.img({
+                            src: nodeObj.thumbnailbase64str
+                        }).css({
+                            height: imgheight,
+                            maxWidth: '100px'
+                        });
+                    } else if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
+                        thumbnailCell.img({
+                            src: nodeObj.thumbnailurl
+                        }).css({
+                            height: imgheight,
+                            maxWidth: '100px'
+                        });
+                    }
 
-                            var importMenuItems = [];
-                            Csw.each(cswPrivate.chemCatConfig.importMenuItems, function (nt) {
-                                if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
-                                    importMenuItems.push({
-                                        text: 'Import ' + nt.nodetypename,
-                                        ntname: nt.nodetypename,
-                                        ntid: nt.nodetypeid,
-                                        icon: nt.iconfilename,
-                                        handler: Csw.method(function () {
-                                            return importOnClick(nt.nodetypename, nt.nodetypeid);
-                                        })
+                    thumbnailCell.$.hover(
+                        function (event) {
+                            Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell });
+                        },
+                        function (event) {
+                            Csw.nodeHoverOut();
+                        });
+                    textCell.$.hover(
+                        function (event) {
+                            Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell }); // yes, thumbnailCell.
+                        },
+                        function (event) {
+                            Csw.nodeHoverOut();
+                        });
+
+                    var btnTable = btncell.table({
+                        name: cswPrivate.name + '_' + nodeid + '_btntbl',
+                        cellspacing: '5px'
+                    });
+                    var btncol = 1;
+                    var row = 1;
+                    var tabid = window.Ext.id();
+                    // Props
+                    Csw.iterate(nodeObj.props, function (propObj) {
+                        if (propObj.fieldtype === "Button") {
+                            if (false == Csw.bool(cswPrivate.suppressButtons)) {
+                                // Object Class Buttons
+                                propObj.size = 'small';
+                                propObj.nodeid = nodeid;
+                                propObj.tabState = propObj.tabState || {};
+                                propObj.tabState.nodeid = nodeid;
+                                propObj.tabState.tabid = tabid;
+                                propObj.tabid = tabid;
+                                propObj.name = propObj.propname;
+                                propObj.EditMode = Csw.enums.editMode.Table;
+                                propObj.onRefresh = cswPrivate.onEditNode;
+
+                                var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14);
+                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': width });
+                                var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
+
+                                Csw.nbt.property(fieldOpt);
+
+                                btncol += 1;
+                            }
+                        } else {
+                            var propCell = texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1));
+                            var cssclass = 'searchResult';
+                            if (propObj.source === 'Results') {
+                                cssclass = 'searchResultDeemph';
+                            }
+                            propCell.span({
+                                text: propObj.propname + ': ' + propObj.gestalt,
+                                cssclass: cssclass
+                            });
+                            row += 1;
+                            //maintextcell.br();
+                        }
+                    });
+                    Csw.publish('render_' + nodeid + '_' + tabid);
+
+                    //Button visibility default behavoir
+                    var showMoreInfoButton = Csw.bool(cswPrivate.compactResults);
+                    var showDetailsButton = Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit));
+                    var showDeleteButton = false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete);
+                    var showExtraActionButton = false === Csw.isNullOrEmpty(cswPrivate.extraAction);
+                    var showFavoriteButton = cswPrivate.searchTarget != "chemcatcentral";
+                    var showImportButton = false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport);
+                    var showMoreAcdResultsButton = false;
+                    
+                    //Button visibility behavoir when C3 is enabled
+                    if (cswPrivate.searchTarget === "chemcatcentral") {
+                        var isFilteredSearch = ('ACD' === cswPrivate.chemCatConfig.dataservice && cswPrivate.chemCatConfig.filtered) || 'C3' === cswPrivate.chemCatConfig.dataservice;
+                        showDetailsButton = isFilteredSearch;
+                        showImportButton = isFilteredSearch;
+                        showMoreAcdResultsButton = 'ACD' === cswPrivate.chemCatConfig.dataservice && false == cswPrivate.chemCatConfig.filtered;
+                    }
+
+                    // System Buttons
+                    if (showMoreInfoButton) {
+                        btnTable.cell(1, btncol).buttonExt({
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
+                            width: ('More Info'.length * 8) + 16,
+                            enabledText: 'More Info',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.info),
+                            disableOnClick: false,
+                            onClick: function () {
+                                texttable.toggle();
+                            } // onClick
+                        }); // CswButton
+                        btncol += 1;
+                    }
+
+                    //Details Button
+                    if (showDetailsButton) {
+                        btnTable.cell(1, btncol).buttonExt({
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'editbtn').string('_'),
+                            width: ('Details'.length * 7) + 16,
+                            enabledText: 'Details',
+                            disableOnClick: false,
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                            onClick: function () {
+                                //If C3 search {} else if Universal search {}
+                                if (cswPrivate.searchTarget === "chemcatcentral") {
+                                    $.CswDialog('C3DetailsDialog', {
+                                        nodeObj: nodeObj,
+                                        onEditNode: cswPrivate.onEditNode,
+                                        c3dataservice: cswPrivate.chemCatConfig.dataservice
                                     });
-                                }
-                            }); //Csw.each()
+                                } else {
+                                    Csw.dialogs.editnode({
+                                        currentNodeId: nodeid,
+                                        currentNodeKey: nodeObj.nodekey,
+                                        nodenames: [nodeObj.nodename],
+                                        ReadOnly: (false === nodeObj.allowedit),
+                                        onEditNode: cswPrivate.onEditNode,
+                                        onEditView: function (viewid) {
+                                            Csw.main.handleAction({
+                                                actionname: 'Edit_View',
+                                                ActionOptions: {
+                                                    viewid: viewid,
+                                                    viewmode: Csw.enums.viewMode.grid.name,
+                                                    startingStep: 2,
+                                                    IgnoreReturn: true
+                                                }
+                                            });
+                                        }
+                                    });
+                                } // CswDialog
+                            } // onClick
+                        }); // CswButton
+                        btncol += 1;
+                    } // if (nodeObj.allowview || nodeObj.allowedit) 
 
-                            var importOnClick = function (nodetypename, nodetypeid) {
-                                // Disable all import buttons so Masotti can't create an "import conga line"
-                                Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
-                                    button.disable();
-                                });
+                    //Delete Button
+                    if (showDeleteButton) {
+                        var deleteBtn = btnTable.cell(1, btncol).buttonExt({
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
+                            width: ('Delete'.length * 8) + 16,
+                            enabledText: 'Delete',
+                            disabledOnClick: false,
+                            //tooltip: { title: 'Delete' },
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                            onClick: Csw.method(function () {
+                                $.CswDialog('DeleteNodeDialog', {
+                                    nodenames: [nodeObj.nodename],
+                                    nodeids: [nodeid],
+                                    cswnbtnodekeys: [nodeObj.nodekey],
+                                    onDeleteNode: cswPrivate.onDeleteNode
+                                }); // CswDialog
+                                deleteBtn.enable();
+                            }) // onClick
+                        }); // CswButton
+                        btncol += 1;
+                    } // if (nodeObj.allowdelete)
 
+                    //More Results Button (when doing a C3:ACD search)
+                    if (showMoreAcdResultsButton) {
+                        btnTable.cell(1, btncol).buttonExt({
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'moreResultsBtn').string('_'),
+                            width: ('More Results'.length * 7) + 16,
+                            enabledText: 'More Results',
+                            disableOnClick: false,
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                            onClick: function () {
 
+                                // Search C3 ACD again
                                 Csw.ajaxWcf.post({
-                                    urlMethod: 'ChemCatCentral/importProduct',
+                                    urlMethod: 'ChemCatCentral/runC3FilteredSearch',
                                     data: {
-                                        C3ProductId: nodeObj.c3productid,
-                                        NodeTypeName: nodetypename,
-                                        NodeTypeId: nodetypeid
+                                        Field: cswPrivate.chemCatConfig.field,
+                                        ACDSearchParams: {
+                                            Cdbregno: nodeObj.acdcdbregno
+                                        }
                                     },
                                     success: function (data) {
-                                        Csw.publish(Csw.enums.events.main.handleAction, data);
+                                        var parsedData = JSON.parse(data.SearchResults);
+                                        cswPrivate.chemCatConfig.onMoreResultsClick(parsedData);
                                     },
                                     error: function (data) {
                                         // Re-enable all import buttons
@@ -383,65 +396,122 @@
                                         });
                                     }
                                 }); // ajaxWcf
+
+                            } // onClick
+                        }); // CswButton
+                        btncol += 1;
+                    } // 
+
+                    //Import Button
+                    if (showImportButton) {
+                        var importMenuItems = [];
+                        Csw.each(cswPrivate.chemCatConfig.importMenuItems, function (nt) {
+                            if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
+                                importMenuItems.push({
+                                    text: 'Import ' + nt.nodetypename,
+                                    ntname: nt.nodetypename,
+                                    ntid: nt.nodetypeid,
+                                    icon: nt.iconfilename,
+                                    handler: Csw.method(function () {
+                                        return importOnClick(nt.nodetypename, nt.nodetypeid);
+                                    })
+                                });
+                            }
+                        }); //Csw.each()
+
+                        var importOnClick = function (nodetypename, nodetypeid) {
+                            // Disable all import buttons so Masotti can't create an "import conga line"
+                            Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                button.disable();
+                            });
+
+                            var ajaxData = {
+                                C3ProductId: nodeObj.c3productid,
+                                Cdbregno: nodeObj.acdcdbregno,
+                                NodeTypeName: nodetypename,
+                                NodeTypeId: nodetypeid
                             };
 
-                            cswPrivate.chemCatConfig.importButtons['button' + cswPrivate.r] = window.Ext.create('Ext.SplitButton', {
-                                text: importMenuItems[0].text,
-                                icon: importMenuItems[0].icon,
-                                width: (importMenuItems[0].text.length * 8) + 16,
-                                renderTo: btnTable.cell(1, btncol).getId(),
-                                handler: Csw.method(function () {
-                                    importOnClick(importMenuItems[0].ntname, importMenuItems[0].ntid);
-                                }),
-                                menu: {
-                                    items: importMenuItems
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'ChemCatCentral/importProduct',
+                                data: ajaxData,
+                                success: function (data) {
+                                    Csw.publish(Csw.enums.events.main.handleAction, data);
+                                },
+                                error: function (data) {
+                                    // Re-enable all import buttons
+                                    Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                        button.enable();
+                                    });
+                                },
+                                complete: function (data) {
+                                    // Re-enable all import buttons
+                                    Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                        button.enable();
+                                    });
                                 }
-                            }); //importButton
+                            }); // ajaxWcf
+                        };
 
-                            btncol += 1;
+                        cswPrivate.chemCatConfig.importButtons['button' + cswPrivate.r] = window.Ext.create('Ext.SplitButton', {
+                            text: importMenuItems[0].text,
+                            icon: importMenuItems[0].icon,
+                            width: (importMenuItems[0].text.length * 8) + 16,
+                            renderTo: btnTable.cell(1, btncol).getId(),
+                            handler: Csw.method(function () {
+                                importOnClick(importMenuItems[0].ntname, importMenuItems[0].ntid);
+                            }),
+                            menu: {
+                                items: importMenuItems
+                            }
+                        }); //importButton
 
-                        } //nodeObj.allowimport
+                        btncol += 1;
 
-                        if (false === Csw.isNullOrEmpty(cswPrivate.extraAction)) {
-                            Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');
+                    } //nodeObj.allowimport
 
-                            btnTable.cell(1, btncol).buttonExt({
-                                name: Csw.delimitedString(cswPrivate.name, nodeid, 'extbtn').string('_'),
-                                width: (cswPrivate.extraAction.length * 8) + 16,
-                                enabledText: cswPrivate.extraAction,
-                                //tooltip: { title: cswPrivate.extraAction },
-                                icon: cswPrivate.extraActionIcon,
-                                disableOnClick: false,
-                                onClick: function () {
-                                    Csw.tryExec(cswPrivate.onExtraAction, nodeObj);
-                                } // onClick
-                            }); // CswButton
-                            btncol += 1;
-                        } // if (nodeObj.allowdelete)
 
-                        //Favorite Button
-                        if (cswPrivate.searchTarget != "chemcatcentral") {
-                            btnTable.cell(1, btncol).favoriteButton({
-                                name: nodeid + '_favBtn',
-                                nodeid: nodeid,
-                                isFavorite: Csw.bool(nodeObj.isFavorite),
-                            });
-                            btncol += 1;
-                        }
 
-                        if (Csw.bool(nodeObj.disabled)) {
-                            textCell.addClass('disabled');
-                            btnTable.addClass('disabled');
-                        }
+                    if (showExtraActionButton) {
+                        Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');
 
-                        if (cswPrivate.singleColumn) {
-                            cswPrivate.r += 1;
-                        } else {
-                            cswPrivate.c += 1;
-                        }
-                    } // if((pagenodecount < pagenodelimit * (currentpage - 1))
-                    cswPrivate.pagenodecount += 1;
-                } // if (cswPrivate.c <= cswPrivate.columns) {
+                        btnTable.cell(1, btncol).buttonExt({
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'extbtn').string('_'),
+                            width: (cswPrivate.extraAction.length * 8) + 16,
+                            enabledText: cswPrivate.extraAction,
+                            //tooltip: { title: cswPrivate.extraAction },
+                            icon: cswPrivate.extraActionIcon,
+                            disableOnClick: false,
+                            onClick: function () {
+                                Csw.tryExec(cswPrivate.onExtraAction, nodeObj);
+                            } // onClick
+                        }); // CswButton
+                        btncol += 1;
+                    } // if (nodeObj.allowdelete)
+
+                    //Favorite Button
+                    if (showFavoriteButton) {
+                        btnTable.cell(1, btncol).favoriteButton({
+                            name: nodeid + '_favBtn',
+                            nodeid: nodeid,
+                            isFavorite: Csw.bool(nodeObj.isFavorite),
+                        });
+                        btncol += 1;
+                    }
+
+                    if (Csw.bool(nodeObj.disabled)) {
+                        textCell.addClass('disabled');
+                        btnTable.addClass('disabled');
+                    }
+
+                    if (cswPrivate.singleColumn) {
+                        cswPrivate.r += 1;
+                    } else {
+                        cswPrivate.c += 1;
+                    }
+                } // if((pagenodecount < pagenodelimit * (currentpage - 1))
+                cswPrivate.pagenodecount += 1;
+            } // if (cswPrivate.c <= cswPrivate.columns) {
         }; // makeNodeCell()
 
 

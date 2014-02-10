@@ -611,10 +611,9 @@ namespace ChemSW.Nbt.ObjClasses
         public bool isFavorite()
         {
             bool isFav = false;
-            if( null != _CswNbtResources.CurrentNbtUser )
+            if( null != _CswNbtResources.CurrentNbtUser && null != _CswNbtResources.CurrentNbtUser.UserId )
             {
-                CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-                isFav = isFavorite( UserId.PrimaryKey );
+                isFav = isFavorite( _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
             }
             return isFav;
         }

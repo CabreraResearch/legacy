@@ -702,45 +702,6 @@
             });
             openDialog(div, 600, 400, null, 'About');
         }, // AboutDialog
-        FileUploadDialog: function (options) {
-            'use strict';
-            var o = {
-                urlMethod: 'fileForProp',
-                url: '',
-                dataType: '',
-                forceIframeTransport: '',
-                params: {},
-                onSuccess: function () { }
-            };
-            if (options) {
-                Csw.extend(o, options);
-            }
-
-            var div = Csw.literals.div();
-
-            div.fileUpload({
-                uploadUrl: o.urlMethod,
-                url: o.url,
-                dataType: o.dataType,
-                forceIframeTransport: o.forceIframeTransport,
-                params: o.params,
-                onSuccess: function (data) {
-                    div.$.dialog('close');
-                    Csw.tryExec(o.onSuccess, data);
-                }
-            });
-
-            div.button({
-                name: 'fileupload_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    div.$.dialog('close');
-                }
-            });
-
-            openDialog(div, 400, 300, null, 'Upload');
-        }, // FileUploadDialog
         C3DetailsDialog: function (options) {
             'use strict';
             var cswPrivate = {
@@ -763,16 +724,28 @@
             //is this necessary or can i use the declaration above?
             var div = Csw.literals.div(),
                 newNode;
+            
+            function createSearchParamsObj() {
+                var CswC3SearchParams = {};
+
+                if (cswPrivate.c3dataservice === 'ACD') {
+                    CswC3SearchParams.ACDSearchParams = {};
+                    CswC3SearchParams["ACDSearchParams"]["Cdbregno"] = cswPrivate.node.acdcdbregno;
+                    CswC3SearchParams["ACDSearchParams"]["ProductId"] = cswPrivate.node.c3productid;
+                    
+                }
+                if (cswPrivate.c3dataservice === 'C3') {
+                    CswC3SearchParams.C3SearchParams = {};
+                    CswC3SearchParams["C3SearchParams"]["ProductId"] = cswPrivate.node.c3productid;
+                }
+
+                return CswC3SearchParams;
+            }
+
 
             var getProductDetails = function () {
 
-                var CswC3SearchParams = {
-                    Field: 'ProductId',
-                    Query: cswPrivate.node.c3productid,
-                    SearchOperator: '',
-                    SourceName: '',
-                    MaxRows: 10
-                };
+                var CswC3SearchParams = createSearchParamsObj();
 
                 Csw.ajaxWcf.post({
                     urlMethod: 'ChemCatCentral/GetProductDetails',
@@ -842,7 +815,7 @@
                         }
 
                         var molImageHeight = 0;
-                        if ("" != data.ProductDetails.MolData && "" != data.ProductDetails.MolImage) {
+                        if ("" != data.ProductDetails.MolImage) {
                             molImageHeight = 120;
                         }
                         table1.cell(2, 2).img({
@@ -917,187 +890,6 @@
             openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
 
         }, // C3DetailsDialog
-
-
-
-        C3SearchDialog: function (options) {
-            'use strict';
-            var cswPrivate = {
-                title: "ChemCatCentral Search",
-                c3searchterm: options.c3searchterm,
-                c3handleresults: options.c3handleresults,
-                clearview: options.clearview,
-                loadView: null //function () { }
-            };
-
-            if (options) {
-                Csw.extend(cswPrivate, options);
-            }
-
-            var div = Csw.literals.div();
-
-            // Outer table
-            var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
-            tableOuter.cell(1, 1).p({ text: '' });
-
-            // Inner table
-            var tableInner = div.table({ cellpadding: '2px' });
-
-            // Pick-lists
-            var sourceSelect = null;
-            var searchTypeSelect = null;
-
-            function onOpen() {
-
-                //DataSources Picklist
-                sourceSelect = tableInner.cell(1, 1).select({
-                    name: 'C3Search_sourceSelect',
-                    selected: 'All Sources'
-                });
-
-                //SearchTypes Picklist
-                searchTypeSelect = tableInner.cell(1, 2).select({
-                    name: 'C3Search_searchTypeSelect',
-                    selected: 'Name',
-                    onChange: function (event) {
-                        if (searchTypeSelect.selectedText() == "Structure") {
-                            searchOperatorSelect.removeOption('begins');
-                            searchTermField.hide();
-                            molSearchText.show();
-                            molSearchField.show();
-                            molImageCell.show();
-                        } else if (searchOperatorSelect[0].length == 2) {
-                            searchOperatorSelect.addOption({ display: 'Begins', value: 'begins' });
-                            searchTermField.show();
-                            molSearchText.hide();
-                            molSearchField.hide();
-                            molImageCell.hide();
-                        }
-                    }// onChange
-                });//searchTypeSelect
-
-                Csw.ajaxWcf.post({
-                    urlMethod: 'ChemCatCentral/GetSearchProperties',
-                    success: function (data) {
-                        searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchProperties));
-                    }
-                });
-
-                Csw.ajaxWcf.post({
-                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
-                    success: function (data) {
-                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
-                    }
-                });
-
-            } //function onOpen() 
-
-
-            var searchOperatorSelect = tableInner.cell(1, 3).select({
-                name: 'C3Search_searchOperatorSelect'
-            });
-            searchOperatorSelect.option({ display: 'Begins', value: 'begins' });
-            searchOperatorSelect.option({ display: 'Contains', value: 'contains' });
-            searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
-
-
-            var searchTermField = tableInner.cell(1, 4).input({
-                value: cswPrivate.c3searchterm,
-                onKeyUp: function (keyCode) {
-                    // If the key pressed is NOT the 'Enter' key
-                    if (keyCode != 13) {
-                        if (Csw.isNullOrEmpty(searchTermField.val())) {
-                            searchButton.disable();
-                        } else {
-                            searchButton.enable();
-                        }
-                    }
-                }
-            });
-
-            var molSearchText = tableInner.cell(2, 1).div({
-                text: "<b>Paste MOL data from clipboard:</b>"
-            });
-            var molSearchField = tableInner.cell(2, 1).textArea({
-                rows: 8,
-                cols: 35
-            });
-
-            var molImageCell = tableInner.cell(2, 2);
-
-
-            var displayMolThumbnail = function (data) {
-                molImageCell.empty();
-                if (data.molImgAsBase64String) {
-                    molImageCell.img({
-                        src: "data:image/jpeg;base64," + data.molImgAsBase64String
-                    });
-                }
-            };
-
-
-            molSearchField.bind('keyup', function () {
-                if (Csw.isNullOrEmpty(molSearchField.val())) {
-                    searchButton.disable();
-                } else {
-                    searchButton.enable();
-                    Csw.getMolImgFromText('', molSearchField.val(), displayMolThumbnail);
-                }
-            });
-
-
-
-            tableInner.cell(2, 1).propDom('colspan', 3);
-            molImageCell.propDom('colspan', 2);
-            molSearchText.hide();
-            molSearchField.hide();
-            molImageCell.hide();
-
-
-            var enableSearchButton = !(Csw.isNullOrEmpty(searchTermField.val()));
-
-            var searchButton = tableInner.cell(1, 5).button({
-                name: 'c3SearchBtn',
-                enabledText: 'Search',
-                //disabledText: "Searching...",
-                bindOnEnter: div,
-                isEnabled: enableSearchButton,
-                onClick: function () {
-
-                    var CswC3SearchParams = {
-                        Field: searchTypeSelect.selectedVal(),
-                        Query: $.trim(searchTermField.val()),
-                        SearchOperator: searchOperatorSelect.selectedVal(),
-                        SourceName: sourceSelect.selectedVal()
-                    };
-
-                    if (searchTypeSelect.selectedText() == "Structure") {
-                        CswC3SearchParams.Query = $.trim(molSearchField.val());
-                    }
-
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'ChemCatCentral/Search',
-                        data: CswC3SearchParams,
-                        success: function (data) {
-                            //Convert to object from string
-                            var obj = JSON.parse(data.SearchResults);
-                            Csw.tryExec(cswPrivate.clearview);
-                            Csw.tryExec(cswPrivate.c3handleresults(obj));
-                            div.$.dialog('close');
-                        }
-                    });
-                }//onClick
-            }); //var searchButton = tableInner.cell(1, 5).button
-
-            tableOuter.cell(2, 1).div(tableInner);
-
-            openDialog(div, 750, 300, null, cswPrivate.title, onOpen);
-
-        }, // C3SearchDialog
-
-
-
-
         StructureSearchDialog: function (options) {
             'use strict';
             var cswPrivate = {
@@ -1742,34 +1534,6 @@
             openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
-        ConfirmDialog: function (message, title, okFunc, cancelFunc) {
-            'use strict';
-            var div = Csw.literals.div({
-                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
-                text: message,
-                align: 'center'
-            });
-
-            div.br();
-
-            div.button({
-                enabledText: 'OK',
-                onClick: function () {
-                    Csw.tryExec(okFunc);
-                    div.$.dialog('close');
-                }
-            });
-
-            div.button({
-                enabledText: 'Cancel',
-                onClick: function () {
-                    Csw.tryExec(cancelFunc);
-                    div.$.dialog('close');
-                }
-            });
-
-            openDialog(div, 400, 150, null, title);
-        },
         NavigationSelectDialog: function (options) {
             'use strict';
             var o = {
@@ -1804,141 +1568,6 @@
                 }
             });
             openDialog(div, 600, 150, null, o.title);
-        },
-        EditImageDialog: function (options) {
-            'use strict';
-            var o = {
-                selectedImg: {},
-                deleteUrl: 'BlobData/clearImage',
-                saveImgUrl: 'Services/BlobData/SaveFile',
-                saveCaptionUrl: 'BlobData/SaveCaption',
-                propid: '',
-                height: 230,
-                onSave: function () { },
-                onEditImg: function () { },
-                onDeleteImg: function () { }
-            };
-
-            if (options) {
-                Csw.extend(o, options);
-            }
-
-            var div = Csw.literals.div({
-                name: 'editCommentDiv'
-            });
-
-            var tbl = div.table({
-                cellspacing: 2,
-                cellpadding: 2
-            });
-
-            var imgCell = tbl.cell(1, 1).css({
-                "text-align": "center",
-                "vertical-align": "middle",
-                "padding-top": "5px"
-            });
-            imgCell.img({
-                src: o.selectedImg.BlobUrl,
-                alt: o.selectedImg.FileName,
-                height: o.height
-            });
-
-            var makeBtns = function () {
-                imgCell.icon({
-                    name: 'uploadnewImgBtn',
-                    iconType: Csw.enums.iconType.pencil,
-                    hovertext: 'Edit this image',
-                    isButton: true,
-                    onClick: function () {
-                        $.CswDialog('FileUploadDialog', {
-                            urlMethod: o.saveImgUrl,
-                            params: {
-                                propid: o.propid,
-                                blobdataid: o.selectedImg.BlobDataId,
-                                caption: textArea.val()
-                            },
-                            forceIframeTransport: true,
-                            dataType: 'iframe',
-                            onSuccess: function (response) {
-                                var newImg = {
-                                    BlobUrl: Csw.getPropFromIFrame(response, 'BlobUrl', true),
-                                    FileName: Csw.getPropFromIFrame(response, 'FileName', true),
-                                    BlobDataId: Csw.number(Csw.getPropFromIFrame(response, 'BlobDataId', true), Csw.int32MinVal),
-                                    Caption: textArea.val()
-                                };
-
-                                imgCell.empty();
-                                imgCell.img({
-                                    src: Csw.hrefString(newImg.BlobUrl),
-                                    alt: newImg.FileName,
-                                    height: o.height
-                                });
-                                o.selectedImg = newImg;
-                                saveBtn.enable();
-                                makeBtns();
-                                o.onEditImg(newImg);
-                            }
-                        });
-                    }
-                });
-                if (false == Csw.isNullOrEmpty(o.selectedImg.BlobDataId))
-                    imgCell.icon({
-                        name: 'clearImgBtn',
-                        iconType: Csw.enums.iconType.trash,
-                        hovertext: 'Clear this image',
-                        isButton: true,
-                        onClick: function () {
-                            $.CswDialog('ConfirmDialog', 'Are you sure you want to delete this image?', 'Confirm Intent To Delete Image',
-                                function () {
-                                    Csw.ajaxWcf.post({
-                                        urlMethod: o.deleteUrl,
-                                        data: {
-                                            Blob: o.selectedImg,
-                                            propid: o.propid
-                                        },
-                                        success: function (response) {
-                                            o.onDeleteImg(response);
-                                            div.$.dialog('close');
-                                        }
-                                    });
-                                },
-                                function () {
-                                }
-                            );
-                        }
-                    });
-            };
-            makeBtns();
-
-            var textArea = tbl.cell(2, 1).textArea({
-                text: o.selectedImg.Caption,
-                rows: 3,
-                cols: 45
-            });
-
-            var saveBtn = div.button({
-                name: 'saveChangesBtn',
-                enabledText: 'Save Changes',
-                onClick: function () {
-                    var newCaption = textArea.val();
-                    o.selectedImg.Caption = newCaption;
-                    Csw.ajaxWcf.post({
-                        urlMethod: o.saveCaptionUrl,
-                        data: {
-                            Blob: o.selectedImg
-                        },
-                        success: function () {
-                            o.onSave(newCaption, o.selectedImg.BlobDataId);
-                            div.$.dialog('close');
-                        }
-                    });
-                }
-            });
-            if (Csw.isNullOrEmpty(o.selectedImg.BlobDataId)) {
-                saveBtn.disable();
-            }
-
-            openDialog(div, 550, 405, null, 'Edit Image');
         },
         ViewEditorFilterEdit: function (options) {
             'use strict';

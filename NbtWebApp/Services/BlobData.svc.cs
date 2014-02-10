@@ -7,6 +7,7 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Core;
+using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.WebServices;
@@ -44,10 +45,10 @@ namespace NbtWebApp
                 blobDataParams.Blob.Caption = caption;
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : ret,
-                    WebSvcMethodPtr : CswNbtWebServiceBinaryData.saveFile,
-                    ParamObj : blobDataParams
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: ret,
+                    WebSvcMethodPtr: CswNbtWebServiceBinaryData.saveFile,
+                    ParamObj: blobDataParams
                     );
 
                 SvcDriver.run();
@@ -73,10 +74,10 @@ namespace NbtWebApp
             blobDataParams.date = date;
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : ret,
-                WebSvcMethodPtr : CswNbtWebServiceBinaryData.getBlob,
-                ParamObj : blobDataParams
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceBinaryData.getBlob,
+                ParamObj: blobDataParams
                 );
 
             SvcDriver.run();
@@ -102,10 +103,10 @@ namespace NbtWebApp
             BlobDataReturn ret = new BlobDataReturn();
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : ret,
-                WebSvcMethodPtr : CswNbtWebServiceBinaryData.clearBlob,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceBinaryData.clearBlob,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
@@ -122,10 +123,10 @@ namespace NbtWebApp
             NodePropImageReturn ret = new NodePropImageReturn();
 
             var SvcDriver = new CswWebSvcDriver<NodePropImageReturn, BlobDataParams>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : ret,
-                WebSvcMethodPtr : CswNbtWebServiceBinaryData.clearImage,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceBinaryData.clearImage,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
@@ -142,10 +143,10 @@ namespace NbtWebApp
             NodePropImageReturn ret = new NodePropImageReturn();
 
             var SvcDriver = new CswWebSvcDriver<NodePropImageReturn, BlobDataParams>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : ret,
-                WebSvcMethodPtr : CswNbtWebServiceBinaryData.saveCaption,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceBinaryData.saveCaption,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
@@ -169,10 +170,10 @@ namespace NbtWebApp
                     };
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : ret,
-                    WebSvcMethodPtr : CswNbtWebServiceBinaryData.getText,
-                    ParamObj : req
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: ret,
+                    WebSvcMethodPtr: CswNbtWebServiceBinaryData.getText,
+                    ParamObj: req
                     );
 
                 SvcDriver.run();
@@ -191,18 +192,62 @@ namespace NbtWebApp
             req.date = req.date ?? string.Empty;
 
             var SvcDriver = new CswWebSvcDriver<NodePropImageReturn, BlobDataParams>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : ret,
-                WebSvcMethodPtr : CswNbtWebServiceBinaryData.getImageProp,
-                ParamObj : req
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceBinaryData.getImageProp,
+                ParamObj: req
                 );
 
             SvcDriver.run();
 
             return ret;
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "getExternalImage?cdbregno={cdbregno}&productid={productid}&uid={uid}" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream getExternalImage( string cdbregno, string productid, string uid )
+        {
+            ExternalImageRet ret = new ExternalImageRet();
+
+            ACDSearchParams Params = new ACDSearchParams();
+            Params.Cdbregno = CswConvert.ToInt32( cdbregno );
+            Params.ProductId = CswConvert.ToInt32( productid );
+
+            var SvcDriver = new CswWebSvcDriver<ExternalImageRet, ACDSearchParams>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.getExternalImage,
+                ParamObj: Params
+                );
+
+            SvcDriver.run();
+
+
+            MemoryStream mem = new MemoryStream();
+            BinaryWriter BWriter = new BinaryWriter( mem );
+            BWriter.Write( ret.Data );
+            mem.Position = 0;
+
+            string Filename = "molimage_" + productid;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "inline;" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( HttpResponseHeader.ContentType, "image/png" );
+
+            return mem;
+        }
     }
 
+    [DataContract]
+    public class ExternalImageRet : CswWebSvcReturn
+    {
+        public ExternalImageRet()
+        {
+            Data = new byte[0];
+        }
+        [DataMember]
+        public byte[] Data;
+    }
 
     [DataContract]
     public class BlobDataParams
@@ -248,7 +293,7 @@ namespace NbtWebApp
     }
 
     [DataContract]
-    public class BlobDataReturn: CswWebSvcReturn
+    public class BlobDataReturn : CswWebSvcReturn
     {
         public BlobDataReturn()
         {
@@ -259,7 +304,7 @@ namespace NbtWebApp
     }
 
     [DataContract]
-    public class NodePropImageReturn: CswWebSvcReturn
+    public class NodePropImageReturn : CswWebSvcReturn
     {
         public NodePropImageReturn()
         {

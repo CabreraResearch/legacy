@@ -127,11 +127,7 @@
             var ret = cswPublic;
             if (cswPrivate.canCheck) {
                 if (arguments.length === 1) {
-                    if (value) {
-                        cswPublic.propNonDom({ 'checked': true });
-                    } else {
-                        cswPublic.$.removeAttr('checked');
-                    }
+                    cswPublic[0].checked = value;
                 } else {
                     ret = cswPublic.$.is(':checked');
                 }

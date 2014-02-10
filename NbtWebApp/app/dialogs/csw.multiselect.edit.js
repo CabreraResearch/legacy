@@ -92,9 +92,7 @@
 
                     cswPrivate.pagingTbl.cell(1, 1).buttonExt({
                         enabledText: 'Previous',
-                        onClick: function() {
-                            onPrevious();
-                        }
+                        onClick: onPrevious,
                     });
 
                     cswPrivate.pagingTbl.cell(1, 2).span({
@@ -103,9 +101,7 @@
 
                     cswPrivate.pagingTbl.cell(1, 3).buttonExt({
                         enabledText: 'Next',
-                        onClick: function() {
-                            onNext();
-                        }
+                        onClick: onNext,
                     });
 
                     cswPrivate.pagingTbl.cell(1, 3).span({
@@ -161,7 +157,7 @@
 
                 // Hide all of the options from last page
                 Csw.iterate(cswPrivate.ctrlOpts, function (item) {
-                    if (item.page = currentPage) {
+                    if (item.page == currentPage) {
                         item.ctrl.ctrlDiv.hide();
                     }
                 });
@@ -182,7 +178,7 @@
 
                 // Hide all of the options from last page
                 Csw.iterate(cswPrivate.ctrlOpts, function (item) {
-                    if (item.page = currentPage) {
+                    if (item.page == currentPage) {
                         item.ctrl.ctrlDiv.hide();
                     }
                 });
@@ -199,10 +195,10 @@
             if (false === checkBox.$.is(':hidden')) {
                 var selectedVal = cswPrivate.ctrlOpts[page + "_" + idx].val;
                 var selectedIdx = cswPrivate.selected.indexOf(selectedVal);
-                document.getElementById(checkBox.getId()).checked = isChecked;
+                checkBox.checked(isChecked);
                 Csw.clientChanges.setChanged();
                 if (checkBox.checked()) {
-                    if (false == (selectedIdx > -1)) {
+                    if (selectedIdx == -1) {
                         cswPrivate.selected.push(selectedVal);
                     }
                 } else {
@@ -219,7 +215,7 @@
             var opts = [];
 
             if (cswPrivate.usePaging) {
-                var start = (cswPrivate.currentPage - 1) * (cswPrivate.itemsPerPage + 1);
+                var start = (cswPrivate.currentPage - 1) * (cswPrivate.itemsPerPage);
                 var end = start + cswPrivate.itemsPerPage - 1;
 
                 if (cswPrivate.currentPage === cswPrivate.totalPages) {
