@@ -1123,7 +1123,7 @@
                                     findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                 });
                             } else if (false === Csw.isNullOrEmpty(response.Step6.PropertyNode)) {
-                                $.CswDialog('ViewEditorPropertyEdit', {
+                                Csw.dialogs.editviewproperty({
                                     propertyNode: response.Step6.PropertyNode,
                                     view: cswPrivate.View,
                                     viewJson: response.Step4.ViewJson,
@@ -1389,13 +1389,13 @@
 
             cswPrivate.finalize = function () {
 
-                var finalizeView = function() {
+                var finalizeView = function () {
                     Csw.ajaxWcf.post({
                         urlMethod: 'ViewEditor/Finalize',
                         data: {
                             CurrentView: cswPrivate.View
                         },
-                        success: function(response) {
+                        success: function (response) {
                             cswPrivate.View = response.CurrentView;
                             cswPrivate.onFinish(cswPrivate.View.ViewId, cswPrivate.View.ViewMode);
                         }
@@ -1407,7 +1407,7 @@
                 } else {
                     finalizeView();
                 }
-                
+
             };
 
             cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
