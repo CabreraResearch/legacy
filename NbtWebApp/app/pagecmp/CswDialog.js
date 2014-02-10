@@ -765,23 +765,17 @@
                 newNode;
             
             function createSearchParamsObj() {
-                var CswC3SearchParams = {
-                    Field: cswPrivate.searchTypeSelect.selectedVal(),
-                    Query: $.trim(cswPrivate.searchTermField.val()),
-                    SearchOperator: cswPrivate.searchOperatorSelect.selectedVal()
-                };
-
-                if (cswPrivate.searchTypeSelect.selectedText() == "Structure") {
-                    CswC3SearchParams.Query = $.trim(cswPrivate.molSearchField.val());
-                }
+                var CswC3SearchParams = {};
 
                 if (cswPrivate.c3dataservice === 'ACD') {
                     CswC3SearchParams.ACDSearchParams = {};
-                    CswC3SearchParams["ACDSearchParams"]["CompanyIds"] = cswPrivate.vendorOptions.selectedVal();
+                    CswC3SearchParams["ACDSearchParams"]["Cdbregno"] = cswPrivate.node.acdcdbregno;
+                    CswC3SearchParams["ACDSearchParams"]["ProductId"] = cswPrivate.node.c3productid;
+                    
                 }
                 if (cswPrivate.c3dataservice === 'C3') {
                     CswC3SearchParams.C3SearchParams = {};
-                    CswC3SearchParams["C3SearchParams"]["DataSources"] = cswPrivate.vendorOptions.selectedVal();
+                    CswC3SearchParams["C3SearchParams"]["ProductId"] = cswPrivate.node.c3productid;
                 }
 
                 return CswC3SearchParams;
@@ -790,11 +784,7 @@
 
             var getProductDetails = function () {
 
-                var CswC3SearchParams = {
-                   C3SearchParams: {
-                        ProductId: cswPrivate.node.c3productid
-                   }
-                };
+                var CswC3SearchParams = createSearchParamsObj();
 
                 Csw.ajaxWcf.post({
                     urlMethod: 'ChemCatCentral/GetProductDetails',
@@ -864,11 +854,12 @@
                         }
 
                         var molImageHeight = 0;
-                        if ("" != data.ProductDetails.MolData && "" != data.ProductDetails.MolImage) {
+                        //if ("" != data.ProductDetails.MolData && "" != data.ProductDetails.MolImage) {
+                        if ("" != data.ProductDetails.MolImage) {
                             molImageHeight = 120;
                         }
                         table1.cell(2, 2).img({
-                            src: 'data:image/jpeg;base64,' + data.ProductDetails.MolImage,
+                            src: 'data:image/png;base64,' + data.ProductDetails.MolImage,
                             height: molImageHeight
                         });
                         table1.cell(2, 2).propDom('rowspan', 6);
