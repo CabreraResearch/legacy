@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
@@ -429,7 +430,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     throw ( new CswDniException( CswEnumErrorType.Error, "There was an error searching ChemCatCentral", exception.Message, exception ) );
                 }
-
+                
                 //TODO: Make this result page look like the NBT search page
                 if( SearchResults.CswC3SearchResults.Length > 0 )
                 {
@@ -517,13 +518,21 @@ namespace ChemSW.Nbt.WebServices
             if( null != C3SearchClient )
             {
                 CswRetObjSearchResults SearchResults = C3SearchClient.getACDMolImage( CswC3SearchParams );
-                if( SearchResults.CswC3SearchResults.Length > 0 )
+                if( null != SearchResults.CswC3SearchResults && SearchResults.CswC3SearchResults.Length > 0 )
                 {
                     C3ProductDetails = SearchResults.CswC3SearchResults[0];
                 }
             }
 
-            Return.Data = Convert.FromBase64String( C3ProductDetails.MolImage );
+            if( String.IsNullOrEmpty( C3ProductDetails.MolImage ) )
+            {
+                CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                Return.Data = File.ReadAllBytes( AppDomain.CurrentDomain.BaseDirectory + CswNbtMetaDataObjectClass.IconPrefix100 + ChemicalOC.IconFileName );
+            }
+            else
+            {
+                Return.Data = Convert.FromBase64String( C3ProductDetails.MolImage );
+            }
         }
 
         public static void importC3Product( ICswResources CswResources, CswNbtC3CreateMaterialReturn Return, CswNbtC3Import.Request Request )
