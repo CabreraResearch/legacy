@@ -96,6 +96,7 @@
     <Content Include="app\db\csw.dbSelect.js" />
     <Content Include="app\db\csw.dbTable.js" />
     <Content Include="app\db\csw.dbInsert.js" />
+    <Content Include="app\dialogs\csw.editviewfilter.js" />
     <Content Include="app\dialogs\csw.editviewrelationship.js" />
     <Content Include="app\dialogs\csw.editviewroot.js" />
     <Content Include="app\dialogs\csw.editviewproperty.js" />
