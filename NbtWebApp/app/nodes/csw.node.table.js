@@ -187,10 +187,16 @@
                         texttable.hide();
                         imgheight = '18px';
                     }
-                    
-                    if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
+
+                    if (false === Csw.isNullOrEmpty(nodeObj.thumbnailbase64str)) {
                         thumbnailCell.img({
-                            //src: Csw.hrefString(nodeObj.thumbnailurl) //TODO: does wrapping this in HREFstring break other searches?
+                            src: nodeObj.thumbnailbase64str
+                        }).css({
+                            height: imgheight,
+                            maxWidth: '100px'
+                        });
+                    } else if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
+                        thumbnailCell.img({
                             src: nodeObj.thumbnailurl
                         }).css({
                             height: imgheight,

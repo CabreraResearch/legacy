@@ -207,6 +207,7 @@ namespace ChemSW.Nbt.WebServices
             public bool Disabled;
             public bool IsFavorite;
             public string ThumbnailUrl;
+            public string ThumbnailBase64Str;
 
             public bool AllowView;
             public bool AllowEdit;
@@ -245,6 +246,7 @@ namespace ChemSW.Nbt.WebServices
                 NodeObj["nodetypeid"] = NodeType.NodeTypeId;
                 NodeObj["nodetypename"] = NodeType.NodeTypeName;
                 NodeObj["thumbnailurl"] = ThumbnailUrl;
+                NodeObj["thumbnailbase64str"] = ThumbnailBase64Str;
                 NodeObj["allowview"] = AllowView;
                 NodeObj["allowedit"] = AllowEdit;
                 NodeObj["allowdelete"] = AllowDelete;
@@ -495,11 +497,11 @@ namespace ChemSW.Nbt.WebServices
                     // Thumbnail image -- set to molimage if we have one
                     if( DataService.Equals( "C3" ) && false == String.IsNullOrEmpty( product.MolImage ) )
                     {
-                        thisNode.ThumbnailUrl = "data:image/jpeg;base64," + product.MolImage;
+                        thisNode.ThumbnailBase64Str = "data:image/jpeg;base64," + product.MolImage;
                     }
-                    else
+                    else if( DataService.Equals( "ACD" ) )
                     {
-                        thisNode.ThumbnailUrl = "Services/BlobData/getExternalImage?cdbregno=" + thisNode.ACDCdbregno + "&productid=" + product.ProductId;
+                        thisNode.ThumbnailUrl = "Services/BlobData/getExternalImage?cdbregno=" + thisNode.ACDCdbregno + "&productid=" + product.ProductId + "&uid=" + CswRandom.RandomString();
                     }
 
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
