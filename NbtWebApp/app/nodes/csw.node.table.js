@@ -367,6 +367,7 @@
                                 Csw.ajaxWcf.post({
                                     urlMethod: 'ChemCatCentral/runC3FilteredSearch',
                                     data: {
+                                        Field: cswPrivate.chemCatConfig.field,
                                         ACDSearchParams: {
                                             Cdbregno: nodeObj.acdcdbregno
                                         }

@@ -399,6 +399,7 @@
                     chemCatConfig: {
                         dataservice: data.c3dataservice, //either 'C3' or 'ACD'
                         filtered: data.filtered,         //Was this data from ACD filtered?
+                        field: data.field,               //What were we searching on? Ex: 'casno'
                         onMoreResultsClick: function (filteredData) {
                             //cswPrivate.onBeforeSearch();
                             cswPublic.handleResults(filteredData);
