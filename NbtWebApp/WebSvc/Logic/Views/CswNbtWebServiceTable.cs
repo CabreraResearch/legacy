@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         /// <param name="C3SearchResultsObj"></param>
         /// <returns></returns>
-        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField, string DataSource, bool filtered = false )
+        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField, string DataService, bool filtered = false )
         {
 
             JObject ret = new JObject();
@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
 
             PropsToHide.Remove( SearchField );
 
-            if( "ACD" == DataSource )
+            if( "ACD" == DataService )
             {
                 if( filtered )
                 {
@@ -129,10 +129,10 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 PropsToHide.Remove( "SourceName" );
-                PropsToHide.Remove( "SupplierName" );    
+                PropsToHide.Remove( "SupplierName" );
             }
-            
-            ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide );
+
+            ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide, DataService );
 
             return ret;
         }
@@ -176,13 +176,13 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="C3SearchResultsObj"></param>
         /// <param name="PropsToHide"></param>
         /// <returns></returns>
-        public JObject makeTableFromWebServiceObj( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide )
+        public JObject makeTableFromWebServiceObj( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide, string DataService )
         {
             JObject ret = new JObject();
 
             if( C3SearchResultsObj != null )
             {
-                Int32 results = _populateDictionary( C3SearchResultsObj, PropsToHide );
+                Int32 results = _populateDictionary( C3SearchResultsObj, PropsToHide, DataService );
 
                 ret["results"] = results;
                 ret["nodetypecount"] = _TableDict.Keys.Count;
@@ -423,7 +423,7 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="C3SearchResultsObj"></param>
         /// <param name="PropsToHide"></param>
         /// <returns></returns>
-        private Int32 _populateDictionary( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide )
+        private Int32 _populateDictionary( CswRetObjSearchResults C3SearchResultsObj, Collection<string> PropsToHide, string DataService )
         {
             Int32 results = 0;
 
@@ -492,21 +492,26 @@ namespace ChemSW.Nbt.WebServices
 
                     }
 
-                    // If there is a generated molimage, display it
-                    //if( false == String.IsNullOrEmpty( product.MolImage ) )
-                    //{
-                    thisNode.ThumbnailUrl = "Services/BlobData/getExternalImage?cdbregno=" + thisNode.ACDCdbregno + "&productid=" + product.ProductId;
-                    //thisNode.ThumbnailUrl = "data:image/png;base64," + product.MolImage;
-                    //}
-
+                    // Thumbnail image -- set to molimage if we have one
+                    if( DataService.Equals( "C3" ) && false == String.IsNullOrEmpty( product.MolImage ) )
+                    {
+                        thisNode.ThumbnailUrl = "data:image/jpeg;base64," + product.MolImage;
+                    }
+                    else
+                    {
+                        thisNode.ThumbnailUrl = "Services/BlobData/getExternalImage?cdbregno=" + thisNode.ACDCdbregno + "&productid=" + product.ProductId;
+                    }
 
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
                     {
                         _TableDict.Add( thisNode.NodeType, new Collection<TableNode>() );
                     }
                     _TableDict[thisNode.NodeType].Add( thisNode );
+
                     results++;
+
                 }//if (null != thisNode.NodeType)
+
             }//for( int i = 0; i < C3SearchResultsObj.CswC3SearchResults.Count(); i++ )
 
             return results;

@@ -854,12 +854,11 @@
                         }
 
                         var molImageHeight = 0;
-                        //if ("" != data.ProductDetails.MolData && "" != data.ProductDetails.MolImage) {
                         if ("" != data.ProductDetails.MolImage) {
                             molImageHeight = 120;
                         }
                         table1.cell(2, 2).img({
-                            src: 'data:image/png;base64,' + data.ProductDetails.MolImage,
+                            src: 'data:image/jpeg;base64,' + data.ProductDetails.MolImage,
                             height: molImageHeight
                         });
                         table1.cell(2, 2).propDom('rowspan', 6);

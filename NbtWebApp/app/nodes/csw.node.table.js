@@ -190,7 +190,8 @@
                     
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                         thumbnailCell.img({
-                            src: Csw.hrefString(nodeObj.thumbnailurl) //TODO: does wrapping this in HREFstring break other searches?
+                            //src: Csw.hrefString(nodeObj.thumbnailurl) //TODO: does wrapping this in HREFstring break other searches?
+                            src: nodeObj.thumbnailurl
                         }).css({
                             height: imgheight,
                             maxWidth: '100px'
