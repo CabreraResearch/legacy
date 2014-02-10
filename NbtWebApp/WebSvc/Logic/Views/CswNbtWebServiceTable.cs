@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         /// <param name="C3SearchResultsObj"></param>
         /// <returns></returns>
-        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField )
+        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField, string DataSource, bool filtered = false )
         {
 
             JObject ret = new JObject();
@@ -114,10 +114,24 @@ namespace ChemSW.Nbt.WebServices
                 PropsToHide.Add( Property );
             }
 
-            PropsToHide.Remove( "SourceName" );
-            PropsToHide.Remove( "SupplierName" );
             PropsToHide.Remove( SearchField );
 
+            if( "ACD" == DataSource )
+            {
+                if( filtered )
+                {
+                    PropsToHide.Remove( "CatalogName" );
+                    PropsToHide.Remove( "CatalogNumbers" );
+                    PropsToHide.Remove( "SupplierName" );
+                }
+                PropsToHide.Remove( "Formula" );
+            }
+            else
+            {
+                PropsToHide.Remove( "SourceName" );
+                PropsToHide.Remove( "SupplierName" );    
+            }
+            
             ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide );
 
             return ret;
