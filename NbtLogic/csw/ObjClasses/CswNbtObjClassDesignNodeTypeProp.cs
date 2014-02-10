@@ -586,19 +586,82 @@ namespace ChemSW.Nbt.ObjClasses
                         if( null != RelationalNodeType )
                         {
                             // We have to embed whether this is an object class or nodetype in the Text of the list value, 
-                            // or else the Value won't sync with nodetype_props correctly
-                            foreach( CswNbtMetaDataNodeTypeProp RelationshipNTP in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) )
+                            // or else the Value won't sync with nodetype_props correctly (see PropRefValue_OCP_Suffix below)
+                           
+                            // Find matches by NodeTypePropId:
+                            CswNbtMetaDataNodeType RelationshipPropNT = _CswNbtResources.MetaData.getNodeType( getNodeTypeName( CswEnumNbtFieldType.Relationship ) );
+                            CswNbtMetaDataNodeTypeProp RelationshipPropNodeTypeValueNTP = RelationshipPropNT.getNodeTypePropByObjectClassProp( PropertyName.NodeTypeValue );
+                            CswNbtMetaDataNodeTypeProp RelationshipPropPropNameNTP = RelationshipPropNT.getNodeTypePropByObjectClassProp( PropertyName.PropName );
+                            CswNbtView MatchingRelView = new CswNbtView( _CswNbtResources );
+                            MatchingRelView.ViewName = "Find Matching Relationship Options";
+                            CswNbtViewRelationship rel1 = MatchingRelView.AddViewRelationship( RelationshipPropNT, false );
+                            MatchingRelView.AddViewProperty( rel1,RelationshipPropNodeTypeValueNTP );
+                            MatchingRelView.AddViewProperty( rel1, RelationshipPropPropNameNTP);
+                            // nodetypeid matches
+                            MatchingRelView.AddViewPropertyAndFilter( rel1,
+                                                                      RelationshipPropNT.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target ),
+                                                                      SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type,
+                                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                      Value: CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() );
+                            MatchingRelView.AddViewPropertyAndFilter( rel1,
+                                                                      RelationshipPropNT.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target ),
+                                                                      Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                      SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id,
+                                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                      Value: RelationalNodeType.NodeTypeId.ToString() );
+                            // objectclassid matches
+                            MatchingRelView.AddViewPropertyAndFilter( rel1,
+                                                                      RelationshipPropNT.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target ),
+                                                                      Conjunction: CswEnumNbtFilterConjunction.Or,
+                                                                      SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type,
+                                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                      Value: CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() );
+                            MatchingRelView.AddViewPropertyAndFilter( rel1,
+                                                                      RelationshipPropNT.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target ),
+                                                                      Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                      SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id,
+                                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                      Value: RelationalNodeType.ObjectClassId.ToString() );
+                            if( null != RelationalNodeType.getObjectClass().getPropertySet() )
                             {
-                                if( RelationshipNTP.FkMatchesNew( RelationalNodeType ) )
-                                {
-                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipNTP.getNodeType().NodeTypeName + ": " + RelationshipNTP.PropName, RelationshipNTP.PropId.ToString() ) );
-                                }
+                                // propertyset matches
+                                MatchingRelView.AddViewPropertyAndFilter( rel1,
+                                                                          RelationshipPropNT.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target ),
+                                                                          Conjunction: CswEnumNbtFilterConjunction.Or,
+                                                                          SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type,
+                                                                          FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                          Value: CswEnumNbtViewRelatedIdType.PropertySetId.ToString() );
+                                MatchingRelView.AddViewPropertyAndFilter( rel1,
+                                                                          RelationshipPropNT.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target ),
+                                                                          Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                          SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id,
+                                                                          FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                          Value: RelationalNodeType.getObjectClass().getPropertySet().PropertySetId.ToString() );
                             }
+                            ICswNbtTree MatchesTree = _CswNbtResources.Trees.getTreeFromView( MatchingRelView, RequireViewPermissions: false, IncludeHiddenNodes: true, IncludeSystemNodes: true );
+                            for( Int32 r = 0; r < MatchesTree.getChildNodeCount(); r++ )
+                            {
+                                MatchesTree.goToNthChild( r );
+
+                                Collection<CswNbtTreeNodeProp> currentProps = MatchesTree.getChildNodePropsOfNode();
+                                CswNbtTreeNodeProp currentPropNodeTypeValue = currentProps.FirstOrDefault( p => p.NodeTypePropId == RelationshipPropNodeTypeValueNTP.PropId );
+                                CswNbtTreeNodeProp currentPropPropName = currentProps.FirstOrDefault( p => p.NodeTypePropId == RelationshipPropPropNameNTP.PropId );
+                                if( null != currentPropPropName && null != currentPropNodeTypeValue )
+                                {
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( currentPropNodeTypeValue.Gestalt + ": " + currentPropPropName.Gestalt,
+                                                                                       MatchesTree.getNodeRelationalIdForCurrentPosition().PrimaryKey.ToString() ) );
+                                }
+
+                                MatchesTree.goToParentNode();
+                            }
+
+                            // Find matches by ObjectClassPropId
                             foreach( CswNbtMetaDataObjectClassProp RelationshipOCP in _CswNbtResources.MetaData.getObjectClassProps( CswEnumNbtFieldType.Relationship ) )
                             {
                                 if( RelationshipOCP.FkMatches( RelationalNodeType ) )
                                 {
-                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipOCP.getObjectClass().ObjectClass + ": " + RelationshipOCP.PropName + PropRefValue_OCP_Suffix, RelationshipOCP.PropId.ToString() ) );
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipOCP.getObjectClass().ObjectClass + ": " + RelationshipOCP.PropName + PropRefValue_OCP_Suffix,
+                                                                                       RelationshipOCP.PropId.ToString() ) );
                                 }
                             }
                         }
@@ -807,7 +870,7 @@ namespace ChemSW.Nbt.ObjClasses
         } // _initCompliantAnswerOptions()
         public bool DerivesFromObjectClassProp
         {
-            get { return false == string.IsNullOrEmpty( ObjectClassPropName.Value ); }
+            get { return false == string.IsNullOrEmpty( ObjectClassPropName.Value ) && null != ObjectClassPropValue; }
         }
 
         public CswNbtMetaDataObjectClassProp ObjectClassPropValue
