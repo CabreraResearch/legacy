@@ -1128,7 +1128,7 @@
                                     view: cswPrivate.View,
                                     viewJson: response.Step4.ViewJson,
                                     stepName: stepNames.FineTuning,
-                                    onBeforeFilterAdd: function () {
+                                    onBeforeEdit: function () {
                                         cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
                                     },
                                     onFilterEdit: function (updatedView) {

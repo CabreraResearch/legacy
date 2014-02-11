@@ -11,7 +11,7 @@
             cswPrivate.view = cswPrivate.view || {};
             cswPrivate.viewJson = cswPrivate.viewJson || '';
             cswPrivate.stepName = cswPrivate.stepName || 'FineTuning';
-            cswPrivate.onBeforeFilterAdd = cswPrivate.onBeforeFilterAdd || function () { };
+            cswPrivate.onBeforeEdit = cswPrivate.onBeforeEdit || function () { };
             cswPrivate.onFilterEdit = cswPrivate.onFilterEdit || function () { };
         }());
 
@@ -22,8 +22,8 @@
                 title: 'Edit ' + cswPrivate.propertyNode.TextLabel + ' View Property',
                 width: 800,
                 height: 460,
-                onClose: function() {
-                    
+                onClose: function () {
+
                 },
                 onOpen: function () {
                     var div = editViewPropDialog.div;
@@ -31,21 +31,37 @@
                         cellspacing: 2,
                         cellpadding: 2
                     });
-                    attributesTbl.cell(1, 1).div().input({
+                    var sortByCheckBox = attributesTbl.cell(1, 1).div().input({
                         type: Csw.enums.inputTypes.checkbox,
                         checked: cswPrivate.propertyNode.SortBy,
                         canCheck: true,
-                        onChange: function (newVal) {
-                            cswPrivate.propertyNode.SortBy = newVal;
+                        onChange: function () {
+                            Csw.tryExec(cswPrivate.onBeforeEdit);
+                            var updateProp = function (child) {
+                                var updated = false;
+                                Csw.iterate(child.Properties, function (prop) {
+                                    if (prop.ArbitraryId === cswPrivate.propertyNode.ArbitraryId) {
+                                        prop.SortBy = sortByCheckBox.checked();
+                                        updated = true;
+                                    }
+                                });
+                                if (false === updated) {
+                                    Csw.iterate(child.ChildRelationships, function (childRel) {
+                                        updateProp(childRel);
+                                    });
+                                }
+                            };
+                            updateProp(cswPrivate.view.Root);
+                            cswPrivate.propertyNode.SortBy = sortByCheckBox.checked();
                         }
                     });
                     attributesTbl.cell(1, 2).div().text('Sort By');
-                    
+
                     div.br({ number: 2 });
-                    
+
                     var filtersDiv = div.div();
 
-                    var renderFilters = function() {
+                    var renderFilters = function () {
                         filtersDiv.empty();
                         var filtersTbl = filtersDiv.table({
                             cellspacing: 5,
@@ -58,6 +74,7 @@
                                 iconType: Csw.enums.iconType.x,
                                 isButton: true,
                                 onClick: function () {
+                                    Csw.tryExec(cswPrivate.onBeforeEdit);
                                     Csw.ajaxWcf.post({
                                         urlMethod: 'ViewEditor/HandleAction',
                                         data: {
@@ -121,7 +138,7 @@
                                     PropArbId: filterData.proparbitraryid
                                 };
 
-                                Csw.tryExec(cswPrivate.onBeforeFilterAdd);
+                                Csw.tryExec(cswPrivate.onBeforeEdit);
                                 Csw.ajaxWcf.post({
                                     urlMethod: 'ViewEditor/HandleAction',
                                     data: ajaxData,
@@ -138,8 +155,20 @@
                     renderFilters();
 
                     div.br({ number: 2 });
-                    div.button({
-                        enabledText: 'Close',
+                    var btnsTbl = div.table({
+                        cellspacing: 2,
+                        cellpadding: 2
+                    });
+                    btnsTbl.cell(1, 1).button({
+                        enabledText: 'Save Changes',
+                        onClick: function () {
+                            Csw.tryExec(cswPrivate.onFilterEdit, cswPrivate.view);
+                            editViewPropDialog.close();
+                        }
+                    });
+
+                    btnsTbl.cell(1, 2).button({
+                        enabledText: 'Cancel',
                         onClick: function () {
                             editViewPropDialog.close();
                         }
