@@ -98,6 +98,10 @@
     <Content Include="app\db\csw.dbInsert.js" />
     <Content Include="app\dialogs\csw.fileUpload.js" />
     <Content Include="app\dialogs\csw.editImage.js" />
+    <Content Include="app\dialogs\csw.editviewfilter.js" />
+    <Content Include="app\dialogs\csw.editviewrelationship.js" />
+    <Content Include="app\dialogs\csw.editviewroot.js" />
+    <Content Include="app\dialogs\csw.editviewproperty.js" />
     <Content Include="app\dialogs\csw.editnode.js" />
     <Content Include="app\dialogs\csw.c3prefsuppliersdialog.js" />
     <Content Include="app\dialogs\csw.c3searchdialog.js" />
