@@ -954,6 +954,7 @@
 
         cswPrivate.openDesignMode = function () {
             cswPrivate.tabState.Config = true;
+            cswPublic.tearDown();
             Csw.layouts.designmode({
                 nodeid: cswPrivate.tabState.nodeid,
                 tabid: cswPrivate.tabState.tabid,
