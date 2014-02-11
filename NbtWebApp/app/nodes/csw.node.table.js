@@ -25,7 +25,8 @@
             chemCatConfig: {
                 allowImport: true,
                 importMenuItems: [],
-                importButtons: {}
+                importButtons: {},
+                prefsuppliers: 'Any Suppliers'
             },
             searchTarget: null, //c3 addition
 
@@ -376,7 +377,8 @@
                                     data: {
                                         Field: cswPrivate.chemCatConfig.field,
                                         ACDSearchParams: {
-                                            Cdbregno: nodeObj.acdcdbregno
+                                            Cdbregno: nodeObj.acdcdbregno,
+                                            CompanyIds: cswPrivate.chemCatConfig.prefsuppliers
                                         }
                                     },
                                     success: function (data) {
