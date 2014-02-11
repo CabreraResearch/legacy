@@ -189,32 +189,36 @@
                     name: 'vieweditor_step1_deleteviewbtn',
                     enabledText: 'Delete View',
                     onClick: function () {
-                        $.CswDialog('ConfirmDialog',
-                                   'Are you sure you want to delete the selected view?',
-                                   'Confirm Intent To Delete',
-                                   function _okClick() {
-                                       Csw.ajax.deprecatedWsNbt({
-                                           urlMethod: 'deleteView',
-                                           data: {
-                                               ViewId: cswPrivate.selectedViewId
-                                           },
-                                           success: function () {
-                                               makeViewsGrid(showAllChkBox.checked());
-                                               copyViewBtn.disable();
-                                               deleteViewBtn.disable();
-                                               cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                                               Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
-                                           },
-                                           error: function () {
-                                               deleteViewBtn.enable();
-                                               copyViewBtn.enable();
-                                           }
-                                       });
-                                   },
-                                   function _cancelClick() {
-                                       deleteViewBtn.enable();
-                                   }
-                               );
+                        var confirmDialog = Csw.dialogs.confirmDialog({
+                            title: 'Confirm Intent To Delete',
+                            message: 'Are you sure you want to delete the selected view?',
+                            width: 400,
+                            height: 150,
+                            onYes: function () {
+                                Csw.ajax.deprecatedWsNbt({
+                                    urlMethod: 'deleteView',
+                                    data: {
+                                        ViewId: cswPrivate.selectedViewId
+                                    },
+                                    success: function () {
+                                        makeViewsGrid(showAllChkBox.checked());
+                                        copyViewBtn.disable();
+                                        deleteViewBtn.disable();
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                                        Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
+                                    },
+                                    error: function () {
+                                        deleteViewBtn.enable();
+                                        copyViewBtn.enable();
+                                    }
+                                });
+                                confirmDialog.close();
+                            },
+                            onNo: function () {
+                                deleteViewBtn.enable();
+                                confirmDialog.close();
+                            }
+                        });
                     }
                 });
                 buttonsTbl.cell(1, 3).buttonExt({
@@ -1094,7 +1098,7 @@
                         },
                         success: function (response) {
                             if (false === Csw.isNullOrEmpty(response.Step6.FilterNode)) {
-                                $.CswDialog('ViewEditorFilterEdit', {
+                                Csw.dialogs.editviewfilter({
                                     filterNode: response.Step6.FilterNode,
                                     view: cswPrivate.View,
                                     onBeforeFilterEdit: function () {
@@ -1106,7 +1110,7 @@
                                     }
                                 });
                             } else if (false === Csw.isNullOrEmpty(response.Step6.RelationshipNode)) {
-                                $.CswDialog('ViewEditorRelationshipEdit', {
+                                Csw.dialogs.editviewrelationship({
                                     relationshipNode: response.Step6.RelationshipNode,
                                     view: cswPrivate.View,
                                     findRelationshipByArbitraryId: cswPrivate.findRelationshipByArbitraryId,
@@ -1123,21 +1127,21 @@
                                     findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                 });
                             } else if (false === Csw.isNullOrEmpty(response.Step6.PropertyNode)) {
-                                $.CswDialog('ViewEditorPropertyEdit', {
+                                Csw.dialogs.editviewproperty({
                                     propertyNode: response.Step6.PropertyNode,
                                     view: cswPrivate.View,
                                     viewJson: response.Step4.ViewJson,
                                     stepName: stepNames.FineTuning,
-                                    onBeforeFilterAdd: function () {
+                                    onBeforeEdit: function () {
                                         cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
                                     },
-                                    onFilterAdd: function (updatedView) {
+                                    onFilterEdit: function (updatedView) {
                                         cswPrivate.View = updatedView;
                                         cswPrivate.makeStep6(true);
                                     }
                                 });
                             } else if (false == Csw.isNullOrEmpty(response.Step6.RootNode)) {
-                                $.CswDialog('ViewEditorRootEdit', {
+                                Csw.dialogs.editviewroot({
                                     relationships: response.Step6.Relationships,
                                     view: cswPrivate.View,
                                     onBeforeRelationshipAdd: function () {
@@ -1389,13 +1393,13 @@
 
             cswPrivate.finalize = function () {
 
-                var finalizeView = function() {
+                var finalizeView = function () {
                     Csw.ajaxWcf.post({
                         urlMethod: 'ViewEditor/Finalize',
                         data: {
                             CurrentView: cswPrivate.View
                         },
-                        success: function(response) {
+                        success: function (response) {
                             cswPrivate.View = response.CurrentView;
                             cswPrivate.onFinish(cswPrivate.View.ViewId, cswPrivate.View.ViewMode);
                         }
@@ -1407,7 +1411,7 @@
                 } else {
                     finalizeView();
                 }
-                
+
             };
 
             cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {

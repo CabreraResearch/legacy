@@ -151,11 +151,26 @@ namespace ChemSW.Nbt.ViewEditor
                                                        Value : Request.FilterValue
                         );
                 }
+                Return.Step6.PropertyNode = propNode;
             }
             else if( Request.Action == "RemoveNode" )
             {
                 CswNbtViewNode nodeToRemove = CurrentView.FindViewNodeByArbitraryId( Request.ArbitraryId );
-                nodeToRemove.Parent.RemoveChild( nodeToRemove );
+                CswNbtViewNode parent = nodeToRemove.Parent;
+                parent.RemoveChild( nodeToRemove );
+
+                if( parent.ViewNodeType == CswEnumNbtViewNodeType.CswNbtViewProperty )
+                {
+                    Return.Step6.PropertyNode = (CswNbtViewProperty) parent;
+                }
+                else if( parent.ViewNodeType == CswEnumNbtViewNodeType.CswNbtViewRelationship )
+                {
+                    Return.Step6.RelationshipNode = (CswNbtViewRelationship) parent;
+                }
+                else if( parent.ViewNodeType == CswEnumNbtViewNodeType.CswNbtViewRoot )
+                {
+                    Return.Step6.RootNode = (CswNbtViewRoot) parent;
+                }
             }
             else if( Request.Action == "UpdateView" )
             {

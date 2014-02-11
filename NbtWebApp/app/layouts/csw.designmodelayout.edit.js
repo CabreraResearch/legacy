@@ -76,7 +76,6 @@
                     var clickTab = function (tab) {
                         cswPrivate.setActiveTabId(tab.id);
                         cswPublic.activeTabId = tab.id;
-                        cswPrivate.sidebar.refreshExistingProperties('Edit', tab.id);
                         if (!cswPrivate.renderedTabs[tab.id]) {
                             cswPrivate.renderedTabs[tab.id] = tab;
                             cswPrivate.renderTab(tab.id, tab.id, cswPrivate.tabStyle);

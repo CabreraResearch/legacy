@@ -273,6 +273,7 @@ namespace ChemSW.Nbt
             }
             CswCommaDelimitedString With = new CswCommaDelimitedString();
             string Select = @"select n.nodeid,
+                                     n.relationalid, n.relationaltable,
                                      n.nodename, 
                                      n.locked,
                                      nvl(n.iconfilename, t.iconfilename) iconfilename,
