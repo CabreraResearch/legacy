@@ -483,7 +483,7 @@ namespace ChemSW.Nbt.Actions
                         if( null != MaterialObj["sdsDocId"] )
                         {
                             SDSNodeId.FromString( MaterialObj["sdsDocId"].ToString() );
-                            JObject SDSProps = CswConvert.ToJObject( MaterialObj["sdsprops"] );
+                            JObject SDSProps = CswConvert.ToJObject( MaterialObj["sdsDocProperties"] );
                             Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, SDSNodeId, SDSProps );
                         }
                         Ret.PromoteTempToReal();

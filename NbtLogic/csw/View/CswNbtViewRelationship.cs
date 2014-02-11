@@ -1788,24 +1788,26 @@ namespace ChemSW.Nbt
             {
                 if( Type == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
-                    CswNbtMetaDataNodeType SecondNT = CswNbtResources.MetaData.getNodeType( Pk );
-                    ret = ( null != SecondNT &&
-                            ( IgnoreVersions && SecondNT.FirstVersionNodeTypeId == CompareNT.FirstVersionNodeTypeId ) ||
-                            SecondNT == CompareNT );
+                    //CswNbtMetaDataNodeType SecondNT = CswNbtResources.MetaData.getNodeType( Pk );
+                    //ret = ( null != SecondNT &&
+                    //        ( IgnoreVersions && SecondNT.FirstVersionNodeTypeId == CompareNT.FirstVersionNodeTypeId ) ||
+                    //        SecondNT == CompareNT );
+                    ret = ( Pk == CompareNT.NodeTypeId );
                 }
                 else if( Type == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
-
-                    CswNbtMetaDataObjectClass SecondOC = CswNbtResources.MetaData.getObjectClass( Pk );
-                    ret = ( null != SecondOC &&
-                            SecondOC.ObjectClassId == CompareNT.ObjectClassId );
+                    //CswNbtMetaDataObjectClass SecondOC = CswNbtResources.MetaData.getObjectClass( Pk );
+                    //ret = ( null != SecondOC &&
+                    //        SecondOC.ObjectClassId == CompareNT.ObjectClassId );
+                    ret = ( Pk == CompareNT.ObjectClassId );
                 }
                 else if( Type == CswEnumNbtViewRelatedIdType.PropertySetId )
                 {
-                    CswNbtMetaDataPropertySet SecondPS = CswNbtResources.MetaData.getPropertySet( Pk );
-                    ret = ( null != SecondPS &&
-                            null != CompareNT.getObjectClass().getPropertySet() &&
-                            SecondPS == CompareNT.getObjectClass().getPropertySet() );
+                    //CswNbtMetaDataPropertySet SecondPS = CswNbtResources.MetaData.getPropertySet( Pk );
+                    //ret = ( null != SecondPS &&
+                    //        null != CompareNT.getObjectClass().getPropertySet() &&
+                    //        SecondPS == CompareNT.getObjectClass().getPropertySet() );
+                    ret = ( null != CompareNT.getObjectClass().getPropertySet() && Pk == CompareNT.getObjectClass().getPropertySet().PropertySetId );
                 }
             }
             return ret;

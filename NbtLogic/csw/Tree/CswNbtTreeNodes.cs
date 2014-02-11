@@ -85,6 +85,7 @@ namespace ChemSW.Nbt
                               false,
                               true,
                               false,
+                              null,
                               out _TreeNode,
                               out _TreeNodeKey );
 
@@ -174,11 +175,12 @@ namespace ChemSW.Nbt
                                        bool Locked,
                                        bool Included,
                                        bool Favorited,
+                                       CswPrimaryKey RelationalId,
                                        out CswNbtTreeNode NewNode,
                                        out CswNbtNodeKey NewNodeKey )
         {
             // Make the object
-            NewNode = new CswNbtTreeNode( NodeId, NodeName, NodeTypeId, ObjectClassId )
+            NewNode = new CswNbtTreeNode( NodeId, NodeName, NodeTypeId, ObjectClassId, RelationalId )
                 {
                     ElementName = ElemName,
                     IconFileName = Icon,
@@ -366,6 +368,7 @@ namespace ChemSW.Nbt
                                   false,
                                   false,
                                   ( ViewRoot != null ) && ViewRoot.Included,
+                                  null,
                                   out _RootNode,
                                   out _RootNodeKey );
                 _CurrentNode = _RootNode;
@@ -794,6 +797,18 @@ namespace ChemSW.Nbt
             return _CurrentNode.CswNodeId;
         }
 
+        public CswPrimaryKey getNodeRelationalIdForCurrentPosition()
+        {
+            _checkCurrentNode();
+
+            if( _CurrentNode.ElementName != Elements.Node )
+            {
+                throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );
+            }
+
+            return _CurrentNode.RelationalId;
+        }
+
         //getNodeIdForCurrentPosition()
 
         public string getNodeNameForCurrentPosition()
@@ -938,14 +953,12 @@ namespace ChemSW.Nbt
                                      AddChildren, RowCount, Included,
                                      DataRowToAdd[_CswNbtColumnNames.IconFileName.ToLower()].ToString(),
                                      DataRowToAdd[_CswNbtColumnNames.NameTemplate.ToLower()].ToString(),
-                //new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
                                      new CswPrimaryKey( "nodes", CswConvert.ToInt32( DataRowToAdd["nodeid"] ) ),
+                                     new CswPrimaryKey( CswConvert.ToString( DataRowToAdd["relationaltable"] ), CswConvert.ToInt32( DataRowToAdd["relationalid"] ) ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeName.ToLower()].ToString(),
-                                     CswConvert.ToInt32(
-                                         DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),
+                                     CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeTypeName.ToLower()].ToString(),
-                                     CswConvert.ToInt32(
-                                         DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
+                                     CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.ObjectClassName.ToLower()].ToString(),
                                      CswConvert.ToBoolean( DataRowToAdd[_CswNbtColumnNames.Locked.ToLower()] ),
                                      Favorited
@@ -958,7 +971,7 @@ namespace ChemSW.Nbt
                                                            CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                            bool Included,
                                                            string IconFileName, string NameTemplate,
-                                                           CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
+                                                           CswPrimaryKey NodeId, CswPrimaryKey RelationalId, string NodeName, Int32 NodeTypeId,
                                                            string NodeTypeName, Int32 ObjectClassId,
                                                            string ObjectClassName, bool Locked, bool Favorited )
         {
@@ -1008,6 +1021,7 @@ namespace ChemSW.Nbt
                                           false,
                                           true,
                                           false,
+                                          null,
                                           out MatchingGroup,
                                           out MatchingGroupKey );
                     }
@@ -1039,6 +1053,7 @@ namespace ChemSW.Nbt
                                   Locked,
                                   Included,
                                   Favorited,
+                                  RelationalId,
                                   out ThisNode,
                                   out ThisKey );
                 ReturnKeyColl.Add( ThisKey );

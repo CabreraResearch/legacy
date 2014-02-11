@@ -180,6 +180,10 @@ namespace ChemSW.Nbt
         /// </summary>
         CswPrimaryKey getNodeIdForCurrentPosition();
         /// <summary>
+        /// Returns the relational primary key of the currently indexed node
+        /// </summary>
+        CswPrimaryKey getNodeRelationalIdForCurrentPosition();
+        /// <summary>
         /// Returns the Name of the currently indexed node
         /// </summary>
         String getNodeNameForCurrentPosition();

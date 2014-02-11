@@ -1312,83 +1312,85 @@ namespace ChemSW.Nbt.MetaData
                 CswEnumNbtFilterMode FilterMode = SubField.DefaultFilterMode;
                 string FilterValue = null;
                 getFilter( ref SubField, ref FilterMode, ref FilterValue );
-
-                CswNbtNodePropWrapper FilterProp = Node.Properties[FilterMetaDataProp];
-
-                // Logical needs a special case
-                if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
+                if( FilterMode != CswEnumNbtFilterMode.Unknown )
                 {
-                    if( SubField.Name == CswNbtFieldTypeRuleLogical.SubFieldName.Checked )
+                    CswNbtNodePropWrapper FilterProp = Node.Properties[FilterMetaDataProp];
+
+                    // Logical needs a special case
+                    if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                     {
+                        if( SubField.Name == CswNbtFieldTypeRuleLogical.SubFieldName.Checked )
+                        {
+                            if( FilterMode == CswEnumNbtFilterMode.Equals )
+                            {
+                                FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
+                            }
+                            else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
+                            {
+                                FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
+                            }
+                        }
+                        else
+                        {
+                            throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
+                        }
+                    }
+                    else
+                    {
+                        string ValueToCompare = string.Empty;
+                        //switch( FilterMetaDataProp.getFieldTypeValue() )
+                        //{
+                        //    case CswEnumNbtFieldType.List:
+                        //        ValueToCompare = FilterProp.AsList.Value;
+                        //        break;
+                        //    case CswEnumNbtFieldType.Static:
+                        //        ValueToCompare = FilterProp.AsStatic.StaticText;
+                        //        break;
+                        //    case CswEnumNbtFieldType.Text:
+                        //        ValueToCompare = FilterProp.AsText.Text;
+                        //        break;
+                        //    case CswEnumNbtFieldType.Relationship:
+                        //        if( null != FilterProp.AsRelationship.RelatedNodeId )
+                        //        {
+                        //            ValueToCompare = FilterProp.AsRelationship.RelatedNodeId.PrimaryKey.ToString();
+                        //        }
+                        //        break;
+                        //    case CswEnumNbtFieldType.MetaDataList:
+                        //        ValueToCompare = FilterProp.AsMetaDataList.Text;
+                        //        break;
+                        //    default:
+                        //        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
+                        //} // switch( FilterMetaDataProp.FieldType.FieldType )
+
+                        dynamic SubfieldVal = FilterProp.GetSubFieldValue( SubField.Name );
+                        if( null != SubfieldVal )
+                        {
+                            ValueToCompare = CswConvert.ToString( SubfieldVal );
+                        }
+
                         if( FilterMode == CswEnumNbtFilterMode.Equals )
                         {
-                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
+                            FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
                         }
                         else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
                         {
-                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
+                            FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
                         }
-                    }
-                    else
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
-                    }
-                }
-                else
-                {
-                    string ValueToCompare = string.Empty;
-                    //switch( FilterMetaDataProp.getFieldTypeValue() )
-                    //{
-                    //    case CswEnumNbtFieldType.List:
-                    //        ValueToCompare = FilterProp.AsList.Value;
-                    //        break;
-                    //    case CswEnumNbtFieldType.Static:
-                    //        ValueToCompare = FilterProp.AsStatic.StaticText;
-                    //        break;
-                    //    case CswEnumNbtFieldType.Text:
-                    //        ValueToCompare = FilterProp.AsText.Text;
-                    //        break;
-                    //    case CswEnumNbtFieldType.Relationship:
-                    //        if( null != FilterProp.AsRelationship.RelatedNodeId )
-                    //        {
-                    //            ValueToCompare = FilterProp.AsRelationship.RelatedNodeId.PrimaryKey.ToString();
-                    //        }
-                    //        break;
-                    //    case CswEnumNbtFieldType.MetaDataList:
-                    //        ValueToCompare = FilterProp.AsMetaDataList.Text;
-                    //        break;
-                    //    default:
-                    //        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
-                    //} // switch( FilterMetaDataProp.FieldType.FieldType )
+                        else if( FilterMode == CswEnumNbtFilterMode.Null )
+                        {
+                            FilterMatches = ( ValueToCompare == string.Empty );
+                        }
+                        else if( FilterMode == CswEnumNbtFilterMode.NotNull )
+                        {
+                            FilterMatches = ( ValueToCompare != string.Empty );
+                        }
+                        else
+                        {
+                            throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support filter mode: " + FilterMode.ToString() );
+                        } // switch( FilterMode )
 
-                    dynamic SubfieldVal = FilterProp.GetSubFieldValue( SubField.Name );
-                    if( null != SubfieldVal )
-                    {
-                        ValueToCompare = CswConvert.ToString( SubfieldVal );
-                    }
-
-                    if( FilterMode == CswEnumNbtFilterMode.Equals )
-                    {
-                        FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
-                    }
-                    else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
-                    {
-                        FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
-                    }
-                    else if( FilterMode == CswEnumNbtFilterMode.Null )
-                    {
-                        FilterMatches = ( ValueToCompare == string.Empty );
-                    }
-                    else if( FilterMode == CswEnumNbtFilterMode.NotNull )
-                    {
-                        FilterMatches = ( ValueToCompare != string.Empty );
-                    }
-                    else
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support filter mode: " + FilterMode.ToString() );
-                    } // switch( FilterMode )
-
-                } // if-else( FilterMetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Logical )
+                    } // if-else( FilterMetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Logical )
+                } // if(FilterMode != CswEnumNbtFilterMode.Unknown)
             } // if( null != FilterMetaDataProp )
             return FilterMatches;
 

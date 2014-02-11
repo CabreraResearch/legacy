@@ -113,16 +113,7 @@ namespace ChemSW.Nbt
     [DataContract]
     public class CswNbtTreeNode
     {
-        public CswNbtTreeNode( string NbtNodeId, string NbtNodeName, int NbtNodeTypeId, int NbtObjectClassId, CswNbtTreeNode ParentNode = null )
-        {
-            NodePk = NbtNodeId;
-            NodeName = NbtNodeName;
-            NodeTypeId = NbtNodeTypeId;
-            ObjectClassId = NbtObjectClassId;
-            this.ParentNode = ParentNode;
-        }
-
-        public CswNbtTreeNode( CswPrimaryKey NbtNodeId, string NbtNodeName, int NbtNodeTypeId, int NbtObjectClassId, CswNbtTreeNode ParentNode = null )
+        public CswNbtTreeNode( CswPrimaryKey NbtNodeId, string NbtNodeName, int NbtNodeTypeId, int NbtObjectClassId, CswPrimaryKey NbtRelationalId, CswNbtTreeNode ParentNode = null )
         {
             if( null != NbtNodeId )
             {
@@ -132,6 +123,7 @@ namespace ChemSW.Nbt
             NodeTypeId = NbtNodeTypeId;
             ObjectClassId = NbtObjectClassId;
             this.ParentNode = ParentNode;
+            RelationalId = NbtRelationalId;
         }
 
         public CswNbtTreeNode ParentNode = null;
@@ -175,8 +167,8 @@ namespace ChemSW.Nbt
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "Name", Order = 7 )]
         public string ElementName = string.Empty;
 
-        private CswPrimaryKey _NodeId = new CswPrimaryKey();
-        public CswPrimaryKey CswNodeId { get { return _NodeId; } }
+        public CswPrimaryKey CswNodeId = new CswPrimaryKey();
+        public CswPrimaryKey RelationalId = null;
 
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "NodePk", Order = 8 )]
         public string NodePk
@@ -184,13 +176,13 @@ namespace ChemSW.Nbt
             get
             {
                 string ret = string.Empty;
-                if( null != _NodeId )
+                if( null != CswNodeId )
                 {
-                    ret = _NodeId.ToString();
+                    ret = CswNodeId.ToString();
                 }
                 return ret;
             }
-            set { _NodeId = CswConvert.ToPrimaryKey( value ); }
+            set { CswNodeId = CswConvert.ToPrimaryKey( value ); }
         }
 
         [DataMember( EmitDefaultValue = false, IsRequired = true, Name = "NodeId", Order = 9 )]
@@ -199,11 +191,11 @@ namespace ChemSW.Nbt
             get
             {
                 int Ret = 0;
-                if( CswTools.IsPrimaryKey( _NodeId ) )
+                if( CswTools.IsPrimaryKey( CswNodeId ) )
                 {
-                    if( _NodeId.PrimaryKey > 0 )
+                    if( CswNodeId.PrimaryKey > 0 )
                     {
-                        Ret = _NodeId.PrimaryKey;
+                        Ret = CswNodeId.PrimaryKey;
                     }
                 }
                 return Ret;

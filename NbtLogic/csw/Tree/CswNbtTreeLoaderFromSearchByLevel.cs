@@ -302,6 +302,7 @@ namespace ChemSW.Nbt
                                         ),
                                 permgrp as ( " + _makePermissionGroupSQL() + @" ),
                                   srch as ( select n.nodeid,
+                                                   n.relationalid, n.relationaltable,
                                                    n.nodename,
                                                    n.locked,
                                                    nvl(n.iconfilename, t.iconfilename) iconfilename,

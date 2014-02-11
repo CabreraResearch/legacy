@@ -59,16 +59,21 @@
                     cswPrivate.previewCell = cswPublic.table.cell(1, 4);
                     cswPrivate.validateCell = cswPublic.table.cell(1, 5);
 
-                    var nodeLink = cswPrivate.pathCell.nodeLink({
-                        text: cswPrivate.selectednodelink,
-                        linkText: cswPrivate.path
-                    });
-
-                    if (cswPrivate.isRequired) {
-                        cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, nodeLink, {
-                            className: 'locationValidator_' + window.Ext.id(),
-                            errorMsg: 'Location is required.'
+                    if (cswPrivate.ReadOnly) {
+                        // case 31737 - don't show link if readonly
+                        cswPrivate.pathCell.text(cswPrivate.selectedName);
+                    } else {
+                        var nodeLink = cswPrivate.pathCell.nodeLink({
+                            text: cswPrivate.selectednodelink,
+                            linkText: cswPrivate.path
                         });
+                    
+                        if (cswPrivate.isRequired) {
+                            cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, nodeLink, {
+                                className: 'locationValidator_' + window.Ext.id(),
+                                errorMsg: 'Location is required.'
+                            });
+                        }
                     }
 
                     cswPrivate.selectDiv = cswPrivate.selectCell.div({
@@ -108,7 +113,7 @@
                     render();
                 }
 
-            }());
+            } ());
             //#endregion init ctor
 
             //#region cswPrivate/cswPublic methods and props
@@ -224,10 +229,10 @@
                                 rightpad: 0
                             });
                         },
-                            function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
+                        function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
                     }
                 });
-            }());
+            } ());
             //#region final ctor
 
         });
@@ -236,6 +241,6 @@
         return cswPublic;
     });
 
-}());
+} ());
 
 
