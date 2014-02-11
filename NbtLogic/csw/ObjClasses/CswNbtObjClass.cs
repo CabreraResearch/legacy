@@ -88,14 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
         public void postOnlyChanges( bool ForceUpdate )
         {
-            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
-            {
-                OverrideUniqueValidation = true,
-                OverrideMailReportEvents = true,
-                Creating = true,
-                ForceUpdate = ForceUpdate
-            };
-            NodePersistStrategy.postChanges( _CswNbtNode );
+            _CswNbtNode.postOnlyChanges( ForceUpdate );
         }//postChanges()
 
         /// <summary>

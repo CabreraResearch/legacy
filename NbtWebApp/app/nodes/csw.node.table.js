@@ -25,7 +25,9 @@
             chemCatConfig: {
                 allowImport: true,
                 importMenuItems: [],
-                importButtons: {}
+                importButtons: {}, // Store all buttons to disable them later
+                moreResultsBtns: {}, // Store all buttons to disable them later
+                prefsuppliers: 'Any Suppliers'
             },
             searchTarget: null, //c3 addition
 
@@ -362,13 +364,18 @@
 
                     //More Results Button (when doing a C3:ACD search)
                     if (showMoreAcdResultsButton) {
-                        btnTable.cell(1, btncol).buttonExt({
+                        cswPrivate.chemCatConfig.moreResultsBtns['button' + cswPrivate.r] = btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'moreResultsBtn').string('_'),
                             width: ('More Results'.length * 7) + 16,
                             enabledText: 'More Results',
                             disableOnClick: false,
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                             onClick: function () {
+                                
+                                // Disable all other 'More Results' buttons
+                                Csw.iterate(cswPrivate.chemCatConfig.moreResultsBtns, function (button, name) {
+                                    button.disable();
+                                });
 
                                 // Search C3 ACD again
                                 Csw.ajaxWcf.post({
@@ -376,7 +383,8 @@
                                     data: {
                                         Field: cswPrivate.chemCatConfig.field,
                                         ACDSearchParams: {
-                                            Cdbregno: nodeObj.acdcdbregno
+                                            Cdbregno: nodeObj.acdcdbregno,
+                                            CompanyIds: cswPrivate.chemCatConfig.prefsuppliers
                                         }
                                     },
                                     success: function (data) {
@@ -385,13 +393,13 @@
                                     },
                                     error: function (data) {
                                         // Re-enable all import buttons
-                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                        Csw.iterate(cswPrivate.chemCatConfig.moreResultsBtns, function (button, name) {
                                             button.enable();
                                         });
                                     },
                                     complete: function (data) {
                                         // Re-enable all import buttons
-                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                        Csw.iterate(cswPrivate.chemCatConfig.moreResultsBtns, function (button, name) {
                                             button.enable();
                                         });
                                     }

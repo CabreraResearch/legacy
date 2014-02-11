@@ -431,20 +431,17 @@ namespace ChemSW.Nbt.WebServices
                     throw ( new CswDniException( CswEnumErrorType.Error, "There was an error searching ChemCatCentral", exception.Message, exception ) );
                 }
 
-                //TODO: Make this result page look like the NBT search page
-                if( SearchResults.CswC3SearchResults.Length > 0 )
-                {
-                    CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
-                    Ret["table"] = wsTable.getTable( SearchResults, CswC3SearchParams.Field, CswNbtC3ClientManager.DataService, true );
-                    Ret["filters"] = "";
-                    Ret["searchterm"] = CswC3SearchParams.Query;
-                    Ret["field"] = CswC3SearchParams.Field;
-                    Ret["filtersapplied"] = "";
-                    Ret["sessiondataid"] = "";
-                    Ret["searchtarget"] = "chemcatcentral";
-                    Ret["c3dataservice"] = CswNbtC3ClientManager.DataService;
-                    Ret["filtered"] = true;
-                }
+                CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
+                Ret["table"] = wsTable.getTable( SearchResults, CswC3SearchParams.Field, CswNbtC3ClientManager.DataService, true );
+                Ret["filters"] = "";
+                Ret["searchterm"] = CswC3SearchParams.Query;
+                Ret["field"] = CswC3SearchParams.Field;
+                Ret["filtersapplied"] = "";
+                Ret["sessiondataid"] = "";
+                Ret["searchtarget"] = "chemcatcentral";
+                Ret["c3dataservice"] = CswNbtC3ClientManager.DataService;
+                Ret["filtered"] = true;
+                Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
 
                 Return.Data.SearchResults = Ret.ToString();
             }
@@ -501,6 +498,7 @@ namespace ChemSW.Nbt.WebServices
                 Ret["searchtarget"] = "chemcatcentral";
                 Ret["c3dataservice"] = CswNbtC3ClientManager.DataService;
                 Ret["filtered"] = "C3" == CswNbtC3ClientManager.DataService;
+                Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
 
                 Return.Data.SearchResults = Ret.ToString();
             }
@@ -1246,12 +1244,10 @@ namespace ChemSW.Nbt.WebServices
 
             // We want the 'Preferred' option to default to selected _if_ there are preferred suppliers set on the User
             bool PreferredOptionSelected = false;
-            string PreferredSuppliers = "";
-            CswNbtObjClassUser CurrentUser = CswNbtResources.Nodes.GetNode( CswNbtResources.CurrentNbtUser.UserId );
-            if( false == CurrentUser.C3ACDPreferredSuppliers.Empty )
+            string PreferredSuppliers = _getCurrentUserPrefSuppliers( CswNbtResources );
+            if( false == string.IsNullOrEmpty( PreferredSuppliers ) )
             {
                 PreferredOptionSelected = true;
-                PreferredSuppliers = CurrentUser.C3ACDPreferredSuppliers.Text;
             }
 
             ACDVendorOptions.Add( new VendorOption
@@ -1305,6 +1301,16 @@ namespace ChemSW.Nbt.WebServices
 
             return AvailableDataSources;
         }//_getAvailableDataSources()
+
+        private static string _getCurrentUserPrefSuppliers( CswNbtResources CswNbtResources )
+        {
+            string Ret = string.Empty;
+
+            CswNbtObjClassUser CurrentUser = CswNbtResources.Nodes.GetNode( CswNbtResources.CurrentNbtUser.UserId );
+            Ret = CurrentUser.C3ACDPreferredSuppliers.Text;
+
+            return Ret;
+        }//_getCurrentUserPrefSuppliers
 
         #endregion Private Helper Methods
 
