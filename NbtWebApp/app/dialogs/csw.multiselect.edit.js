@@ -44,9 +44,32 @@
         }//calculateTotalPages()
 
 
-        cswPrivate.pageInfo = function () {
-            return "Page " + cswPrivate.currentPage + " of " + calculateTotalPages();
-        };
+        //construct the span that describes current and total pages
+        cswPrivate.pageInfo = function (parent) {
+            //clear out the old div
+            parent.empty();
+            //fetch the number of pages, and create an array of the page numbers from 1 to N
+            var numberOfPages = calculateTotalPages();
+            var options = new Array(numberOfPages);
+            for (var i = 0; i < numberOfPages; i++) { options[i] = i + 1; }
+            
+            //create the component
+            var pageCountContainer = parent.span();
+            pageCountContainer.span({ text: 'Page ' });
+            var pageChoices = pageCountContainer.select({
+                values: options,
+                selected: cswPrivate.currentPage,
+                onChange: function() {
+                    //when a new page number is clicked, jump to that page and re-render options
+                    cswPrivate.currentPage = parseInt(pageChoices.val());
+                    updateVisibleOptions();
+                }
+            });
+            pageCountContainer.span({ text: ' of ' + numberOfPages });
+            
+            return pageCountContainer;
+        };//pageInfo()
+
 
         cswPrivate.getSelectedOptions = function () {
             //iterate through the list, adding each selected item's value to the list to return
@@ -102,7 +125,7 @@
                         updateVisibleOptions();
                         
                         //re-render the page list, because total number of pages may have changed
-                        cswPrivate.pageDisplay.text(cswPrivate.pageInfo());
+                        cswPrivate.pageInfo(cswPrivate.pageDisplay);
                     }//after a new letter is entered in the filter
                 });//filter input
 
@@ -160,7 +183,8 @@
                         text: '&nbsp;&nbsp;&nbsp;'
                     });
                     //display a "Page X of Y" message after the buttons
-                    cswPrivate.pageDisplay = cswPrivate.pagingTbl.cell(1, 5).span({ text: cswPrivate.pageInfo() });
+                    cswPrivate.pageDisplay = cswPrivate.pagingTbl.cell(1, 5);
+                    cswPrivate.pageInfo(cswPrivate.pageDisplay);
                 }//if (cswPrivate.usePaging)
 
             };//makeCtrl()
@@ -215,7 +239,7 @@
                     cswPrivate.currentPage = previousPage;
                     updateVisibleOptions();
                     //update the page text at the bottom of the page
-                    cswPrivate.pageDisplay.text(cswPrivate.pageInfo());
+                    cswPrivate.pageInfo(cswPrivate.pageDisplay);
                 }//if we're not already on the first page
         }//onPrevious()
 
@@ -230,7 +254,7 @@
                 cswPrivate.currentPage = nextPage;
                 updateVisibleOptions();
                 //update the page text at the bottom of the page
-                cswPrivate.pageDisplay.text(cswPrivate.pageInfo());
+                cswPrivate.pageInfo(cswPrivate.pageDisplay);
             }//if we're not already on the last page
         }//onNext()
 

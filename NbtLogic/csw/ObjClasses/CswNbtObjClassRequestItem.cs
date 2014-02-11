@@ -786,6 +786,7 @@ namespace ChemSW.Nbt.ObjClasses
             Name.RecalculateReferenceValue();
         }
         public CswNbtNodePropPropertyReference Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+
         public CswNbtNodePropSequence ItemNumber { get { return _CswNbtNode.Properties[PropertyName.ItemNumber]; } }
         public CswNbtNodePropStatic Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropRelationship Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
