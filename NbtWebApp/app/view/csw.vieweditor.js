@@ -1131,7 +1131,7 @@
                                     onBeforeFilterAdd: function () {
                                         cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
                                     },
-                                    onFilterAdd: function (updatedView) {
+                                    onFilterEdit: function (updatedView) {
                                         cswPrivate.View = updatedView;
                                         cswPrivate.makeStep6(true);
                                     }
