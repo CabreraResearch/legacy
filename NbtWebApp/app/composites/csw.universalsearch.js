@@ -73,14 +73,14 @@
                     cswPrivate.preFilterSelect.setIcon(nodetypeObj.iconfilename);
                     cswPrivate.nodetypeid = nodetypeObj.id;
                 } else {
-                    cswPrivate.preFilterSelect.setText('All');i
+                    cswPrivate.preFilterSelect.setText('All'); i
                     cswPrivate.preFilterSelect.setIcon('');
                     cswPrivate.nodetypeid = '';
                 }
             }; // onFilterClick()
 
             // Nodetype Filter Menu
-            
+
             //create the request for getNodeTypes assuming we're populating the list normally
             var nodeTypeOptions = {
                 PropertySetName: '',
@@ -98,7 +98,7 @@
             if (false === cswPrivate.allowNodeTypeChange) {
                 nodeTypeOptions.Searchable = false;
             }
-            
+
             cswPublic.ready = Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getNodeTypes',
                 data: nodeTypeOptions,
@@ -145,8 +145,8 @@
                     Csw.tryExec(cswPrivate.onSuccess);
                 } // success
             }); // ajax
-            
-            
+
+
 
             // Search Menu
             Csw.ajaxWcf.post({
@@ -324,7 +324,7 @@
                             cssclass: 'SearchC3Label',
                             text: 'ChemCatCentral.',
                             onClick: function () {
-                                
+
                                 Csw.dialogs.c3SearchDialog({
                                     c3searchterm: cswPrivate.searchinput.val(),
                                     c3handleresults: cswPublic.handleResults,
@@ -393,7 +393,13 @@
                         cswPublic.restoreSearch(cswPrivate.sessiondataid);
                     },
                     onNoResults: function () {
-                        resultstable.cell(2, 1).text('No Results Found');
+                        if (data.c3dataservice === 'ACD' && data.prefsuppliers != 'Any Suppliers') {
+                            resultstable.cell(2, 1).text('No Results Found');
+                            resultstable.cell(3, 1).text(' This may be due to the suppliers you have set as preferred. Try broadening the options you selected.').css('color', 'red');
+                        } else {
+                            resultstable.cell(2, 1).text('No Results Found');
+                        }
+
                     },
                     tabledata: data.table,
                     chemCatConfig: {
@@ -404,7 +410,8 @@
                             //cswPrivate.onBeforeSearch();
                             cswPublic.handleResults(filteredData);
                         },
-                        importMenuItems: data.table.importmenu || []
+                        importMenuItems: data.table.importmenu || [],
+                        prefsuppliers: data.prefsuppliers
                     },
                     //columns: columns,
                     allowEdit: cswPrivate.allowEdit,
@@ -634,7 +641,7 @@
 
                     cswPrivate.searchinput.val(data.searchterm);
                     cswPrivate.onSearchTypeSelect(data.searchtype);
-                    Csw.each(data.filtersapplied, function(filter) {
+                    Csw.each(data.filtersapplied, function (filter) {
                         if (filter.filtertype == "nodetype") {
                             cswPrivate.onPreFilterClick({ id: filter.firstversionid, iconfilename: "Images/newicons/16/" + filter.icon });
                         }
@@ -678,10 +685,10 @@
             cswPrivate.searchTypeSelect.enable();
         };
 
-        cswPublic.getSearchTerm = function() {
+        cswPublic.getSearchTerm = function () {
             return cswPrivate.searchterm;
         };
-        
+
         return cswPublic;
     });
 })();
