@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtNode designNode in _DesignNodesToFinalize )
             {
-                designNode.postChanges( false );
+                designNode.postOnlyChanges( false );
             }
 
             //if( ChangesMade )
