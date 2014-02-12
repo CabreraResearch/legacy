@@ -115,7 +115,6 @@ namespace ChemSW.Nbt.WebServices
             }
 
             PropsToHide.Remove( SearchField );
-
             if( "ACD" == DataService )
             {
                 if( filtered )
@@ -123,6 +122,7 @@ namespace ChemSW.Nbt.WebServices
                     PropsToHide.Remove( "CatalogName" );
                     PropsToHide.Remove( "CatalogNumbers" );
                     PropsToHide.Remove( "SupplierName" );
+                    PropsToHide.Remove( "CasNo" );
                 }
                 PropsToHide.Remove( "Formula" );
             }
