@@ -312,9 +312,8 @@
                             onClick: function () {
                                 //If C3 search {} else if Universal search {}
                                 if (cswPrivate.searchTarget === "chemcatcentral") {
-                                    $.CswDialog('C3DetailsDialog', {
+                                    Csw.dialogs.c3ProductDetails({
                                         nodeObj: nodeObj,
-                                        onEditNode: cswPrivate.onEditNode,
                                         c3dataservice: cswPrivate.chemCatConfig.dataservice
                                     });
                                 } else {
