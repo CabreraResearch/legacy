@@ -935,7 +935,12 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing, bool AllowDeprecated )
         {
             CswNbtNodePropWrapper ret = null;
-            if( null != DesignNode )
+            if( AllowDeprecated )
+            {
+                // DEPRECATED support of old default values.  Should be able to be removed in Larch.
+                ret = _initDefaultValueDeprecated( CreateIfMissing );
+            }
+            else if( null != DesignNode )//you touch it, you post it
             {
                 if( DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.DefaultValue ) )
                 {
@@ -943,11 +948,6 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
 
-            if( AllowDeprecated && ( ret == null || ret.Empty ) )
-            {
-                // DEPRECATED support of old default values.  Should be able to be removed in Larch.
-                ret = _initDefaultValueDeprecated( CreateIfMissing );
-            }
             return ret;
         } // getDefaultValue()
 
