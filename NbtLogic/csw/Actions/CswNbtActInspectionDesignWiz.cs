@@ -295,7 +295,10 @@ namespace ChemSW.Nbt.Actions
                                 //ThisQuestion.ListOptions = AllowedAnswers;
                                 //ThisQuestion.Extended = PreferredAnswer;
 
-                                ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() { CompliantAnswers };
+                                CswCommaDelimitedString CompliantAnswersCDS = new CswCommaDelimitedString();
+                                CompliantAnswersCDS.FromString( CompliantAnswers );
+
+                                ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers].AsMultiList.Value = CompliantAnswersCDS;
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers].AsText.Text = AllowedAnswers;
                                 ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer].AsList.Value = PreferredAnswer;
                                 ThisQuestion.DesignNode.postOnlyChanges( false );
@@ -470,8 +473,8 @@ namespace ChemSW.Nbt.Actions
                 ItgSchedulesView.saveNew( InspectionTargetName + " Schedules", CswEnumNbtViewVisibility.Property );
                 ItgSchedulesView.NbtViewMode = CswEnumNbtViewRenderingMode.Grid.ToString();
 
-                CswNbtViewRelationship Rel = ItgSchedulesView.AddViewRelationship( InspectionTargetGroupNt, IncludeDefaultFilters: true );
-                CswNbtViewRelationship SchedRel = ItgSchedulesView.AddViewRelationship( Rel, CswEnumNbtViewPropOwnerType.Second, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ), IncludeDefaultFilters: true );
+                CswNbtViewRelationship Rel = ItgSchedulesView.AddViewRelationship( InspectionTargetGroupNt, IncludeDefaultFilters : true );
+                CswNbtViewRelationship SchedRel = ItgSchedulesView.AddViewRelationship( Rel, CswEnumNbtViewPropOwnerType.Second, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ), IncludeDefaultFilters : true );
                 ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Description ) );
                 ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.NextDueDate ) );
                 ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.RunStatus ) );
@@ -772,7 +775,7 @@ namespace ChemSW.Nbt.Actions
             CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
             CompliantAnswers.FromString( CompliantAnswersString );
 
-            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive: false ) )
+            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive : false ) )
             {
                 PreferredAnswerString = "";
             }
@@ -867,7 +870,7 @@ namespace ChemSW.Nbt.Actions
                 foreach( DataRow Row in UploadDataTable.Rows )
                 {
                     string Question = _standardizeName( Row[_QuestionName] );
-                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive: false ) )
+                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive : false ) )
                     {
                         _UniqueQuestions.Add( Question );
                         if( false == string.IsNullOrEmpty( Question ) )
@@ -913,7 +916,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignName );
             if( null != InspectionDesignNt )
             {
-                string CopyInspectionNameOrig = CswTools.makeUniqueCopyName( InspectionDesignName, MaxLength: 50 );
+                string CopyInspectionNameOrig = CswTools.makeUniqueCopyName( InspectionDesignName, MaxLength : 50 );
                 string CopyInspectionNameFinal = CopyInspectionNameOrig;
                 Int32 Iterator = 0;
                 while( null != _CswNbtResources.MetaData.getNodeType( CopyInspectionNameFinal ) )
