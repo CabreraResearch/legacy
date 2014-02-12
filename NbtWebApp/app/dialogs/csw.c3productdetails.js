@@ -76,9 +76,21 @@
                                     text: 'Supplier: ' + data.ProductDetails.SupplierName
                                 });
 
-                                table1.cell(3, 1).div({
-                                    text: 'Catalog No: ' + data.ProductDetails.CatalogNo
-                                });
+                                if ('ACD' === cswPrivate.c3dataservice) {
+                                    var catalogNumbers = '';
+                                    Csw.iterate(cswPrivate.node.props, function(prop) {
+                                        if (prop.propname === "CatalogNumbers") {
+                                            catalogNumbers = prop.gestalt;
+                                        }
+                                    });
+                                    table1.cell(3, 1).div({
+                                        text: 'Catalog Numbers: ' + catalogNumbers
+                                    });
+                                } else {
+                                    table1.cell(3, 1).div({
+                                        text: 'Catalog No: ' + data.ProductDetails.CatalogNo
+                                    });
+                                }
 
                                 // CAS Number
                                 var casnodiv = table1.cell(4, 1).div({
