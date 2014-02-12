@@ -80,13 +80,6 @@ namespace ChemSW.Nbt.PropTypes
                     //NewView.save();
                     SetPropRowValue( _ViewIdSubField, NewView.ViewId.get() );
                     SetPropRowValue( _CachedViewNameSubField, PropName );
-
-                    // Case 20194. KLUGE Alert!!!
-                    CswNbtNode node = _CswNbtResources.Nodes.GetNode( NodeId );
-                    if( null != node )
-                    {
-                        node.postChanges( false );
-                    }
                 }
 
                 return new CswNbtViewId( CswConvert.ToInt32( GetPropRowValue( _ViewIdSubField ) ) );

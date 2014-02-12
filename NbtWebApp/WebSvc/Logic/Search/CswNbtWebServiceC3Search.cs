@@ -441,7 +441,10 @@ namespace ChemSW.Nbt.WebServices
                 Ret["searchtarget"] = "chemcatcentral";
                 Ret["c3dataservice"] = CswNbtC3ClientManager.DataService;
                 Ret["filtered"] = true;
-                Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+                {
+                    Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                }
 
                 Return.Data.SearchResults = Ret.ToString();
             }
@@ -498,7 +501,10 @@ namespace ChemSW.Nbt.WebServices
                 Ret["searchtarget"] = "chemcatcentral";
                 Ret["c3dataservice"] = CswNbtC3ClientManager.DataService;
                 Ret["filtered"] = "C3" == CswNbtC3ClientManager.DataService;
-                Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+                {
+                    Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                }
 
                 Return.Data.SearchResults = Ret.ToString();
             }
