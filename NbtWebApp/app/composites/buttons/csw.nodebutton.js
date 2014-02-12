@@ -2,6 +2,50 @@
 (function ($) {
     "use strict";
 
+
+    Csw.composites.register('nodeButton', function (cswParent, options) {
+
+        var cswPublic = {};
+        var cswPrivate = {};
+        var tabsAndProps;
+
+        (function _pre() {
+            cswPrivate = {
+                name: 'nodebutton',
+                div: {},
+                value: '',
+                mode: 'button',
+                useToolTip: true,
+                messageDiv: {},
+                state: '',
+                confirmmessage: '',
+                table: {},
+                btnCell: {},
+                size: 'small',
+                propId: '',
+                onClickAction: null,
+                menuOptions: [],
+                displayName: '',
+                icon: '',
+                nodeId: '',
+                tabId: '',
+                identityTabId: '',
+                properties: {},
+                onRefresh: function () { },
+                issaveprop: false
+            };
+
+            tabsAndProps = options.tabsAndProps;
+            delete options.tabsAndProps;
+
+            Csw.extend(cswPrivate, options, true);
+            cswPrivate.div = cswParent.div();
+            cswPrivate.div.empty();
+
+            cswPrivate.table = cswPrivate.div.table();
+        }());
+
+
     function onObjectClassButtonClick(opts, tabsAndProps, onRefresh) {
         var actionJson = opts.data.actionData;
         var launchAction = false;
@@ -111,6 +155,11 @@
                         Csw.publish('onAnyNodeButtonClickFinish', true);
                         Csw.publish(Csw.enums.events.main.refreshHeader);
                         break;
+                    case 'Request':
+                        //when the button is clicked without opening the menu, open the menu
+                        cswPublic.button.menu.showMenu();
+                        Csw.publish('onAnyNodeButtonClickFinish', true);
+                        break;
                     default:
                         Csw.dialogs.addnode({
                             nodetypeid: actionJson.requestItemNodeTypeId,
@@ -194,57 +243,14 @@
                 }
                 Csw.debug.warn('No event has been defined for button click ' + opts.data.action);
                 break;
-        }
+        }//switch (opts.data.action)
         if (launchAction) {
             //1: Clear the center divs
             Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
             //2: load th
             Csw.publish(Csw.enums.events.main.handleAction, actionJson);
         }
-    }
-
-
-    Csw.composites.register('nodeButton', function (cswParent, options) {
-
-        var cswPublic = {};
-        var cswPrivate = {};
-        var tabsAndProps;
-
-        (function _pre() {
-            cswPrivate = {
-                name: 'nodebutton',
-                div: {},
-                value: '',
-                mode: 'button',
-                useToolTip: true,
-                messageDiv: {},
-                state: '',
-                confirmmessage: '',
-                table: {},
-                btnCell: {},
-                size: 'small',
-                propId: '',
-                onClickAction: null,
-                menuOptions: [],
-                displayName: '',
-                icon: '',
-                nodeId: '',
-                tabId: '',
-                identityTabId: '',
-                properties: {},
-                onRefresh: function () { },
-                issaveprop: false
-            };
-
-            tabsAndProps = options.tabsAndProps;
-            delete options.tabsAndProps;
-
-            Csw.extend(cswPrivate, options, true);
-            cswPrivate.div = cswParent.div();
-            cswPrivate.div.empty();
-
-            cswPrivate.table = cswPrivate.div.table();
-        }());
+    }//onObjectClassButtonClick()
 
         var onAnyNodeButtonClick = function () {
             cswPublic.button.disable();
