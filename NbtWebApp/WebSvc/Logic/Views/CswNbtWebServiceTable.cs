@@ -130,6 +130,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 PropsToHide.Remove( "SourceName" );
                 PropsToHide.Remove( "SupplierName" );
+                PropsToHide.Remove( "CatalogNo" );
             }
 
             ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide, DataService );
