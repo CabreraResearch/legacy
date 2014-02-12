@@ -7,7 +7,6 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
@@ -184,7 +183,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JArray ret = new JArray();
 
-            foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes() )
+            foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes().OrderBy( ft => ft.FieldType.Value ) )
             {
                 if( FieldType.IsLayoutCompatible( LayoutType ) &&
                     //Case 31808: This is not in IsLayoutCompatible because we only want to prevent adding new Button props (not exisitng)
