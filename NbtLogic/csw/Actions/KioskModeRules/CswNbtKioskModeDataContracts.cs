@@ -12,6 +12,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public Collection<Mode> AvailableModes = new Collection<Mode>();
         [DataMember]
         public OperationData OperationData;
+        [DataMember] 
+        public string ReportNode = string.Empty;
     }
 
     [DataContract]

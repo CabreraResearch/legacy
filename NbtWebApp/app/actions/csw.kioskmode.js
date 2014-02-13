@@ -301,6 +301,19 @@
             cswPrivate.operationTbl.cell(1, 1)
                 .css({ 'text-align': 'left', 'font-size': '255%', 'width': '55%', 'padding-bottom': '75px' })
                 .span({ text: 'Kiosk Mode' });
+            
+            Csw.ajaxWcf.get({
+                urlMethod: 'KioskMode/KioskModeBarcodeReport',
+                success: function (data) {
+                    cswPrivate.operationTbl.cell(1, 2).css({ 'vertical-align': 'middle', 'font-size': '125%', 'padding-bottom': '75px' })
+                    .a({
+                        value: 'Print Kiosk Mode Barcodes',
+                        onClick: function () {
+                            Csw.main.handleReport(data.ReportNode);
+                        }
+                    });
+                }
+            });
 
             cswPrivate.renderAvailableModes();
 
