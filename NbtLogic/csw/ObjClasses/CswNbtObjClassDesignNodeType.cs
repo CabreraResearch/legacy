@@ -16,9 +16,9 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassDesignNodeType : CswNbtObjClass
+    public class CswNbtObjClassDesignNodeType: CswNbtObjClass
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string AuditLevel = "Audit Level";
             public const string Category = "Category";
@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             // Set 'Name' default value = nodetypename
             NameProp.getDefaultValue( true, false ).AsText.Text = NewNodeType.NodeTypeName;
-            
+
             // The following changes for new forms only
             if( NewNodeType.VersionNo == 1 && false == InternalCreate )
             {
@@ -435,17 +435,17 @@ namespace ChemSW.Nbt.ObjClasses
             // ... that are relationships
             DeferView.AddViewPropertyAndFilter( DeferViewRel2,
                                                 NTPFieldTypeOCP,
-                                                Conjunction: CswEnumNbtFilterConjunction.And,
-                                                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
-                                                FilterMode: CswEnumNbtFilterMode.Equals,
-                                                Value: _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
+                                                Conjunction : CswEnumNbtFilterConjunction.And,
+                                                SubFieldName : CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                FilterMode : CswEnumNbtFilterMode.Equals,
+                                                Value : _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
             // ... or locations
             DeferView.AddViewPropertyAndFilter( DeferViewRel2,
                                                 NTPFieldTypeOCP,
-                                                Conjunction: CswEnumNbtFilterConjunction.Or,
-                                                FilterMode: CswEnumNbtFilterMode.Equals,
-                                                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
-                                                Value: _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
+                                                Conjunction : CswEnumNbtFilterConjunction.Or,
+                                                FilterMode : CswEnumNbtFilterMode.Equals,
+                                                SubFieldName : CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                Value : _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
             DeferSearchTo.OverrideView( DeferView );
 
         } //afterPopulateProps()
@@ -458,9 +458,9 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCPPropName )
                 {
                     case PropertyName.ViewNodesButton:
-                        CswNbtView DefaultView = RelationalNodeType.CreateDefaultView( includeDefaultFilters: true );
+                        CswNbtView DefaultView = RelationalNodeType.CreateDefaultView( includeDefaultFilters : true );
                         DefaultView.ViewName = NodeTypeName.Text + " Default View";
-                        DefaultView.SaveToCache( IncludeInQuickLaunch: true );
+                        DefaultView.SaveToCache( IncludeInQuickLaunch : true );
 
                         ButtonData.Action = CswEnumNbtButtonAction.loadView;
                         ButtonData.Data["viewid"] = DefaultView.SessionViewId.ToString();
@@ -522,7 +522,6 @@ namespace ChemSW.Nbt.ObjClasses
                     } );
                 PropMap.Add( PropNode.RelationalId.PrimaryKey, PropCopy );
 
-
                 // Fix layout
                 if( PropCopy.PropName.Text.Equals( CswNbtObjClass.PropertyName.Save ) )
                 {
@@ -534,6 +533,10 @@ namespace ChemSW.Nbt.ObjClasses
                             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NodeTypeCopy.RelationalId.PrimaryKey, PropCopy.RelationalNodeTypeProp, false, NewTab.RelationalId.PrimaryKey, Int32.MaxValue, 1 );
                         }
                     }
+                }
+                else if( PropCopy.PropName.Text.Equals( CswNbtObjClass.PropertyName.LegacyId ) )
+                {
+                    _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( PropCopy.RelationalNodeTypeProp );
                 }
                 else
                 {
@@ -853,7 +856,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first
                 Dictionary<CswPrimaryKey, Int32> PropQuestionNumbers = new Dictionary<CswPrimaryKey, Int32>();
-                Collection<CswNbtObjClassDesignNodeTypeProp> Props = Tab.getPropNodesByDisplayOrder( NumberedOnly: true );
+                Collection<CswNbtObjClassDesignNodeTypeProp> Props = Tab.getPropNodesByDisplayOrder( NumberedOnly : true );
                 foreach( CswNbtObjClassDesignNodeTypeProp Prop in Props )
                 {
                     if( //Prop.UseNumbering.Checked == CswEnumTristate.True && 
