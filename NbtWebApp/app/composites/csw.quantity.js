@@ -12,6 +12,7 @@
 
         (function _preCtor() {
             Csw.extend(cswPrivate, options);
+            
             //cswPrivate.$parent = cswPrivate.$parent || cswParent.$;
             cswPrivate.name = options.name || '';
             cswPrivate.precision = options.precision || 6;
@@ -54,7 +55,7 @@
 
         cswPrivate.makeControl = function () {
             cswPrivate.numberTextBox = cswPrivate.table.cell(1, cswPrivate.cellCol).numberTextBox({
-                name: cswPrivate.name + '_qty',
+                name: cswPrivate.name + '_qty_' + window.Ext.id(),
                 value: cswPrivate.quantity,
                 MinValue: cswPrivate.minvalue,
                 MaxValue: cswPrivate.maxvalue,
