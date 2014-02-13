@@ -124,7 +124,6 @@ namespace ChemSW.Nbt.WebServices
                     PropsToHide.Remove( "CatalogName" );
                     PropsToHide.Remove( "CatalogNumbers" );
                     PropsToHide.Remove( "SupplierName" );
-                    PropsToHide.Remove( "CasNo" );
                 }
                 PropsToHide.Remove( "Formula" );
             }
