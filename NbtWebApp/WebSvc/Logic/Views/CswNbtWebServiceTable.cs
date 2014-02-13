@@ -119,6 +119,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( filtered )
                 {
+                    PropsToHide.Add( "CatalogNo" ); //Filtered ACD searches should NEVER show "CatalogNo"
+
                     PropsToHide.Remove( "CatalogName" );
                     PropsToHide.Remove( "CatalogNumbers" );
                     PropsToHide.Remove( "SupplierName" );
