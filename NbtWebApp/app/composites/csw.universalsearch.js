@@ -413,6 +413,7 @@
                         importMenuItems: data.table.importmenu || [],
                         prefsuppliers: data.prefsuppliers
                     },
+                    staticBase64ImageStr: data.staticbase64imagestr,
                     //columns: columns,
                     allowEdit: cswPrivate.allowEdit,
                     allowDelete: cswPrivate.allowEdit,

@@ -30,6 +30,7 @@
                 prefsuppliers: 'Any Suppliers'
             },
             searchTarget: null, //c3 addition
+            staticBase64ImageStr: '', //an image as a base64 string that will be used for ALL search results (for performance)
 
             compactResults: false,
             suppressButtons: false,
@@ -190,9 +191,10 @@
                         imgheight = '18px';
                     }
 
-                    if (false === Csw.isNullOrEmpty(nodeObj.thumbnailbase64str)) {
+                    if (false === Csw.isNullOrEmpty(nodeObj.thumbnailbase64str) || false === Csw.isNullOrEmpty(cswPrivate.staticBase64ImageStr)) {
                         thumbnailCell.img({
-                            src: nodeObj.thumbnailbase64str
+                            //always use cswPrivate.staticBase64ImageStr if there's a value
+                            src: (false == Csw.isNullOrEmpty(cswPrivate.staticBase64ImageStr) ? cswPrivate.staticBase64ImageStr : nodeObj.thumbnailbase64str)
                         }).css({
                             height: imgheight,
                             maxWidth: '100px'
@@ -275,7 +277,7 @@
                     var showFavoriteButton = cswPrivate.searchTarget != "chemcatcentral";
                     var showImportButton = false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport);
                     var showMoreAcdResultsButton = false;
-                    
+
                     //Button visibility behavoir when C3 is enabled
                     if (cswPrivate.searchTarget === "chemcatcentral") {
                         var isFilteredSearch = ('ACD' === cswPrivate.chemCatConfig.dataservice && cswPrivate.chemCatConfig.filtered) || 'C3' === cswPrivate.chemCatConfig.dataservice;
@@ -310,9 +312,8 @@
                             onClick: function () {
                                 //If C3 search {} else if Universal search {}
                                 if (cswPrivate.searchTarget === "chemcatcentral") {
-                                    $.CswDialog('C3DetailsDialog', {
+                                    Csw.dialogs.c3ProductDetails({
                                         nodeObj: nodeObj,
-                                        onEditNode: cswPrivate.onEditNode,
                                         c3dataservice: cswPrivate.chemCatConfig.dataservice
                                     });
                                 } else {
@@ -371,7 +372,7 @@
                             disableOnClick: false,
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                             onClick: function () {
-                                
+
                                 // Disable all other 'More Results' buttons
                                 Csw.iterate(cswPrivate.chemCatConfig.moreResultsBtns, function (button, name) {
                                     button.disable();

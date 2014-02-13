@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class CswNbtC3SearchReturn : CswWebSvcReturn
+        public class CswNbtC3SearchReturn: CswWebSvcReturn
         {
             public CswNbtC3SearchReturn()
             {
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class CswNbtC3CreateMaterialReturn : CswWebSvcReturn
+        public class CswNbtC3CreateMaterialReturn: CswWebSvcReturn
         {
             public CswNbtC3CreateMaterialReturn()
             {
@@ -431,6 +431,17 @@ namespace ChemSW.Nbt.WebServices
                     throw ( new CswDniException( CswEnumErrorType.Error, "There was an error searching ChemCatCentral", exception.Message, exception ) );
                 }
 
+                ExternalImageRet ImageRet = new ExternalImageRet();
+
+                /*
+                 * We have to create our own Acd Search params and set Product Id to Int32.MinVal because C3 is serializing ProductId to "0" instead of MinVal.
+                 */
+                ACDSearchParams acdSearchParams = new ACDSearchParams();
+                acdSearchParams.ProductId = Int32.MinValue;
+                acdSearchParams.Cdbregno = CswC3SearchParams.ACDSearchParams.Cdbregno;
+                getExternalImage( CswResources, ImageRet, acdSearchParams ); 
+                string imageStrBase64 = "data:image/png;base64," + Convert.ToBase64String( ImageRet.Data );
+
                 CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
                 Ret["table"] = wsTable.getTable( SearchResults, CswC3SearchParams.Field, CswNbtC3ClientManager.DataService, true );
                 Ret["filters"] = "";
@@ -441,7 +452,11 @@ namespace ChemSW.Nbt.WebServices
                 Ret["searchtarget"] = "chemcatcentral";
                 Ret["c3dataservice"] = CswNbtC3ClientManager.DataService;
                 Ret["filtered"] = true;
-                Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                Ret["staticbase64imagestr"] = imageStrBase64;
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+                {
+                    Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                }
 
                 Return.Data.SearchResults = Ret.ToString();
             }
@@ -498,7 +513,10 @@ namespace ChemSW.Nbt.WebServices
                 Ret["searchtarget"] = "chemcatcentral";
                 Ret["c3dataservice"] = CswNbtC3ClientManager.DataService;
                 Ret["filtered"] = "C3" == CswNbtC3ClientManager.DataService;
-                Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+                {
+                    Ret["prefsuppliers"] = CswC3SearchParams.ACDSearchParams.CompanyIds;
+                }
 
                 Return.Data.SearchResults = Ret.ToString();
             }
@@ -576,7 +594,7 @@ namespace ChemSW.Nbt.WebServices
                             ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
                             // Create the temporary material node
-                            CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                            CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                                 {
                                     //Set the c3productid property
                                     ( (CswNbtPropertySetMaterial) NewNode ).C3ProductId.Text = C3ProductDetails.ProductId.ToString();
@@ -937,35 +955,35 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
 
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                               MetaDataProp: NameOCP,
-                                                               Value: Value,
-                                                               SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
-                                                               FilterMode: CswEnumNbtFilterMode.Equals );
+                                                               MetaDataProp : NameOCP,
+                                                               Value : Value,
+                                                               SubFieldName : CswNbtFieldTypeRuleText.SubFieldName.Text,
+                                                               FilterMode : CswEnumNbtFilterMode.Equals );
 
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp: AliasesOCP,
-                                                           Value: "," + Value + ",",
-                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
-                                                           FilterMode: CswEnumNbtFilterMode.Contains,
-                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : "," + Value + ",",
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Contains,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp: AliasesOCP,
-                                                           Value: Value + ",",
-                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
-                                                           FilterMode: CswEnumNbtFilterMode.Begins,
-                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : Value + ",",
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Begins,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp: AliasesOCP,
-                                                           Value: "," + Value,
-                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
-                                                           FilterMode: CswEnumNbtFilterMode.Ends,
-                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : "," + Value,
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Ends,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                           MetaDataProp: AliasesOCP,
-                                                           Value: Value,
-                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
-                                                           FilterMode: CswEnumNbtFilterMode.Equals,
-                                                           Conjunction: CswEnumNbtFilterConjunction.Or );
+                                                           MetaDataProp : AliasesOCP,
+                                                           Value : Value,
+                                                           SubFieldName : CswEnumNbtSubFieldName.Text,
+                                                           FilterMode : CswEnumNbtFilterMode.Equals,
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or );
 
                 // Create the tree
                 Ret = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
@@ -1007,7 +1025,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassSDSDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        CswNbtObjClassSDSDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                             {
                                 // This needs to be CswNbtObjClassSDSDocument NOT CswNbtObjClassDocument!
                                 CswNbtObjClassSDSDocument NewSDSDocumentNode = NewNode;
@@ -1210,7 +1228,7 @@ namespace ChemSW.Nbt.WebServices
                                         string Href;
                                         string FormattedMolString;
                                         string errorMsg;
-                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, Node: Node );
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, Node : Node );
                                     }
                                     else
                                     {
