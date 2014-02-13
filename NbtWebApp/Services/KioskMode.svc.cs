@@ -72,6 +72,24 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "KioskModeBarcodeReport" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the Report node used to print Kiosk Mode barcodes" )]
+        public CswNbtWebServiceKioskMode.KioskModeDataReturn KioskModeBarcodeReport()
+        {
+            CswNbtWebServiceKioskMode.KioskModeDataReturn Ret = new CswNbtWebServiceKioskMode.KioskModeDataReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceKioskMode.getKioskModeBarcodeReport,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 
 }

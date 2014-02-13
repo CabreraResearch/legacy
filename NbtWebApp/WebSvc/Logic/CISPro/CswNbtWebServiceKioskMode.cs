@@ -1,9 +1,12 @@
+using System;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Actions.KioskMode;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using NbtWebApp.WebSvc.Returns;
 
@@ -158,6 +161,24 @@ namespace ChemSW.Nbt.WebServices
 
             KioskModeData.OperationData = OpData;
             Return.Data = KioskModeData;
+        }
+
+        public static void getKioskModeBarcodeReport( ICswResources CswResources, KioskModeDataReturn Return, object KioskModeData )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            CswNbtMetaDataObjectClass ReportOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+            CswNbtSearch FindReport = new CswNbtSearch( NbtResources );
+            FindReport.addFilter( ReportOC, false );
+            FindReport.SearchType = CswEnumSqlLikeMode.Exact;
+            FindReport.SearchTerm = "Kiosk Mode Barcodes";
+            ICswNbtTree SearchResults = FindReport.Results();
+            if( SearchResults.getChildNodeCount() > 0 )
+            {
+                SearchResults.goToNthChild( 0 );
+                CswNbtObjClassReport ReportNode = SearchResults.getNodeForCurrentPosition();
+                Return.Data.ReportNode = ReportNode.NodeId.ToString();
+                SearchResults.goToParentNode();
+            }
         }
 
         #region Private Methods
