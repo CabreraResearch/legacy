@@ -63,7 +63,7 @@
     };
 
     cswPrivate.setLogoutPath = function () {
-        var homeUrl = cswPrivate.logoutpath || Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) || 'Login.aspx';
+        var homeUrl = cswPrivate.logoutpath || Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) || 'ExternalLogin.aspx';
         
         if (Csw.clientSession.isDebug(Csw.queryString())) {
             Csw.clientSession.enableDebug();
@@ -147,7 +147,7 @@
         ///<summary>Complete the logout. Nuke any lingering client-side data.</summary>
         cswPrivate.logoutpath = cswPrivate.logoutpath ||
             Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) ||
-            'Login.aspx';
+            'ExternalLogin.aspx';
 
         if (!cswPrivate.logoutpath) {
             throw new Error('Attempted to Logout, but Logout path was empty.');

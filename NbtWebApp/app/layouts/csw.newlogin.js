@@ -84,7 +84,7 @@
 
             //if authentication was a success, re-submit a GET to the page so caching can begin (AppCache 'feature' stops it from working on POSTed pages)
             cswPrivate.onSuccess = function () {
-                window.location = "Login.aspx";
+                window.location = "ExternalLogin.aspx";
             };
 
             cswPrivate.authenticate(cswPrivate.accessid, cswPrivate.username, cswPrivate.password);
