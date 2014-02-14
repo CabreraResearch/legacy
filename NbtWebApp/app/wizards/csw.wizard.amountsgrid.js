@@ -156,6 +156,7 @@
                                 cswPrivate.quantity.name = 'containerQuantity';
                                 cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                 cswPrivate.quantity.isReadOnly = cswPrivate.quantity.qtyReadonly;
+                                cswPrivate.quantity.quantityoptional = false;
 
                                 if (null != Csw.currentUser.defaults().DefaultBalanceId) {
                                     Csw.ajaxWcf.post({

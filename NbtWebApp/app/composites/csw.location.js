@@ -67,12 +67,20 @@
                             text: cswPrivate.selectednodelink,
                             linkText: cswPrivate.path
                         });
-                    
+
                         if (cswPrivate.isRequired) {
                             cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, nodeLink, {
                                 className: 'locationValidator_' + window.Ext.id(),
-                                errorMsg: 'Location is required.'
+                                errorMsg: 'Location is required.',
+                                onValidation: function (isValid) {
+                                    if (isValid) {
+                                        cswPrivate.validateCell.hide();
+                                    } else {
+                                        cswPrivate.validateCell.show();
+                                    }
+                                }
                             });
+                            cswPrivate.locationValidator.input.checked(false === Csw.isNullOrEmpty(cswPrivate.nodeid));
                         }
                     }
 
@@ -113,7 +121,7 @@
                     render();
                 }
 
-            } ());
+            }());
             //#endregion init ctor
 
             //#region cswPrivate/cswPublic methods and props
@@ -232,7 +240,7 @@
                         function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
                     }
                 });
-            } ());
+            }());
             //#region final ctor
 
         });
@@ -241,6 +249,6 @@
         return cswPublic;
     });
 
-} ());
+}());
 
 

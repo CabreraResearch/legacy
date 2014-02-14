@@ -199,7 +199,7 @@
                     var ret = false;
                     if (false === cswPrivate.overrideBeforeSelect) {
                         ret = (false === cswPrivate.preventSelect && (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1));
-                        if (false !== ret && cswPrivate.useCheckboxes !== true) {
+                        if (false !== ret && cswPrivate.useCheckboxes !== true && false === record.data.disabled) {
                             ret = Csw.tryExec(cswPrivate.beforeSelect, record, cswPublic.tree);
                         }
                     } else {
