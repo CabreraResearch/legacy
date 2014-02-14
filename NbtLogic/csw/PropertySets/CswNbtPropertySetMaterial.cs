@@ -259,7 +259,8 @@ namespace ChemSW.Nbt.ObjClasses
 
                             CswNbtObjClassRequestItem RequestItem = RequestAct.makeMaterialRequestItem( this, ButtonData );
 
-                            ButtonData.Data["requestaction"] = OCPPropName;
+                            ButtonData.Data["requestaction"] = ButtonData.SelectedText;
+                            //ButtonData.Data["requestaction"] = OCPPropName;
                             //Case 31298: Default Option Text "Request" != "Request By Bulk"
                             if( ButtonData.SelectedText == "Request" )
                             {
