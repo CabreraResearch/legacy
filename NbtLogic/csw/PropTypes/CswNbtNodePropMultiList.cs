@@ -301,20 +301,20 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
-
-            JArray OptionsArray = new JArray();
-            ParentObject["options"] = OptionsArray;
-
-            foreach( string Key in Options.Keys )
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
             {
-                JObject NewOption = new JObject();
-                NewOption["text"] = Options[Key];
-                NewOption["value"] = Key;
-                NewOption["selected"] = Value.Contains( Key ).ToString().ToLower();
-                OptionsArray.Add( NewOption );
+                JArray OptionsArray = new JArray();
+                ParentObject["options"] = OptionsArray;
+
+                foreach( string Key in Options.Keys )
+                {
+                    JObject NewOption = new JObject();
+                    NewOption["text"] = Options[Key];
+                    NewOption["value"] = Key;
+                    NewOption["selected"] = Value.Contains( Key ).ToString().ToLower();
+                    OptionsArray.Add( NewOption );
+                }
             }
             ParentObject["readonlyless"] = CollapsedReadOnlyValue;
             ParentObject["readonlymore"] = ExpandedReadOnlyValue;

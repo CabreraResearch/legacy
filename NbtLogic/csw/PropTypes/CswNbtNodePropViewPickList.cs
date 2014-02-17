@@ -251,26 +251,28 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_SelectedViewIdsSubField.ToXmlNodeName()] = SelectedViewIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
-            ParentObject[ElemName_Options] = new JObject();
 
-            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
-            CBAOptions.Columns.Add( "Include" );
-
-            DataTable ViewsTable = ViewsForCBA();
-            foreach( DataRow ViewRow in ViewsTable.Rows )
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
             {
-                CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
-                Option.Key = ViewRow[KeyColumn].ToString();
-                Option.Label = ViewRow[NameColumn].ToString();
-                Option.Values.Add( CswConvert.ToBoolean( ViewRow[ValueColumn] ) );
-                CBAOptions.Options.Add( Option );
+                ParentObject[ElemName_Options] = new JObject();
+
+                CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+                CBAOptions.Columns.Add( "Include" );
+
+                DataTable ViewsTable = ViewsForCBA();
+                foreach( DataRow ViewRow in ViewsTable.Rows )
+                {
+                    CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
+                    Option.Key = ViewRow[KeyColumn].ToString();
+                    Option.Label = ViewRow[NameColumn].ToString();
+                    Option.Values.Add( CswConvert.ToBoolean( ViewRow[ValueColumn] ) );
+                    CBAOptions.Options.Add( Option );
+                }
+                CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
             }
-            CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

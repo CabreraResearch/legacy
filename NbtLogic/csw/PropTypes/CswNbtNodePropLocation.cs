@@ -272,8 +272,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_PathSubField.ToXmlNodeName( true )] = string.Empty;
@@ -289,19 +287,21 @@ namespace ChemSW.Nbt.PropTypes
 
                 ParentObject["selectednodelink"] = SelectedNode.NodeLink;
             }
-
-            //Case 30335 - This is required for Allow Inventory to work properly
-            View.SaveToCache( false );
-            ParentObject["viewid"] = View.SessionViewId.ToString();
-
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
-            JArray LocationNTArray = new JArray();
-            foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
             {
-                LocationNTArray.Add( LocationNT.NodeTypeId );
+                //Case 30335 - This is required for Allow Inventory to work properly
+                View.SaveToCache( false );
+                ParentObject["viewid"] = View.SessionViewId.ToString();
+
+                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+                ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
+                JArray LocationNTArray = new JArray();
+                foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
+                {
+                    LocationNTArray.Add( LocationNT.NodeTypeId );
+                }
+                ParentObject["locationnodetypeids"] = LocationNTArray;
             }
-            ParentObject["locationnodetypeids"] = LocationNTArray;
         }
 
         // ReadXml()

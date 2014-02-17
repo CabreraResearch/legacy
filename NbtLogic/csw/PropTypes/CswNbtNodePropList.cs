@@ -164,51 +164,52 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
             ParentObject["search"] = false;
 
-            if( Options.Options.Count <= _SearchThreshold )
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
             {
-                // Make sure the selected value is in the list of options (originally case 28020)
-                // TODO: When we use WCF, we can just serialize Options directly
-                JArray OptionsArr = new JArray();
-                bool foundValue = false;
-                foreach( CswNbtNodeTypePropListOption o in Options.Options )
+                if( Options.Options.Count <= _SearchThreshold )
                 {
-                    foundValue = foundValue || ( o.Value == Value );
-                    JObject Opt = new JObject();
-                    Opt["Text"] = o.Text;
-                    Opt["Value"] = o.Value;
-                    OptionsArr.Add( Opt );
-                }
-                if( false == foundValue )
-                {
-                    // We don't want to send an empty option if the property is required
-                    if( false == string.IsNullOrEmpty( Value ) || false == string.IsNullOrEmpty( Text ) || false == _CswNbtMetaDataNodeTypeProp.IsRequired )
+                    // Make sure the selected value is in the list of options (originally case 28020)
+                    // TODO: When we use WCF, we can just serialize Options directly
+                    JArray OptionsArr = new JArray();
+                    bool foundValue = false;
+                    foreach( CswNbtNodeTypePropListOption o in Options.Options )
                     {
+                        foundValue = foundValue || ( o.Value == Value );
                         JObject Opt = new JObject();
-                        Opt["Text"] = Text;
-                        Opt["Value"] = Value;
+                        Opt["Text"] = o.Text;
+                        Opt["Value"] = o.Value;
                         OptionsArr.Add( Opt );
                     }
-                }
-                ParentObject["options"] = OptionsArr;
+                    if( false == foundValue )
+                    {
+                        // We don't want to send an empty option if the property is required
+                        if( false == string.IsNullOrEmpty( Value ) || false == string.IsNullOrEmpty( Text ) || false == _CswNbtMetaDataNodeTypeProp.IsRequired )
+                        {
+                            JObject Opt = new JObject();
+                            Opt["Text"] = Text;
+                            Opt["Value"] = Value;
+                            OptionsArr.Add( Opt );
+                        }
+                    }
+                    ParentObject["options"] = OptionsArr;
 
-                // To search or not to search
-                if( ( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
-                    || _CswNbtMetaDataNodeTypeProp.IsRequired && Options.Options.Count == 0 )
+                    // To search or not to search
+                    if( ( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                        || _CswNbtMetaDataNodeTypeProp.IsRequired && Options.Options.Count == 0 )
+                    {
+                        ParentObject["search"] = true;
+                    }
+                }
+                else
                 {
                     ParentObject["search"] = true;
+                    ParentObject["options"] = "";
                 }
-            }
-            else
-            {
-                ParentObject["search"] = true;
-                ParentObject["options"] = "";
-            }
+            } // if( ForEdit )
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

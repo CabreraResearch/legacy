@@ -36,16 +36,16 @@ namespace ChemSW.Nbt.PropTypes
             _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId,
                                                                                               x =>
+                                                                                              {
+                                                                                                  if( CswTools.IsInteger( x ) )
                                                                                                   {
-                                                                                                      if( CswTools.IsInteger( x ) )
-                                                                                                      {
-                                                                                                          RelatedNodeId = new CswPrimaryKey( "nodes", x );
-                                                                                                      }
-                                                                                                      else
-                                                                                                      {
-                                                                                                          RelatedNodeId = CswConvert.ToPrimaryKey( x );
-                                                                                                      }
-                                                                                                  } ) );
+                                                                                                      RelatedNodeId = new CswPrimaryKey( "nodes", x );
+                                                                                                  }
+                                                                                                  else
+                                                                                                  {
+                                                                                                      RelatedNodeId = CswConvert.ToPrimaryKey( x );
+                                                                                                  }
+                                                                                              } ) );
         }
 
         private CswNbtSubField _NameSubField;
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != GetPropRowValue( _NameSubField ) )
                 {
-                    SetPropRowValue( _NameSubField, value, IsNonModifying : true );
+                    SetPropRowValue( _NameSubField, value, IsNonModifying: true );
                     Gestalt = value;
                 }
             }
@@ -323,7 +323,7 @@ namespace ChemSW.Nbt.PropTypes
                     Options.Add( new CswPrimaryKey(), "" );
                 }
 
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View : OptionsView,
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: OptionsView,
                                                                              IncludeSystemNodes: false,
                                                                              RequireViewPermissions: false,
                                                                              IncludeHiddenNodes: false );
@@ -363,125 +363,134 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
-            JArray JOptions = (JArray) ( ParentObject["options"] = new JArray() );
-
             CswNbtNode RelatedNode = null;
             if( CswTools.IsPrimaryKey( RelatedNodeId ) )
             {
-                ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = RelatedNodeId.ToString();
+                //ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = RelatedNodeId.ToString();
                 RelatedNode = _CswNbtResources.Nodes[RelatedNodeId];
             }
 
-            bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );
-            Int32 OptionCount = 0;
-            if( AllowEdit )
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
             {
-                CswPrimaryKey pk = null;
-                if( null != RelatedNode )
+                JArray JOptions = (JArray) ( ParentObject["options"] = new JArray() );
+                bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );
+                Int32 OptionCount = 0;
+                if( AllowEdit )
                 {
-                    pk = RelatedNode.NodeId;
-                }
-                //Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
-                Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources,
-                                                                         CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Required] ),
-                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id] ),
-                                                                         pk, View );
-                if( Options.Count > _SearchThreshold )
-                {
-                    ParentObject["usesearch"] = true;
-                }
-                else
-                {
-                    ParentObject["usesearch"] = false;
-                    CswPrimaryKey FirstPk = null;
-                    foreach( CswPrimaryKey NodePk in Options.Keys )
+                    CswPrimaryKey pk = null;
+                    if( null != RelatedNode )
                     {
-                        if( CswTools.IsPrimaryKey( NodePk ) )
-                        {
-                            OptionCount += 1;
-                            JObject JOption = new JObject();
-                            FirstPk = FirstPk ?? NodePk;
-                            JOption["id"] = NodePk.ToString();
-                            JOption["value"] = Options[NodePk];
-                            JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
-                            JOptions.Add( JOption );
-                        }
+                        pk = RelatedNode.NodeId;
                     }
-
-                    //If Required, show empty when no value is selected and if there is more than one option to select from
-                    bool ShowEmptyOption = Required && false == CswTools.IsPrimaryKey( RelatedNodeId ) && 1 < OptionCount;
-                    //If not Required, always show the empty value
-                    ShowEmptyOption = ShowEmptyOption || false == Required;
-
-                    if( ShowEmptyOption )
+                    //Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
+                    Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources,
+                                                                                                 CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Required] ),
+                                                                                                 CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id] ),
+                                                                                                 pk, View );
+                    if( Options.Count > _SearchThreshold )
                     {
-                        JObject JOption = new JObject();
-                        JOption["id"] = "";
-                        JOption["value"] = "";
-                        JOptions.AddFirst( JOption );
+                        ParentObject["usesearch"] = true;
                     }
                     else
                     {
-                        //Case 30030
-                        if( null == RelatedNode &&
-                            Required &&
-                            Options.Count == 1 &&
-                            CswTools.IsPrimaryKey( FirstPk ) )
+                        ParentObject["usesearch"] = false;
+                        CswPrimaryKey FirstPk = null;
+                        foreach( CswPrimaryKey NodePk in Options.Keys )
                         {
-                            RelatedNode = _CswNbtResources.Nodes[FirstPk];
+                            if( CswTools.IsPrimaryKey( NodePk ) )
+                            {
+                                OptionCount += 1;
+                                JObject JOption = new JObject();
+                                FirstPk = FirstPk ?? NodePk;
+                                JOption["id"] = NodePk.ToString();
+                                JOption["value"] = Options[NodePk];
+                                JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
+                                JOptions.Add( JOption );
+                            }
+                        }
+
+                        //If Required, show empty when no value is selected and if there is more than one option to select from
+                        bool ShowEmptyOption = Required && false == CswTools.IsPrimaryKey( RelatedNodeId ) && 1 < OptionCount;
+                        //If not Required, always show the empty value
+                        ShowEmptyOption = ShowEmptyOption || false == Required;
+
+                        if( ShowEmptyOption )
+                        {
+                            JObject JOption = new JObject();
+                            JOption["id"] = "";
+                            JOption["value"] = "";
+                            JOptions.AddFirst( JOption );
+                        }
+                        else
+                        {
+                            //Case 30030
+                            if( null == RelatedNode &&
+                                Required &&
+                                Options.Count == 1 &&
+                                CswTools.IsPrimaryKey( FirstPk ) )
+                            {
+                                RelatedNode = _CswNbtResources.Nodes[FirstPk];
+                            }
                         }
                     }
                 }
-            }
 
-            ParentObject["nodetypeid"] = 0;
-            ParentObject["objectclassid"] = 0;
-            ParentObject["propertysetid"] = 0;
-            bool AllowAdd = false;
-            bool AllowView = true;
-            if( null != RelatedNodeId )
-            {
-                CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeTypeFromNodeId( RelatedNodeId );
-                AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, TargetNodeType ) );
-                AllowView = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, TargetNodeType ) );
-            }
-            else if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
-            {
-                ParentObject["nodetypeid"] = TargetId;
-                CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
-                AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, TargetNodeType ) );
-                AllowView = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, TargetNodeType ) );
-            }
-            else if( TargetType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-            {
-                ParentObject["objectclassid"] = TargetId;
-                CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
-                AllowAdd = ( null != TargetObjectClass &&
-                                TargetObjectClass.CanAdd &&
-                                TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
-                if( false == AllowAdd )
+                ParentObject["nodetypeid"] = 0;
+                ParentObject["objectclassid"] = 0;
+                ParentObject["propertysetid"] = 0;
+                bool AllowAdd = false;
+                bool AllowView = true;
+                if( null != RelatedNodeId )
                 {
-                    AllowView = ( null != TargetObjectClass &&
-                         TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) );
+                    CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeTypeFromNodeId( RelatedNodeId );
+                    AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, TargetNodeType ) );
+                    AllowView = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, TargetNodeType ) );
                 }
-            }
-            else if( TargetType == CswEnumNbtViewRelatedIdType.PropertySetId )
-            {
-                ParentObject["propertysetid"] = TargetId;
-                CswNbtMetaDataPropertySet TargetPropSet = _CswNbtResources.MetaData.getPropertySet( TargetId );
-                AllowAdd = TargetPropSet.getObjectClasses().Any( oc => null != oc &&
-                                                                        oc.CanAdd &&
-                                                                        oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
-                if( false == AllowAdd )
+                else if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
-                    AllowView = TargetPropSet.getObjectClasses().Any( oc => null != oc &&
-                         oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) );
+                    ParentObject["nodetypeid"] = TargetId;
+                    CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
+                    AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, TargetNodeType ) );
+                    AllowView = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, TargetNodeType ) );
                 }
-            }
-            ParentObject["allowadd"] = AllowAdd;
-            ParentObject["allowview"] = AllowView;
+                else if( TargetType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                {
+                    ParentObject["objectclassid"] = TargetId;
+                    CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
+                    AllowAdd = ( null != TargetObjectClass &&
+                                 TargetObjectClass.CanAdd &&
+                                 TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
+                    if( false == AllowAdd )
+                    {
+                        AllowView = ( null != TargetObjectClass &&
+                                      TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) );
+                    }
+                }
+                else if( TargetType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                {
+                    ParentObject["propertysetid"] = TargetId;
+                    CswNbtMetaDataPropertySet TargetPropSet = _CswNbtResources.MetaData.getPropertySet( TargetId );
+                    AllowAdd = TargetPropSet.getObjectClasses().Any( oc => null != oc &&
+                                                                           oc.CanAdd &&
+                                                                           oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
+                    if( false == AllowAdd )
+                    {
+                        AllowView = TargetPropSet.getObjectClasses().Any( oc => null != oc &&
+                                                                                oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) );
+                    }
+                }
+                ParentObject["allowadd"] = AllowAdd;
+                ParentObject["allowview"] = AllowView;
+
+                if( null != View )
+                {
+                    ParentObject["viewid"] = View.ViewId.ToString();
+                    if( AllowEdit && OptionCount == 0 )
+                    {
+                        ParentObject["doGetNodes"] = true;
+                    }
+                }
+            } // if( ForEdit )
 
             ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
@@ -494,15 +503,6 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
-            if( null != View )
-            {
-                ParentObject["viewid"] = View.ViewId.ToString();
-                if( AllowEdit && OptionCount == 0 )
-                {
-                    ParentObject["doGetNodes"] = true;
-                }
-            }
-
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

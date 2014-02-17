@@ -296,35 +296,39 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //ParentObject[_TypeSubField.ToXmlNodeName( true )] = Type.ToString();
-            //ParentObject[_IdSubField.ToXmlNodeName( true )] = Id;
             ParentObject["selectedvalue"] = SelectedValue;
-
-            JArray OptionsArr = new JArray();
-            JObject foundValue = null;
-            foreach( CswNbtNodeTypePropListOption o in Options.Options )
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
             {
-                JObject Opt = new JObject();
-                Opt["text"] = o.Text;
-                Opt["value"] = o.Value;
-                OptionsArr.Add( Opt );
-                if( o.Value == SelectedValue )
+                JArray OptionsArr = new JArray();
+                JObject foundValue = null;
+                foreach( CswNbtNodeTypePropListOption o in Options.Options )
                 {
+                    JObject Opt = new JObject();
+                    Opt["text"] = o.Text;
+                    Opt["value"] = o.Value;
+                    OptionsArr.Add( Opt );
+                    if( o.Value == SelectedValue )
+                    {
+                        foundValue = Opt;
+                    }
+                }
+                // Make sure the selected value is in the list of options (originally case 28020)
+                if( null == foundValue )
+                {
+                    JObject Opt = new JObject();
+                    Opt["text"] = Text;
+                    Opt["value"] = SelectedValue;
+                    OptionsArr.Insert( 0, Opt );
                     foundValue = Opt;
                 }
-            }
-            // Make sure the selected value is in the list of options (originally case 28020)
-            if( null == foundValue )
-            {
-                JObject Opt = new JObject();
-                Opt["text"] = Text;
-                Opt["value"] = SelectedValue;
-                OptionsArr.Insert( 0, Opt );
-                foundValue = Opt;
-            }
-            ParentObject["options"] = OptionsArr;
+                ParentObject["options"] = OptionsArr;
 
-            ParentObject[_TextSubField.ToXmlNodeName( true )] = foundValue["text"];
+                ParentObject[_TextSubField.ToXmlNodeName( true )] = foundValue["text"];
+            }
+            else
+            {
+                ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
+            }
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
