@@ -14,7 +14,7 @@
         function postToExternalLogin() {
             var form = document.createElement("form");
             form.setAttribute("method", "post");
-            form.setAttribute("action", "ExternalLogin.aspx");
+            form.setAttribute("action", "Login.aspx");
 
             var accessIdField = document.createElement("input");
             accessIdField.setAttribute("type", "text");
