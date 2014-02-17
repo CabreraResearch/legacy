@@ -280,7 +280,6 @@
                 },
                 success: function(data) {
                     cswPrivate.IdentityTabProps = data.properties;
-
                     var layoutOpts = {
                         name: cswPrivate.name + '_layout',
                         OddCellRightAlign: true,
@@ -306,8 +305,10 @@
 
                     cswPrivate.identityForm.empty();
 
-                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.View) {
-                        cswPrivate.editmodeButton = cswPrivate.identityForm.buttonExt({
+                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.View &&
+                        false === cswPrivate.forceReadOnly) {
+
+                        cswPrivate.loadEditButton = cswPrivate.identityForm.buttonExt({
                             name: 'editmodebtn',
                             enabledText: 'Edit',
                             disabledText: 'Loading...',
@@ -321,7 +322,7 @@
                                 cswPrivate.onTearDown();
                                 cswPublic.resetTabs();
                             }
-                        });
+                        }).hide();
                     }
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTabProps) &&
@@ -1084,6 +1085,7 @@
                     }
                     if (false === Csw.bool(propData.readonly)) {
                         cswPrivate.atLeastOne.Saveable = true;
+                        cswPrivate.loadEditButton.show();
                     }
 
                 }
