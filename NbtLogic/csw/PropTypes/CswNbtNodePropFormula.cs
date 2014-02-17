@@ -100,13 +100,8 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-
-        //private string _ElemName_Value = "Value";
-
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_RawFormulaTextSubfield.ToXmlNodeName( true )] = Text;
             ParentObject["formattedText"] = _parseChemicalFormula( Text );
             ParentObject["size"] = Size;
