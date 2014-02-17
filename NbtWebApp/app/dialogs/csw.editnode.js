@@ -30,7 +30,7 @@
             cswPrivate.onClose = cswPrivate.onClose || null;
             cswPrivate.onAfterButtonClick = cswPrivate.onAfterButtonClick || null;
             cswPrivate.date = cswPrivate.date || '';
-            cswPrivate.editMode = Csw.enums.editMode.EditInPopup;
+            cswPrivate.editMode = Csw.enums.editMode.Edit;
             cswPrivate.name = cswPrivate.name || 'EditNode';
             cswPrivate.title = cswPrivate.title || 'Edit';
 
@@ -64,7 +64,8 @@
                             nodekey: cswPrivate.currentNodeKey || cswPrivate.selectedNodeKeys.first(),
                             ReadOnly: cswPrivate.ReadOnly,
                             EditMode: cswPrivate.editMode,
-                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
+                            inDialog: true
                         },
                         ReloadTabOnSave: true,
                         Refresh: cswPrivate.onRefresh,

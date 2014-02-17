@@ -577,8 +577,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                false == _ConfigMode &&                                       // case 29484
                                                FieldType != CswEnumNbtFieldType.PropertyReference &&
                                                FieldType != CswEnumNbtFieldType.Static &&
-                                               ( CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode ||            // \ case 29484
-                                                 CswEnumNbtNodeEditMode.EditInPopup == _CswNbtResources.EditMode ) &&   // /
+                                               CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode &&   // case 29484
                                                _CswNbtResources.CurrentNbtUser.IsAdministrator() );
                 }
 

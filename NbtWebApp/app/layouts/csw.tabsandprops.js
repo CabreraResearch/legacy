@@ -544,7 +544,8 @@
             /// <summary>
             /// True if Multi Edit is enabled
             /// </summary>
-            return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp) && cswPrivate.Multi;
+            return cswPrivate.Multi && ( cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || 
+                                         cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp );
         };
 
         cswPrivate.setNode = function (node) {
@@ -975,7 +976,7 @@
                     nodeTypeId: cswPrivate.tabState.nodetypeid,
                     tabs: cswPrivate.tabs
                 },
-                renderInNewView: cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup
+                renderInNewView: Csw.bool(cswPrivate.tabState.inDialog)
             });
         };
 

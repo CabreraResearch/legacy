@@ -41,7 +41,6 @@ namespace ChemSW.Nbt.ObjClasses
                             Ret = true;
                         }
                         break;
-                    case CswEnumNbtNodeEditMode.EditInPopup:
                     case CswEnumNbtNodeEditMode.Edit:
                         if( TabIdInt > 0 )
                         {

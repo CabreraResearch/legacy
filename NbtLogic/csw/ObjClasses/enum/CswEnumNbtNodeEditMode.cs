@@ -18,10 +18,8 @@ namespace ChemSW.Nbt
                                                                    {
                                                                        { Edit, Edit },
                                                                        { Add, Add },
-                                                                       { EditInPopup, EditInPopup },
                                                                        { Demo, Demo },
                                                                        { PrintReport, PrintReport },
-                                                                       { DefaultValue, DefaultValue },
                                                                        { AuditHistoryInPopup, AuditHistoryInPopup },
                                                                        { Preview, Preview },
                                                                        { Table, Table },
@@ -90,11 +88,6 @@ namespace ChemSW.Nbt
         public const string Temp = "Temp";
 
         /// <summary>
-        /// Editing a node in a popup
-        /// </summary>
-        public const string EditInPopup = "EditInPopup";
-
-        /// <summary>
         /// Editing fake property values (as in Design mode)
         /// </summary>
         public const string Demo = "Demo";
@@ -103,12 +96,7 @@ namespace ChemSW.Nbt
         /// Displaying values for a print report
         /// </summary>
         public const string PrintReport = "PrintReport";
-
-        /// <summary>
-        /// Editing the default value of a property (in Design)
-        /// </summary>
-        public const string DefaultValue = "DefaultValue";
-
+        
         /// <summary>
         /// Showing node audit history in a popup
         /// </summary>

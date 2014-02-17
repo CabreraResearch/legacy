@@ -41,10 +41,8 @@
     Csw.enums.register('editMode', {
         Edit: 'Edit',
         Add: 'Add',
-        EditInPopup: 'EditInPopup',
         Demo: 'Demo',
         PrintReport: 'PrintReport',
-        DefaultValue: 'DefaultValue',
         AuditHistoryInPopup: 'AuditHistoryInPopup',
         Preview: 'Preview',
         Table: 'Table',
