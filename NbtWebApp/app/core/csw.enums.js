@@ -39,6 +39,7 @@
     });
 
     Csw.enums.register('editMode', {
+        View: 'View',
         Edit: 'Edit',
         Add: 'Add',
         Demo: 'Demo',

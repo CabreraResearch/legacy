@@ -33,7 +33,7 @@
                 viewid: '',
                 nodename: '',
                 nodetypename: '',
-                EditMode: Csw.enums.editMode.Edit,
+                EditMode: Csw.enums.editMode.View,
                 ReadOnly: false,
                 Config: false,
                 showSaveButton: true,
@@ -278,46 +278,63 @@
                     RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
                     ForceReadOnly: cswPrivate.forceReadOnly
                 },
-                success: function (data) {
-                    cswPrivate.IdentityTab = data.properties;
+                success: function(data) {
+                    cswPrivate.IdentityTabProps = data.properties;
 
-                    if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab) &&
+                    var layoutOpts = {
+                        name: cswPrivate.name + '_layout',
+                        OddCellRightAlign: true,
+                        ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
+                        cellSet: {
+                            rows: 1,
+                            columns: 2
+                        },
+                        showConfigButton: false, //o.tabState.Config,
+                        showExpandRowButton: false,
+                        showExpandColButton: false,
+                        showRemoveButton: false
+                    };
+                    cswPrivate.IdentityTabId = data.tab.tabid;
+                    cswPrivate.addTabId(data.tab.tabid);
+
+                    cswPrivate.titleDiv.empty();
+                    if (cswPrivate.showTitle) {
+                        cswPrivate.titleDiv.append(data.node.nodename);
+                        cswPrivate.titleDiv.show();
+                    }
+                    cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
+
+                    cswPrivate.identityForm.empty();
+
+                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.View) {
+                        cswPrivate.editmodeButton = cswPrivate.identityForm.buttonExt({
+                            name: 'editmodebtn',
+                            enabledText: 'Edit',
+                            disabledText: 'Loading...',
+                            width: '100px',
+                            path: 'Images/newicons/',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                            onClick: function() {
+                                cswPrivate.tabState.EditMode = Csw.enums.editMode.Edit;
+                                cswPrivate.tabState.propertyData = Csw.object();
+                                cswParent.empty();
+                                cswPrivate.onTearDown();
+                                cswPublic.resetTabs();
+                            }
+                        });
+                    }
+
+                    if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTabProps) &&
                         false === cswPrivate.tabState.Config &&
                         cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+                        
+                        var identityFormTbl = cswPrivate.identityForm.table({
+                            name: cswPrivate.name + '_formtbl_' + cswPrivate.IdentityTabId,
+                            width: '100%'
+                        }).css({ padding: '10px' });
 
-                        var layoutOpts = {
-                            name: cswPrivate.name + '_layout',
-                            OddCellRightAlign: true,
-                            ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
-                            cellSet: {
-                                rows: 1,
-                                columns: 2
-                            },
-                            showConfigButton: false, //o.tabState.Config,
-                            showExpandRowButton: false,
-                            showExpandColButton: false,
-                            showRemoveButton: false
-                        };
-                        cswPrivate.IdentityTabId = data.tab.tabid;
-                        cswPrivate.addTabId(data.tab.tabid);
-
-                        cswPrivate.titleDiv.empty();
-                        if (cswPrivate.showTitle) {
-                            cswPrivate.titleDiv.append(data.node.nodename);
-                            cswPrivate.titleDiv.show();
-                        }
-                        if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
-                            cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
-
-                            cswPrivate.identityForm.empty();
-                            var identityFormTbl = cswPrivate.identityForm.table({
-                                name: cswPrivate.name + '_formtbl_' + cswPrivate.IdentityTabId,
-                                width: '100%'
-                            }).css({ padding: '10px' });
-
-                            cswPrivate.identityLayoutTable = identityFormTbl.cell(1, 1).layoutTable(layoutOpts);
-                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
-                        }
+                        cswPrivate.identityLayoutTable = identityFormTbl.cell(1, 1).layoutTable(layoutOpts);
+                        cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTabProps);
                     }
                 }
             });
@@ -634,7 +651,7 @@
             /// </summary>
             //merge the current tab props and identity tab props into one new object
             var propJson = {};
-            propJson[cswPrivate.IdentityTabId] = cswPrivate.IdentityTab;
+            propJson[cswPrivate.IdentityTabId] = cswPrivate.IdentityTabProps;
             propJson[cswPrivate.tabState.tabid] = cswPublic.getProps();
 
             return propJson;
@@ -932,7 +949,7 @@
                         filterToPropId: Csw.string(cswPrivate.tabState.filterToPropId),
                         ConfigMode: cswPrivate.tabState.Config,
                         RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
-                        GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
+                        GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTabProps)),
                         ForceReadOnly: cswPrivate.forceReadOnly
                     },
                     success: function (data) {
@@ -1296,6 +1313,7 @@
         cswPublic.resetTabs = function (nodeid, nodekey) {
             if (false === Csw.isNullOrEmpty(nodeid)) {
                 cswPrivate.setNode({ nodeid: nodeid, nodekey: nodekey });
+                cswPrivate.tabState.EditMode = Csw.enums.editMode.View;
             }
             cswPrivate.onTearDown();
             cswPrivate.init();
@@ -1314,10 +1332,10 @@
             cswPrivate.init = function () {
                 Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                 Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+
                 //We don't have node name yet. Init the div in the right place and polyfill later.
                 cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
                 cswPrivate.identityWrapDiv = cswParent.div();
-
                 cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
 
                 cswPrivate.identityForm = cswPrivate.tabsTable.cell(1, 1).form();

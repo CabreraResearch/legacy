@@ -96,7 +96,7 @@
 
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.ready = Csw.promises.all();
-                if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
+                if (false === cswPrivate.ReadOnly && Csw.isNullOrEmpty(cswPrivate.viewid)) {
                     cswPrivate.ready.push(Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getLocationView',
                         data: {

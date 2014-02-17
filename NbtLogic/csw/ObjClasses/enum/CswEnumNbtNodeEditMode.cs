@@ -16,6 +16,7 @@ namespace ChemSW.Nbt
     {
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
                                                                    {
+                                                                       { View, View },
                                                                        { Edit, Edit },
                                                                        { Add, Add },
                                                                        { Demo, Demo },
@@ -71,6 +72,11 @@ namespace ChemSW.Nbt
         {
             return Value;
         }
+
+        /// <summary>
+        /// View only (no editing)
+        /// </summary>
+        public const string View = "View";
 
         /// <summary>
         /// Regular editing
