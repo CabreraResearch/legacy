@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 ParentObject[_ElemName_Options] = new JObject();
                 CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();

@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.PropTypes
 
             ParentObject["fractional"] = CswConvert.ToBoolean( TargetFractional );
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 ParentObject["relatednodeid"] = string.Empty;
                 ParentObject["relatednodelink"] = string.Empty;

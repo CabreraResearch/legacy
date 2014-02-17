@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 ParentObject["allowedanswers"] = "," + AllowedAnswersString;
                 ParentObject["compliantanswers"] = CompliantAnswersString;

@@ -217,7 +217,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
             ParentObject[ElemName_Options] = new JObject();
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
                 CBAOptions.Columns.Add( "Include" );

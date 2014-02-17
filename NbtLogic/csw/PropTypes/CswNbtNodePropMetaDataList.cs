@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject["selectedvalue"] = SelectedValue;
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 JArray OptionsArr = new JArray();
                 JObject foundValue = null;

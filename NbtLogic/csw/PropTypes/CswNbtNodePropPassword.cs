@@ -195,7 +195,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
 

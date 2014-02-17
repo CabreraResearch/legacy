@@ -370,7 +370,7 @@ namespace ChemSW.Nbt.PropTypes
                 RelatedNode = _CswNbtResources.Nodes[RelatedNodeId];
             }
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 JArray JOptions = (JArray) ( ParentObject["options"] = new JArray() );
                 bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );

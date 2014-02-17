@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 ParentObject[ElemName_Options] = new JObject();
 

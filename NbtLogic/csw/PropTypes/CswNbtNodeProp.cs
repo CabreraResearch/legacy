@@ -715,6 +715,15 @@ namespace ChemSW.Nbt.PropTypes
             set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
         }
 
+        protected bool IsEditModeEditable
+        {
+            get
+            {
+                return ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit ||
+                         _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add );
+            }
+        }
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

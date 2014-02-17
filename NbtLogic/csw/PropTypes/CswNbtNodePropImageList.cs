@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["allowmultiple"] = AllowMultiple;
             ParentObject["imageprefix"] = ImagePrefix;
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 JObject OptionsObj = new JObject();
                 ParentObject["options"] = OptionsObj;

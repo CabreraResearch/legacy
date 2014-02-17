@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 ParentObject["selectednodelink"] = SelectedNode.NodeLink;
             }
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 //Case 30335 - This is required for Allow Inventory to work properly
                 View.SaveToCache( false );

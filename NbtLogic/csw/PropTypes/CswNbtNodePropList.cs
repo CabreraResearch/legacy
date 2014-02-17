@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
             ParentObject["search"] = false;
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit )
+            if( IsEditModeEditable )
             {
                 if( Options.Options.Count <= _SearchThreshold )
                 {
