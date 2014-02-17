@@ -28,8 +28,7 @@
                             showSaveButton: false
                         },
                         showTitle: false,
-                        onInitFinish: function () {
-                        },
+                        onInitFinish: function () {},
                         forceReadOnly: true
                     });
                 }

@@ -1085,7 +1085,9 @@
                     }
                     if (false === Csw.bool(propData.readonly)) {
                         cswPrivate.atLeastOne.Saveable = true;
-                        cswPrivate.loadEditButton.show();
+                        if (cswPrivate.loadEditButton) {
+                            cswPrivate.loadEditButton.show();
+                        }
                     }
 
                 }

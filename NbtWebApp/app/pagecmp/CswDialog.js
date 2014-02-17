@@ -572,7 +572,8 @@
                             filterToPropId: cswDlgPrivate.PasswordId,
                             nodeid: cswDlgPrivate.UserId,
                             nodekey: cswDlgPrivate.UserKey,
-                            isChangePasswordDialog: true     // kludgetastic!  case 29841
+                            isChangePasswordDialog: true,     // kludgetastic!  case 29841
+                            EditMode: Csw.enums.editMode.Edit
                         },
                         onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
