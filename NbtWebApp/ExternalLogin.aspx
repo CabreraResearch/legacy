@@ -12,7 +12,7 @@
         <div>
             
             <div id="contentDiv"></div>
-            <script language="javascript">
+            <script>
                 //(function () {
                     
                     //drop in the values from the server for accessid, username, password, and logoutpath
