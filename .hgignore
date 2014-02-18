@@ -49,6 +49,8 @@ Nbt.sln.DotSettings.user
 NbtWebApp/mobile/*
 NbtWebApp/plato*
 Thumbs.db
+aspnet_client/system_web/4_0_30319/crystalreportviewers13/urlreporting/appletviewer.js
+aspnet_client/**/*
 syntax: regexp
 .*\.orig
 .*\.vsp

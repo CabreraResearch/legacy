@@ -1,6 +1,6 @@
-using ChemSW.Core;
 using System;
 using System.Collections.Generic;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -11,7 +11,12 @@ namespace ChemSW.Nbt.MetaData
                                                                 {
                                                                     { Single, Single },
                                                                     { Multiple, Multiple },
-                                                                    { Blank, Blank }
+                                                                    { Blank, Blank },
+                                                                    //case 31684: these values are actually returned as "0"/"1"/"" from the DB, 
+                                                                    //and we need to be able to implicitly convert from the numeric representation
+                                                                    { "0", Single },
+                                                                    { "1", Multiple },
+                                                                    { "", Blank }
                                                                 };
         /// <summary>
         /// The string value of the current instance

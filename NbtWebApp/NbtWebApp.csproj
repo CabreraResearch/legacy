@@ -1299,13 +1299,6 @@
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ExternalLogin.aspx.cs">
-      <DependentUpon>ExternalLogin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ExternalLogin.aspx.designer.cs">
-      <DependentUpon>ExternalLogin.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Main.aspx.designer.cs">
       <DependentUpon>Main.aspx</DependentUpon>
     </Compile>

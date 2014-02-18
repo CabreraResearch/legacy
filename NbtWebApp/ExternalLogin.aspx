@@ -1,7 +1,7 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="ChemSW.Nbt.WebPages.Login" %>
 
-<!doctype html xmlns="http://www.w3.org/1999/xhtml">
- <html>
+<!DOCTYPE html>
+ <html runat="server" id="html">
     <head runat="server">
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
         <title>Login</title>
@@ -10,10 +10,25 @@
     <body>
         <form id="form1" runat="server">
         <div>
-            Please Wait...
+            
+            <div id="contentDiv"></div>
+            <script>
+                //(function () {
+                    
+                    //drop in the values from the server for accessid, username, password, and logoutpath
+                    <asp:PlaceHolder ID="JSPlaceHolder" runat="server"></asp:PlaceHolder>
 
-            <script language="javascript">
-                <asp:PlaceHolder ID="JSPlaceHolder" runat="server"></asp:PlaceHolder>
+                    var contentDiv = $('#contentDiv');
+                    Csw.layouts.login(Csw.dom(null, contentDiv),
+                        {
+                            accessid: accessid,
+                            username: username,
+                            password: password,
+                            logoutpath: logoutpath,
+                        });
+                    
+
+                //})();//
             </script>
              
         </div>
