@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterPromoteNode()
 
-        protected override void beforeWriteNodeLogic( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             // If display condition is set, required must be false
             if( false == DisplayConditionProperty.Empty )

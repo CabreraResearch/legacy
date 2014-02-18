@@ -424,7 +424,7 @@ namespace ChemSW.Nbt.ObjClasses
             _updateCartCounts();
         }
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             if( Creating )
             {

@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.ObjClasses
             Size.setReadOnly( value: true, SaveToDb: true );
         }
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";

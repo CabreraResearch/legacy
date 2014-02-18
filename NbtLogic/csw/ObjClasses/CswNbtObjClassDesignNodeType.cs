@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        protected override void beforeWriteNodeLogic( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             if( null != RelationalNodeType )
             {

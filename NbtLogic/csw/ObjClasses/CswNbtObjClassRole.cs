@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             // The user cannot change his or her own Administrator privileges.
             if( Administrator.wasAnySubFieldModified() &&
