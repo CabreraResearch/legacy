@@ -62,7 +62,7 @@ NETWORK:
 *
 
 ../_Assembly.txt
-../ExternalLogin.aspx
+../Login.aspx
 
 #css
 <%
