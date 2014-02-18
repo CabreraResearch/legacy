@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// ObjectClass-specific logic to execute before updating a new or existing node
         /// </summary>
-        protected virtual void beforeWriteNodeLogic( bool Creating ) { }
+        protected virtual void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation ) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after updating a new or existing node
         /// </summary>
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            beforeWriteNodeLogic( Creating );
+            beforeWriteNodeLogic( Creating, OverrideUniqueValidation );
             if( false == Creating )
             {
                 foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )

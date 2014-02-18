@@ -384,7 +384,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtSdNode NodeAction = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
                 NodeAction.addSingleNodeProp( Node, PropJson, null );
                 // Some property values are reset by business logic, which needs to be emulated here
-                Node.ObjClass.beforeWriteNode( IsCopy: false, OverrideUniqueValidation: false, Creating: false );
+                Node.ObjClass.beforeWriteNode( IsCopy: false, OverrideUniqueValidation: true, Creating: false );
 
                 // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
                 // We need to do this prop as well as all conditional props
