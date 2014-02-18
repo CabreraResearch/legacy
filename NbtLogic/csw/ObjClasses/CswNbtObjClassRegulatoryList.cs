@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     string CurrentRegListRegions = "";
                                     if( string.IsNullOrEmpty( CswConvert.ToString( CurrentRegListNode.Regions.Value ) ) )
                                     {
-                                        if( SyncModule.Equals( CswEnumNbtModuleName.ArielSync ) )
+                                        if( SyncModule.Equals( CswEnumRegulatoryListListModes.ArielManaged ) )
                                         {
                                             CurrentRegListRegions = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConvert.ToString( CswEnumNbtConfigurationVariables.arielmodules ) );
                                         }
