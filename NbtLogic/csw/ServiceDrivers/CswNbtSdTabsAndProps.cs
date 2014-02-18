@@ -234,6 +234,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     _getAuditHistoryGridProp( Ret, Node );
                 }
+                // Case 31931 -- We should be returning information about the node!
+                Ret["node"] = _getNodeProps( Node );
             }
             else
             {
@@ -291,18 +293,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Prop.TriggerOnBeforeRender();
                 }
 
-                if( CswTools.IsPrimaryKey( Node.NodeId ) )
-                {
-                    Ret["node"]["nodeid"] = Node.NodeId.ToString();
-                    Ret["node"]["nodelink"] = Node.NodeLink;
-                    Ret["node"]["nodename"] = Node.NodeName;
-                    Ret["node"]["nodetypeid"] = Node.NodeTypeId;
-                    Ret["node"]["isFavorite"] = Node.isFavorite();
-                    if( null != Node.RelationalId && CswTools.IsPrimaryKey( Node.RelationalId ) )
-                    {
-                        Ret["node"]["relationalid"] = Node.RelationalId.PrimaryKey.ToString();
-                    }
-                }
+                Ret["node"] = _getNodeProps( Node );
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
                 if( TabId.StartsWith( HistoryTabPrefix ) )
@@ -596,6 +587,30 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // makePropJson()
 
+        /// <summary>
+        /// Create a JObject with information about the provided Node.
+        /// </summary>
+        /// <param name="Node"></param>
+        /// <returns></returns>
+        private JObject _getNodeProps( CswNbtNode Node )
+        {
+            JObject Ret = new JObject();
+
+            if( CswTools.IsPrimaryKey( Node.NodeId ) )
+            {
+                Ret["nodeid"] = Node.NodeId.ToString();
+                Ret["nodelink"] = Node.NodeLink;
+                Ret["nodename"] = Node.NodeName;
+                Ret["nodetypeid"] = Node.NodeTypeId;
+                Ret["isFavorite"] = Node.isFavorite();
+                if( null != Node.RelationalId && CswTools.IsPrimaryKey( Node.RelationalId ) )
+                {
+                    Ret["relationalid"] = Node.RelationalId.PrimaryKey.ToString();
+                }
+            }
+
+            return Ret;
+        }//_getNodeProps()
 
         public void _getAuditHistoryGridProp( JObject ParentObj, CswNbtNode Node )
         {
