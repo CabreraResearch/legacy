@@ -82,6 +82,7 @@
                         Csw.dialogs.editnode({
                             currentNodeId: nodeid,
                             nodenames: [nodeSelect.selectedName()],
+                            editMode: Csw.enums.editMode.Edit,
                             onEditNode: function () {
                                 // refresh
                                 cswPrivate.loadNode(nodeid);
