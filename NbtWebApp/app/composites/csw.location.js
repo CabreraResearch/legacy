@@ -162,7 +162,7 @@
                     onClick: (function () {
                         var first = true;
                         return function () {
-                            if (first) {      // only do this once
+                            if (first && cswPublic.locationTree.nodeTree) {// only do this once && wait for the tree to be loaded
                                 cswPublic.locationTree.nodeTree.expandAll();
                                 first = false;
                             }
@@ -170,7 +170,7 @@
                                 cswPrivate.locationValidator.input.$.valid();
                             }
                             cswPublic.comboBox.open(); // ensure we're open on click
-                            return false;    // but only close when onTreeSelect fires, below
+                            return false; // but only close when onTreeSelect fires, below
                         };
                     })()
                 });
