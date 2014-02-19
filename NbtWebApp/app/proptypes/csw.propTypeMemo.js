@@ -18,8 +18,8 @@
                     name: nodeProperty.name,
                     height: (nodeProperty.propData.values.rows * 24) + 'px',
                     width: (nodeProperty.propData.values.columns * 9) + 'px',
-                    text: text
-                }).css({ overflow: 'scroll' });
+                    text: text.replace(/\n/g,'<br>')
+                }).css({ overflow: 'auto' });
             } else {
                 nodeProperty.onPropChangeBroadcast(function(val) {
                     if (text !== val) {
