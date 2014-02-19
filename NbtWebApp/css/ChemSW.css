@@ -1516,3 +1516,8 @@ ul li div {
 .MergeTable_RightCell_Odd {
     background-color: #99ffcc;
 }
+
+.CswHighlightedButton {
+    background-image: none !Important;
+    background-color: #FFFF00 !Important;
+}

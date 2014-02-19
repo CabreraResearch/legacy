@@ -315,6 +315,7 @@
                             width: '100px',
                             path: 'Images/newicons/',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                            cssclass: 'CswHighlightedButton',
                             onClick: function() {
                                 cswPrivate.tabState.EditMode = Csw.enums.editMode.Edit;
                                 cswPrivate.tabState.propertyData = Csw.object();
