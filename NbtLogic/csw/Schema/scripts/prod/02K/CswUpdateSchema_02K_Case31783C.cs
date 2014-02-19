@@ -73,7 +73,6 @@ select
   n2.nodeid design_nodetypeprop_nodeid,
   lt.layout_tab_id,
   lc.layout_column_id,
-  ntp.filter,
   ntp.filterpropid,
   ntp.filtersubfield,
   ntp.filtermode,
@@ -93,7 +92,7 @@ left join layout_property lp2 on lp2.metadata_nodetypepropid = ntp.filterpropid 
 left join layout_column lc2 on lc2.layout_column_id = lp2.column_id
 left join layout_tab lt2 on lt2.layout_tab_id = lc2.parent_id
 where lt.uniquename = l.tabtype
-and ntp.filter is not null
+and ntp.filtersubfield is not null
 and lt2.layout_type = lower(decode(l.layouttype, 'Table', 'search', l.layouttype))
 order by l.nodetypeid, l.layouttype, l.taborder, ntp.filtervalue, l.display_column, l.display_row";
             CswTableUpdate LayoutColumnUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "layout_column_update", "layout_column" );
@@ -116,7 +115,10 @@ order by l.nodetypeid, l.layouttype, l.taborder, ntp.filtervalue, l.display_colu
                     }
                     DataRow LayoutColumnRow = LayoutColumnTable.NewRow();
                     LayoutColumnRow["column_order"] = colorder;
-                    LayoutColumnRow["column_name"] = ConditionalPropRow["filter"].ToString().Replace( '|',' ' );
+                    LayoutColumnRow["column_name"] = 
+                        ConditionalPropRow["filtersubfield"] + " " +
+                        ( String.IsNullOrEmpty( ConditionalPropRow["filtermode"].ToString() ) ? "Null" : ConditionalPropRow["filtermode"] ) + " " + 
+                        ConditionalPropRow["filtervalue"];
                     LayoutColumnRow["parent_id"] = ConditionalPropRow["parent_property"];
                     LayoutColumnRow["parent_type"] = "property";
                     LayoutColumnTable.Rows.Add( LayoutColumnRow );
