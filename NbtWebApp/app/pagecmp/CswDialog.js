@@ -753,7 +753,7 @@
                 size: 16,
                 isButton: true,
                 onClick: function () {
-                    $.CswDialog('FileUploadDialog', {
+                    Csw.dialogs.fileUpload({
                         url: 'Services/BlobData/getText',
                         forceIFrameTransport: true,
                         dataType: 'iframe',
@@ -767,7 +767,7 @@
                             Csw.getMolImgFromText('', molText.val(), displayMolThumbnail);
 
                         }
-                    });
+                    }).open();
                 }
             });
 
@@ -832,7 +832,7 @@
                 size: 16,
                 isButton: true,
                 onClick: function () {
-                    $.CswDialog('FileUploadDialog', {
+                    Csw.dialogs.fileUpload({
                         url: 'Services/BlobData/getText',
                         forceIframeTransport: true, //because IE9 doesn't work
                         dataType: 'iframe', //response will be in an iframe obj
@@ -843,7 +843,7 @@
                             molTxtArea.val(fileText);
                             cswPrivate.cell12.text(fileName);
                         }
-                    });
+                    }).open();
                 }
             });
 
