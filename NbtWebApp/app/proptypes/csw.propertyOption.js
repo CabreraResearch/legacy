@@ -86,10 +86,11 @@
             };
 
             cswPublic.isReadOnly = function () {
-                return Csw.bool(cswPublic.tabState.ReadOnly) ||
+                return (Csw.bool(cswPublic.tabState.ReadOnly) ||
                     Csw.bool(cswPublic.tabState.Config) ||
                     cswPublic.isDisabled() ||
-                    Csw.bool(cswPublic.propData.readonly);
+                    Csw.bool(cswPublic.propData.readonly) ||
+                    Csw.enums.editMode.View === cswPublic.tabState.EditMode);
             };
 
             cswPublic.canOverride = function () {

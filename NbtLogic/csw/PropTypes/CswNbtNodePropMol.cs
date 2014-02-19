@@ -70,8 +70,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
             ParentObject["href"] = getLink( JctNodePropId, NodeId );
