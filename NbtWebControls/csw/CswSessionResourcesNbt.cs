@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -39,30 +38,27 @@ namespace ChemSW.Nbt
 
             CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, SetupMode, true, CswSuperCycleCache, RscAdo.CswEnumPooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
             
-            bool RecordStatistics = false;
-            if ( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswEnumSetupVariableNames.RecordUserStatistics] ) )
-            {
-                RecordStatistics = true;
-            }
+            bool RecordStatistics = CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswEnumSetupVariableNames.RecordUserStatistics] );
 
-            Dictionary<string, string> Cookies = new Dictionary<string, string>();
-            foreach( string CookieName in Context.Request.Cookies )
-            {
-                Cookies[CookieName] = Context.Request.Cookies[CookieName].Value;
-            }
+            //Dictionary<string, string> Cookies = new Dictionary<string, string>();
+            //foreach( string CookieName in Context.Request.Cookies )
+            //{
+            //    Cookies[CookieName] = Context.Request.Cookies[CookieName].Value;
+            //}
 
             CswNbtSchemaAuthenticatorFactory AuthenticatorFactory = new CswNbtSchemaAuthenticatorFactory( CswNbtResources );
             ICswSchemaAuthenticater Authenticator = AuthenticatorFactory.Make( CswNbtResources.SetupVbls );
 
             CswSessionManager = new CswSessionManager( CswEnumAppType.Nbt,
-                                                       new CswWebClientStorageCookies( HttpRequest, HttpResponse ),
+                new CswWebClientStorageHttpHeader( HttpRequest, HttpResponse ),
+                //new CswWebClientStorageCookies( HttpRequest, HttpResponse ),
                                                        LoginAccessId,
                                                        CswNbtResources.SetupVbls,
                                                        CswNbtResources.CswDbCfgInfo,
                                                        CswNbtResources,
                                                        CswResourcesMaster,
                                                        Authenticator,
-                                                       Cookies,
+                //Cookies,
                                                        _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
                                                                                                   new CswNbtStatisticsStorageStateServer(),
                                                                                                   RecordStatistics ) );

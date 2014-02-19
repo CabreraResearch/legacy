@@ -40,6 +40,9 @@ namespace NbtWebApp
                 );
 
             InitDriverType.run();
+
+            //HttpResponse.AppendHeader("CisProSessionId", "test");
+
             return ( Ret );
 
         }

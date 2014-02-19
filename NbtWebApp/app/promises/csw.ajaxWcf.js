@@ -162,9 +162,14 @@
                 contentType: 'application/json; charset=utf-8',
                 //processdata: false,
                 data: cswInternal.data,
-                watchGlobal: false !== watchGlobal
+                watchGlobal: false !== watchGlobal,
+                headers: {
+                    SessionId: Csw.cookie.get(Csw.cookie.cookieNames.SessionId)
+                }
             });
-            ret.done(function (data) {
+            ret.done(function (data, textStatus, jqXHR) {
+                debugger;
+                Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('SessionId'));
                 return cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.urlMethod);
             }); /* success{} */
             ret.fail(function (jqXHR, textStatus, errorText) {

@@ -123,9 +123,14 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(cswInternal.data),
-                watchGlobal: false !== watchGlobal
+                watchGlobal: false !== watchGlobal,
+                headers: {
+                    SessionId: Csw.cookie.get(Csw.cookie.cookieNames.SessionId)
+                }
             });
             ret.done(function (data, textStatus, jqXHR) {
+                debugger;
+                Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('SessionId'));
                 cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }); /* success{} */
             ret.fail(function (jqXHR, textStatus, errorThrown) {
