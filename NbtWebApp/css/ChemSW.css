@@ -1517,7 +1517,9 @@ ul li div {
     background-color: #99ffcc;
 }
 
-.CswHighlightedButton {
-    background-image: none !Important;
-    background-color: #FFFF00 !Important;
+.CswHighlightedButton 
+{
+/*    background-image: none !Important;
+    background-color: #6699cc !Important;*/
+    border: 4px solid #ffff00 !Important;
 }
