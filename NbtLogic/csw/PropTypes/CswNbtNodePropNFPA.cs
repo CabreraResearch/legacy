@@ -138,8 +138,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_RedSubField.ToXmlNodeName( true )] = Red;
             ParentObject[_YellowSubField.ToXmlNodeName( true )] = Yellow;
             ParentObject[_BlueSubField.ToXmlNodeName( true )] = Blue;

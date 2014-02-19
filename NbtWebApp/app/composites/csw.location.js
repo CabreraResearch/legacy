@@ -96,7 +96,7 @@
 
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.ready = Csw.promises.all();
-                if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
+                if (false === cswPrivate.ReadOnly && Csw.isNullOrEmpty(cswPrivate.viewid)) {
                     cswPrivate.ready.push(Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getLocationView',
                         data: {
@@ -214,18 +214,18 @@
             (function _post() {
                 cswPrivate.ready.then(function () {
                     if (false === cswPrivate.ReadOnly) {
-                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
+//                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
                             cswPrivate.makeLocationCombo();
-                        } else {
-                            cswPrivate.editCell.icon({
-                                name: cswPrivate.name + '_toggle',
-                                iconType: Csw.enums.iconType.pencil,
-                                hovertext: 'Edit',
-                                size: 16,
-                                isButton: true,
-                                onClick: cswPrivate.makeLocationCombo
-                            }); // imageButton
-                        }
+//                        } else {
+//                            cswPrivate.editCell.icon({
+//                                name: cswPrivate.name + '_toggle',
+//                                iconType: Csw.enums.iconType.pencil,
+//                                hovertext: 'Edit',
+//                                size: 16,
+//                                isButton: true,
+//                                onClick: cswPrivate.makeLocationCombo
+//                            }); // imageButton
+//                        }
 
                         cswPrivate.previewCell.css({ width: '24px' });
                         cswParent.$.hover(function (event) {

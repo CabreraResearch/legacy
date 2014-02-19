@@ -272,11 +272,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         /// <param name="JObject">JToken class JObject</param>
         /// <param name="Tab"></param>
-        public void ToJSON( JObject JObject )
+        public void ToJSON( JObject ParentObject )
         {
             JObject Values = new JObject();
-            //            _Tab = Tab;
-            JObject["values"] = Values;
+            ParentObject["values"] = Values;
             _CswNbtNodeProp.ToJSON( Values );
         }
 

@@ -68,11 +68,11 @@
 
             optsNodeSelect.doGetNodes = nodeProperty.propData.values.doGetNodes;
 
-            optsNodeSelect.showSelectOnLoad = (function () {
+            optsNodeSelect.showSelectOnLoad = true; /*(function () {
                 return nodeProperty.tabState.EditMode === Csw.enums.editMode.Add ||
                     nodeProperty.isMulti() ||
                     (nodeProperty.isRequired() && Csw.isNullOrEmpty(optsNodeSelect.selectedNodeId));
-            }());
+            }());*/
 
             var nodeSelect = nodeProperty.propDiv.nodeSelect(optsNodeSelect);
 

@@ -13,29 +13,36 @@
 
             var text = nodeProperty.propData.values.text;
 
-            nodeProperty.onPropChangeBroadcast(function (val) {
-                if (text !== val) {
-                    text = val;
-                    textArea.val(val);
-                }
-            });
+            if (nodeProperty.isReadOnly()) {
+                nodeProperty.propDiv.div({
+                    name: nodeProperty.name,
+                    height: (nodeProperty.propData.values.rows * 24) + 'px',
+                    width: (nodeProperty.propData.values.columns * 9) + 'px',
+                    text: text.replace(/\n/g,'<br>')
+                }).css({ overflow: 'auto' });
+            } else {
+                nodeProperty.onPropChangeBroadcast(function(val) {
+                    if (text !== val) {
+                        text = val;
+                        textArea.val(val);
+                    }
+                });
 
-            var textArea = nodeProperty.propDiv.textArea({
-                onChange: function (val) {
-                    text = val;
-                    nodeProperty.propData.values.text = val;
-                    nodeProperty.broadcastPropChange(val);
-                },
-                name: nodeProperty.name,
-                rows: nodeProperty.propData.values.rows,
-                cols: nodeProperty.propData.values.columns,
-                value: text,
-                disabled: nodeProperty.isReadOnly(),
-                isRequired: nodeProperty.isRequired(),
-                readonly: nodeProperty.isReadOnly()
-            });
-
-        };
+                var textArea = nodeProperty.propDiv.textArea({
+                    onChange: function(val) {
+                        text = val;
+                        nodeProperty.propData.values.text = val;
+                        nodeProperty.broadcastPropChange(val);
+                    },
+                    name: nodeProperty.name,
+                    rows: nodeProperty.propData.values.rows,
+                    cols: nodeProperty.propData.values.columns,
+                    value: text,
+                    isRequired: nodeProperty.isRequired(),
+                    readonly: nodeProperty.isReadOnly()
+                });
+            } // if-else(nodeProperty.isReadOnly()) {
+        }; // render()
 
         //Bind the callback to the render event
         nodeProperty.bindRender(render);

@@ -30,16 +30,16 @@
             cswPrivate.cell12 = table.cell(1, 2);
 
             if (false === nodeProperty.isReadOnly()) {
-                cswPrivate.cell12.icon({
-                    name: nodeProperty.name,
-                    iconType: Csw.enums.iconType.pencil,
-                    hovertext: 'Edit',
-                    size: 16,
-                    isButton: true,
-                    onClick: function () {
-                        cswPrivate.editTable.show();
-                    }
-                });
+//                cswPrivate.cell12.icon({
+//                    name: nodeProperty.name,
+//                    iconType: Csw.enums.iconType.pencil,
+//                    hovertext: 'Edit',
+//                    size: 16,
+//                    isButton: true,
+//                    onClick: function () {
+//                        cswPrivate.editTable.show();
+//                    }
+//                });
 
                 cswPrivate.editTable = table.cell(2, 2).table({ name: 'edittbl' });
                 cswPrivate.editTable.cell(1, 1).text('Start Date');
@@ -71,7 +71,7 @@
                     selected: cswPrivate.units
                 });
 
-                cswPrivate.editTable.hide();
+//                cswPrivate.editTable.hide();
             }
         };
 
