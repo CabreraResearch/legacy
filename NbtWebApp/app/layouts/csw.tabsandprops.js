@@ -305,27 +305,9 @@
 
                     cswPrivate.identityForm.empty();
 
-                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.View &&
-                        false === cswPrivate.forceReadOnly) {
-
-                        cswPrivate.loadEditButton = cswPrivate.identityForm.buttonExt({
-                            name: 'editmodebtn',
-                            enabledText: 'Edit',
-                            disabledText: 'Loading...',
-                            width: '100px',
-                            path: 'Images/newicons/',
-                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                            cssclass: 'CswHighlightedButton',
-                            onClick: function() {
-                                cswPrivate.tabState.EditMode = Csw.enums.editMode.Edit;
-                                cswPrivate.tabState.propertyData = Csw.object();
-                                cswParent.empty();
-                                cswPrivate.onTearDown();
-                                cswPublic.resetTabs();
-                            }
-                        }).hide();
-                    }
-
+                    cswPrivate.identityButtonDiv = cswPrivate.identityForm.div();
+                    cswPrivate.makeIdentityTabButtons(cswPrivate.identityButtonDiv);
+                    
                     if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTabProps) &&
                         false === cswPrivate.tabState.Config &&
                         cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
@@ -341,6 +323,29 @@
                 }
             });
         };
+
+        cswPrivate.makeIdentityTabButtons = function(div) {
+            if (cswPrivate.tabState.EditMode === Csw.enums.editMode.View &&
+                false === cswPrivate.forceReadOnly) {
+                // case 28234
+                cswPrivate.loadEditModeButton = div.buttonExt({
+                    name: 'loadEditModeButton',
+                    enabledText: 'Edit',
+                    disabledText: 'Loading...',
+                    width: '100px',
+                    path: 'Images/newicons/',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                    cssclass: 'CswHighlightedButton',
+                    onClick: function() {
+                        cswPrivate.tabState.EditMode = Csw.enums.editMode.Edit;
+                        cswPrivate.tabState.propertyData = Csw.object();
+                        cswParent.empty();
+                        cswPrivate.onTearDown();
+                        cswPublic.resetTabs();
+                    }
+                }).hide();
+            }
+        }; // makeIdentityTabButtons
 
         cswPublic.getEditMode = function () {
             return Csw.string(cswPrivate.tabState.EditMode, 'Edit');
@@ -1086,8 +1091,8 @@
                     }
                     if (false === Csw.bool(propData.readonly)) {
                         cswPrivate.atLeastOne.Saveable = true;
-                        if (cswPrivate.loadEditButton) {
-                            cswPrivate.loadEditButton.show();
+                        if (cswPrivate.loadEditModeButton) {
+                            cswPrivate.loadEditModeButton.show();
                         }
                     }
 
@@ -1155,6 +1160,9 @@
 
         cswPrivate.makeProp = function (propCell, propData, tabid, configMode, layoutTable) {
             'use strict';
+            if (propData.issaveprop) { // case 28234
+                propCell = cswPrivate.identityButtonDiv;
+            }
             propCell.empty();
             if (cswPrivate.canDisplayProp(propData, configMode)) {
 

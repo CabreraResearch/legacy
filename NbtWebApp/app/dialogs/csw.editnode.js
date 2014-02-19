@@ -30,7 +30,7 @@
             cswPrivate.onClose = cswPrivate.onClose || null;
             cswPrivate.onAfterButtonClick = cswPrivate.onAfterButtonClick || null;
             cswPrivate.date = cswPrivate.date || '';
-            cswPrivate.editMode = Csw.enums.editMode.View;
+            cswPrivate.editMode = cswPrivate.editMode || Csw.enums.editMode.View;
             cswPrivate.name = cswPrivate.name || 'EditNode';
             cswPrivate.title = cswPrivate.title || 'Edit';
 
