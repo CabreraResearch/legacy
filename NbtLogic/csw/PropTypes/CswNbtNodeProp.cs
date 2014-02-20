@@ -539,10 +539,10 @@ namespace ChemSW.Nbt.PropTypes
                     if( FieldType == CswEnumNbtFieldType.ViewReference )
                     {
                         //we want to copy views to the new node by value, so changes to the view on either node don't affect the other
-                            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId(Source.Field1_Fk) );
-                            CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
-                            ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                            SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );
+                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( Source.Field1_Fk ) );
+                        CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
+                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                        SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );
                     }
                     else
                     {
@@ -700,11 +700,8 @@ namespace ChemSW.Nbt.PropTypes
 
         #region Xml Operations
 
-        abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
-        public virtual void ToJSON( JObject ParentObject )
-        {
-            //TriggerOnBeforeRender();  this is now done in CswNbtSdTabsAndProps
-        }
+        public abstract void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
+        public abstract void ToJSON( JObject ParentObject );
         public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
 
         #endregion Xml Operations
@@ -716,6 +713,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
             set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
+        }
+
+        protected bool IsEditModeEditable
+        {
+            get
+            {
+                return ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit ||
+                         _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add );
+            }
         }
 
     }//CswNbtNodeProp

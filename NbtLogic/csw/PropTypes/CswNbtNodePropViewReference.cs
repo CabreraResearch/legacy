@@ -137,8 +137,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
             if( null != View )
             {

@@ -563,9 +563,12 @@ namespace ChemSW.Nbt.MetaData
         {
             return IsSaveProp &&
                    false == IsConfigMode &&
-                   ( ( Layout == CswEnumNbtLayoutType.Edit && HasEditableProps ) ||
-                    Layout == CswEnumNbtLayoutType.Add );
-        }
+                   ( _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add ||
+                     _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit ) &&
+                   ( Layout == CswEnumNbtLayoutType.Add ||
+                     ( Layout == CswEnumNbtLayoutType.Edit && HasEditableProps ) );
+        
+        } // ShowSaveProp()
 
 
         /// <summary>
