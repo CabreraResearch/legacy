@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>()
                 {
-                    // new CswUpdateMetaData_02L_CaseXXXXX()
+                    new CswUpdateMetaData_02L_Case29446A()
                 };
         } // _MetaDataScripts()
 
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>()
                 {
-                    // new CswUpdateSchema_02L_CaseXXXXX()
+                    new CswUpdateSchema_02L_Case29446B()
                 };
         } // _SchemaScripts()
 

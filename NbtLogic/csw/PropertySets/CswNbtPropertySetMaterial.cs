@@ -466,7 +466,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid Synonyms { get { return ( _CswNbtNode.Properties[PropertyName.Synonyms] ); } }
-
+        
         #endregion
 
     }//CswNbtPropertySetMaterial
