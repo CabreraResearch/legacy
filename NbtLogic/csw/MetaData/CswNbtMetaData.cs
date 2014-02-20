@@ -648,7 +648,7 @@ namespace ChemSW.Nbt.MetaData
         /// ***                  If you're the first one to use this, good luck!               ***
         /// **************************************************************************************
         /// </summary>
-        public void makeNewFieldTypeNew( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType )
+        public void makeNewFieldType( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType )
         {
             if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
             {
@@ -668,7 +668,7 @@ namespace ChemSW.Nbt.MetaData
 
                 // Create a new "Design NodeTypeProp" nodetype node
                 CswNbtMetaDataObjectClass NodeTypePropOC = this.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-                CswNbtMetaDataNodeType NodeTypePropNT = this.makeNewNodeTypeNew( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
+                CswNbtMetaDataNodeType NodeTypePropNT = this.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
                     {
                         NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FieldType ),
                         Category = "Design"
@@ -790,7 +790,7 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp thisNTP = NodeTypePropNT.getNodeTypeProp( Attr.Name );
                     if( null == thisNTP )
                     {
-                        thisNTP = makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypePropNT, _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( Attr.AttributeFieldType ), Attr.Name )
+                        thisNTP = makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypePropNT, _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( Attr.AttributeFieldType ), Attr.Name )
                             {
                                 TabId = TabId
                             } );
@@ -814,7 +814,7 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
 
             } // if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
-        }//makeNewFieldTypeNew()
+        }//makeNewFieldType()
 
 
         private void _addJctDdNtpRow( DataTable JctTable, CswNbtMetaDataNodeTypeProp Prop, string TableName, string ColumnName, CswEnumNbtSubFieldName SubFieldName = null )
@@ -910,7 +910,7 @@ namespace ChemSW.Nbt.MetaData
 
         //} // makeNewNodeType()
 
-        public CswNbtMetaDataNodeType makeNewNodeTypeNew( CswNbtWcfMetaDataModel.NodeType NtModel )
+        public CswNbtMetaDataNodeType makeNewNodeType( CswNbtWcfMetaDataModel.NodeType NtModel )
         {
             CswNbtMetaDataObjectClass DesignNodeTypeOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
             CswNbtObjClassDesignNodeType NewNodeTypeNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
@@ -1129,7 +1129,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeType">Node Type for new tab</param>
         /// <param name="TabName">Name of new tab</param>
         /// <param name="TabOrder">(Optional) Order value for new tab. If omitted, tab order will use getNextTabOrder().</param>
-        public CswNbtMetaDataNodeTypeTab makeNewTabNew( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder = Int32.MinValue )
+        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder = Int32.MinValue )
         {
             CswNbtMetaDataObjectClass DesignNodeTypeTabOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
             CswNbtObjClassDesignNodeTypeTab NewTabNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeTabOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
@@ -1293,7 +1293,7 @@ namespace ChemSW.Nbt.MetaData
 
         //} //makeNewProp
 
-        public CswNbtMetaDataNodeTypeProp makeNewPropNew( CswNbtWcfMetaDataModel.NodeTypeProp NtpModel )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtWcfMetaDataModel.NodeTypeProp NtpModel )
         {
             //CswNbtMetaDataObjectClass DesignNodeTypePropOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
             CswNbtMetaDataNodeType DesignNodeTypePropNT = getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( NtpModel.FieldType.FieldType ) );

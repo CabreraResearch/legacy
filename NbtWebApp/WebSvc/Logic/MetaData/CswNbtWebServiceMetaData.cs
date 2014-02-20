@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.WebServices
             if( Int32.MinValue != RelationshipNodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipNodeTypePropId );
-                NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatchesNew( nt ) );
+                NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatches( nt ) );
             }
             else if( null != PropertySet )
             {
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
                             if( null == RelatedNodeType ||
-                                false == RelationshipNtp.FkMatchesNew( RelatedNodeType, true ) )
+                                false == RelationshipNtp.FkMatches( RelatedNodeType, true ) )
                             {
                                 AddThisNodeType = false;
                             }

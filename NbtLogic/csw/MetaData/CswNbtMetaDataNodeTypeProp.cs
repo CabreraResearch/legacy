@@ -756,17 +756,17 @@ namespace ChemSW.Nbt.MetaData
 
         #region FK Matching
 
-        public bool FkMatchesNew( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
+        public bool FkMatches( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
         {
             return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareNT, IgnoreVersions );
         }
 
-        public bool FkMatchesNew( CswNbtMetaDataObjectClass CompareOC )
+        public bool FkMatches( CswNbtMetaDataObjectClass CompareOC )
         {
             return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareOC );
         }
 
-        public bool FkMatchesNew( CswNbtMetaDataPropertySet ComparePS )
+        public bool FkMatches( CswNbtMetaDataPropertySet ComparePS )
         {
             return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, ComparePS );
         }
@@ -1796,7 +1796,7 @@ namespace ChemSW.Nbt.MetaData
             if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
                 CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
-                ret = FkMatchesNew( UserOC );
+                ret = FkMatches( UserOC );
             }
             return ret;
         }

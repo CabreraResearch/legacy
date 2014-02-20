@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeTypeTab ActionTab = NewNodeType.getNodeTypeTab( "Action" );
                 if( ActionTab == null )
                 {
-                    ActionTab = _CswNbtResources.MetaData.makeNewTabNew( NewNodeType, "Action", 9 );
+                    ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
                 }
 
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredProp, true, ActionTab.TabId, 1, 1 );
