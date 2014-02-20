@@ -240,17 +240,17 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// The default value of the property
         /// </summary>
-        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing, bool AllowDeprecated )
+        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing )
         {
-            return _CswNbtMetaDataNodeTypeProp.getDefaultValue( CreateIfMissing, AllowDeprecated );
+            return _CswNbtMetaDataNodeTypeProp.getDefaultValue( CreateIfMissing );
         }
 
         /// <summary>
         /// Whether a default value of the property is defined
         /// </summary>
-        public bool HasDefaultValue( bool AllowDeprecated )
+        public bool HasDefaultValue()
         {
-            return ( _CswNbtMetaDataNodeTypeProp.HasDefaultValue( AllowDeprecated ) );
+            return ( _CswNbtMetaDataNodeTypeProp.HasDefaultValue() );
         }
 
         /// <summary>

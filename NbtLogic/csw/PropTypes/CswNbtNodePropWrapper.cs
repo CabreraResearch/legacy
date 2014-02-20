@@ -142,11 +142,11 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// The default value of the property
         /// </summary>
-        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing, bool AllowDeprecated )
+        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing )
         {
-            return _CswNbtNodeProp.getDefaultValue( CreateIfMissing, AllowDeprecated );
+            return _CswNbtNodeProp.getDefaultValue( CreateIfMissing );
         }
-        public bool HasDefaultValue( bool AllowDeprecated ) { return ( _CswNbtNodeProp.HasDefaultValue( AllowDeprecated ) ); }
+        public bool HasDefaultValue() { return ( _CswNbtNodeProp.HasDefaultValue() ); }
 
         public void setPendingUpdate( bool value ) { _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.PendingUpdate, CswEnumNbtPropColumn.PendingUpdate, value ); }
         public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } } // set { _CswNbtNodePropData.PendingUpdate = value; } }
@@ -351,9 +351,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             bool DoCopy = _CswNbtNodeProp.onBeforeSetDefault();
 
-            if( DoCopy && this.HasDefaultValue( true ) )
+            if( DoCopy && this.HasDefaultValue() )
             {
-                this.copy( this.getDefaultValue( false, true ) );
+                this.copy( this.getDefaultValue( false ) );
                 _CswNbtNodeProp.onAfterSetDefault();
             }
 

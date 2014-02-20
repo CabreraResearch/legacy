@@ -126,7 +126,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType CustomerNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev Customers" );
             if( null == CustomerNt )
             {
-                CustomerNt = _CswNbtResources.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ) )
+                CustomerNt = _CswNbtResources.MetaData.makeNewNodeTypeNew( new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ) )
                 {
                     NodeTypeName = "Csw Dev Customers"
                 } );
