@@ -6,9 +6,9 @@ using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassSize: CswNbtObjClass
+    public class CswNbtObjClassSize : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Material = "Material";
             public const string InitialQuantity = "Initial Quantity";
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UPC = "UPC";
         }
 
-        public CswNbtObjClassSize( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassSize( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -46,14 +46,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
-            if( null != _CswNbtResources.CurrentNbtUser.Cookies && null == Material.RelatedNodeId && _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
-            {
-                CswPrimaryKey pk = CswConvert.ToPrimaryKey( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
-                if( null != pk && _isMaterialID( pk ) ) //only assign the id if we got a real nodeid from cookies and it's indeed a material id
-                {
-                    Material.RelatedNodeId = pk;
-                }
-            }
             _setUnits();//Case 30571 - set available quantity units on the add layout
             if( CswEnumTristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
             {
@@ -107,7 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( MaterialNode != null )
             {
-                Material.setReadOnly( value : true, SaveToDb : true );
+                Material.setReadOnly( value: true, SaveToDb: true );
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                 Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
             }

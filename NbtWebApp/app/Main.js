@@ -55,11 +55,6 @@ window.initMain = window.initMain || function (undefined) {
     Csw.main.mainviewselect = null;
     Csw.main.universalsearch = null;
 
-    //todo: DO WE STILL NEED THIS?
-    Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
-        Csw.main.setUsername();
-    });
-
     Csw.main.register('refreshHeaderUsername', function () {
         Csw.ajaxWcf.post({
             urlMethod: 'Session/GetHeaderUsername',

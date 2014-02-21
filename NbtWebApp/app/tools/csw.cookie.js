@@ -7,16 +7,9 @@
 
     Csw.cookie.register('cookieNames',
         {
-            // Server set
             SessionId: 'CswSessionId', //not server set anymore
-            CustomerId: 'CswAccessId',
-            Username: 'CswUsername',
-            OriginalUsername: 'CswOriginalUsername',
-
             LogoutPath: 'csw_logoutpath',
-
             UserDefaults: 'csw_userdefaults',
-
             CurrentNodeId: 'csw_currentnodeid',
             CurrentNodeKey: 'csw_currentnodekey',
             CurrentTabId: 'csw_currenttabid',
@@ -25,7 +18,6 @@
             CurrentViewId: 'csw_currentviewid',
             CurrentViewMode: 'csw_currentviewmode',
             CurrentSearchId: 'csw_currentsearchid',
-
             LastActionName: 'csw_lastactionname',
             LastActionUrl: 'csw_lastactionurl',
             LastViewId: 'csw_lastviewid',
