@@ -40,11 +40,7 @@ namespace NbtWebApp
                 );
 
             InitDriverType.run();
-
-            //HttpResponse.AppendHeader("CisProSessionId", "test");
-
             return ( Ret );
-
         }
 
         /// <summary>
@@ -130,14 +126,32 @@ namespace NbtWebApp
             CswWebSvcReturn Ret = new CswWebSvcReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, object>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceSession.endCurrentUserSessions,
-                ParamObj : null
-        );
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceSession.endCurrentUserSessions,
+                ParamObj: null
+            );
             SvcDriver.run();
             return Ret;
 
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceHeader.HeaderUsername getHeaderUsername()
+        {
+            CswNbtWebServiceHeader.HeaderUsername Ret = new CswNbtWebServiceHeader.HeaderUsername();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceHeader.HeaderUsername, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceHeader.getHeaderUsername,
+                ParamObj: null
+            );
+            SvcDriver.run();
+            return Ret;
         }
     }
 }

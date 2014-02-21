@@ -168,7 +168,6 @@
                 }
             });
             ret.done(function (data, textStatus, jqXHR) {
-                debugger;
                 Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('SessionId'));
                 return cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.urlMethod);
             }); /* success{} */
@@ -199,7 +198,6 @@
 
         return promise;
     }); /* cswPrivate.jsonPost */
-
 
     Csw.ajaxWcf.register('post', function (options, type) {
         /// <summary> Executes Async webservice request using HTTP verb 'POST'. </summary>
@@ -256,7 +254,5 @@
         /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
         return cswPrivate.execRequest('PUT', options);
     });
-
-
 
 }());

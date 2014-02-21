@@ -129,7 +129,6 @@
                 }
             });
             ret.done(function (data, textStatus, jqXHR) {
-                debugger;
                 Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('SessionId'));
                 cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }); /* success{} */
@@ -159,11 +158,7 @@
 
         return promise;
     }); /* cswPrivate.jsonPost */
-
-
-
-
-
+    
     Csw.ajax.register('deprecatedWsNbt', function (options) {
         /// <summary> Executes Async webservice request. </summary>
         /// <param name="options" type="Object">

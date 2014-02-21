@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -14,6 +15,7 @@ using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -40,6 +42,13 @@ namespace ChemSW.Nbt.WebServices
                 Href = inHref;
                 Module = inModule;
             }
+        }
+
+        [DataContract]
+        public class HeaderUsername : CswWebSvcReturn
+        {
+            [DataMember]
+            public string Data = string.Empty;
         }
 
         public JObject getDashboard()
@@ -381,7 +390,17 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // makeVersionJson()
 
-
+        public static void getHeaderUsername( ICswResources CswResources, HeaderUsername Return, object Request )
+        {
+            if( string.IsNullOrEmpty( CswResources.CswSessionManager.OriginalUserName ) )
+            {
+                Return.Data += CswResources.CurrentUser.Username + "@" + CswResources.AccessId;
+            }
+            else
+            {
+                Return.Data = CswResources.CswSessionManager.OriginalUserName + " as " + CswResources.CurrentUser.Username + "@" + CswResources.AccessId;
+            }
+        }
 
     } // class CswNbtWebServiceHeader
 

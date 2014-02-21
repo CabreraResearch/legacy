@@ -9,14 +9,17 @@
         });
 
         Csw.main.register('refreshHeaderMenu', function (onSuccess) {
-            var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
+            //var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
             Csw.main.headerMenu.empty();
 
             return Csw.main.headerMenu.menu({
                 width: '100%',
                 ajax: {
                     urlMethod: 'getHeaderMenu',
-                    data: {}
+                    data: {},
+                    success: function(data) {
+                        console.log(data);
+                    }
                 },
                 
                 useCache: true,
