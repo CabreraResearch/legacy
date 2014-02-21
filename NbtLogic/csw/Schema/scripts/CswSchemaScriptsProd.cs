@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     new CswSchemaScriptsJuniper(),
                     new CswSchemaScriptsKatsura(),
+                    new CswSchemaScriptsLarch(),
                     //new CswSchemaScriptsCAF()
                 };
 

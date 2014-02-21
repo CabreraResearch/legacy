@@ -751,6 +751,8 @@
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31076.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case27149.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswSchemaScriptsLarch.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case31750.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31353_CofA_Fix.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31101.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31264.cs" />

@@ -180,7 +180,10 @@ namespace ChemSW.Nbt.MetaData
             return ( CswConvert.ToBoolean( _ObjectClassPropRow["iscompoundunique"] ) );
         }
 
-
+        /// <summary>
+        /// Specifies whether all values of the property must be unique for all nodetypes.
+        /// </summary>
+        /// <returns></returns>
         public bool IsGlobalUnique() // BZ 9754
         {
             return CswConvert.ToBoolean( _ObjectClassPropRow["isglobalunique"] );
