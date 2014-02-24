@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Provides an interface into the StructureSearch classes
         /// </summary>
-        public CswStructureSearchManager StructureSearchManager;
+        public CswMoleculeManager MoleculeManager;
 
         private Collection<CswWebSvcReturnBase.ErrorMessage> _Messages = new Collection<CswWebSvcReturnBase.ErrorMessage>();
         public Collection<CswWebSvcReturnBase.ErrorMessage> Messages
@@ -126,8 +126,8 @@ namespace ChemSW.Nbt
             Permit = new CswNbtPermit( this );
             SearchManager = new CswNbtSearchManager( this );
 
-            StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
-            StructureSearchManager.AddAdditionalWhere = delegate()
+            MoleculeManager = new CswMoleculeManager( this, "jct_nodes_props", "nodeid", "clobdata" );
+            MoleculeManager.AddAdditionalWhere = delegate()
                 {
                     CswNbtMetaDataObjectClass ChemicalOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                     CswNbtMetaDataObjectClassProp StructureOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Structure );
