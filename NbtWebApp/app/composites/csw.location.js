@@ -96,7 +96,7 @@
 
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.ready = Csw.promises.all();
-                if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
+                if (false === cswPrivate.ReadOnly && Csw.isNullOrEmpty(cswPrivate.viewid)) {
                     cswPrivate.ready.push(Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getLocationView',
                         data: {
@@ -162,7 +162,7 @@
                     onClick: (function () {
                         var first = true;
                         return function () {
-                            if (first) {      // only do this once
+                            if (first && cswPublic.locationTree.nodeTree) {// only do this once && wait for the tree to be loaded
                                 cswPublic.locationTree.nodeTree.expandAll();
                                 first = false;
                             }
@@ -170,7 +170,7 @@
                                 cswPrivate.locationValidator.input.$.valid();
                             }
                             cswPublic.comboBox.open(); // ensure we're open on click
-                            return false;    // but only close when onTreeSelect fires, below
+                            return false; // but only close when onTreeSelect fires, below
                         };
                     })()
                 });
@@ -214,18 +214,18 @@
             (function _post() {
                 cswPrivate.ready.then(function () {
                     if (false === cswPrivate.ReadOnly) {
-                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
+//                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
                             cswPrivate.makeLocationCombo();
-                        } else {
-                            cswPrivate.editCell.icon({
-                                name: cswPrivate.name + '_toggle',
-                                iconType: Csw.enums.iconType.pencil,
-                                hovertext: 'Edit',
-                                size: 16,
-                                isButton: true,
-                                onClick: cswPrivate.makeLocationCombo
-                            }); // imageButton
-                        }
+//                        } else {
+//                            cswPrivate.editCell.icon({
+//                                name: cswPrivate.name + '_toggle',
+//                                iconType: Csw.enums.iconType.pencil,
+//                                hovertext: 'Edit',
+//                                size: 16,
+//                                isButton: true,
+//                                onClick: cswPrivate.makeLocationCombo
+//                            }); // imageButton
+//                        }
 
                         cswPrivate.previewCell.css({ width: '24px' });
                         cswParent.$.hover(function (event) {

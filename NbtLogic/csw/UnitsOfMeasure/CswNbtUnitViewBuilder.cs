@@ -137,9 +137,9 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.UnitType );
-                if( UnitTypeProp.HasDefaultValue( false ) )
+                if( UnitTypeProp.HasDefaultValue() )
                 {
-                    CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.getDefaultValue( false, false ).AsList.Value;
+                    CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.getDefaultValue( false ).AsList.Value;
                     if( _physicalStateMatchesUnitType( PhysicalState, UnitType, ExcludeEach ) )
                     {
                         if( UnitType == CswEnumNbtUnitTypes.Each )

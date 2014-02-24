@@ -41,14 +41,13 @@ namespace ChemSW.Nbt.ObjClasses
                             Ret = true;
                         }
                         break;
-                    case CswEnumNbtNodeEditMode.EditInPopup:
                     case CswEnumNbtNodeEditMode.Edit:
                         if( TabIdInt > 0 )
                         {
                             CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabIdInt );
                             if( null != Tab )
                             {
-                                Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab, NodeId : NodeId );
+                                Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab, NodeId: NodeId );
                             }
                         }
                         else
@@ -86,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// TODO - Case 31708: fix performance issues on writeNode event logic and remove this function
         /// </summary>
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postOnlyChanges( bool ForceUpdate )
+        public void postOnlyChanges( bool ForceUpdate, bool SkipEvents = false )
         {
-            _CswNbtNode.postOnlyChanges( ForceUpdate );
+            _CswNbtNode.postOnlyChanges( ForceUpdate, SkipEvents );
         }//postChanges()
 
         /// <summary>
@@ -258,7 +257,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CompoundUniqueProps.Add( CurrentProp );
                     }
                 }
-                if( CompoundUniqueProps.Count > 0 &&  NodeId != null )
+                if( CompoundUniqueProps.Count > 0 && NodeId != null )
                 {
                     CswNbtView CswNbtView = this.NodeType.CreateDefaultView();
                     CswNbtView.ViewName = "For compound unique";
@@ -302,7 +301,7 @@ namespace ChemSW.Nbt.ObjClasses
                             throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
                         }
                     }//we have a duplicate value situation
-                } 
+                }
             }
             else//[9:55:20 AM 11/21/2013] Steven Salter: I can't think of any other situation [that unique props should be blanked]
             {
@@ -409,9 +408,9 @@ namespace ChemSW.Nbt.ObjClasses
             afterPopulateProps();
         }
 
-        protected virtual void afterPopulateProps() {}
+        protected virtual void afterPopulateProps() { }
 
-        
+
 
         /// <summary>
         /// Save any properties before the Object Class Button Click Event is triggered
@@ -449,7 +448,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
             {
                 CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, ForceReadOnly : false );
+                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, ForceReadOnly: false );
             }
         }
 
@@ -463,7 +462,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Collection<Int32> TabIds = new Collection<int>();
                 if( null != ButtonData.TabIds )
                 {
-                    TabIds = ButtonData.TabIds.ToIntCollection( ExcludeMinVal : true, ExcludeDuplicates : true );
+                    TabIds = ButtonData.TabIds.ToIntCollection( ExcludeMinVal: true, ExcludeDuplicates: true );
                 }
 
                 if( TabIds.Count > 0 )
@@ -577,7 +576,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         protected CswNbtNode CopyNodeImpl( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : IsNodeTemp, OnAfterMakeNode : delegate( CswNbtNode NewNode )
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: IsNodeTemp, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                 {
                     NewNode.copyPropertyValues( Node );
                     if( null != OnCopy )

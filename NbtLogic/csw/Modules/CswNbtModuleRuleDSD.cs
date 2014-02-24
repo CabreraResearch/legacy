@@ -44,7 +44,7 @@ namespace ChemSW.Nbt
                     }
 
                     //Create the DSD tab and put it next to the GHS tab
-                    DSDTab = _CswNbtResources.MetaData.makeNewTabNew( ChemicalNT, "DSD", GHSTab.TabOrder + 1 );
+                    DSDTab = _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "DSD", GHSTab.TabOrder + 1 );
                 }
 
                 if( false == DSDTab.HasProps )

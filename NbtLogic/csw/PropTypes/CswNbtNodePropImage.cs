@@ -128,11 +128,8 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject["width"] = ( Width > 0 ) ? Width : 0;
             ParentObject["height"] = ( Height > 0 ) ? Height : 0;
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";

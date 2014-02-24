@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
-using ChemSW.StructureSearch;
 using NbtWebApp.WebSvc.Logic.CISPro;
 using NbtWebApp.WebSvc.Returns;
 
@@ -73,7 +72,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( false == String.IsNullOrEmpty( molData ) )
             {
-                byte[] bytes = CswStructureSearch.GetImage( molData );
+                byte[] bytes = NbtResources.MoleculeManager.GenerateImage( molData );
                 base64String = Convert.ToBase64String( bytes );
             }
 
@@ -88,7 +87,7 @@ namespace ChemSW.Nbt.WebServices
             string molData = StructureSearchData.molString;
             bool exact = StructureSearchData.exact;
 
-            Dictionary<int, string> results = NbtResources.StructureSearchManager.RunSearch( molData, exact );
+            Dictionary<int, string> results = NbtResources.MoleculeManager.RunSearch( molData, exact );
             CswNbtView searchView = new CswNbtView( NbtResources );
             searchView.SetViewMode( CswEnumNbtViewRenderingMode.Table );
             searchView.Category = "Recent";
@@ -129,14 +128,6 @@ namespace ChemSW.Nbt.WebServices
             ImgData.errorMsg = errorMsg;
 
             Return.Data = ImgData;
-        }
-
-        public static void ClearMolFingerprint( ICswResources CswResources, MolDataReturn Return, MolData Request )
-        {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            CswPrimaryKey pk = new CswPrimaryKey();
-            pk.FromString( Request.nodeId );
-            NbtResources.StructureSearchManager.DeleteFingerprintRecord( pk.PrimaryKey );
         }
 
         #endregion

@@ -656,22 +656,22 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         } // getFieldTypeValue()
 
-        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing, bool AllowDeprecated )
+        public CswNbtNodePropWrapper getDefaultValue( bool CreateIfMissing )
         {
             CswNbtNodePropWrapper ret = null;
             if( null != _NodeTypeProp )
             {
-                ret = _NodeTypeProp.getDefaultValue( CreateIfMissing, AllowDeprecated );
+                ret = _NodeTypeProp.getDefaultValue( CreateIfMissing );
             }
             return ret;
         } // getDefaultValue()
 
-        public bool HasDefaultValue( bool AllowDeprecated )
+        public bool HasDefaultValue()
         {
             bool ret = false;
             if( null != _NodeTypeProp )
             {
-                ret = _NodeTypeProp.HasDefaultValue( AllowDeprecated );
+                ret = _NodeTypeProp.HasDefaultValue();
             }
             return ret;
         } // HasDefaultValue()

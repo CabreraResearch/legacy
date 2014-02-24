@@ -130,11 +130,6 @@ namespace ChemSW.Nbt.ObjClasses
             //}
         }
 
-        public override void beforePropertySetDeleteNode()
-        {
-            _CswNbtResources.StructureSearchManager.DeleteFingerprintRecord( this.NodeId.PrimaryKey );
-        }
-
         public override void afterPropertySetPopulateProps()
         {
             LabelCodes.InitOptions = _initDsdPhraseOptions;
