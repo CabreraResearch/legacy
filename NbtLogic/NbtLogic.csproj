@@ -897,7 +897,9 @@
     <None Include="csw\Schema\scripts\past\02G\CswUpdateSchema_02G_Case30610.cs" />
     <None Include="csw\Schema\scripts\past\02G\CswUpdateSchema_02G_Case30679.cs" />
     <None Include="csw\Schema\scripts\past\02G\CswUpdateSchema_02G_Case30383.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02Larch\CswUpdateSchema_02L_Case31883.cs" />
     <Compile Include="csw\Schema\scripts\prod\02Larch\CswSchemaScriptsLarch.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02Larch\CswUpdateSchema_02L_CaseXXXXX.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticationLogic.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticatorFactory.cs" />
@@ -1035,7 +1037,6 @@
     <Compile Include="csw\Sched\helpers\CafTranslator.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtCAFImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtTierII.cs" />
-    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerLocation.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerReconciliationActions.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetGeneratorTarget.cs" />
