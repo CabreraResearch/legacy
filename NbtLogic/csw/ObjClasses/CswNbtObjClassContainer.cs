@@ -296,6 +296,14 @@ namespace ChemSW.Nbt.ObjClasses
                             ReceiptLotNode.getCofA( ButtonData );
                         }
                         break;
+                    case PropertyName.Open:
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                        HasPermission = true;
+                        CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                        OpenedDate.DateTimeValue = DateTime.Now;
+                        ExpirationDate.DateTimeValue = Chemical.getDefaultExpirationDate( ( DateTime.Now > ExpirationDate.DateTimeValue ? DateTime.Now : ExpirationDate.DateTimeValue ) );
+                        Open.setHidden( true, true );
+                        break;
                     case CswNbtObjClass.PropertyName.Save:
                         HasPermission = true;
                         break;

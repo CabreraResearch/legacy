@@ -32,8 +32,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-            CswNbtMetaDataObjectClassProp OpenedDateOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.OpenedDate );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp OpenedDateOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.OpenedDate );
             foreach( CswNbtMetaDataNodeTypeProp OpenedDateNTP in OpenedDateOCP.getNodeTypeProps() )
             {
                 OpenedDateNTP.DesignNode.ReadOnly.Checked = CswEnumTristate.True;

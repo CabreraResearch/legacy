@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Add new props to Chemicals and Containers"; }
+            get { return "Add Open button to Containers"; }
         }
 
         public override string AppendToScriptName()
@@ -31,13 +31,6 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( ChemicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
-            {
-                FieldType = CswEnumNbtFieldType.TimeInterval,
-                PropName = CswNbtObjClassChemical.PropertyName.OpenExpirationInterval
-            } );
-
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerOC )
             {

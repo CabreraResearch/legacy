@@ -102,7 +102,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LinkChemWatch = "Link ChemWatch";
             public const string ProductDescription = "Product Description";
             public const string LegacyMaterialId = "Legacy Material Id";
-            public const string OpenExpirationInterval = "Open Expiration Interval";
         }
 
         #endregion Enums
@@ -1622,7 +1621,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid LinkChemWatch { get { return _CswNbtNode.Properties[PropertyName.LinkChemWatch]; } }
         public CswNbtNodePropMemo ProductDescription { get { return _CswNbtNode.Properties[PropertyName.ProductDescription]; } }
         public CswNbtNodePropText LegacyMaterialId { get { return _CswNbtNode.Properties[PropertyName.LegacyMaterialId]; } }
-        public CswNbtNodePropTimeInterval OpenExpirationInterval { get { return _CswNbtNode.Properties[PropertyName.OpenExpirationInterval]; } }
 
         #endregion Object class specific properties
 
