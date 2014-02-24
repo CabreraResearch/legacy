@@ -6,9 +6,7 @@ using System.Net;
 using ChemSW;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
@@ -48,16 +46,16 @@ namespace NbtWebApp.WebSvc.Logic.API
             {
                 try
                 {
-                    CswNbtNode Node = NbtResources.Nodes.GetNode( Request.NodeId );
-                    if( null != Node )
-                    {
-                        CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( NbtResources );
-                        SdTabsAndProps.saveNodeProps( Node, Request.PropData );
-                    }
-                    else
-                    {
-                        Return.Status = HttpStatusCode.NotFound;
-                    }
+                    //CswNbtNode Node = NbtResources.Nodes.GetNode( Request.NodeId );
+                    //if( null != Node )
+                    //{
+                    //    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( NbtResources );
+                    //    //SdTabsAndProps.saveNodeProps( Node, Request.PropData );
+                    //}
+                    //else
+                    //{
+                    //    Return.Status = HttpStatusCode.NotFound;
+                    //}
                 }
                 catch( Exception ex )
                 {
