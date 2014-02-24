@@ -131,12 +131,8 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        // ReadXml()
-
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = Barcode;
         }

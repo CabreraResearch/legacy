@@ -568,8 +568,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                false == _ConfigMode &&                                       // case 29484
                                                FieldType != CswEnumNbtFieldType.PropertyReference &&
                                                FieldType != CswEnumNbtFieldType.Static &&
-                                               ( CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode ||            // \ case 29484
-                                                 CswEnumNbtNodeEditMode.EditInPopup == _CswNbtResources.EditMode ) &&   // /
+                                               CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode &&   // case 29484
                                                _CswNbtResources.CurrentNbtUser.IsAdministrator() );
                 }
 
@@ -664,7 +663,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue( false ) )
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue() )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, Prop.PropName + " may not be removed", Prop.PropName + " is required and has no unique value, and therefore cannot be removed from 'Add' layouts" );
                     }

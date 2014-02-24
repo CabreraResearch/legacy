@@ -127,8 +127,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject["size"] = Size.ToString();
         }

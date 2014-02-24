@@ -195,27 +195,27 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
             ParentObject["width"] = Width;
             ParentObject["height"] = Height;
             ParentObject["allowmultiple"] = AllowMultiple;
             ParentObject["imageprefix"] = ImagePrefix;
 
-            JObject OptionsObj = new JObject();
-            ParentObject["options"] = OptionsObj;
-            foreach( string Key in Options.Keys )
+            if( IsEditModeEditable )
             {
-                OptionsObj[Key] = new JObject();
-                OptionsObj[Key]["text"] = Options[Key];
-                OptionsObj[Key]["value"] = Key;
-                if( Value.Contains( Key ) )
+                JObject OptionsObj = new JObject();
+                ParentObject["options"] = OptionsObj;
+                foreach( string Key in Options.Keys )
                 {
-                    OptionsObj[Key]["selected"] = true;
+                    OptionsObj[Key] = new JObject();
+                    OptionsObj[Key]["text"] = Options[Key];
+                    OptionsObj[Key]["value"] = Key;
+                    if( Value.Contains( Key ) )
+                    {
+                        OptionsObj[Key]["selected"] = true;
+                    }
                 }
             }
-
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

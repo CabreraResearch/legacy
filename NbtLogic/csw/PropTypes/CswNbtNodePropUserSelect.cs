@@ -214,25 +214,26 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
             ParentObject[ElemName_Options] = new JObject();
 
-            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
-            CBAOptions.Columns.Add( "Include" );
-
-            DataTable Data = getUserOptions();
-            foreach( DataRow Row in Data.Rows )
+            if( IsEditModeEditable )
             {
-                CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
-                Option.Key = Row[KeyColumn].ToString();
-                Option.Label = Row[NameColumn].ToString();
-                Option.Values.Add( CswConvert.ToBoolean( Row[ValueColumn] ) );
-                CBAOptions.Options.Add( Option );
-            }
+                CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+                CBAOptions.Columns.Add( "Include" );
 
-            CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
+                DataTable Data = getUserOptions();
+                foreach( DataRow Row in Data.Rows )
+                {
+                    CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
+                    Option.Key = Row[KeyColumn].ToString();
+                    Option.Label = Row[NameColumn].ToString();
+                    Option.Values.Add( CswConvert.ToBoolean( Row[ValueColumn] ) );
+                    CBAOptions.Options.Add( Option );
+                }
+
+                CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
+            }
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

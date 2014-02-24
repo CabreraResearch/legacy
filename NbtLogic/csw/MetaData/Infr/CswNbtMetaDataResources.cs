@@ -90,55 +90,55 @@ namespace ChemSW.Nbt.MetaData
             PropertySetsCollection.clearCache();
         }//refreshAll()
 
-        /// <summary>
-        /// Regenerate QuestionNo values for all properties
-        /// </summary>
-        public void RecalculateQuestionNumbersDeprecated( CswNbtMetaDataNodeType NodeType )
-        {
-            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
-            {
-                Int32 CurrentQuestionNo = 1;
-                // Do non-conditional ones first
-                Dictionary<Int32, CswNbtMetaDataNodeTypeProp> PropsToDo = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>();
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.getNodeTypePropsByDisplayOrder() )
-                {
-                    if( Prop.UseNumbering )
-                        PropsToDo.Add( Prop.FirstPropVersionId, Prop );
-                }
+        ///// <summary>
+        ///// Regenerate QuestionNo values for all properties
+        ///// </summary>
+        //public void RecalculateQuestionNumbersDeprecated( CswNbtMetaDataNodeType NodeType )
+        //{
+        //    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
+        //    {
+        //        Int32 CurrentQuestionNo = 1;
+        //        // Do non-conditional ones first
+        //        Dictionary<Int32, CswNbtMetaDataNodeTypeProp> PropsToDo = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>();
+        //        foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.getNodeTypePropsByDisplayOrder() )
+        //        {
+        //            if( Prop.UseNumbering )
+        //                PropsToDo.Add( Prop.FirstPropVersionId, Prop );
+        //        }
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
-                {
-                    if( !Prop.hasFilter() )
-                    {
-                        Prop._DataRow["questionno"] = CswConvert.ToDbVal( CurrentQuestionNo );
-                        Prop._DataRow["subquestionno"] = CswConvert.ToDbVal( Int32.MinValue );
-                        CurrentQuestionNo++;
-                    }
-                }
+        //        foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
+        //        {
+        //            if( !Prop.hasFilter() )
+        //            {
+        //                Prop._DataRow["questionno"] = CswConvert.ToDbVal( CurrentQuestionNo );
+        //                Prop._DataRow["subquestionno"] = CswConvert.ToDbVal( Int32.MinValue );
+        //                CurrentQuestionNo++;
+        //            }
+        //        }
 
-                // Now do the conditional ones (with numbered parents)
-                Int32[] SubQuestionNos = new Int32[CurrentQuestionNo + 1];
-                for( Int32 i = 1; i <= CurrentQuestionNo; i++ )
-                    SubQuestionNos[i] = 1;
+        //        // Now do the conditional ones (with numbered parents)
+        //        Int32[] SubQuestionNos = new Int32[CurrentQuestionNo + 1];
+        //        for( Int32 i = 1; i <= CurrentQuestionNo; i++ )
+        //            SubQuestionNos[i] = 1;
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
-                {
-                    if( Prop.hasFilter() )
-                    {
-                        //CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
-                        CswNbtMetaDataNodeTypeProp ParentProp = PropsToDo[Prop.FilterNodeTypePropId];
-                        if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
-                        {
-                            Prop._DataRow["questionno"] = CswConvert.ToDbVal( ParentProp.QuestionNo );
-                            Prop._DataRow["subquestionno"] = CswConvert.ToDbVal( SubQuestionNos[ParentProp.QuestionNo] );
-                            //Prop.QuestionNo = ParentProp.QuestionNo;
-                            //Prop.SubQuestionNo = SubQuestionNos[ParentProp.QuestionNo];
-                            SubQuestionNos[ParentProp.QuestionNo] += 1;
-                        }
-                    }
-                }
-            }
-        }
+        //        foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
+        //        {
+        //            if( Prop.hasFilter() )
+        //            {
+        //                //CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
+        //                CswNbtMetaDataNodeTypeProp ParentProp = PropsToDo[Prop.FilterNodeTypePropId];
+        //                if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
+        //                {
+        //                    Prop._DataRow["questionno"] = CswConvert.ToDbVal( ParentProp.QuestionNo );
+        //                    Prop._DataRow["subquestionno"] = CswConvert.ToDbVal( SubQuestionNos[ParentProp.QuestionNo] );
+        //                    //Prop.QuestionNo = ParentProp.QuestionNo;
+        //                    //Prop.SubQuestionNo = SubQuestionNos[ParentProp.QuestionNo];
+        //                    SubQuestionNos[ParentProp.QuestionNo] += 1;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         private Collection<CswNbtNode> _DesignNodesToFinalize = new Collection<CswNbtNode>();
         public void addDesignNodeForFinalization( CswNbtNode designNode )

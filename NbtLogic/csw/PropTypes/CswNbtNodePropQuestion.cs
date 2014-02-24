@@ -350,11 +350,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
-            ParentObject["allowedanswers"] = ","+AllowedAnswersString;
-            ParentObject["compliantanswers"] = CompliantAnswersString;
+            if( IsEditModeEditable )
+            {
+                ParentObject["allowedanswers"] = "," + AllowedAnswersString;
+                ParentObject["compliantanswers"] = CompliantAnswersString;
+            }
             ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
             ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
             ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant;

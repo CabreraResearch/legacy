@@ -195,23 +195,24 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
-            ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
-
-            ParentObject["passwordcomplexity"] = PasswordComplexity;
-            ParentObject["passwordlength"] = PasswordLength;
-            ParentObject["newpassword"] = string.Empty;
-            ParentObject["isexpired"] = IsExpired;
-            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            if( IsEditModeEditable )
             {
-                ParentObject["expire"] = IsExpired; // case 30227
-                ParentObject["isadmin"] = true;
-            }
-            else
-            {
-                ParentObject["expire"] = false;
-                ParentObject["isadmin"] = false;
+                ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
+
+                ParentObject["passwordcomplexity"] = PasswordComplexity;
+                ParentObject["passwordlength"] = PasswordLength;
+                ParentObject["newpassword"] = string.Empty;
+                ParentObject["isexpired"] = IsExpired;
+                if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                {
+                    ParentObject["expire"] = IsExpired; // case 30227
+                    ParentObject["isadmin"] = true;
+                }
+                else
+                {
+                    ParentObject["expire"] = false;
+                    ParentObject["isadmin"] = false;
+                }
             }
         }
 
