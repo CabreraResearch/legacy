@@ -201,8 +201,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != molProp )
                 {
                     molProp.Mol = FormattedMolString;
+                    Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
+                }
+
+                if( PostChanges )
+                {
+                    Node.postChanges( false );
                 }
             }
+
         }
 
         /// <summary>
