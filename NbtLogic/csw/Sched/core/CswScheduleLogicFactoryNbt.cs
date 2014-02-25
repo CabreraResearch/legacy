@@ -19,7 +19,6 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtUpdtPropVals() );
             ReturnVal.Add( new CswScheduleLogicNbtDisableCswAdmin() );
             ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
-            ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
             ReturnVal.Add( new CswScheduleLogicNbtGenRequests() );
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );

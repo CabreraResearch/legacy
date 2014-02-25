@@ -26,7 +26,7 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.ShowProp( ChemicalNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ViewSDS );
                 _CswNbtResources.Modules.ShowProp( ChemicalNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.AssignedSDS );
-                CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" ) ?? _CswNbtResources.MetaData.makeNewTabNew( ChemicalNT, "Hazards", 3 );
+                CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" ) ?? _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "Hazards", 3 );
             }
 
             //Show the following Container properties...

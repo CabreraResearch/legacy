@@ -122,8 +122,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = Href;

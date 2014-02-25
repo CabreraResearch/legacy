@@ -431,8 +431,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Quantity ) : string.Empty;
             ParentObject[_Val_kg_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_kg ) : string.Empty;
             ParentObject[_Val_Liters_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_Liters ) : string.Empty;
@@ -458,39 +456,43 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }
 
-            ParentObject["relatednodeid"] = string.Empty;
-            ParentObject["relatednodelink"] = string.Empty;
-            if( null != RelatedNode )
-            {
-                ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
-                ParentObject["relatednodelink"] = RelatedNode.NodeLink;
-            }
-
             ParentObject["fractional"] = CswConvert.ToBoolean( TargetFractional );
 
-            if( false == ReadOnly )
+            if( IsEditModeEditable )
             {
-                JArray JOptions = new JArray();
-                ParentObject["options"] = JOptions;
-
-                foreach( CswNbtNode Node in UnitNodes )
+                ParentObject["relatednodeid"] = string.Empty;
+                ParentObject["relatednodelink"] = string.Empty;
+                if( null != RelatedNode )
                 {
-                    JObject JOption = new JObject();
-                    if( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue )
-                    {
-                        JOption["id"] = Node.NodeId.ToString();
-                        JOption["value"] = Node.NodeName;
-                        JOption["fractional"] = CswConvert.ToBoolean( Node.Properties[CswNbtObjClassUnitOfMeasure.PropertyName.Fractional].AsLogical.Checked );
-                    }
-                    else if( false == Required )
-                    {
-                        JOption["id"] = "";
-                        JOption["value"] = "";
-                        JOption["fractional"] = false;
-                    }
-                    JOptions.Add( JOption );
+                    ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
+                    ParentObject["relatednodelink"] = RelatedNode.NodeLink;
                 }
-            }
+
+
+                if( false == ReadOnly )
+                {
+                    JArray JOptions = new JArray();
+                    ParentObject["options"] = JOptions;
+
+                    foreach( CswNbtNode Node in UnitNodes )
+                    {
+                        JObject JOption = new JObject();
+                        if( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue )
+                        {
+                            JOption["id"] = Node.NodeId.ToString();
+                            JOption["value"] = Node.NodeName;
+                            JOption["fractional"] = CswConvert.ToBoolean( Node.Properties[CswNbtObjClassUnitOfMeasure.PropertyName.Fractional].AsLogical.Checked );
+                        }
+                        else if( false == Required )
+                        {
+                            JOption["id"] = "";
+                            JOption["value"] = "";
+                            JOption["fractional"] = false;
+                        }
+                        JOptions.Add( JOption );
+                    }
+                }
+            } // if( ForEdit )
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

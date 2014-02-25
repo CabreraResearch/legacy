@@ -18,7 +18,6 @@ namespace ChemSW.Nbt.Sched
                                                                        { GenNode                       , GenNode                        },
                                                                        { GenRequest                    , GenRequest                     },
                                                                        { Import                        , Import                         },
-                                                                       { MolFingerprints               , MolFingerprints                },
                                                                        { NodeCounts                    , NodeCounts                     },
                                                                        { PurgeSessionData              , PurgeSessionData               },
                                                                        { Reconciliation                , Reconciliation                 },
@@ -90,7 +89,6 @@ namespace ChemSW.Nbt.Sched
         public const string GenNode = "GenNode";
         public const string GenRequest = "GenRequest";
         public const string Import = "Import";
-        public const string MolFingerprints = "MolFingerprints";
         public const string NodeCounts = "NodeCounts";
         public const string PurgeSessionData = "PurgeSessionData";
         public const string Reconciliation = "Reconciliation";

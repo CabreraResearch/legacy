@@ -297,7 +297,7 @@
                                     tabState: {
                                         nodeid: data.NodePairs[0].NodeTempId,
                                         ReadOnly: true,
-                                        EditMode: Csw.enums.editMode.Edit
+                                        EditMode: Csw.enums.editMode.View
                                     }
                                 });
                             }

@@ -116,8 +116,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_SequenceSubField.ToXmlNodeName( true )] = Sequence;
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
         }

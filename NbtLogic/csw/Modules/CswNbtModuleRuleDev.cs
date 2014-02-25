@@ -28,7 +28,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType FieldTypeNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev FieldType Test" );
             if( null == FieldTypeNt )
             {
-                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeTypeNew(
+                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeType(
                     new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass ) )
                         {
                             NodeTypeName = "Csw Dev FieldType Test",
@@ -44,10 +44,10 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    SimpleTab = _CswNbtResources.MetaData.makeNewTabNew( FieldTypeNt, "Simple", 1 );
+                    SimpleTab = _CswNbtResources.MetaData.makeNewTab( FieldTypeNt, "Simple", 1 );
                 }
-                CswNbtMetaDataNodeTypeTab LessSimpleTab = _CswNbtResources.MetaData.makeNewTabNew( FieldTypeNt, "Less Simple", 2 );
-                CswNbtMetaDataNodeTypeTab ComplexTab = _CswNbtResources.MetaData.makeNewTabNew( FieldTypeNt, "Complex", 3 );
+                CswNbtMetaDataNodeTypeTab LessSimpleTab = _CswNbtResources.MetaData.makeNewTab( FieldTypeNt, "Less Simple", 2 );
+                CswNbtMetaDataNodeTypeTab ComplexTab = _CswNbtResources.MetaData.makeNewTab( FieldTypeNt, "Complex", 3 );
 
                 foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes() )
                 {
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt
                         case CswEnumNbtFieldType.Sequence:
                         case CswEnumNbtFieldType.Static:
                         case CswEnumNbtFieldType.Text:
-                            _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
+                            _CswNbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
                                 {
                                     TabId = SimpleTab.TabId
                                 } );
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt
                         case CswEnumNbtFieldType.Quantity:
                         case CswEnumNbtFieldType.Scientific:
                         case CswEnumNbtFieldType.ViewReference:
-                            _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
+                            _CswNbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
                                 {
                                     TabId = LessSimpleTab.TabId
                                 } );
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt
                         case CswEnumNbtFieldType.TimeInterval:
                         case CswEnumNbtFieldType.ViewPickList:
                         case CswEnumNbtFieldType.UserSelect:
-                            _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
+                            _CswNbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
                                 {
                                     TabId = ComplexTab.TabId
                                 } );
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType CustomerNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev Customers" );
             if( null == CustomerNt )
             {
-                CustomerNt = _CswNbtResources.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ) )
+                CustomerNt = _CswNbtResources.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ) )
                 {
                     NodeTypeName = "Csw Dev Customers"
                 } );
