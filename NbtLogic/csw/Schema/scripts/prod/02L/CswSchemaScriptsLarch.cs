@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>()
                 {
+                    new CswUpdateSchema_02L_Case31883(),
                     new CswUpdateSchema_02L_Case29446B()
                 };
         } // _SchemaScripts()

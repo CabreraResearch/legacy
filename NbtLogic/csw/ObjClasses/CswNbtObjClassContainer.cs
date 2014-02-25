@@ -301,8 +301,9 @@ namespace ChemSW.Nbt.ObjClasses
                         HasPermission = true;
                         CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                         OpenedDate.DateTimeValue = DateTime.Now;
-                        ExpirationDate.DateTimeValue = Chemical.getDefaultExpirationDate( ( DateTime.Now > ExpirationDate.DateTimeValue ? DateTime.Now : ExpirationDate.DateTimeValue ) );
+                        ExpirationDate.DateTimeValue = Chemical.getDefaultExpirationDate( ( DateTime.Now < ExpirationDate.DateTimeValue ? DateTime.Now : ExpirationDate.DateTimeValue ) );
                         Open.setHidden( true, true );
+                        postChanges( true );
                         break;
                     case CswNbtObjClass.PropertyName.Save:
                         HasPermission = true;
