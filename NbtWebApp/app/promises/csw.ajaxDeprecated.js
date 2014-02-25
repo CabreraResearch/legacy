@@ -123,9 +123,13 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(cswInternal.data),
-                watchGlobal: false !== watchGlobal
+                watchGlobal: false !== watchGlobal,
+                headers: {
+                    'X-NBT-SessionId': Csw.cookie.get(Csw.cookie.cookieNames.SessionId)
+                }
             });
             ret.done(function (data, textStatus, jqXHR) {
+                Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('X-NBT-SessionId'));
                 cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }); /* success{} */
             ret.fail(function (jqXHR, textStatus, errorThrown) {
@@ -154,11 +158,7 @@
 
         return promise;
     }); /* cswPrivate.jsonPost */
-
-
-
-
-
+    
     Csw.ajax.register('deprecatedWsNbt', function (options) {
         /// <summary> Executes Async webservice request. </summary>
         /// <param name="options" type="Object">

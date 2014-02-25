@@ -9,7 +9,6 @@
         });
 
         Csw.main.register('refreshHeaderMenu', function (onSuccess) {
-            var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
             Csw.main.headerMenu.empty();
 
             return Csw.main.headerMenu.menu({
@@ -62,8 +61,8 @@
                 }, // onEndImpersonation
                 onReturnToNbtManager: function () {
                     Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
-                    /* case 24669 */
-                    Csw.cookie.clearAll();
+                    // Case 31888: We need the sessionid cookie to set the sessionid in the header request
+                    Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath, Csw.cookie.cookieNames.SessionId]);
                     return Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'nbtManagerReauthenticate',
                         success: function (result) {

@@ -162,9 +162,13 @@
                 contentType: 'application/json; charset=utf-8',
                 //processdata: false,
                 data: cswInternal.data,
-                watchGlobal: false !== watchGlobal
+                watchGlobal: false !== watchGlobal,
+                headers: {
+                    'X-NBT-SessionId': Csw.cookie.get(Csw.cookie.cookieNames.SessionId)
+                }
             });
-            ret.done(function (data) {
+            ret.done(function (data, textStatus, jqXHR) {
+                Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('X-NBT-SessionId'));
                 return cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.urlMethod);
             }); /* success{} */
             ret.fail(function (jqXHR, textStatus, errorText) {
@@ -194,7 +198,6 @@
 
         return promise;
     }); /* cswPrivate.jsonPost */
-
 
     Csw.ajaxWcf.register('post', function (options, type) {
         /// <summary> Executes Async webservice request using HTTP verb 'POST'. </summary>
@@ -251,7 +254,5 @@
         /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
         return cswPrivate.execRequest('PUT', options);
     });
-
-
 
 }());

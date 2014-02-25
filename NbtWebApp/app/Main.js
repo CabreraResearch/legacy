@@ -55,22 +55,18 @@ window.initMain = window.initMain || function (undefined) {
     Csw.main.mainviewselect = null;
     Csw.main.universalsearch = null;
 
-    Csw.main.register('setUsername', function () {
-        var originalU = Csw.clientSession.originalUserName();
-        var currentU = Csw.clientSession.currentUserName();
-        if (Csw.isNullOrEmpty(originalU)) {
-            Csw.main.headerUsername.text(currentU + '@' + Csw.clientSession.currentAccessId())
-                .$.hover(function () { $(this).prop('title', Csw.clientSession.getExpireTime()); });
-        } else {
-            Csw.main.headerUsername.text(originalU + ' as ' + currentU + '@' + Csw.clientSession.currentAccessId())
-                .$.hover(function () { $(this).prop('title', Csw.clientSession.getExpireTime()); });
-        }
+    Csw.main.register('refreshHeaderUsername', function () {
+        Csw.ajaxWcf.post({
+            urlMethod: 'Session/GetHeaderUsername',
+            data: {},
+            success: function (data) {
+                Csw.main.headerUsername.text(data).$.hover(function () { $(this).prop('title', Csw.clientSession.getExpireTime()); });
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
     });
-
-    Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
-        Csw.main.setUsername();
-    });
-    
 
     Csw.main.register('refreshViewSelect', function (onSuccess) {
         Csw.main.viewSelectDiv.empty();
@@ -81,10 +77,8 @@ window.initMain = window.initMain || function (undefined) {
         });
         return Csw.main.mainviewselect.promise;
     });
-    
-    Csw.main.register('initAll', function (onSuccess) {
 
-        Csw.main.setUsername();
+    Csw.main.register('initAll', function (onSuccess) {
         
         // Case 31251 -- check isDebug on refresh
         if (Csw.clientSession.isDebug(Csw.queryString())) {
@@ -117,17 +111,18 @@ window.initMain = window.initMain || function (undefined) {
         });
         var menu = Csw.main.refreshHeaderMenu();
         var ready = Q.all([
+            Csw.main.refreshHeaderUsername(),
             Csw.main.refreshDashboard(),
             menu.ajax,
             Csw.main.universalsearch.ready,
             Csw.actions.quotaImage(Csw.main.headerQuota)
         ]);
-// this prevents the page from recovering from a failed clientDb connect
-// see case 31050
-//        ready.fail(function (err) {
-//            Csw.debug.error(err);
-//        });
-        ready.fin(function() {
+        // this prevents the page from recovering from a failed clientDb connect
+        // see case 31050
+        //        ready.fail(function (err) {
+        //            Csw.debug.error(err);
+        //        });
+        ready.fin(function () {
             Csw.main.finishInitAll(onSuccess);
         });
         return ready;
@@ -138,7 +133,7 @@ window.initMain = window.initMain || function (undefined) {
         // handle querystring arguments
         var loadCurrent = Csw.main.handleQueryString();
 
-        if (false === Csw.isFunction(onSuccess)) {   
+        if (false === Csw.isFunction(onSuccess)) {
             if (loadCurrent) {
                 var finishInit = function () {
                     var current = Csw.clientState.getCurrent();
@@ -174,7 +169,7 @@ window.initMain = window.initMain || function (undefined) {
             Csw.tryExec(onSuccess);
         }
 
-                    //Csw.main.leftDiv.text('not clear!');
+        //Csw.main.leftDiv.text('not clear!');
 
     }); // _finishInitAll()
 

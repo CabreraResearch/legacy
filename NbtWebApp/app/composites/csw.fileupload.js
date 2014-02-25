@@ -21,7 +21,7 @@
             cswPrivate.forceIframeTransport = cswPrivate.forceIframeTransport || false;
             cswPrivate.url = cswPrivate.url || cswPrivate.uploadUrl + '?' + Csw.params(cswPrivate.params);
             cswPrivate.dataType = cswPrivate.dataType || 'json';
-
+            cswPrivate.paramName = cswPrivate.paramName || 'fileupload';
             cswParent.empty();
             cswPublic = cswParent.div();
 
@@ -48,7 +48,7 @@
             cswPrivate.uploadBtn = cswPrivate.uploadInp.$.fileupload({
                 dataType: cswPrivate.dataType,
                 url: cswPrivate.url,
-                paramName: 'fileupload',
+                paramName: cswPrivate.paramName,
                 forceIframeTransport: cswPrivate.forceIframeTransport,
                 send: function (e, data) {
                     cswPrivate.progressBar = cswPrivate.progressBar || window.Ext.create('Ext.ProgressBar', {
@@ -58,7 +58,13 @@
 
                     cswPrivate.progressBar.wait();
                 },
+                headers: {
+                    'X-NBT-SessionId': Csw.cookie.get(Csw.cookie.cookieNames.SessionId)
+                },
                 done: function (e, jqXHR) {
+                    // We do this for any ajax response, so we need to do set it here too (Case 31888)
+                    Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('X-NBT-SessionId'));
+
                     cswPrivate.progressBar.reset();
                     cswPrivate.progressBar.updateText('Upload Complete');
 
