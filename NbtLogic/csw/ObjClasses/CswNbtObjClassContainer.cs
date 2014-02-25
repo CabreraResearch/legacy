@@ -62,6 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string TareQuantity = "Tare Quantity";
             public const string Concentration = "Concentration";
             public const string OpenedDate = "Opened Date";
+            public const string Open = "Open";
         }
 
         #endregion Properties
@@ -294,6 +295,14 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             ReceiptLotNode.getCofA( ButtonData );
                         }
+                        break;
+                    case PropertyName.Open:
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                        HasPermission = true;
+                        CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                        OpenedDate.DateTimeValue = DateTime.Now;
+                        ExpirationDate.DateTimeValue = Chemical.getDefaultExpirationDate( ( DateTime.Now > ExpirationDate.DateTimeValue ? DateTime.Now : ExpirationDate.DateTimeValue ) );
+                        Open.setHidden( true, true );
                         break;
                     case CswNbtObjClass.PropertyName.Save:
                         HasPermission = true;
@@ -1041,6 +1050,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity TareQuantity { get { return ( _CswNbtNode.Properties[PropertyName.TareQuantity] ); } }
         public CswNbtNodePropText Concentration { get { return ( _CswNbtNode.Properties[PropertyName.Concentration] ); } }
         public CswNbtNodePropDateTime OpenedDate { get { return ( _CswNbtNode.Properties[PropertyName.OpenedDate] ); } }
+        public CswNbtNodePropButton Open { get { return _CswNbtNode.Properties[PropertyName.Open]; } }
 
         #endregion
 
