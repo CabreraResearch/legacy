@@ -45,9 +45,10 @@
                 type: Csw.enums.inputTypes.file
             });
 
+            // Note: We send the sessionid in the querystring because IE9 doesn't support XHR
             cswPrivate.uploadBtn = cswPrivate.uploadInp.$.fileupload({
                 dataType: cswPrivate.dataType,
-                url: cswPrivate.url,
+                url: cswPrivate.url + '&X-NBT-SessionId=' + Csw.cookie.get(Csw.cookie.cookieNames.SessionId),
                 paramName: cswPrivate.paramName,
                 forceIframeTransport: cswPrivate.forceIframeTransport,
                 send: function (e, data) {
@@ -63,7 +64,8 @@
                 },
                 done: function (e, jqXHR) {
                     // We do this for any ajax response, so we need to do set it here too (Case 31888)
-                    Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.getResponseHeader('X-NBT-SessionId'));
+                    // Note: jqXHR has a 'headers' property
+                    Csw.cookie.set(Csw.cookie.cookieNames.SessionId, jqXHR.headers['X-NBT-SessionId']);
 
                     cswPrivate.progressBar.reset();
                     cswPrivate.progressBar.updateText('Upload Complete');
