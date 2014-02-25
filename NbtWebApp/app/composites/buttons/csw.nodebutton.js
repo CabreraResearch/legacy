@@ -130,8 +130,8 @@
 
             case Csw.enums.nbtButtonAction.reauthenticate:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
-                /* case 24669 */
-                Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath]);
+                // Case 31888: We need the sessionid cookie to set the sessionid in the header request
+                Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath, Csw.cookie.cookieNames.SessionId]);
                 Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },

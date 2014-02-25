@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -34,8 +33,6 @@ namespace ChemSW.Nbt.Security
         public Int32 UserObjectClassId { get { return _UserObjectClassId; } }
         public Int32 RoleNodeTypeId { get { return _RoleNodeTypeId; } }
         public Int32 RoleObjectClassId { get { return _RoleObjectClassId; } }
-
-        public Dictionary<string, string> Cookies { get; set; }
 
         private const string _FkSuffix = "_fk";
         private const string _DateSuffix = "_date";

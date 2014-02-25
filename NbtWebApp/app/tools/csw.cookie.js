@@ -7,16 +7,9 @@
 
     Csw.cookie.register('cookieNames',
         {
-            // Server set
-            SessionId: 'CswSessionId',
-            CustomerId: 'CswAccessId',
-            Username: 'CswUsername',
-            OriginalUsername: 'CswOriginalUsername',
-
+            SessionId: 'CswSessionId', //not server set anymore
             LogoutPath: 'csw_logoutpath',
-
             UserDefaults: 'csw_userdefaults',
-
             CurrentNodeId: 'csw_currentnodeid',
             CurrentNodeKey: 'csw_currentnodekey',
             CurrentTabId: 'csw_currenttabid',
@@ -24,14 +17,11 @@
             CurrentActionUrl: 'csw_currentactionurl',
             CurrentViewId: 'csw_currentviewid',
             CurrentViewMode: 'csw_currentviewmode',
-            //CurrentReportId: 'csw_currentreportid',
             CurrentSearchId: 'csw_currentsearchid',
-
             LastActionName: 'csw_lastactionname',
             LastActionUrl: 'csw_lastactionurl',
             LastViewId: 'csw_lastviewid',
             LastViewMode: 'csw_lastviewmode',
-            //LastReportId: 'csw_lastreportid',
             LastSearchId: 'csw_lastsearchid'
         }
     );

@@ -64,8 +64,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswEnumAuthenticationStatus ret = _CswSessionResources.attemptRefresh();
 
-            if( ThrowOnError &&
-                ret != CswEnumAuthenticationStatus.Authenticated )
+            if( ThrowOnError && ret != CswEnumAuthenticationStatus.Authenticated )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Current session is not authenticated, please login again.", "Cannot execute web method without a valid session." );
             }
