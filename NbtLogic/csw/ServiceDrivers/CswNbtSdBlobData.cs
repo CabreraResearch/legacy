@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
 
             //Case 29769 - enforce correct mol file format
-            FormattedMolString = CswNbtNodePropMol.FormatMolFile( MolString );
+            FormattedMolString = _CswNbtResources.MoleculeManager.FormatMolFile( MolString );
 
             errorMsg = string.Empty;
             Href = string.Empty;
