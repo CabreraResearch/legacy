@@ -90,7 +90,7 @@
             cswPrivate.authenticate(cswPrivate.accessid, cswPrivate.username, cswPrivate.password);
         }
         //if we've already authenticated from the if branch above, skip the login controls and check for a redirect immediately
-        else if (document.cookie.contains("CswSessionId")) {
+        else if (document.cookie.contains("X-NBT-SessionId")) {
             cswPrivate.isAuthenticated = true;
             cswPrivate.checkForReload();
         //otherwise, define all of the login controls

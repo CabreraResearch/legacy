@@ -7,7 +7,7 @@
 
     Csw.cookie.register('cookieNames',
         {
-            SessionId: 'CswSessionId', //not server set anymore
+            SessionId: 'X-NBT-SessionId', //not server set anymore
             LogoutPath: 'csw_logoutpath',
             UserDefaults: 'csw_userdefaults',
             CurrentNodeId: 'csw_currentnodeid',
