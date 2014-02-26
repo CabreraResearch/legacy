@@ -207,8 +207,9 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                     if( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) )
                     {
-                        //Do not show the Open button if the Container does not have an Expiration Date set or the Chemical does not have an Open Expiration Interval set
+                        //Do not show the Open/OpenedData props if the Container does not have an Expiration Date set or the Chemical does not have an Open Expiration Interval set
                         Open.setHidden( true, false );
+                        OpenedDate.setHidden( true, false );
                     }
                 } );
         }//afterPopulateProps()
