@@ -48,9 +48,14 @@
             // Note: We send the sessionid in the querystring because IE9 doesn't support XHR
             cswPrivate.uploadBtn = cswPrivate.uploadInp.$.fileupload({
                 dataType: cswPrivate.dataType,
-                url: cswPrivate.url + '&X-NBT-SessionId=' + Csw.cookie.get(Csw.cookie.cookieNames.SessionId),
+                url: cswPrivate.url,
                 paramName: cswPrivate.paramName,
                 forceIframeTransport: cswPrivate.forceIframeTransport,
+                beforeSend: function (jqXHR, settings) {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.params)) {
+                        settings.url = cswPrivate.url + +'&X-NBT-SessionId=' + Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
+                    }
+                },
                 send: function (e, data) {
                     cswPrivate.progressBar = cswPrivate.progressBar || window.Ext.create('Ext.ProgressBar', {
                         renderTo: cswPublic.p().getId(),
