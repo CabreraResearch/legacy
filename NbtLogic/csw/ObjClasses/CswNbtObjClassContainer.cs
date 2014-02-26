@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
             Open.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
                     CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-                    if( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) )
+                    if( false == CanOpen() )
                     {
                         //Do not show the Open/OpenedData props if the Container does not have an Expiration Date set or the Chemical does not have an Open Expiration Interval set
                         Open.setHidden( true, false );
@@ -394,14 +394,14 @@ namespace ChemSW.Nbt.ObjClasses
         public bool CanOpen()
         {
             CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            return ( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) );
+            return ( DateTime.MinValue != ExpirationDate.DateTimeValue || ( false == String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) && false == Double.IsNaN( Chemical.OpenExpireInterval.Quantity ) ) );
         }
 
         public void OpenContainer()
         {
             CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
 
-            if( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) )
+            if( false == CanOpen() )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
                     "Cannot open container when Container does not have an expiration date set or the material does not have an open expiration interval set",
