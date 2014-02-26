@@ -8,8 +8,9 @@ module.exports = function (grunt) {
     var cswVendorJsMinFiles = files.vendorMin;
     var cswVendorJsFiles = files.vendor;
     var imageResources = files.images;
-
-    var cswVendorCssFiles = [];
+    var cswVendorCssFiles = files.vendorCss;
+	var cswVendorData = files.vendorData; 
+	
     var buildDate = grunt.template.today("yyyy.m.d");
     var buildName = 'ChemSW.' + buildDate;
     // Project configuration.
@@ -19,7 +20,8 @@ module.exports = function (grunt) {
 
         CswTestJsFiles: cswTestJsFiles,
         cswVendorJsFiles: cswVendorJsFiles,
-
+        cswVendorCssFiles: cswVendorCssFiles, 
+		
         imageResources: imageResources,
 
         pkg: grunt.file.readJSON('package.json'),
@@ -33,7 +35,7 @@ module.exports = function (grunt) {
         buildMode: 'prod',
         buildPrefix: 'release/' + buildName + '.min',
 
-        clean: ['release'],
+        clean: ['release', 'vendor', 'Scripts', 'Content'],
 
         concat: {
             login: { //ExternalLogin.html
@@ -281,7 +283,8 @@ module.exports = function (grunt) {
         grunt.task.run('toHtml:prod:report'); //Generate the Report HTML file from the template
         grunt.task.run('toHtml:prod:print'); //Generate the PrintingLabels HTML file from the template
         grunt.task.run('toHtml:prod:balance');//Generate the ReadingBalances HTML file from the template
-        grunt.task.run('toHtml:prod:pManifest'); //Generate the appcache from the manifest template
+        grunt.task.run('toHtml:prod:pManifest'); //Generate the appcache from the manifest template 
+		grunt.task.run('copyVendorData'); //copy the third party images to the web app
     });
 
     grunt.registerTask('buildDev', function (includeAllPages) {
@@ -352,8 +355,21 @@ module.exports = function (grunt) {
         grunt.task.run('qunit');
     });
 
+	grunt.registerTask('copyVendorData', function () {
+        /// <summary>
+        /// copy vendor JS data from the third party repo into the web app
+        /// </summary>
+		cswVendorData.forEach( function (directory) {
+		    grunt.file.recurse( directory, function (abspath, rootdir, subdir, file) {
+			   grunt.file.copy(abspath, abspath.substr(26));
+			});
+		});
+			
+		
+	});
+	
+	
     grunt.registerTask('default', ['build:dev:true']);
-
 
     /**REGION: register CSW tasks */
 };

@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Telerik.Web.UI, Version=2008.2.1001.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ThirdParty\Telerik\RadControls for ASPNET AJAX Q2 2008 1001\bin35\Telerik.Web.UI.dll</HintPath>
+      <HintPath>..\..\..\tools\ThirdParty\Telerik.Web.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
