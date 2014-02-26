@@ -310,16 +310,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Open:
                         ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         HasPermission = true;
-                        CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-
-                        if( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) )
-                        {
-                            throw new CswDniException( CswEnumErrorType.Warning,
-                                "Cannot open container when Container does not have an expiration date set or the material does not have an open expiration interval set",
-                                "Container.ExpirationDate isn't set or Container.Material.OpenExpirationInterval is not set, cannot open container" );
-                        }
-                        OpenedDate.DateTimeValue = DateTime.Now;
-                        ExpirationDate.DateTimeValue = ( ExpirationDate.DateTimeValue < Chemical.getDefaultOpenExpirationDate( DateTime.Now ) ? ExpirationDate.DateTimeValue : Chemical.getDefaultOpenExpirationDate( DateTime.Now ) );
+                        OpenContainer();
                         postChanges( true );
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -395,6 +386,29 @@ namespace ChemSW.Nbt.ObjClasses
         public void DisposeContainer( bool OverridePermissions = false )
         {
             _Disposer.Dispose( OverridePermissions );
+        }
+
+        /// <summary>
+        /// Checks if the Container has an Expiration Date and that the chemical has an open expiration interval set
+        /// </summary>
+        public bool CanOpen()
+        {
+            CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            return ( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) );
+        }
+
+        public void OpenContainer()
+        {
+            CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+
+            if( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning,
+                    "Cannot open container when Container does not have an expiration date set or the material does not have an open expiration interval set",
+                    "Container.ExpirationDate isn't set or Container.Material.OpenExpirationInterval is not set, cannot open container" );
+            }
+            OpenedDate.DateTimeValue = DateTime.Now;
+            ExpirationDate.DateTimeValue = ( ExpirationDate.DateTimeValue < Chemical.getDefaultOpenExpirationDate( DateTime.Now ) ? ExpirationDate.DateTimeValue : Chemical.getDefaultOpenExpirationDate( DateTime.Now ) );
         }
 
         /// <summary>

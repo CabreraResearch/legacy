@@ -95,6 +95,7 @@
     <Compile Include="csw\Actions\CswNbtActHMISReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Actions\Container\CswNbtContainerDispenser.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleOpen.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleDispose.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleOwner.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleTransfer.cs" />
