@@ -770,7 +770,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       case when sf.specialflags like '%ehs%' then '1' else '0' end, 
       case when sf.specialflags like '%trade secret%' then '1' else '0' end,
       hc.hazardcategories,
-      t2.maxqty, t2.avgqty, md.daysonsite, 
+      t2.maxqty, mq.range_code, t2.avgqty, aq.range_code, md.daysonsite, 
       cp.usetype, cp.pressure, cp.temperature, ml.storagelocations)
       bulk collect into TIER_II_MATERIALS
       from tier2quantities t2
@@ -783,6 +783,8 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       left join physicalstate ps on ps.nodeid = t2.materialid
       left join specialflags sf on sf.nodeid = t2.materialid
       left join hazardcategories hc on hc.nodeid = t2.materialid
+      left join tier2_rangecodes mq on t2.maxqty >= mq.lower_bound and t2.maxqty < mq.upper_bound
+      left join tier2_rangecodes aq on t2.avgqty >= aq.lower_bound and t2.avgqty < aq.upper_bound
       order by t2.materialid
     ;
     
