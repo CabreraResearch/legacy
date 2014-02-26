@@ -47,7 +47,8 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                SetPropRowValue( _MolSubField, value );
+                string formattedMol = _CswNbtResources.MoleculeManager.FormatMolFile( value );
+                SetPropRowValue( _MolSubField, formattedMol );
                 Gestalt = value;
             }
         }

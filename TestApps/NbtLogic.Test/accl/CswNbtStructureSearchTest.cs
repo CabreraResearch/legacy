@@ -243,6 +243,8 @@ M  END";
                 AsChemical.Structure.Mol = MolWithoutBenzeneRing;
             } );
 
+            TestData.CswNbtResources.finalize();
+
             Dictionary<int, string> FoundMols = TestData.CswNbtResources.MoleculeManager.RunSearch( Benzene, false );
 
             bool ContainsNode1 = FoundMols.Keys.Any( key => key == n1Benzene.NodeId.PrimaryKey );
