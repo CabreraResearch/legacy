@@ -91,6 +91,26 @@ namespace ChemSW.Nbt.Test.UnitsOfMeasure
         /// with respect to the material's specific gravity.
         /// </summary>
         [Test]
+        public void convertUnitTestVolumeToWeight()
+        {
+            Double ValueToConvert = 1;
+            CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, CswEnumTristate.True );
+            CswNbtNode PoundsNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( "Chemical", "Liquid", 1 );
+            Double Expected = 2.205;
+
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, LiterNode.NodeId, PoundsNode.NodeId, ChemicalNode.NodeId );
+
+            Double Actual = ConversionObj.convertUnit( ValueToConvert );
+            Assert.AreEqual( Expected, Math.Round( Actual, 3 ), "Conversion applied incorrectly." );
+        }
+
+        /// <summary>
+        /// Given a numeric value, two UnitOfMeasure Nodes of types Volume and Weight, and a MaterialNode, when unit conversion is applied, 
+        /// the returning number should be the product of the given value and the interconversion of the old and new conversion factors 
+        /// with respect to the material's specific gravity.
+        /// </summary>
+        [Test]
         public void convertUnitTestVolumeToWeightUnitTypes()
         {
             Double ValueToConvert = 4;
