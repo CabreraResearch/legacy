@@ -1160,7 +1160,7 @@
 
         cswPrivate.makeProp = function (propCell, propData, tabid, configMode, layoutTable) {
             'use strict';
-            if (propData.issaveprop) { // case 28234
+            if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add && propData.issaveprop) { // case 28234
                 propCell = cswPrivate.identityButtonDiv;
             }
             propCell.empty();
