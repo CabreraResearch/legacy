@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.csw.ImportExport
 
                     CswEnumNbtFieldType propFT = GetFieldTypeFromCAFPropTypeCode( row["propertytype"].ToString() );
 
-                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName ) );
+                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName ) );
                     //newProp.IsRequired = CswConvert.ToBoolean( row["required"] );
                     //newProp.ReadOnly = CswConvert.ToBoolean( row["readonly"] );
                     //newProp.ListOptions = row["listopts"].ToString();

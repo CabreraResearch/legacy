@@ -98,7 +98,7 @@ namespace NbtWebApp.WebSvc.Logic.Layout
 
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            CswNbtMetaDataNodeTypeTab Tab =  NbtResources.MetaData.makeNewTabNew( NbtResources.MetaData.getNodeType( Req.NodetypeId ), Req.Name, Req.Order );
+            CswNbtMetaDataNodeTypeTab Tab =  NbtResources.MetaData.makeNewTab( NbtResources.MetaData.getNodeType( Req.NodetypeId ), Req.Name, Req.Order );
             Ret.Data.TabId = Tab.TabId;
         }
 

@@ -180,7 +180,10 @@ namespace ChemSW.Nbt.MetaData
             return ( CswConvert.ToBoolean( _ObjectClassPropRow["iscompoundunique"] ) );
         }
 
-
+        /// <summary>
+        /// Specifies whether all values of the property must be unique for all nodetypes.
+        /// </summary>
+        /// <returns></returns>
         public bool IsGlobalUnique() // BZ 9754
         {
             return CswConvert.ToBoolean( _ObjectClassPropRow["isglobalunique"] );
@@ -245,72 +248,72 @@ namespace ChemSW.Nbt.MetaData
                      _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ) != null );
         }
 
-        public void setFilterDeprecated( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        {
-            CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            setFilterDeprecated( FilterProp, SubField, FilterMode, FilterValue );
-        }
+        //public void setFilterDeprecated( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
+        //{
+        //    CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
+        //    setFilterDeprecated( FilterProp, SubField, FilterMode, FilterValue );
+        //}
 
-        public void setFilterDeprecated( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        {
-            if( IsRequired )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
-            }
+        //public void setFilterDeprecated( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
+        //{
+        //    if( IsRequired )
+        //    {
+        //        throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+        //    }
 
-            bool changed = false;
+        //    bool changed = false;
 
-            if( FilterProp != null )
-            {
-                Int32 CurrentFilterId = CswConvert.ToInt32( _ObjectClassPropRow["filterpropid"] );
-                changed = ( CurrentFilterId != FilterProp.FirstPropVersionId ||
-                            SubField.Name.ToString() != _ObjectClassPropRow["filtersubfield"].ToString() ||
-                            FilterMode.ToString() != _ObjectClassPropRow["filtermode"].ToString() ||
-                            FilterValue.ToString() != _ObjectClassPropRow["filtervalue"].ToString() );
-                if( changed )
-                {
-                    _ObjectClassPropRow["filterpropid"] = CswConvert.ToDbVal( FilterProp.FirstPropVersionId );
-                    _ObjectClassPropRow["filtersubfield"] = SubField.Name.ToString();
-                    _ObjectClassPropRow["filtermode"] = FilterMode.ToString();
-                    _ObjectClassPropRow["filtervalue"] = FilterValue;
-                }
-            }
-            else
-            {
-                _CswNbtMetaDataResources.CswNbtResources.logMessage( "Attempted to create a conditional property filter with based upon a null ObjectClassProperty." );
-            }
-            if( changed )
-            {
-                _setNodeTypePropFiltersDeprecated( FilterProp, SubField, FilterMode, FilterValue );
-            }
-        }
+        //    if( FilterProp != null )
+        //    {
+        //        Int32 CurrentFilterId = CswConvert.ToInt32( _ObjectClassPropRow["filterpropid"] );
+        //        changed = ( CurrentFilterId != FilterProp.FirstPropVersionId ||
+        //                    SubField.Name.ToString() != _ObjectClassPropRow["filtersubfield"].ToString() ||
+        //                    FilterMode.ToString() != _ObjectClassPropRow["filtermode"].ToString() ||
+        //                    FilterValue.ToString() != _ObjectClassPropRow["filtervalue"].ToString() );
+        //        if( changed )
+        //        {
+        //            _ObjectClassPropRow["filterpropid"] = CswConvert.ToDbVal( FilterProp.FirstPropVersionId );
+        //            _ObjectClassPropRow["filtersubfield"] = SubField.Name.ToString();
+        //            _ObjectClassPropRow["filtermode"] = FilterMode.ToString();
+        //            _ObjectClassPropRow["filtervalue"] = FilterValue;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        _CswNbtMetaDataResources.CswNbtResources.logMessage( "Attempted to create a conditional property filter with based upon a null ObjectClassProperty." );
+        //    }
+        //    if( changed )
+        //    {
+        //        _setNodeTypePropFiltersDeprecated( FilterProp, SubField, FilterMode, FilterValue );
+        //    }
+        //}
 
-        public void setNodeTypePropFiltersDeprecated()
-        {
-            CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            CswNbtSubField SubField = null;
-            CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
-            string FilterValue = string.Empty;
-            getFilter( ref SubField, ref FilterMode, ref FilterValue );
-            _setNodeTypePropFiltersDeprecated( FilterProp, SubField, FilterMode, FilterValue );
-        }
+        //public void setNodeTypePropFiltersDeprecated()
+        //{
+        //    CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
+        //    CswNbtSubField SubField = null;
+        //    CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+        //    string FilterValue = string.Empty;
+        //    getFilter( ref SubField, ref FilterMode, ref FilterValue );
+        //    _setNodeTypePropFiltersDeprecated( FilterProp, SubField, FilterMode, FilterValue );
+        //}
 
-        private void _setNodeTypePropFiltersDeprecated( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        {
-            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
-            {
-                if( FilterProp != null )
-                {
-                    foreach( CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp in FilterProp.getNodeTypeProps() )
-                    {
-                        if( FilterPropNodeTypeProp.NodeTypeId == NodeTypeProp.NodeTypeId )
-                        {
-                            NodeTypeProp.setFilterDeprecated( FilterPropNodeTypeProp, SubField, FilterMode, FilterValue );
-                        }
-                    }
-                }
-            }
-        }
+        //private void _setNodeTypePropFiltersDeprecated( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
+        //{
+        //    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+        //    {
+        //        if( FilterProp != null )
+        //        {
+        //            foreach( CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp in FilterProp.getNodeTypeProps() )
+        //            {
+        //                if( FilterPropNodeTypeProp.NodeTypeId == NodeTypeProp.NodeTypeId )
+        //                {
+        //                    NodeTypeProp.setFilterDeprecated( FilterPropNodeTypeProp, SubField, FilterMode, FilterValue );
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         public CswEnumNbtPropertySelectMode Multi
         {
@@ -353,16 +356,16 @@ namespace ChemSW.Nbt.MetaData
             private set { _ObjectClassPropRow["fkvalue"] = value; }
         }
 
-        public void setNodeTypePropFKDeprecated()
-        {
-            if( IsFK && false == String.IsNullOrEmpty( FKType ) && Int32.MinValue != FKValue )
-            {
-                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
-                {
-                    NodeTypeProp.SetFKDeprecated( FKType, FKValue, ValuePropType, ValuePropId );
-                }
-            }
-        }
+        //public void setNodeTypePropFKDeprecated()
+        //{
+        //    if( IsFK && false == String.IsNullOrEmpty( FKType ) && Int32.MinValue != FKValue )
+        //    {
+        //        foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+        //        {
+        //            NodeTypeProp.SetFKDeprecated( FKType, FKValue, ValuePropType, ValuePropId );
+        //        }
+        //    }
+        //}
 
         public Int32 ValuePropId
         {

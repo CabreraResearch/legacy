@@ -1,5 +1,4 @@
-﻿using ChemSW.Nbt.MetaData.FieldTypeRules;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
@@ -9,10 +8,10 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -188,7 +187,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
 
             //Case 29769 - enforce correct mol file format
-            FormattedMolString = MoleculeBuilder.FormatMolFile( MolString );
+            FormattedMolString = CswNbtNodePropMol.FormatMolFile( MolString );
 
             errorMsg = string.Empty;
             Href = string.Empty;
@@ -202,19 +201,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != molProp )
                 {
                     molProp.Mol = FormattedMolString;
-
-                    //Save the mol image to blob_data
-                    byte[] molImage = CswStructureSearch.GetImage( FormattedMolString );
-
-                    CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
+                }
 
-                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node : Node );
-
-                    //case 28364 - calculate fingerprint and save it
-                    _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString, out errorMsg );
+                if( PostChanges )
+                {
+                    Node.postChanges( false );
                 }
             }
+
         }
 
         /// <summary>

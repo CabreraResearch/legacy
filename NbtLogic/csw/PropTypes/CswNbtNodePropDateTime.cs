@@ -136,13 +136,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateTimeValue );
             ParentObject[_DateValueSubField.ToXmlNodeName( true )] = CswDate.ToClientAsDateTimeJObject();
             ParentObject["displaymode"] = DisplayMode.ToString();
-
-        } // ToJSON()
+        }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

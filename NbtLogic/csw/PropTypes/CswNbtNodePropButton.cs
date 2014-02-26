@@ -181,8 +181,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             //TODO: when Case 27516 is complete, merge these two "JSON" methods
             AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
             ParentObject["confirmmessage"] = ConfirmationDialogMessage;

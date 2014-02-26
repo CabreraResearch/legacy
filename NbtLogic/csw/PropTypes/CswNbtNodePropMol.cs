@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -70,8 +71,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
             ParentObject["href"] = getLink( JctNodePropId, NodeId );
@@ -95,6 +94,59 @@ namespace ChemSW.Nbt.PropTypes
         {
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Mol );
         }
+
+        /// <summary>
+        /// Formats a mol file in the format of: 3 lines with optional text, atom/bond count line, atoms table, bonds table, "M  END"
+        /// </summary>
+        /// <returns></returns>
+        public static string FormatMolFile( string OrginalMolFile )
+        {
+            //strip out any "$$$$"
+            OrginalMolFile = OrginalMolFile.Replace( "$$$$", "" );
+
+            List<string> fixedLines = new List<string>()
+                {
+                    "", //for optional comment 1
+                    "", //for optional comment 2
+                    "", //for optional comment 3
+                    ""  //for atom/bond count line
+                };
+
+            string[] lines = OrginalMolFile.Split( new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None );
+
+            int commentsAdded = 0;
+            bool firstAtomTblLine = true;
+
+            for( int i = 0; i < lines.Length; i++ )
+            {
+                string line = lines[i];
+                if( Regex.IsMatch( line, @"^(\s{1,5}(-|)[0-9]{1,3}.[0-9]{3,4}){3}\s[aA-zZ*]{1,2}" ) ) //atom table line
+                {
+                    fixedLines.Add( line );
+                    if( firstAtomTblLine ) //if this is the first AtomTbl line, assume the line before it is the Atom/Bond Count line
+                    {
+                        firstAtomTblLine = false;
+                        fixedLines[3] = lines[i - 1];
+                    }
+                }
+                else if( Regex.IsMatch( line, @"^\s{0,3}([0-9]{1,3})\s{0,2}([1-9]|[1-9][0-9])\s{2}[1-3]\s{2}|\s{0,2}[0-9]{5,6}\s{2}[1-3]\s{2}" ) && false == firstAtomTblLine )
+                {
+                    fixedLines.Add( line );
+                }
+                else if( commentsAdded < 3 )
+                {
+                    fixedLines[commentsAdded] = line;
+                    commentsAdded++;
+                }
+            }
+            fixedLines.Add( "M  END" ); //this is always the last line in a Mol file
+
+            string ret = "";
+            fixedLines.ForEach( line => ret += line + "\n" );
+            return ret;
+        }
+
+
     }//CswNbtNodePropMol
 
 }//namespace ChemSW.Nbt.PropTypes

@@ -92,12 +92,11 @@
                 cswPrivate.morediv.hide();
                 multiSelectCtrl = makeMultiSelect(false, parentDiv, '240px', '360px');
             } else {
-                editBtnCell.icon({
+                editBtnCell.buttonExt({
                     name: cswPrivate.name + '_toggle',
-                    iconType: Csw.enums.iconType.pencil,
-                    hovertext: 'Edit',
-                    size: 16,
-                    isButton: true,
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                    size: 'small',
+                    enabledText: 'Edit',
                     onClick: function () {
                         makeMultiSelect(true);
                     }

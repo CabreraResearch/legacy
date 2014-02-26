@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                 RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
 
                 // Add default layout entry for new property
-                if( CswEnumTristate.True == Required.Checked && false == RelationalNodeTypeProp.HasDefaultValue( false ) )
+                if( CswEnumTristate.True == Required.Checked && false == RelationalNodeTypeProp.HasDefaultValue() )
                 {
                     _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false );
                 }
@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterPromoteNode()
 
-        protected override void beforeWriteNodeLogic( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             // If display condition is set, required must be false
             if( false == DisplayConditionProperty.Empty )
@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                                 if( RelationshipProp != null )
                                 {
-                                    if( RelationshipProp.FkMatchesDeprecated( AssemblyNodeType ) )
+                                    if( RelationshipProp.FkMatches( AssemblyNodeType ) )
                                     {
                                         // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
                                         // We have to update all these nodes always, not just when there's a prop name 
@@ -1051,7 +1051,7 @@ namespace ChemSW.Nbt.ObjClasses
                     } // if( null != RelationalNodeType )
 
                     // Handle default values from ObjectClassProp
-                    _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp, false );
+                    _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp );
                 } // if( null != OCProp )
             } // if( DerivesFromObjectClassProp )
         } // syncFromObjectClass()

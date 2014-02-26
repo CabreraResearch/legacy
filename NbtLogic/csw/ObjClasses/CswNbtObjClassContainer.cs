@@ -17,11 +17,11 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer : CswNbtObjClass, ICswNbtPermissionTarget
+    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget
     {
         #region Properties
 
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Barcode = "Barcode";
             public const string Material = "Material";
@@ -62,6 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string TareQuantity = "Tare Quantity";
             public const string Concentration = "Concentration";
             public const string OpenedDate = "Opened Date";
+            public const string Open = "Open";
         }
 
         #endregion Properties
@@ -104,10 +105,10 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPromoteNodeLogic()
         {
             // originally case 27330, moved here by case 30647
-            Size.setReadOnly( value: true, SaveToDb: true );
+            Size.setReadOnly( value : true, SaveToDb : true );
         }
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
@@ -185,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             Location.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
-                    if ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp || IsTemp )
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp || IsTemp )
                     {
                         if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
                         {
@@ -200,6 +201,16 @@ namespace ChemSW.Nbt.ObjClasses
                     Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = _CswNbtResources.CurrentNbtUser.getUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true );
                     Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, null, UserPermissions.Keys ); //Location.SelectedNodeId, UserPermissions.Keys );
                 } );
+
+            Open.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+                {
+                    CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                    if( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) )
+                    {
+                        //Do not show the Open button if the Container does not have an Expiration Date set or the Chemical does not have an Open Expiration Interval set
+                        Open.setHidden( true, false );
+                    }
+                } );
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -208,7 +219,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( PropertyName.Disposed );
             CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
             viewProp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode: CswEnumNbtFilterMode.Equals, Value: CswEnumTristate.False.ToString(), ShowAtRuntime: true );
+            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode : CswEnumNbtFilterMode.Equals, Value : CswEnumTristate.False.ToString(), ShowAtRuntime : true );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
@@ -294,6 +305,21 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             ReceiptLotNode.getCofA( ButtonData );
                         }
+                        break;
+                    case PropertyName.Open:
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                        HasPermission = true;
+                        CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+
+                        if( DateTime.MinValue == ExpirationDate.DateTimeValue || String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) )
+                        {
+                            throw new CswDniException( CswEnumErrorType.Warning,
+                                "Cannot open container when Container does not have an expiration date set or the material does not have an open expiration interval set",
+                                "Container.ExpirationDate isn't set or Container.Material.OpenExpirationInterval is not set, cannot open container" );
+                        }
+                        OpenedDate.DateTimeValue = DateTime.Now;
+                        ExpirationDate.DateTimeValue = ( ExpirationDate.DateTimeValue < Chemical.getDefaultOpenExpirationDate( DateTime.Now ) ? ExpirationDate.DateTimeValue : Chemical.getDefaultOpenExpirationDate( DateTime.Now ) );
+                        postChanges( true );
                         break;
                     case CswNbtObjClass.PropertyName.Save:
                         HasPermission = true;
@@ -637,24 +663,24 @@ namespace ChemSW.Nbt.ObjClasses
                                 case PropertyName.Undispose:
                                     isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], InventoryGroupId ) )
                                                || false == IsDisposed; //Hide the Undispose button when the Container is not disposed
-                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    p.setHidden( value : isHidden, SaveToDb : false );
                                     break;
                                 case PropertyName.Dispose:
                                     isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], InventoryGroupId ) )
                                                || IsDisposed;
-                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    p.setHidden( value : isHidden, SaveToDb : false );
                                     break;
                                 case PropertyName.Request:
                                     isHidden = ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) && false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId ) )
                                                || IsDisposed
                                                || ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM )
                                                     && Requisitionable.Checked == CswEnumTristate.False );
-                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    p.setHidden( value : isHidden, SaveToDb : false );
                                     break;
                                 case PropertyName.Dispense:
                                     isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer], InventoryGroupId ) )
                                                || IsDisposed;
-                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    p.setHidden( value : isHidden, SaveToDb : false );
                                     break;
                                 case PropertyName.ViewSDS:
                                     CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
@@ -667,14 +693,14 @@ namespace ChemSW.Nbt.ObjClasses
                                                                     .Contains( ( (CswNbtObjClassChemical) material.Node ).ViewSDS.NodeTypeProp )
                                         //       || IsDisposed   actually, this one we can show.
                                                );
-                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    p.setHidden( value : isHidden, SaveToDb : false );
                                     break;
                                 case PropertyName.ViewCofA:
                                     isHidden = ( false == CswNbtObjClassCofADocument.receiptLotHasActiveCofA( _CswNbtResources, ReceiptLot.RelatedNodeId ) );
-                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    p.setHidden( value : isHidden, SaveToDb : false );
                                     break;
                                 default:
-                                    p.setHidden( value: IsDisposed, SaveToDb: false );
+                                    p.setHidden( value : IsDisposed, SaveToDb : false );
                                     break;
                             } // switch
                         } // if( prop.getFieldType().FieldType == CswEnumNbtFieldType.Button )
@@ -684,28 +710,28 @@ namespace ChemSW.Nbt.ObjClasses
                             switch( p.ObjectClassPropName )
                             {
                                 case PropertyName.Barcode:
-                                    p.setReadOnly( value: false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb: true );
+                                    p.setReadOnly( value : false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb : true );
                                     break;
                                 case PropertyName.ExpirationDate:
                                     if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
                                     {
                                         CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                                        p.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb: false );
+                                        p.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb : false );
                                     }
                                     break;
                                 case PropertyName.SourceContainer:
                                     bool isHidden = ( false == CswTools.IsPrimaryKey( SourceContainer.RelatedNodeId ) );
-                                    p.setHidden( value: isHidden, SaveToDb: true );
+                                    p.setHidden( value : isHidden, SaveToDb : true );
 
                                     if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
                                     {
-                                        SourceContainer.setReadOnly( value: true, SaveToDb: true );
+                                        SourceContainer.setReadOnly( value : true, SaveToDb : true );
                                     }
                                     break;
                             } // switch
 
                             // This overrides all of the above!
-                            p.setReadOnly( IsDisposed, SaveToDb: true );
+                            p.setReadOnly( IsDisposed, SaveToDb : true );
 
                         } // if-else( prop.getFieldType().FieldType == CswEnumNbtFieldType.Button )
                     } );
@@ -818,16 +844,16 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestType );
 
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestItem.Statuses.Submitted );
-                RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, Value : NodeId.PrimaryKey.ToString() );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
 
                 if( RequestItemType == CswNbtObjClassRequestItem.Types.ContainerMove )
                 {
                     CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
-                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtFieldTypeRuleLocation.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
+                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName : CswNbtFieldTypeRuleLocation.SubFieldName.NodeID, Value : Location.SelectedNodeId.PrimaryKey.ToString() );
                 }
 
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes : false, RequireViewPermissions : false, IncludeHiddenNodes : false );
                 if( Tree.getChildNodeCount() > 0 )
                 {
                     for( Int32 N = 0; N < Tree.getChildNodeCount(); N += 1 )
@@ -899,12 +925,12 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     //if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
                     //{
-                        CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
-                        CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
-                        if( null != InvGroupNode )
-                        {
-                            LotControlled.Checked = InvGroupNode.Central.Checked == CswEnumTristate.True ? CswEnumTristate.True : CswEnumTristate.False;
-                        }
+                    CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
+                    CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
+                    if( null != InvGroupNode )
+                    {
+                        LotControlled.Checked = InvGroupNode.Central.Checked == CswEnumTristate.True ? CswEnumTristate.True : CswEnumTristate.False;
+                    }
                     //}
                     else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                     {
@@ -994,7 +1020,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( LotControlled.Checked == CswEnumTristate.True )
             {
                 //DispenseForCertificate.RelatedNodeId = null;//TODO - uncomment when DispenseForCertificate is created
-                
+
                 //Status.Value = String.Empty;
                 Status.Value = CswEnumNbtContainerStatuses.LabUseOnly; // this'll need to be changed eventually but see case 31646
             }
@@ -1041,6 +1067,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity TareQuantity { get { return ( _CswNbtNode.Properties[PropertyName.TareQuantity] ); } }
         public CswNbtNodePropText Concentration { get { return ( _CswNbtNode.Properties[PropertyName.Concentration] ); } }
         public CswNbtNodePropDateTime OpenedDate { get { return ( _CswNbtNode.Properties[PropertyName.OpenedDate] ); } }
+        public CswNbtNodePropButton Open { get { return _CswNbtNode.Properties[PropertyName.Open]; } }
 
         #endregion
 

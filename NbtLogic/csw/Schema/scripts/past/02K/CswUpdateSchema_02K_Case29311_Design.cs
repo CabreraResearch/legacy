@@ -754,7 +754,7 @@ namespace ChemSW.Nbt.Schema
                             thisProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
                             node.DisplayConditionProperty.RelatedNodeId = propsDict[thisProp.FilterNodeTypePropId].NodeId;
                             node.DisplayConditionSubfield.Value = SubField.Name.ToString();
-                            node.DisplayConditionFilterMode.Value = FilterValue;
+                            node.DisplayConditionFilterMode.Value = FilterMode.ToString();
                             node.DisplayConditionValue.Text = FilterValue;
                         }
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )

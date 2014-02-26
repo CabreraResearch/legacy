@@ -41,6 +41,7 @@ PACKAGE TIER_II_DATA_MANAGER AS
   LAST_RUN_INTERVAL number;
   WEIGHT_BASE_UNIT_ID number;
 
+  function GET_LOCATIONS_UNDER (locationid in number) return tier_ii_location_table pipelined;
   procedure SET_TIER_II_DATA;
 
 END TIER_II_DATA_MANAGER;" );
@@ -59,6 +60,11 @@ PACKAGE UNIT_CONVERSION AS
     value_to_convert in number, 
     old_conversion_factor in number, 
     new_conversion_factor in number, 
+    specific_gravity in number default 1
+    ) return number;
+  function CONVERT_UNIT_TO_LBS (
+    value_to_convert in number, 
+    unitid in number, 
     specific_gravity in number default 1
     ) return number;
 
@@ -104,6 +110,61 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     LAST_RUN_INTERVAL := trunc(DATE_ADDED) - trunc(LAST_RUN_DATE);
     WEIGHT_BASE_UNIT_ID := UNIT_CONVERSION.GET_BASE_UNIT('Unit_Weight');
   end SET_PACKAGE_PROPERTIES;
+
+  function GET_LOCATIONS_UNDER(locationid in number) return tier_ii_location_table pipelined is
+    unsorted_locations tier_ii_location_table;
+    sorted_locations tier_ii_location_table;
+    temp_locs tier_ii_location_table;
+    isFinished number := 0;
+  begin
+    --Get all locationids and their parentlocationids
+    select tier_ii_location(n.nodeid, loc.field1_fk) 
+      bulk collect into unsorted_locations
+      from nodes n
+      left join
+        (select n.nodeid, jnp.field1_fk
+          from jct_nodes_props JNP
+            inner join nodes n on n.nodeid = jnp.nodeid
+            inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid        
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            inner join object_class oc on ocp.objectclassid = oc.objectclassid
+          where oc.objectclass = 'LocationClass'
+          and ocp.propname = 'Location') loc on n.nodeid = loc.nodeid
+        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        inner join object_class oc on nt.objectclassid = oc.objectclassid
+        where oc.objectclass = 'LocationClass';
+      
+    --Store root base case
+    select tier_ii_location(locationid, null) 
+      bulk collect into sorted_locations 
+      from dual;
+      
+    --Grab all locations under the given locationid one tree level at a time (starting at the root)
+    while isFinished = 0 loop
+      select tier_ii_location(LOCATIONID, parentlocationid)
+        bulk collect into temp_locs 
+        from table(unsorted_locations)
+        where PARENTLOCATIONID in (select locationid from table(sorted_locations))
+        and LOCATIONID not in (select locationid from table(sorted_locations));
+      if(temp_locs.count = 0) then
+        isFinished := 1;
+      else
+        for x in 1..temp_locs.count loop
+          sorted_locations.extend(1);
+          sorted_locations(sorted_locations.count) := temp_locs(x);
+        end loop;
+      end if;
+    end loop;
+    
+    select tier_ii_location(LOCATIONID, parentlocationid) 
+      bulk collect into temp_locs 
+      from table(sorted_locations);
+    for x in 1..temp_locs.count loop
+      pipe row(temp_locs(x));
+    end loop;
+    
+    return;
+  end GET_LOCATIONS_UNDER;
   
   function GET_LOCATIONS return tier_ii_location_table is
     unsorted_locations tier_ii_location_table;
@@ -430,6 +491,17 @@ PACKAGE BODY UNIT_CONVERSION AS
     converted_value := value_to_convert * old_conversion_factor * specific_gravity / new_conversion_factor;
     return converted_value;
   end CONVERT_UNIT;
+
+  function CONVERT_UNIT_TO_LBS (value_to_convert in number, unitid in number, specific_gravity in number default 1) 
+  return number is
+    conversion_factor number;
+    lb_conversion_factor number := 0.453592;--This assumes the base unit for weight is kg
+    converted_value number;
+  begin
+    conversion_factor := GET_CONVERSION_FACTOR(unitid);
+    converted_value := value_to_convert * conversion_factor * specific_gravity / lb_conversion_factor;
+    return round(converted_value, 3);
+  end CONVERT_UNIT_TO_LBS;
 
 END UNIT_CONVERSION;" );
 

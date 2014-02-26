@@ -1470,6 +1470,10 @@
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\CswCommon\CswACCL\CswACCL.csproj">
+      <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
+      <Name>CswACCL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
@@ -1477,10 +1481,6 @@
     <ProjectReference Include="..\..\..\Common\CswCommon\CswWebControls\CswWebControls.csproj">
       <Project>{1617e93a-a9dd-46d5-a607-7a36df91c2d1}</Project>
       <Name>CswWebControls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\CswCommon\StructureSearch\StructureSearch.csproj">
-      <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
-      <Name>StructureSearch</Name>
     </ProjectReference>
     <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">
       <Project>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</Project>

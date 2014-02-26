@@ -572,7 +572,8 @@
                             filterToPropId: cswDlgPrivate.PasswordId,
                             nodeid: cswDlgPrivate.UserId,
                             nodekey: cswDlgPrivate.UserKey,
-                            isChangePasswordDialog: true     // kludgetastic!  case 29841
+                            isChangePasswordDialog: true,     // kludgetastic!  case 29841
+                            EditMode: Csw.enums.editMode.Edit
                         },
                         onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
@@ -734,7 +735,9 @@
                     molText.val(data.molString);
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + data.molImgAsBase64String
+                        src: "data:image/jpeg;base64," + data.molImgAsBase64String,
+                        height: 160,
+                        width: 160
                     });
                 }
             };
@@ -753,7 +756,7 @@
                 size: 16,
                 isButton: true,
                 onClick: function () {
-                    $.CswDialog('FileUploadDialog', {
+                    Csw.dialogs.fileUpload({
                         url: 'Services/BlobData/getText',
                         forceIFrameTransport: true,
                         dataType: 'iframe',
@@ -767,7 +770,7 @@
                             Csw.getMolImgFromText('', molText.val(), displayMolThumbnail);
 
                         }
-                    });
+                    }).open();
                 }
             });
 
@@ -832,7 +835,7 @@
                 size: 16,
                 isButton: true,
                 onClick: function () {
-                    $.CswDialog('FileUploadDialog', {
+                    Csw.dialogs.fileUpload({
                         url: 'Services/BlobData/getText',
                         forceIframeTransport: true, //because IE9 doesn't work
                         dataType: 'iframe', //response will be in an iframe obj
@@ -843,7 +846,7 @@
                             molTxtArea.val(fileText);
                             cswPrivate.cell12.text(fileName);
                         }
-                    });
+                    }).open();
                 }
             });
 

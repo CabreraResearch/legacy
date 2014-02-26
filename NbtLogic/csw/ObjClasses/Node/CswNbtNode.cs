@@ -415,14 +415,15 @@ namespace ChemSW.Nbt.ObjClasses
         /// TODO - Case 31708: fix performance issues on writeNode event logic and remove this function
         /// </summary>
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postOnlyChanges( bool ForceUpdate )
+        public void postOnlyChanges( bool ForceUpdate, bool SkipEvents = false )
         {
             ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
             {
                 OverrideUniqueValidation = true,
                 OverrideMailReportEvents = true,
                 Creating = true,
-                ForceUpdate = ForceUpdate
+                ForceUpdate = ForceUpdate,
+                SkipEvents = SkipEvents
             };
             NodePersistStrategy.postChanges( this );
         }//postChanges()

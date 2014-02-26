@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             // Set which properties are displayed
             switch( ListMode.Value )
@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     string CurrentRegListRegions = "";
                                     if( string.IsNullOrEmpty( CswConvert.ToString( CurrentRegListNode.Regions.Value ) ) )
                                     {
-                                        if( SyncModule.Equals( CswEnumNbtModuleName.ArielSync ) )
+                                        if( SyncModule.Equals( CswEnumRegulatoryListListModes.ArielManaged ) )
                                         {
                                             CurrentRegListRegions = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConvert.ToString( CswEnumNbtConfigurationVariables.arielmodules ) );
                                         }

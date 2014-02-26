@@ -106,8 +106,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             ParentObject[_TextSubField.ToXmlNodeName( true )] = StaticText;
             ParentObject["rows"] = Rows;
             ParentObject["columns"] = Columns;

@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
 
             // Set 'Name' default value = nodetypename
-            NameProp.getDefaultValue( true, false ).AsText.Text = NewNodeType.NodeTypeName;
+            NameProp.getDefaultValue( true ).AsText.Text = NewNodeType.NodeTypeName;
 
             // The following changes for new forms only
             if( NewNodeType.VersionNo == 1 && false == InternalCreate )
@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeTypeTab ActionTab = NewNodeType.getNodeTypeTab( "Action" );
                 if( ActionTab == null )
                 {
-                    ActionTab = _CswNbtResources.MetaData.makeNewTabNew( NewNodeType, "Action", 9 );
+                    ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
                 }
 
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredProp, true, ActionTab.TabId, 1, 1 );
@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        protected override void beforeWriteNodeLogic( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             if( null != RelationalNodeType )
             {
@@ -637,7 +637,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 // Set 'Name' default value = nodetypename
                 CswNbtMetaDataNodeTypeProp NameProp = RelationalNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
-                NameProp.getDefaultValue( true, true ).AsText.Text = RelationalNodeType.NodeTypeName;
+                NameProp.getDefaultValue( true ).AsText.Text = RelationalNodeType.NodeTypeName;
             }
             if( false == CswTools.IsValidName( NodeTypeName.Text ) )
             {
@@ -864,7 +864,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         Prop.QuestionNo.Value = CurrentQuestionNo;
                         Prop.SubQuestionNo.Value = Int32.MinValue;
-                        Prop.postOnlyChanges( false );
+                        Prop.postOnlyChanges( ForceUpdate: false, SkipEvents: true );
                         PropQuestionNumbers[Prop.NodeId] = CurrentQuestionNo;
                         CurrentQuestionNo++;
                     }
@@ -888,7 +888,7 @@ namespace ChemSW.Nbt.ObjClasses
                             Int32 ParentPropQuestionNo = PropQuestionNumbers[Prop.DisplayConditionProperty.RelatedNodeId];
                             Prop.QuestionNo.Value = ParentPropQuestionNo;
                             Prop.SubQuestionNo.Value = SubQuestionNos[ParentPropQuestionNo];
-                            Prop.postOnlyChanges( false );
+                            Prop.postOnlyChanges( ForceUpdate: false, SkipEvents: true );
                             SubQuestionNos[ParentPropQuestionNo] += 1;
                         }
                     }

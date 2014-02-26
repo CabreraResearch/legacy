@@ -140,8 +140,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            base.ToJSON( ParentObject );  // FIRST
-
             if( false == Double.IsNaN( Base ) )
             {
                 ParentObject[_BaseSubField.ToXmlNodeName( true )] = Base.ToString();

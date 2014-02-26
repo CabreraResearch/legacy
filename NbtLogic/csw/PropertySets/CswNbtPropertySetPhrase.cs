@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Property Set ctor
         /// </summary>
-        protected CswNbtPropertySetPhrase( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        protected CswNbtPropertySetPhrase( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public CswNbtMetaDataPropertySet PropertySet
         {
@@ -118,27 +118,27 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Before write node event for derived classes to implement
         /// </summary>
-        public virtual void beforePropertySetWriteNode() {}
+        public virtual void beforePropertySetWriteNode() { }
 
         /// <summary>
         /// After write node event for derived classes to implement
         /// </summary>
-        public virtual void afterPropertySetWriteNode() {}
+        public virtual void afterPropertySetWriteNode() { }
 
         /// <summary>
         /// Before delete node event for derived classes to implement
         /// </summary>
-        public virtual void beforePropertySetDeleteNode() {}
+        public virtual void beforePropertySetDeleteNode() { }
 
         /// <summary>
         /// After delete node event for derived classes to implement
         /// </summary>
-        public virtual void afterPropertySetDeleteNode() {}
+        public virtual void afterPropertySetDeleteNode() { }
 
         /// <summary>
         /// Populate props event for derived classes to implement
         /// </summary>
-        public virtual void afterPropertySetPopulateProps() {}
+        public virtual void afterPropertySetPopulateProps() { }
 
         /// <summary>
         /// Button click event for derived classes to implement
@@ -148,13 +148,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Mechanism to add default filters in derived classes
         /// </summary>
-        public virtual void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
+        public virtual void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
         #endregion Abstract Methods
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             beforePropertySetWriteNode();
         }
