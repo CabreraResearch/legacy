@@ -68,7 +68,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="accl\CswNbtStructureSearchTest.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpReceivingTest.cs" />
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoaderTest.cs" />
     <Compile Include="csw\ObjClasses\CswNbtNodeCollectionTest.cs" />
@@ -94,10 +93,6 @@
     <Compile Include="TestData\TestData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Common\CswCommon\CswACCL\CswACCL.csproj">
-      <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
-      <Name>CswACCL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Common\CswCommon\CswCommon.csproj">
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
