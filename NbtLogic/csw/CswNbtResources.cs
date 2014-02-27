@@ -9,7 +9,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Log;
 using ChemSW.Mail;
-using ChemSW.MoleculeManager;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -20,6 +19,7 @@ using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 using ChemSW.Security;
 using ChemSW.Session;
+using ChemSW.StructureSearch;
 using ChemSW.TblDn;
 using ChemSW.WebSvc;
 
