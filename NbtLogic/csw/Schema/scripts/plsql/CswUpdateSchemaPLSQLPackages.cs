@@ -43,6 +43,7 @@ PACKAGE TIER_II_DATA_MANAGER AS
 
   function GET_LOCATIONS_UNDER (locationid in number) return tier_ii_location_table pipelined;
   procedure SET_TIER_II_DATA;
+  function GET_TIER_II_DATA (locationid in number, start_date in date, end_date in date) return TIER_II_TABLE pipelined;
 
 END TIER_II_DATA_MANAGER;" );
 
@@ -426,6 +427,373 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       end loop;
     end if;
   end SET_TIER_II_DATA;
+  
+  function GET_TIER_II_DATA (locationid in number, start_date in date, end_date in date) return TIER_II_TABLE pipelined is
+    TIER_II_MATERIALS TIER_II_TABLE;
+  begin
+
+    with
+    --Chemical Props
+    istierii as (
+    select jnp.nodeid, jnp.field1 as istierii
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Is Tier II'
+    ),
+    chemicals as (
+    select n.nodeid, t2.istierii
+          from nodes n
+          left join istierii t2 on n.nodeid = t2.nodeid
+          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+            inner join object_class oc on nt.objectclassid = oc.objectclassid
+            where oc.objectclass = 'ChemicalClass'
+    ),
+    --Components
+    components as (
+    select
+        c.constid, mat.istierii, m.materialid, per.percentage
+      from nodes n
+      left join (select jnp.nodeid, jnp.field1_numeric as percentage
+    from jct_nodes_props jnp
+      inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+      inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+      where ocp.propname = 'Percentage') per on n.nodeid = per.nodeid
+    left join (select jnp.nodeid, jnp.field1_fk as materialid
+      from jct_nodes_props jnp
+      inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+      inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+      where ocp.propname = 'Mixture') m on n.nodeid = m.nodeid
+    left join (select jnp.nodeid, jnp.field1_fk as constid
+      from jct_nodes_props jnp
+      inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+      inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+      where ocp.propname = 'Constituent') c on n.nodeid = c.nodeid
+    left join (select n.nodeid, istierii.istierii
+      from nodes n
+      left join (select jnp.nodeid, jnp.field1 as istierii
+        from jct_nodes_props jnp
+        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        where ocp.propname = 'Is Tier II') istierii on n.nodeid = istierii.nodeid
+      inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        inner join object_class oc on nt.objectclassid = oc.objectclassid
+        where oc.objectclass = 'ChemicalClass') mat on mat.nodeid = c.constid
+    inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+      inner join object_class oc on nt.objectclassid = oc.objectclassid
+      where oc.objectclass = 'MaterialComponentClass'
+        and c.constid is not null
+        and per.percentage is not null
+    ),
+    --ContainerDispenseTransaction Props
+    DispensedDate as (
+    select jnp.nodeid, jnp.field1_date as DispensedDate
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Dispensed Date'
+    ),
+    QuantityDispensed as (
+    select jnp.nodeid, jnp.field1_numeric as QuantityDispensed, jnp.field1_fk as QuantityDispensedUnit
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Quantity Dispensed'
+    ),
+    RemainingQuantity as (
+    select jnp.nodeid, jnp.field1_numeric as RemainingQuantity, jnp.field1_fk as RemainingQuantityUnit
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Remaining Source Container Quantity'
+    ),
+    SourceContainer as (
+    select jnp.nodeid, jnp.field1_fk as containerid
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ( ocp.propname = 'Source Container' or ocp.propname = 'Destination Container' )
+    ),
+    --Container Props
+    material as (
+    select jnp.nodeid, jnp.field1_fk as materialid
+          from jct_nodes_props jnp
+          inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+          inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+          where ocp.propname = 'Material'
+    ),
+    usetype as (
+    select jnp.nodeid, jnp.field1 as usetype
+          from jct_nodes_props jnp
+          inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+          inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+          where ocp.propname = 'Use Type'
+    ),
+    pressure as (
+    select jnp.nodeid, jnp.field1 as pressure
+          from jct_nodes_props jnp
+          inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+          inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+          where ocp.propname = 'Storage Pressure'
+    ),
+    temperature as (
+    select jnp.nodeid, jnp.field1 as temperature
+          from jct_nodes_props jnp
+          inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+          inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+          where ocp.propname = 'Storage Temperature'
+    ),
+    containers as (
+    select n.nodeid, decode(cm.constid, null, mat.materialid, cm.constid) materialid, ut.usetype, sp.pressure, st.temperature,
+    decode(cm.percentage, null, 100, cm.percentage) as percentage
+          from nodes n
+          left join material mat on n.nodeid = mat.nodeid
+          left join chemicals m on mat.materialid = m.nodeid
+          left join components cm on mat.materialid = cm.materialid
+          left join usetype ut on n.nodeid = ut.nodeid
+          left join pressure sp on n.nodeid = sp.nodeid
+          left join temperature st on n.nodeid = st.nodeid
+          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+            inner join object_class oc on nt.objectclassid = oc.objectclassid
+            where oc.objectclass = 'ContainerClass'
+            and (m.istierii = 1 or cm.istierii = 1)
+    ),
+    dispenses as (
+    select 
+      --Use component's id if present - else, use materialid
+      c.materialid,
+      c.nodeid containerid,
+      dd.DispensedDate DispensedDate, trunc(dd.DispensedDate) dispenseday, qd.QuantityDispensed, qd.QuantityDispensedUnit,
+      --Brings QuantityDispensed values over to RemainingQuantity column for Receiving dispenses
+      decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity) RemainingQuantity,
+      --Picks the final quantity value for all dispense records for a given day and, 
+      --if it's for a constituent, recalculates the quantity based on the constituent's percentage
+      (first_value(decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity)) 
+        over(partition by containerid, trunc(dd.DispensedDate) order by dispenseddate desc)) * c.percentage / 100 as qty
+      ,c.percentage
+          from nodes n
+          left join DispensedDate dd on n.nodeid = dd.nodeid
+          left join QuantityDispensed qd on n.nodeid = qd.nodeid
+          left join RemainingQuantity rq on n.nodeid = rq.nodeid
+          left join SourceContainer sc on n.nodeid = sc.nodeid
+          left join containers c on sc.containerid = c.nodeid
+          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+            inner join object_class oc on nt.objectclassid = oc.objectclassid
+            where oc.objectclass = 'ContainerDispenseTransactionClass'
+            and sc.containerid is not null
+            and c.materialid is not null
+    ),
+    cal as ( --TODO - if we build this as a view, we can dynamically inject the cacheThreshold timespan here
+    select start_date + level - 1 the_date, 0 qty 
+        from dual 
+        connect by level <= end_date - start_date + 1
+    ),
+    dispensesPerDay as (
+    select 
+        cdt.materialid, cdt.containerid, max(cdt.dispenseddate), cdt.dispenseday, cdt.qty, cdt.QuantityDispensedUnit, cal.the_date
+        from dispenses cdt
+        join  cal  on (cal.the_date >= cdt.dispenseday AND cal.the_date <= sysdate)
+        group by cdt.materialid, cdt.containerid, cdt.dispenseday, cdt.qty, cdt.QuantityDispensedUnit, cal.the_date
+    ),
+    --select * from dispensesPerDay;
+    LocLocation as (
+    select jnp.nodeid, jnp.field4 as locationPath, jnp.field1_fk as locationid
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Location'
+    ),
+    LocContainer as (
+    select jnp.nodeid, jnp.field1_fk as containerid
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Container'
+    ),
+    LocStatus as (
+    select jnp.nodeid, jnp.field1 as status
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Status'
+    ),
+    LocScandate as (
+    select jnp.nodeid, jnp.field1_date as scandate
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Scan Date'
+    ),
+    locations as (
+    select 
+        c.materialid, c.nodeid containerid, ll.locationid, lsd.scandate, cal.the_date, c.usetype, c.pressure, c.temperature
+        from nodes n
+        left join LocStatus ls on n.nodeid = ls.nodeid
+        left join LocLocation ll on n.nodeid = ll.nodeid
+        left join LocContainer lc on n.nodeid = lc.nodeid
+        left join LocScanDate lsd on n.nodeid = lsd.nodeid
+        left join containers c on lc.containerid = c.nodeid
+        join cal on (cal.the_date >= trunc(lsd.scandate) AND cal.the_date <= sysdate)
+        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+          inner join object_class oc on nt.objectclassid = oc.objectclassid
+          where oc.objectclass = 'ContainerLocationClass'
+          and c.materialid is not null
+          and c.nodeid is not null
+          and ls.status = 'Moved, Dispensed, or Disposed/Undisposed'--This filters out scan and placeholder records
+    ),
+    containerlocations as (
+    select unique materialid, containerid, the_date, usetype, pressure, temperature,
+        (first_value(locationid) over( partition by containerid, the_date order by scandate desc)) as locationid
+        from locations locs
+        order by the_date asc, materialid, containerid, locationid
+    ),
+    tier2info as (
+    select unique dpd.materialid, dpd.containerid, dpd.the_date,
+        (first_value(dpd.qty) over( partition by dpd.materialid, dpd.containerid, dpd.the_date order by dpd.dispenseday desc)) as curqty,
+        dpd.quantitydispensedunit qtyunit, cl.locationid, cl.usetype, cl.pressure, cl.temperature
+        from dispensesPerDay dpd 
+        left join containerLocations cl on cl.materialid = dpd.materialid and cl.containerid = dpd.containerid and cl.the_date = dpd.the_date
+    ),
+    --select * from tier2info;
+    uniqueusetypes as (
+      select unique materialid, listagg(usetype, ',') within group (order by usetype) usetype
+      from (select unique materialid, usetype from tier2info) 
+      group by materialid
+    ),
+    uniquepressures as (
+      select unique materialid, listagg(pressure, ',') within group (order by pressure) pressure
+      from (select unique materialid, pressure from tier2info) 
+      group by materialid
+    ),
+    uniquetemperatures as (
+      select unique materialid, listagg(temperature, ',') within group (order by temperature) temperature
+      from (select unique materialid, temperature from tier2info) 
+      group by materialid
+    ),
+    containerprops as (
+      select uut.materialid, uut.usetype, up.pressure, ut.temperature
+      from uniqueusetypes uut
+      left join uniquepressures up on uut.materialid = up.materialid
+      left join uniquetemperatures ut on uut.materialid = ut.materialid
+    ),
+    --select * from containerprops;
+    locationscope as (
+      --TODO: replace this collection with a call to a pipelined function that takes a locationid and returns it along with every child locationid
+      select locationid from table(TIER_II_DATA_MANAGER.GET_LOCATIONS_UNDER(locationid))
+    ),
+    --Somewhere around here is where we can split this query if we need to use a materialized view
+    tier2qtyByUnit as (
+    select materialid, the_date, sum(curqty) as qty, qtyunit, locationid
+        from tier2info
+        where locationid in (select * from locationscope)
+        group by materialid, the_date, qtyunit, locationid
+    ),
+    specgrav as (
+    select jnp.nodeid, jnp.field1_numeric as spec_grav
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Specific Gravity'
+    ),
+    --select * from tier2qtyByUnit;
+    tier2qtyPerLocation as (
+    select t2.materialid, t2.the_date, t2.locationid, sum(unit_conversion.convert_unit_to_lbs(t2.qty, t2.qtyunit, sg.spec_grav)) qty
+        from tier2qtyByUnit t2
+        join specgrav sg on sg.nodeid = t2.materialid
+        group by t2.materialid, t2.the_date, t2.locationid
+    ),
+    --select * from tier2qtyPerLocation;
+    tier2quantities as (
+    select 
+      t2.materialid, max(t2.qty) as maxqty, round(avg(t2.qty), 6) as avgqty
+      from tier2qtyPerLocation t2
+      group by t2.materialid
+    ),
+    --select * from tier2quantities;
+    storagelocations as (
+    select materialid, listagg(locationPath, ', ') within group (order by locationPath) storagelocations 
+      from (select unique ml.*, ll.locationPath 
+            from (select unique ml.materialid, ml.locationid from tier2qtyPerLocation ml) ml
+            left join LocLocation ll on ll.locationid = ml.locationid)
+      group by materialid
+    ),
+    daysonsite as (
+    select materialid, count(*) as daysonsite 
+        from ( select unique materialid, the_date from tier2qtyPerLocation ) 
+        group by materialid
+    ),
+    --select * from daysonsite;
+    tradename as (
+    select jnp.nodeid, jnp.field1 as tradename
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Tradename'
+    ),
+    casno as (
+    select jnp.nodeid, jnp.field1 as casno
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'CAS No'
+    ),
+    materialtype as (
+    select jnp.nodeid, jnp.field1 as materialtype
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Material Type'
+    ),
+    physicalstate as (
+    select jnp.nodeid, jnp.field1 as physicalstate
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Physical State'
+    ),
+    specialflags as (
+    select jnp.nodeid, jnp.gestaltsearch as specialflags
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Special Flags'
+    ),
+    hazardcategories as (
+    select jnp.nodeid, jnp.gestaltsearch as hazardcategories
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Hazard Categories'
+    )
+    select 
+      TIER_II_ROW(t2.materialid, tn.tradename, cn.casno, mt.materialtype, ps.physicalstate,
+      case when sf.specialflags like '%ehs%' then '1' else '0' end, 
+      case when sf.specialflags like '%trade secret%' then '1' else '0' end,
+      hc.hazardcategories,
+      t2.maxqty, mq.range_code, t2.avgqty, aq.range_code, md.daysonsite, 
+      cp.usetype, cp.pressure, cp.temperature, ml.storagelocations)
+      bulk collect into TIER_II_MATERIALS
+      from tier2quantities t2
+      left join storagelocations ml on ml.materialid = t2.materialid
+      left join daysonsite md on md.materialid = t2.materialid
+      left join containerprops cp on cp.materialid = t2.materialid
+      left join tradename tn on tn.nodeid = t2.materialid
+      left join casno cn on cn.nodeid = t2.materialid
+      left join materialtype mt on mt.nodeid = t2.materialid
+      left join physicalstate ps on ps.nodeid = t2.materialid
+      left join specialflags sf on sf.nodeid = t2.materialid
+      left join hazardcategories hc on hc.nodeid = t2.materialid
+      left join tier2_rangecodes mq on t2.maxqty >= mq.lower_bound and t2.maxqty < mq.upper_bound
+      left join tier2_rangecodes aq on t2.avgqty >= aq.lower_bound and t2.avgqty < aq.upper_bound
+      order by t2.materialid
+    ;
+    
+    for i in 1..TIER_II_MATERIALS.count loop
+      pipe row(TIER_II_MATERIALS(i));
+    end loop;
+
+    return;
+  end GET_TIER_II_DATA;
 
 END TIER_II_DATA_MANAGER;" );
 
