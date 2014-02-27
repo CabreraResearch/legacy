@@ -27,5 +27,6 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public static readonly CswEnumNbtKioskModeRuleName Transfer = new CswEnumNbtKioskModeRuleName( "Transfer" );
         public static readonly CswEnumNbtKioskModeRuleName Dispense = new CswEnumNbtKioskModeRuleName( "Dispense" );
         public static readonly CswEnumNbtKioskModeRuleName Dispose = new CswEnumNbtKioskModeRuleName( "Dispose" );
+        public static readonly CswEnumNbtKioskModeRuleName Open = new CswEnumNbtKioskModeRuleName( "Open" );
     }
 }

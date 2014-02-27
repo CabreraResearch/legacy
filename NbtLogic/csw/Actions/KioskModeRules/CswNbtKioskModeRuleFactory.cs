@@ -38,6 +38,10 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 ret = new CswNbtKioskModeRuleStatus( CswNbtResources );
             }
+            else if( loweredName.Equals( CswEnumNbtKioskModeRuleName.Open._Name.ToLower() ) )
+            {
+                ret = new CswNbtKioskModeRuleOpen( CswNbtResources );
+            }
             return ret;
         }
     }

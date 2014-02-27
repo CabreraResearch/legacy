@@ -31,7 +31,6 @@ namespace ChemSW.Nbt.Schema
             Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
                 {
                     new CswSchemaScriptsLarch(),
-                    new CswSchemaScriptsLarch(),
                 };
 
             // DDL
