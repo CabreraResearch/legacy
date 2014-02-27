@@ -202,7 +202,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != molProp )
                 {
                     molProp.Mol = FormattedMolString;
-                    Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
                     //Save the mol image to blob_data
                     byte[] molImage = CswStructureSearch.GetImage( FormattedMolString );
 
@@ -214,13 +213,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString, out errorMsg );
                 }
-
-                if( PostChanges )
-                {
-                    Node.postChanges( false );
-                }
             }
-
         }
 
         /// <summary>
