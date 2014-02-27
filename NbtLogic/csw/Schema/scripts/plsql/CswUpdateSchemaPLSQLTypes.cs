@@ -61,6 +61,33 @@ TYPE TIER_II_MATERIAL AS OBJECT
 )" );
 
             #endregion TIER_II_MATERIAL
+
+            #region TIER_II_ROW
+
+            public static readonly TypeHeaders TIER_II = new TypeHeaders( CswEnumDeveloper.BV, 31910, "TIER_II_ROW",
+            @"create or replace
+TYPE TIER_II_ROW AS OBJECT 
+(
+  MATERIALID number,
+  TRADENAME varchar2(255),
+  CASNO varchar2(255),
+  MATERIALTYPE varchar2(255),  
+  PHYSICALSTATE varchar2(255),
+  EHS varchar2(1),
+  TRADESECRET varchar2(1),
+  HAZARDCATEGORIES varchar2(255),
+  MAXQTY number,  
+  MAXQTYRANGECODE varchar2(10),  
+  AVGQTY number,
+  AVGQTYRANGECODE varchar2(10),
+  DAYSONSITE number,
+  USETYPE varchar2(255),  
+  PRESSURE varchar2(255),
+  TEMPERATURE varchar2(255),  
+  STORAGELOCATIONS varchar2(4000)
+)" );
+
+            #endregion TIER_II_ROW
         }
 
         public sealed class NestedTables : CswEnum<NestedTables>
@@ -109,6 +136,14 @@ type TIER_II_LOCATION_TABLE as table of TIER_II_LOCATION;" );
 type TIER_II_MATERIAL_TABLE as table of TIER_II_MATERIAL;" );
 
             #endregion TIER_II_MATERIAL_TABLE
+
+            #region TIER_II_TABLE
+
+            public static readonly NestedTables TIER_II_TABLE = new NestedTables( CswEnumDeveloper.BV, 28247, "TIER_II_TABLE",
+            @"create or replace
+type TIER_II_TABLE as table of TIER_II_ROW;" );
+
+            #endregion TIER_II_TABLE
         }
 
     }//class CswUpdateSchemaPLSQLTypes

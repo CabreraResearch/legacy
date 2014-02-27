@@ -947,7 +947,7 @@ namespace ChemSW.Nbt.ObjClasses
                         LotControlled.Checked = InvGroupNode.Central.Checked == CswEnumTristate.True ? CswEnumTristate.True : CswEnumTristate.False;
                     }
                     //}
-                    else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
+                    if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                     {
                         CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Move );
                     }
