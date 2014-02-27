@@ -11,6 +11,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
+using ChemSW.StructureSearch;
 using NbtWebApp;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
@@ -1220,10 +1221,19 @@ namespace ChemSW.Nbt.WebServices
                                     string molData = C3Mapping.C3ProductPropertyValue;
 
                                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                    string Href;
-                                    string FormattedMolString;
-                                    string errorMsg;
-                                    SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, Node : Node );
+
+                                    MolecularGraph Mol = MoleculeBuilder.CreateMolFromString( molData );
+                                    if( false == Mol.ContainsInvalidAtom() )
+                                    {
+                                        string Href;
+                                        string FormattedMolString;
+                                        string errorMsg;
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, Node : Node );
+                                    }
+                                    else
+                                    {
+                                        _CswNbtResources.logMessage( "Failed to save the MOL file for product with ProductId " + _ProductToImport.ProductId + " during the C3 import process because it contained an invalid atom." );
+                                    }
                                 }
                                 break;
                             default:
