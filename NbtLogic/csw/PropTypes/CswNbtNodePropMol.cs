@@ -95,7 +95,6 @@ namespace ChemSW.Nbt.PropTypes
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Mol );
         }
         
-
     }//CswNbtNodePropMol
 
 }//namespace ChemSW.Nbt.PropTypes
