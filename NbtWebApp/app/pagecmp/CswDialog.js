@@ -735,9 +735,7 @@
                     molText.val(data.molString);
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + data.molImgAsBase64String,
-                        height: 160,
-                        width: 160
+                        src: "data:image/jpeg;base64," + data.molImgAsBase64String
                     });
                 }
             };
