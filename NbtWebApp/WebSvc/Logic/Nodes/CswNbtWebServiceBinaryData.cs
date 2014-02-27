@@ -64,52 +64,30 @@ namespace ChemSW.Nbt.WebServices
 
             if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, MetaDataProp.getNodeType(), NbtResources.CurrentNbtUser ) )
             {
-                if( MetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.MOL )
-                {
-                    byte[] molimg = new byte[0];
-                    CswNbtNode node = null;
-                    if( String.IsNullOrEmpty( Request.date ) )
-                    {
-                        node = NbtResources.Nodes.GetNode( Request.NodeId );
-                        molimg = NbtResources.MoleculeManager.GenerateImage( node.Properties[MetaDataProp].AsMol.Mol, false );
-                    }
-                    else
-                    {
-                        DateTime nodedate = CswConvert.ToDateTime( Request.date );
-                        node = NbtResources.Nodes.GetNode( Request.NodeId, new CswDateTime( NbtResources, nodedate ) );
-                        molimg = NbtResources.MoleculeManager.GenerateImage( node.Properties[MetaDataProp].AsMol.Mol, false );
-                    }
 
-                    Request.data = molimg;
-                    Request.Blob.FileName = node.NodeName + ".jpg";
-                    Request.Blob.ContentType = "image/jpeg";
+                //Get the file from blob_data
+                if( String.IsNullOrEmpty( Request.date ) )
+                {
+                    CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
+                    string whereClause = "where jctnodepropid = " + Request.propid;
+                    if( Int32.MinValue != BlobDataId )
+                    {
+                        whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
+                    }
+                    blobDataTbl = blobDataSelect.getTable( whereClause );
                 }
-                else
+                else //get the audited record
                 {
-                    //Get the file from blob_data
-                    if( String.IsNullOrEmpty( Request.date ) )
-                    {
-                        CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
-                        string whereClause = "where jctnodepropid = " + Request.propid;
-                        if( Int32.MinValue != BlobDataId )
-                        {
-                            whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
-                        }
-                        blobDataTbl = blobDataSelect.getTable( whereClause );
-                    }
-                    else //get the audited record
-                    {
-                        int jctnodepropid = CswConvert.ToInt32( Request.propid );
-                        CswArbitrarySelect blobDataAuditSelect = CswNbtSdBlobData.GetBlobAuditSelect( NbtResources, Request.date, jctnodepropid, BlobDataId );
-                        blobDataTbl = blobDataAuditSelect.getTable();
-                    }
+                    int jctnodepropid = CswConvert.ToInt32( Request.propid );
+                    CswArbitrarySelect blobDataAuditSelect = CswNbtSdBlobData.GetBlobAuditSelect( NbtResources, Request.date, jctnodepropid, BlobDataId );
+                    blobDataTbl = blobDataAuditSelect.getTable();
+                }
 
-                    foreach( DataRow row in blobDataTbl.Rows )
-                    {
-                        Request.data = row["blobdata"] as byte[];
-                        Request.Blob.FileName = row["filename"].ToString();
-                        Request.Blob.ContentType = row["contenttype"].ToString();
-                    }
+                foreach( DataRow row in blobDataTbl.Rows )
+                {
+                    Request.data = row["blobdata"] as byte[];
+                    Request.Blob.FileName = row["filename"].ToString();
+                    Request.Blob.ContentType = row["contenttype"].ToString();
                 }
 
                 if( null == Request.data || Request.data.Length == 0 )

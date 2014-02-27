@@ -53,7 +53,7 @@
                 forceIframeTransport: cswPrivate.forceIframeTransport,
                 beforeSend: function (jqXHR, settings) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.params)) {
-                        settings.url = cswPrivate.url + +'&X-NBT-SessionId=' + Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
+                        settings.url = cswPrivate.url +'&X-NBT-SessionId=' + Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
                     }
                 },
                 send: function (e, data) {

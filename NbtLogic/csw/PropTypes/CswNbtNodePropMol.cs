@@ -146,7 +146,6 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-
     }//CswNbtNodePropMol
 
 }//namespace ChemSW.Nbt.PropTypes

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
@@ -79,6 +78,13 @@ namespace ChemSW.Nbt.WebServices
                     imgUrl = "Images/newicons/KioskMode/Transfer_code39.png",
                     applies_to_types = applies_to_all
                 } );
+                kioskModeData.AvailableModes.Add( new Mode
+                {
+                    name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Open._Name ),
+                    imgUrl = "Images/newicons/KioskMode/Open_code39.png",
+                    applies_to_types = applies_to_cont
+                } );
+
                 CswNbtPermit permissions = new CswNbtPermit( NbtResources );
                 if( permissions.can( CswEnumNbtActionName.DispenseContainer ) )
                 {

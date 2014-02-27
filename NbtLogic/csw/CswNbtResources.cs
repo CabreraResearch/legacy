@@ -9,7 +9,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Log;
 using ChemSW.Mail;
-using ChemSW.MoleculeManager;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -20,6 +19,7 @@ using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 using ChemSW.Security;
 using ChemSW.Session;
+using ChemSW.StructureSearch;
 using ChemSW.TblDn;
 using ChemSW.WebSvc;
 
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Provides an interface into the StructureSearch classes
         /// </summary>
-        public CswMoleculeManager MoleculeManager;
+        public CswStructureSearchManager StructureSearchManager;
 
         private Collection<CswWebSvcReturnBase.ErrorMessage> _Messages = new Collection<CswWebSvcReturnBase.ErrorMessage>();
         public Collection<CswWebSvcReturnBase.ErrorMessage> Messages
@@ -126,8 +126,8 @@ namespace ChemSW.Nbt
             Permit = new CswNbtPermit( this );
             SearchManager = new CswNbtSearchManager( this );
 
-            MoleculeManager = new CswMoleculeManager( this, "jct_nodes_props", "nodeid", "clobdata" );
-            MoleculeManager.AddAdditionalWhere = delegate()
+            StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
+            StructureSearchManager.AddAdditionalWhere = delegate()
                 {
                     CswNbtMetaDataObjectClass ChemicalOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                     CswNbtMetaDataObjectClassProp StructureOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Structure );
