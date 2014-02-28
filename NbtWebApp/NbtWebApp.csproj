@@ -1475,7 +1475,7 @@
       <Name>CswCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswWebControls\CswWebControls.csproj">
-      <Project>{1617e93a-a9dd-46d5-a607-7a36df91c2d1}</Project>
+      <Project>{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}</Project>
       <Name>CswWebControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Common\CswCommon\StructureSearch\StructureSearch.csproj">

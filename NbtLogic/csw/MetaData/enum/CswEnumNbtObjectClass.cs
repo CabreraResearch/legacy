@@ -37,6 +37,7 @@ namespace ChemSW.Nbt.MetaData
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
             { EquipmentClass                    , EquipmentClass                     },
             { EquipmentTypeClass                , EquipmentTypeClass                 },
+            { FakeClass                         , FakeClass                          },   // for testing only
             { FeedbackClass                     , FeedbackClass                      },
             { FireClassExemptAmountClass        , FireClassExemptAmountClass         },
             { FireClassExemptAmountSetClass     , FireClassExemptAmountSetClass      },
@@ -164,6 +165,7 @@ namespace ChemSW.Nbt.MetaData
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
         public const string EquipmentClass = "EquipmentClass";
         public const string EquipmentTypeClass = "EquipmentTypeClass";
+        public const string FakeClass = "FakeClass";  // for testing only
         public const string FeedbackClass = "FeedbackClass";
         public const string FireClassExemptAmountClass = "FireClassExemptAmountClass";
         public const string FireClassExemptAmountSetClass = "FireClassExemptAmountSetClass";

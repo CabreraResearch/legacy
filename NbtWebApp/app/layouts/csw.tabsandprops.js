@@ -263,8 +263,8 @@
             }
         };
 
-        cswPrivate.makeIdentityTab = function () {
-            cswPrivate.ajax.tabs = Csw.ajax.deprecatedWsNbt({
+        cswPrivate.makeIdentityTab = function (onSuccess) {
+            Csw.ajax.deprecatedWsNbt({
                 watchGlobal: cswPrivate.AjaxWatchGlobal,
                 urlMethod: 'getIdentityTabProps',
                 data: {
@@ -320,7 +320,9 @@
                         cswPrivate.identityLayoutTable = identityFormTbl.cell(1, 1).layoutTable(layoutOpts);
                         cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTabProps);
                     }
-                }
+
+                    Csw.tryExec(onSuccess);
+                } // success()
             });
         };
 
@@ -437,10 +439,6 @@
                         }
 
                         function makeTabs() {
-                            cswPrivate.clearTabs();
-
-                            cswPrivate.makeIdentityTab();
-
                             var tabIds = Csw.delimitedString();
                             Csw.iterate(data.tabs, function (tab) {
                                 tabIds.add(tab.id);
@@ -508,7 +506,10 @@
                                             cswPrivate.form.empty();
                                             cswPrivate.onTearDown();
                                             cswPrivate.setLastSelectedTab(cswPrivate.tabState.tabNo, cswPrivate.tabState.tabid);
-                                            makeTabs();
+                                            cswPrivate.clearTabs();
+                                            cswPrivate.makeIdentityTab(function() {
+                                                makeTabs();
+                                            });
                                         }
                                         return ret;
 
@@ -522,7 +523,10 @@
                             cswPrivate.tabcnt = tabno;
                         }
 
-                        makeTabs();
+                        cswPrivate.clearTabs();
+                        cswPrivate.makeIdentityTab(function() {
+                            makeTabs();
+                        });
                     } // success
                 }); // ajax
             } // if-else editmode is add or preview
@@ -1259,12 +1263,13 @@
                 }
                 if (propData) {
                     cswPrivate.onTearDownProps();
-                    cswPrivate.tabState.propertyData = propData;
-                    cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
 
                     // Case 30885: Refresh the identity tab
                     cswPrivate.identityForm.empty();
-                    cswPrivate.makeIdentityTab();
+                    cswPrivate.makeIdentityTab(function() {
+                        cswPrivate.tabState.propertyData = propData;
+                        cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                    });
                 }
             } else {
                 cswPrivate.onTearDown();

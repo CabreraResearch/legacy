@@ -51,6 +51,9 @@ NbtWebApp/plato*
 Thumbs.db
 aspnet_client/system_web/4_0_30319/crystalreportviewers13/urlreporting/appletviewer.js
 aspnet_client/**/*
+NbtWebApp/vendor/*
+NbtWebApp/Content/*
+NbtWebApp/scripts/*
 syntax: regexp
 .*\.orig
 .*\.vsp
