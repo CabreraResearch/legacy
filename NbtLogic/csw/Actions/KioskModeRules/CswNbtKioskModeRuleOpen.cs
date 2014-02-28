@@ -1,5 +1,5 @@
 ﻿using System;
-using ChemSW.Core;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
@@ -40,21 +40,14 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerToOpen = _CswNbtResources.Nodes[OpData.Field1.NodeId];
-            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, containerToOpen.NodeType ) && _CswNbtResources.Permit.can( CswEnumNbtActionName.DisposeContainer ) )
+            CswNbtNode NodeToOpen = _CswNbtResources.Nodes[OpData.Field1.NodeId];
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeToOpen.getNodeType() ) )
             {
-                if( CswEnumTristate.True == containerToOpen.Disposed.Checked )
-                {
-                    OpData.Field1.StatusMsg = "Container " + OpData.Field1.Value + " is already disposed";
-                    OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispose already disposed container " + OpData.Field1.Value );
-                }
-                else
-                {
-                    containerToOpen.OpenContainer();
-                    containerToOpen.postChanges( false );
-                    OpData.Log.Add( DateTime.Now + " - Opened container " + OpData.Field1.Value + " expiration date set to: " + containerToOpen.ExpirationDate.Gestalt );
-                    OpData.Field1.Value = string.Empty;
-                }
+                ICswNbtKioskModeOpenable containerToOpen = (ICswNbtKioskModeOpenable) NodeToOpen.ObjClass;
+                containerToOpen.OpenItem();
+                NodeToOpen.postChanges( false );
+                OpData.Log.Add( DateTime.Now + " - Opened container " + OpData.Field1.Value + " expiration date set to: " + containerToOpen.ExpirationDate.Gestalt );
+                OpData.Field1.Value = string.Empty;
                 OpData.Field1.ServerValidated = false;
             }
             else
@@ -76,8 +69,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );
-                CswNbtObjClassContainer PotentialContainer = tree.getNodeForCurrentPosition();
-                if( PotentialContainer.CanOpen() )
+                ICswNbtKioskModeOpenable PotentialOpenable = (ICswNbtKioskModeOpenable) tree.getNodeForCurrentPosition().ObjClass;
+                if( PotentialOpenable.CanOpen() )
                 {
                     OpData.Field1.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                     ret = true;

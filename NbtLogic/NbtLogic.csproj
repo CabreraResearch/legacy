@@ -106,6 +106,8 @@
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleStatus.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeDataContracts.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRule.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\CswNbtKioskModeOpenableImpl.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\ICswNbtKioskModeOpenable.cs" />
     <Compile Include="csw\Actions\Receiving\CswNbtAmountsGridQuantity.cs" />
     <Compile Include="csw\Actions\Receiving\CswNbtReceivingDefinition.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpReceiving.cs" />
