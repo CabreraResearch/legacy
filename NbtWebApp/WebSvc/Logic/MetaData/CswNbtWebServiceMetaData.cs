@@ -178,6 +178,36 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         }
 
+        public JObject getNodeTypeProps( string NodeTypeName, string NodeTypeId, bool EditablePropsOnly )
+        {
+            JObject ReturnVal = new JObject();
+            CswNbtMetaDataNodeType NodeType;
+            if( false == String.IsNullOrEmpty( NodeTypeName ) )
+            {
+                NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
+            }
+            else
+            {
+                NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
+            }
+            if( null != NodeType )
+            {
+                if( _userHasPermission( CswEnumNbtNodeTypePermission.View, NodeType ) )
+                {
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps()
+                                                                        .Where( p => EditablePropsOnly && false == p.getFieldType().IsDisplayType() )
+                                                                        .OrderBy( p => p.PropName ) )
+                    {
+                        string PropKey = "prop_" + Prop.PropId;
+                        ReturnVal[PropKey] = new JObject();
+                        ReturnVal[PropKey]["id"] = Prop.PropId;
+                        ReturnVal[PropKey]["name"] = Prop.PropName;
+                    }
+                }
+            }
+            return ReturnVal;
+        } // getNodeTypeProps()
+
         //Get fieldtypes
         public JArray getFieldTypes( string LayoutType )
         {

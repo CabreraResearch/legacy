@@ -20,6 +20,14 @@
 
         var actionHandler = Csw.object();
         (function buildActHandler() {
+            actionHandler.add('batch edit', function (o) {
+                return Csw.nbt.batchEditWizard(Csw.main.centerTopDiv, {
+                    onCancel: onCancel,
+                    onFinish: function () {
+                        onCancel();
+                    }
+                });
+            });
             actionHandler.add('chemwatch', function (o) {
                 return Csw.actions.chemwatch(Csw.main.centerTopDiv, {
                     state: o.state,
