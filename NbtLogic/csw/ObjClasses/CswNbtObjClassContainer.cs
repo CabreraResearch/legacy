@@ -409,6 +409,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             OpenedDate.DateTimeValue = DateTime.Now;
             ExpirationDate.DateTimeValue = ( ExpirationDate.DateTimeValue < Chemical.getDefaultOpenExpirationDate( DateTime.Now ) ? ExpirationDate.DateTimeValue : Chemical.getDefaultOpenExpirationDate( DateTime.Now ) );
+            Open.setHidden( true, true );
         }
 
         /// <summary>
