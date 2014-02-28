@@ -1030,8 +1030,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswTableUpdate ObjectClassPropUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class_props" );
                     DataTable UpdateTable = ObjectClassPropUpdate.getEmptyTable();
-                    _addObjectClassPropRow( UpdateTable,
-                                            OcpModel );
+                    _addObjectClassPropRow( UpdateTable, OcpModel );
 
                     ObjectClassPropUpdate.update( UpdateTable );
                     MetaData.refreshAll();
