@@ -8,26 +8,27 @@ namespace ChemSW.Nbt.Sched
     {
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
-                                                                   {
-                                                                       { BatchOp                       , BatchOp                        },
-                                                                       { CAFImport                     , CAFImport                      },
-                                                                       { ContainerReconciliationActions, ContainerReconciliationActions },
-                                                                       { DisableChemSwAdmin            , DisableChemSwAdmin             },
-                                                                       { ExpiredContainers             , ExpiredContainers              },
-                                                                       { GenEmailRpt                   , GenEmailRpt                    },
-                                                                       { GenNode                       , GenNode                        },
-                                                                       { GenRequest                    , GenRequest                     },
-                                                                       { Import                        , Import                         },
-                                                                       { MolFingerprints               , MolFingerprints                },
-                                                                       { NodeCounts                    , NodeCounts                     },
-                                                                       { PurgeSessionData              , PurgeSessionData               },
-                                                                       { Reconciliation                , Reconciliation                 },
-                                                                       { TierII                        , TierII                         },
-                                                                       { UpdtInspection                , UpdtInspection                 },
-                                                                       { UpdtMTBF                      , UpdtMTBF                       },
-                                                                       { UpdtPropVals                  , UpdtPropVals                   },
-                                                                       { ValidateAccessIds             , ValidateAccessIds              }
-                                                                   };
+        {
+            { BatchOp                       , BatchOp                        },
+            { CAFImport                     , CAFImport                      },
+            { ContainerReconciliationActions, ContainerReconciliationActions },
+            { ContainerRecords              , ContainerRecords               },
+            { DisableChemSwAdmin            , DisableChemSwAdmin             },
+            { ExpiredContainers             , ExpiredContainers              },
+            { GenEmailRpt                   , GenEmailRpt                    },
+            { GenNode                       , GenNode                        },
+            { GenRequest                    , GenRequest                     },
+            { Import                        , Import                         },
+            { MolFingerprints               , MolFingerprints                },
+            { NodeCounts                    , NodeCounts                     },
+            { PurgeSessionData              , PurgeSessionData               },
+            { Reconciliation                , Reconciliation                 },
+            { TierII                        , TierII                         },
+            { UpdtInspection                , UpdtInspection                 },
+            { UpdtMTBF                      , UpdtMTBF                       },
+            { UpdtPropVals                  , UpdtPropVals                   },
+            { ValidateAccessIds             , ValidateAccessIds              }
+        };
         /// <summary>
         /// The string value of the current instance
         /// </summary>
@@ -83,6 +84,7 @@ namespace ChemSW.Nbt.Sched
         public const string BatchOp = "BatchOp";
         public const string CAFImport = "CAFImport";
         public const string ContainerReconciliationActions = "ContainerReconciliationActions";
+        public const string ContainerRecords = "ContainerRecordss";
         public const string DisableChemSwAdmin = "DisableChemSwAdmin";
         public const string ExpiredContainers = "ExpiredContainers";
         public const string ExtChemDataSync = "ExtChemDataSync";

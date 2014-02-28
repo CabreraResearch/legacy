@@ -242,6 +242,7 @@
     <Compile Include="csw\Requesting\CswNbtRequestItemType.cs" />
     <Compile Include="csw\Requesting\CswNbtRequestItemTypeMaterialCreate.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerRecords.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtPurgeSessionData.cs" />
