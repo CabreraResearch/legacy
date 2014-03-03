@@ -2,15 +2,16 @@ using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassEquipmentAssembly : CswNbtObjClass
+    public class CswNbtObjClassEquipmentAssembly: CswNbtObjClass, ICswNbtKioskModeMoveable
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Type = "Assembly Type";
             public const string AssemblyParts = "Assembly Parts";
@@ -50,7 +51,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static string PartsXValueName = "Uses";
 
-        public CswNbtObjClassEquipmentAssembly( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        private readonly CswNbtKioskModeMoveableImpl _Mover;
+
+        public CswNbtObjClassEquipmentAssembly( CswNbtResources CswNbtResources, CswNbtNode Node )
+            : base( CswNbtResources, Node )
+        {
+            _Mover = new CswNbtKioskModeMoveableImpl( CswNbtResources, this );
+        }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -105,7 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NodesUpdate.update( NodesTable );
                 }
             }
-        }      
+        }
 
         protected override void afterPopulateProps()
         {
@@ -216,6 +223,21 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropPropertyReference UserPhone { get { return ( _CswNbtNode.Properties[PropertyName.UserPhone] ); } }
 
         #endregion
+
+        #region ICswNbtKioskModeMovable
+
+        public bool CanMove(out string Error)
+        {
+            return _Mover.CanMove(out Error);
+        }
+
+        public void Move( CswNbtObjClassLocation LocationToMoveTo )
+        {
+            _Mover.Move( LocationToMoveTo );
+        }
+
+        #endregion
+
     }//CswNbtObjClassEquipmentAssembly
 
 }//namespace ChemSW.Nbt.ObjClasses

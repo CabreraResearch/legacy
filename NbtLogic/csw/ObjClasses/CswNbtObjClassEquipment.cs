@@ -1,12 +1,13 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassEquipment: CswNbtObjClass
+    public class CswNbtObjClassEquipment: CswNbtObjClass, ICswNbtKioskModeMoveable
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -49,7 +50,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static string PartsXValueName { get { return "Uses"; } }
 
-        public CswNbtObjClassEquipment( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        private readonly CswNbtKioskModeMoveableImpl _Mover;
+
+        public CswNbtObjClassEquipment( CswNbtResources CswNbtResources, CswNbtNode Node )
+            : base( CswNbtResources, Node )
+        {
+            _Mover = new CswNbtKioskModeMoveableImpl( CswNbtResources, this );
+        }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -255,6 +262,35 @@ namespace ChemSW.Nbt.ObjClasses
             User.RefreshNodeName();
             User.SyncGestalt();
         }
+
+        #region ICswNbtKioskModeMoveable
+
+        /// <summary>
+        /// Returns false if this equipment is in an assembly
+        /// </summary>
+        public bool CanMove( out string Error )
+        {
+            //Intentionally dont use default Move
+            bool ret = true;
+            Error = string.Empty;
+            if( null != Assembly.RelatedNodeId )
+            {
+                CswNbtObjClassEquipmentAssembly assembly = _CswNbtResources.Nodes[Assembly.RelatedNodeId];
+                if( null != assembly )
+                {
+                    ret = false;
+                    Error = "Cannot perform MOVE operation on Equipment (" + EquipmentId.Barcode + ") when it belongs to Assembly (" + assembly.Barcode.Barcode + ")";
+                }
+            }
+            return ret;
+        }
+
+        public void Move( CswNbtObjClassLocation LocationToMoveTo )
+        {
+            _Mover.Move(LocationToMoveTo);
+        }
+
+        #endregion
 
     }//CswNbtObjClassEquipment
 

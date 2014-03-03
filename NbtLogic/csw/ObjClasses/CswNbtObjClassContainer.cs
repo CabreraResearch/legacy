@@ -18,7 +18,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable
+    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable, ICswNbtKioskModeMoveable
     {
         #region Properties
 
@@ -76,6 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtContainerDispenser Dispenser;
         private CswNbtContainerDisposer _Disposer;
         private CswNbtKioskModeOpenableImpl _Opener;
+        private CswNbtKioskModeMoveableImpl _Mover;
 
         public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
@@ -83,6 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
             _Disposer = new CswNbtContainerDisposer( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
             _Opener = new CswNbtKioskModeOpenableImpl( _CswNbtResources, this );
+            _Mover = new CswNbtKioskModeMoveableImpl( _CswNbtResources, this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -1076,6 +1078,20 @@ namespace ChemSW.Nbt.ObjClasses
         public bool CanOpen()
         {
             return _Opener.CanOpen();
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeMoveable
+
+        public bool CanMove( out string Error )
+        {
+            return _Mover.CanMove( out Error );
+        }
+
+        public void Move( CswNbtObjClassLocation LocationToMoveTo )
+        {
+            _Mover.Move( LocationToMoveTo );
         }
 
         #endregion
