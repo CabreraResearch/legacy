@@ -9,7 +9,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassEquipmentAssembly: CswNbtObjClass, ICswNbtKioskModeMoveable
+    public class CswNbtObjClassEquipmentAssembly: CswNbtObjClass, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -52,11 +52,13 @@ namespace ChemSW.Nbt.ObjClasses
         public static string PartsXValueName = "Uses";
 
         private readonly CswNbtKioskModeMoveableImpl _Mover;
+        private readonly CswNbtKioskModeOwnerableImpl _Ownerer;
 
         public CswNbtObjClassEquipmentAssembly( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _Mover = new CswNbtKioskModeMoveableImpl( CswNbtResources, this );
+            _Ownerer = new CswNbtKioskModeOwnerableImpl( CswNbtResources, this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -176,13 +178,6 @@ namespace ChemSW.Nbt.ObjClasses
             UpdateOwner( NewUser );
         }
 
-        public void UpdateOwner( CswNbtObjClassUser NewUser )
-        {
-            User.RelatedNodeId = NewUser.NodeId;
-            User.SyncGestalt();
-            User.RefreshNodeName();
-        }
-
         #endregion
 
         #region Object class specific properties
@@ -226,14 +221,28 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region ICswNbtKioskModeMovable
 
-        public bool CanMove(out string Error)
+        public bool CanMove( out string Error )
         {
-            return _Mover.CanMove(out Error);
+            return _Mover.CanMove( out Error );
         }
 
         public void Move( CswNbtObjClassLocation LocationToMoveTo )
         {
             _Mover.Move( LocationToMoveTo );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeOwnerable
+
+        public bool CanUpdateOwner( out string Error )
+        {
+            return _Ownerer.CanMove( out Error );
+        }
+
+        public void UpdateOwner( CswNbtObjClassUser NewOwner )
+        {
+            _Ownerer.UpdateOwner( NewOwner );
         }
 
         #endregion
