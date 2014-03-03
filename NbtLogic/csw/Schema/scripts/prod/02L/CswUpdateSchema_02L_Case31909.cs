@@ -43,7 +43,7 @@ select * from(
 counts as (
   select count(nodeid) counts, casno from chemicals group by casno
 )
-select c.nodeid, c.casno, c.tradename, decode(c.istierii, null, 'N', c.istierii) istierii from chemicals c
+select c.nodeid as materialid, c.casno, c.tradename, decode(c.istierii, null, 'N', c.istierii) istierii from chemicals c
 join counts ct on ct.casno = c.casno
 where counts > 1";
             CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
