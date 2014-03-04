@@ -64,5 +64,23 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "DuplicateMaterialsReport" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the Report node used to identify duplicate chemicals" )]
+        public CswNbtWebServiceRegulatoryReporting.TierIIDataReturn DuplicateMaterialsReport()
+        {
+            CswNbtWebServiceRegulatoryReporting.TierIIDataReturn Ret = new CswNbtWebServiceRegulatoryReporting.TierIIDataReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.TierIIDataReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getDuplicateMaterialsReport,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }

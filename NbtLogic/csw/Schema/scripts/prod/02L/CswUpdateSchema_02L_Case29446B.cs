@@ -38,6 +38,16 @@ namespace ChemSW.Nbt.Schema
             {
                 OpenedDateNTP.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
                 OpenedDateNTP.DesignNode.postChanges( false );
+                CswNbtMetaDataNodeType nt = OpenedDateNTP.getNodeType();
+                OpenedDateNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, nt.getFirstNodeTypeTab().TabId );
+            }
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp OpenExpireIntervalOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.OpenExpireInterval );
+            foreach( CswNbtMetaDataNodeTypeProp OpenExpireIntervalNTP in OpenExpireIntervalOCP.getNodeTypeProps() )
+            {
+                CswNbtMetaDataNodeType nt = OpenExpireIntervalNTP.getNodeType();
+                OpenExpireIntervalNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, nt.getFirstNodeTypeTab().TabId );
             }
 
         } // update()

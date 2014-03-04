@@ -10,6 +10,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Conversion;
+using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -25,6 +26,8 @@ namespace ChemSW.Nbt.Actions
 
         [DataMember]
         public Collection<TierIIMaterial> Materials;
+        [DataMember]
+        public String DuplicateMaterialsReportId = String.Empty;
 
         [DataContract]
         public class TierIIMaterial
@@ -142,7 +145,95 @@ namespace ChemSW.Nbt.Actions
 
         #region Public Methods
 
+        public TierIIData getDuplicateMaterialsReport()
+        {
+            TierIIData Data = new TierIIData();
+            CswNbtMetaDataObjectClass ReportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+            CswNbtSearch FindReport = new CswNbtSearch( _CswNbtResources );
+            FindReport.addFilter( ReportOC, false );
+            FindReport.SearchType = CswEnumSqlLikeMode.Exact;
+            FindReport.SearchTerm = "Duplicate Chemicals";
+            ICswNbtTree SearchResults = FindReport.Results();
+            if( SearchResults.getChildNodeCount() > 0 )
+            {
+                SearchResults.goToNthChild( 0 );
+                CswNbtObjClassReport ReportNode = SearchResults.getNodeForCurrentPosition();
+                Data.DuplicateMaterialsReportId = ReportNode.NodeId.ToString();
+                SearchResults.goToParentNode();
+            }
+            return Data;
+        }
+
         public TierIIData getTierIIData( TierIIData.TierIIDataRequest Request )
+        {
+            CswArbitrarySelect TierIISelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Material Select",
+                "select * from table(TIER_II_DATA_MANAGER.GET_TIER_II_DATA(" + CswConvert.ToPrimaryKey( Request.LocationId ).PrimaryKey + 
+                ", " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ) +
+                ", " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) +"))" );
+            DataTable TierIITable = TierIISelect.getTable();
+            foreach( DataRow MaterialRow in TierIITable.Rows )
+            {
+                TierIIData.TierIIMaterial Material = new TierIIData.TierIIMaterial
+                {
+                    MaterialId = MaterialRow["materialid"].ToString(),
+                    TradeName = MaterialRow["tradename"].ToString(),
+                    CASNo = MaterialRow["casno"].ToString(),
+                    MaterialType = MaterialRow["materialtype"].ToString(),
+                    PhysicalState = MaterialRow["physicalstate"].ToString(),
+                    EHS = CswConvert.ToBoolean( MaterialRow["ehs"].ToString() ),
+                    TradeSecret = CswConvert.ToBoolean( MaterialRow["tradesecret"].ToString() ),
+                    MaxQty = Math.Round( CswConvert.ToDouble( MaterialRow["maxqty"] ), 3 ),
+                    MaxQtyRangeCode = MaterialRow["maxqtyrangecode"].ToString(),
+                    AverageQty = Math.Round( CswConvert.ToDouble( MaterialRow["avgqty"] ), 3 ),
+                    AverageQtyRangeCode = MaterialRow["avgqtyrangecode"].ToString(),
+                    DaysOnSite = CswConvert.ToInt32( MaterialRow["daysonsite"] ),
+                    Unit = "lb"
+                };
+                CswCommaDelimitedString Hazards = new CswCommaDelimitedString();
+                Hazards.FromString( MaterialRow["hazardcategories"].ToString() );
+                foreach( String Hazard in Hazards )
+                {
+                    Material.HazardCategories.Add( Hazard );
+                }
+                int ContainerPropRows;
+                CswCommaDelimitedString Pressures = new CswCommaDelimitedString();
+                Pressures.FromString( MaterialRow["pressure"].ToString() );
+                ContainerPropRows = Pressures.Count;
+                CswCommaDelimitedString Temperatures = new CswCommaDelimitedString();
+                Temperatures.FromString( MaterialRow["temperature"].ToString() );
+                ContainerPropRows = Temperatures.Count > ContainerPropRows ? Temperatures.Count : ContainerPropRows;
+                CswCommaDelimitedString UseTypes = new CswCommaDelimitedString();
+                UseTypes.FromString( MaterialRow["usetype"].ToString() );
+                ContainerPropRows = UseTypes.Count > ContainerPropRows ? UseTypes.Count : ContainerPropRows;
+                for( int i = 0; i < ContainerPropRows; i++ )
+                {
+                    int p = Pressures.Count-1 < i ? Pressures.Count : i;
+                    int t = Pressures.Count-1 < i ? Pressures.Count : i;
+                    int u = Pressures.Count-1 < i ? Pressures.Count : i;
+                    TierIIData.StorageCodes StorageCodes = new TierIIData.StorageCodes
+                    {
+                        Pressure = Pressures[p],
+                        Temperature = Temperatures[t],
+                        UseType = UseTypes[u]
+                    };
+                    Material.Storage.Add( StorageCodes );
+                }
+                CswCommaDelimitedString Locations = new CswCommaDelimitedString();
+                Locations.FromString( MaterialRow["storagelocations"].ToString() );
+                foreach( String Location in Locations )
+                {
+                    Material.Locations.Add( new TierIIData.StorageLocations
+                    {
+                        Location = Location
+                    });
+                }
+                Data.Materials.Add( Material );
+            }
+
+            return Data;
+        }
+
+        public TierIIData getTierIIData_old( TierIIData.TierIIDataRequest Request )
         {
             BaseUnit = _setBaseUnit( "kg", "Unit_Weight" );
             CswNbtObjClassUnitOfMeasure PoundsUnit = _setBaseUnit( "lb", "Unit_Weight" );

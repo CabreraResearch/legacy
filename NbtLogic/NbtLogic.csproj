@@ -107,6 +107,8 @@
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleStatus.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeDataContracts.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRule.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\CswNbtKioskModeOpenableImpl.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\ICswNbtKioskModeOpenable.cs" />
     <Compile Include="csw\Actions\Receiving\CswNbtAmountsGridQuantity.cs" />
     <Compile Include="csw\Actions\Receiving\CswNbtReceivingDefinition.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpReceiving.cs" />
@@ -243,6 +245,7 @@
     <Compile Include="csw\Requesting\CswNbtRequestItemType.cs" />
     <Compile Include="csw\Requesting\CswNbtRequestItemTypeMaterialCreate.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerRecords.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtPurgeSessionData.cs" />
@@ -754,6 +757,7 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31611.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31909.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case32003.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31907.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateDDL_02L_Case31907.cs" />

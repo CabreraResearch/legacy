@@ -83,6 +83,12 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = _CswNbtActTierIIReporting.getTierIIData( Request );
         }
 
+        public static void getDuplicateMaterialsReport( ICswResources CswResources, TierIIDataReturn Return, object Request )
+        {
+            CswNbtActTierIIReporting _CswNbtActTierIIReporting = new CswNbtActTierIIReporting( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActTierIIReporting.getDuplicateMaterialsReport();
+        }
+
         #endregion Public
     }
 }

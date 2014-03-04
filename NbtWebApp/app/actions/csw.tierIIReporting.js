@@ -26,21 +26,6 @@
         };
 
         cswPrivate.getCurrentDate = function () {
-            //if (Csw.isNullOrEmpty(cswPrivate.currentDate)) {
-            //    var today = new Date();
-            //    var dd = today.getDate();
-            //    var mm = today.getMonth() + 1; //January is 0!
-            //    var yyyy = today.getFullYear();
-            //    if (dd < 10) {
-            //        dd = '0' + dd;
-            //    }
-            //    if (mm < 10) {
-            //        mm = '0' + mm;
-            //    }
-            //    today = mm + '/' + dd + '/' + yyyy;
-            //    cswPrivate.currentDate = today;
-            //}
-            //return cswPrivate.currentDate;
             return moment().format('L');
         };
         //#endregion Action Functions
@@ -119,6 +104,19 @@
             if (Csw.isNullOrEmpty(cswPrivate.LocationId)) {
                 updateButton.disable();
             }
+            //Duplicate Materials Report
+            Csw.ajaxWcf.get({
+                urlMethod: 'RegulatoryReporting/DuplicateMaterialsReport',
+                success: function (data) {
+                    cswPrivate.controlTbl.cell(1, 3).css({ 'vertical-align': 'middle' })
+                    .a({
+                        value: 'View Duplicate Chemicals',
+                        onClick: function () {
+                            Csw.main.handleReport(data.DuplicateMaterialsReportId);
+                        }
+                    });
+                }
+            });
         };
         //#endregion Setup Controls
 

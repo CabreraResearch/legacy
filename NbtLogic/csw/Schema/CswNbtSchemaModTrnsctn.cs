@@ -927,7 +927,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Scheduled Rule
         /// </summary>
-        public Int32 createScheduledRule( CswEnumNbtScheduleRuleNames RuleName, CswEnumRecurrence Recurrence, Int32 Interval )
+        public Int32 createScheduledRule( CswEnumNbtScheduleRuleNames RuleName, CswEnumRecurrence Recurrence, Int32 Interval, bool Disabled = false )
         {
             Int32 RetRuleId = Int32.MinValue;
             if( null != Recurrence &&
@@ -945,7 +945,7 @@ namespace ChemSW.Nbt.Schema
                     NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
                     NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
                     NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
-                    NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
+                    NewRuleRow["disabled"] = CswConvert.ToDbVal( Disabled );
                     NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
                     RuleTable.Rows.Add( NewRuleRow );
 
