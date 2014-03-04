@@ -52,6 +52,9 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Properties", Factory, typeof( Properties ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Explorer", Factory, typeof( Explorer ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/ChemWatch", Factory, typeof( ChemWatch ) ) );
+
+            //Proof of concept for REST api:
+            RouteTable.Routes.Add( new ServiceRoute( "api", Factory, typeof( API ) ) );
         }
 
         /// <summary>
