@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Test.Actions
             TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
             {
                 LocationId = LocationId.ToString(),
-                StartDate = DateTime.Now.AddYears( -1 ).ToString(),
+                StartDate = DateTime.Now.AddDays( -10 ).ToString(),
                 EndDate = DateTime.Now.ToString()
             };
             TierIIData Data = TierIIAction.getTierIIData( Request );
@@ -66,12 +66,11 @@ namespace ChemSW.Nbt.Test.Actions
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode();
             CswNbtNode KilogramsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1, 0, CswEnumTristate.True );
-            TestData.Nodes.createContainerNode("Container", 1, KilogramsUnit, ChemicalNode, LocationId) ;
-            TestData.CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, KilogramsUnit, ChemicalNode, LocationId ) ;
             TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
             {
                 LocationId = LocationId.ToString(),
-                StartDate = DateTime.Now.AddYears( -1 ).ToString(),
+                StartDate = DateTime.Now.AddDays( -10 ).ToString(),
                 EndDate = DateTime.Now.AddDays( 1 ).ToString()
             };
             TierIIData Data = TierIIAction.getTierIIData( Request );
@@ -94,15 +93,13 @@ namespace ChemSW.Nbt.Test.Actions
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode();
             CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
-            TestData.Nodes.createContainerNode( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
-            TestData.CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today.AddDays( -1 ) );
             TestData.CswNbtResources.execArbitraryPlatformNeutralSql( "update tier2 set dateadded = dateadded - 1 where tier2id > " + _TierIIHWM );
-            TestData.Nodes.createContainerNode( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
-            TestData.CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today );
             TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
             {
                 LocationId = LocationId.ToString(),
-                StartDate = DateTime.Now.AddYears( -1 ).ToString(),
+                StartDate = DateTime.Now.AddDays( -10 ).ToString(),
                 EndDate = DateTime.Now.AddDays( 1 ).ToString()
             };
             TierIIData Data = TierIIAction.getTierIIData( Request );
