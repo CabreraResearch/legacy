@@ -108,15 +108,15 @@ namespace ChemSW.Nbt.Test
             return ret;
         }
 
-        internal CswNbtNode createContainerDispenseTransactionNode( CswNbtObjClassContainer Container, DateTime? DateCreated = null )
+        internal CswNbtNode createContainerDispenseTransactionNode( CswNbtObjClassContainer Container, DateTime? DateCreated = null, double? Quantity = null, string Type = null )
         {
             CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Dispense Transaction" ), delegate( CswNbtNode NewNode )
             {
                 CswNbtObjClassContainerDispenseTransaction ContDispTransNode = NewNode;
                 ContDispTransNode.DestinationContainer.RelatedNodeId = Container.NodeId;
-                ContDispTransNode.QuantityDispensed.Quantity = Container.Quantity.Quantity;
+                ContDispTransNode.QuantityDispensed.Quantity = Quantity ?? Container.Quantity.Quantity;
                 ContDispTransNode.QuantityDispensed.UnitId = Container.Quantity.UnitId;
-                ContDispTransNode.Type.Value = CswEnumNbtContainerDispenseType.Receive.ToString();
+                ContDispTransNode.Type.Value = Type ?? CswEnumNbtContainerDispenseType.Receive.ToString();
                 ContDispTransNode.DispensedDate.DateTimeValue = DateCreated ?? Container.DateCreated.DateTimeValue;
             } );
 
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.Test
             return ret;
         }
 
-        internal CswNbtNode createContainerNode( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null, bool Missing = false )
+        internal CswNbtNode createContainerNode( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null, string UseType = "", bool Missing = false )
         {
             CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), delegate( CswNbtNode NewNode )
                 {
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.Test
                         UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters" + Sequence, 1.0, 0, CswEnumTristate.True );
                     }
                     ContainerNode.Quantity.UnitId = UnitOfMeasure.NodeId;
-                    ContainerNode.UseType.Value = CswEnumNbtContainerUseTypes.Storage;
+                    ContainerNode.UseType.Value = UseType ?? CswEnumNbtContainerUseTypes.Storage;
                     ContainerNode.StorageTemperature.Value = CswEnumNbtContainerStorageTemperatures.RoomTemperature;
                     ContainerNode.StoragePressure.Value = CswEnumNbtContainerStoragePressures.Atmospheric;
                     if( Material != null )
@@ -158,9 +158,9 @@ namespace ChemSW.Nbt.Test
             return ret;
         }
 
-        internal CswNbtNode createContainerWithRecords( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null, DateTime? DateCreated = null )
+        internal CswNbtNode createContainerWithRecords( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null, DateTime? DateCreated = null, string UseType = null )
         {
-            CswNbtNode ret = createContainerNode( NodeTypeName, Quantity, UnitOfMeasure, Material, LocationId );
+            CswNbtNode ret = createContainerNode( NodeTypeName, Quantity, UnitOfMeasure, Material, LocationId, UseType );
             createContainerDispenseTransactionNode( ret, DateCreated );
             createContainerLocationNode( ret, LocationId: LocationId, NullableScanDate: DateCreated );
             return ret;

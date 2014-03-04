@@ -49,62 +49,11 @@ namespace ChemSW.Nbt.Test.Actions
             TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
             {
                 LocationId = LocationId.ToString(),
-                StartDate = DateTime.Now.AddDays( -10 ).ToString(),
+                StartDate = DateTime.Today.ToString(),
                 EndDate = DateTime.Now.ToString()
             };
             TierIIData Data = TierIIAction.getTierIIData( Request );
             Assert.AreEqual( 0, Data.Materials.Count );
-        }
-
-        /// <summary>
-        /// Given a location and timeframe that has one Material,
-        /// assert that the returned TierII data contains one Material
-        /// </summary>
-        [Test]
-        public void getTierIIDataTestOneMaterial()
-        {
-            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
-            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode();
-            CswNbtNode KilogramsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1, 0, CswEnumTristate.True );
-            TestData.Nodes.createContainerWithRecords( "Container", 1, KilogramsUnit, ChemicalNode, LocationId ) ;
-            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
-            {
-                LocationId = LocationId.ToString(),
-                StartDate = DateTime.Now.AddDays( -10 ).ToString(),
-                EndDate = DateTime.Now.AddDays( 1 ).ToString()
-            };
-            TierIIData Data = TierIIAction.getTierIIData( Request );
-            Assert.AreEqual( 1, Data.Materials.Count );//Material exists
-            Assert.IsNotNullOrEmpty( Data.Materials[0].TradeName );//Material name exists
-            Assert.AreEqual( "12-34-0", Data.Materials[0].CASNo );//Material data exists
-            Assert.AreEqual( "Storage", Data.Materials[0].Storage[0].UseType );//Container data exists
-            Assert.AreEqual( "New Room", Data.Materials[0].Locations[0].Location );//Location data exists
-        }
-
-        /// <summary>
-        /// Given a location and timeframe that has one Material for two days,
-        /// given that the quantity of that Material is different for each day,
-        /// assert that the returned TierII data contains an average quantity of the total quantity between Dat 1 and Day 2.
-        /// Prior to resolving Case 31508, this test failed.
-        /// </summary>
-        [Test]
-        public void getTierIIDataTestTwoDaysAverage()
-        {
-            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
-            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode();
-            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
-            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today.AddDays( -1 ) );
-            TestData.CswNbtResources.execArbitraryPlatformNeutralSql( "update tier2 set dateadded = dateadded - 1 where tier2id > " + _TierIIHWM );
-            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today );
-            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
-            {
-                LocationId = LocationId.ToString(),
-                StartDate = DateTime.Now.AddDays( -10 ).ToString(),
-                EndDate = DateTime.Now.AddDays( 1 ).ToString()
-            };
-            TierIIData Data = TierIIAction.getTierIIData( Request );
-            Assert.AreEqual( 2, Data.Materials[0].DaysOnSite );//Material existed for two days
-            Assert.AreEqual( 1.5, Data.Materials[0].AverageQty );//AverageQty is the average between Day 1 and Day 2
         }
 
         #endregion getTierIIData
@@ -126,20 +75,42 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_1Day_MaterialNotPresentNotTierII()
         {
-            Assert.Inconclusive("Write Me!");
-    }
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( IsTierII: CswEnumTristate.False );
+            CswNbtNode KilogramsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1, 0, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, KilogramsUnit, ChemicalNode, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 0, Data.Materials.Count );
+        }
 
         /// <summary>
-        /// Given a material with an invalid (or missing) CASNo and IsTierII set to true,
+        /// Given a material with a missing CASNo and IsTierII set to true,
         /// Given a container of the given material in a given location,
         /// When the TierII report is run for one day on the given location,
         /// Assert that the given material is not listed
         /// </summary>
         [Test]
-        public void TierII_1Day_MaterialNotPresentBadCASNo()
+        public void TierII_1Day_MaterialNotPresentNoCASNo()
         {
-            Assert.Inconclusive( "Write Me!" );
-}
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( CASNo: "" );
+            CswNbtNode KilogramsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1, 0, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, KilogramsUnit, ChemicalNode, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 0, Data.Materials.Count );
+        }
 
         /// <summary>
         /// Given a material with a valid CASNo, IsTierII set to true, and a physical state of solid,
@@ -150,7 +121,24 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_1Day_MaterialPresent()
         {
-            Assert.Inconclusive("Write Me!");
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 1, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 1, Data.Materials[0].AverageQty );
+            Assert.IsNotNullOrEmpty( Data.Materials[0].TradeName );//Material name exists
+            Assert.AreEqual( "12-34-0", Data.Materials[0].CASNo );//Material data exists
+            Assert.AreEqual( "Storage", Data.Materials[0].Storage[0].UseType );//Container data exists
+            Assert.AreEqual( "New Room", Data.Materials[0].Locations[0].Location );//Location data exists
         }
 
         /// <summary>
@@ -163,7 +151,20 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_1Day_MaterialPresentSpecificGravity()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( SpecificGravity: 0.5 );//1 L = .5 kg = 1.102 lb
+            CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, LiterNode, ChemicalNode, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 1.102, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 1.102, Data.Materials[0].AverageQty );
         }
 
         /// <summary>
@@ -190,7 +191,24 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_1Day_MaterialPresentInChildLocations()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationIdA = TestData.Nodes.createLocationNode().NodeId;
+            CswPrimaryKey LocationIdB = TestData.Nodes.createLocationNode( ParentLocationId: LocationIdA ).NodeId;
+            CswPrimaryKey LocationIdC = TestData.Nodes.createLocationNode( ParentLocationId: LocationIdA ).NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationIdB );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationIdC );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationIdA.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 2, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 2, Data.Materials[0].AverageQty );
+            Assert.AreEqual( 2, Data.Materials[0].Locations.Count );
         }
 
         /// <summary>
@@ -203,7 +221,23 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_1Day_MaterialPresentInChildOfChildLocation()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationIdA = TestData.Nodes.createLocationNode().NodeId;
+            CswPrimaryKey LocationIdB = TestData.Nodes.createLocationNode( ParentLocationId: LocationIdA ).NodeId;
+            CswPrimaryKey LocationIdC = TestData.Nodes.createLocationNode( ParentLocationId: LocationIdB ).NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationIdC );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationIdA.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 1, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 1, Data.Materials[0].AverageQty );
+            Assert.AreEqual( 1, Data.Materials[0].Locations.Count );
         }
 
         /// <summary>
@@ -216,8 +250,22 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_1Day_MaterialPresentWithMultipleStorageTypes()
         {
-            //the same should hold true for storage conditions (pressure/temperature)
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, UseType: CswEnumNbtContainerUseTypes.Closed );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 2, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 2, Data.Materials[0].AverageQty );
+            Assert.AreEqual( 2, Data.Materials[0].Storage.Count );
         }
 
         //for more than one day, account for the following actions:
@@ -225,21 +273,7 @@ namespace ChemSW.Nbt.Test.Actions
         //receiving containers (ensure max/avg qty are affected correctly)
         //dispensing contianers (for use and into child containers - ensure max/avg qty are affected correctly)
         //disposing/undisposing containers (ensure daysonsite includes all days excluding disposed days)
-        //changing a container's use type (ensure both use types show up)
 
-        /// <summary>
-        /// Given a container of a given TierII material in a given location on the first day,
-        /// Given that the container has its UseType changed from Closed to Open on the second day,
-        /// When the TierII report is run for two days on the given location,
-        /// Assert that the given material is listed with both Closed and Open listed under Type of Storage
-        /// </summary>
-        [Test]
-        public void TierII_2Days_ChangeContainerStorageType()
-        {
-            //the same should hold true for storage conditions (pressure/temperature)
-            Assert.Inconclusive( "Write Me!" );
-        }
-        
         /// <summary>
         /// Given a container of a given TierII material in a given location on the first day,
         /// Given that another container of the same material is added to the given location on the second day,
@@ -251,7 +285,22 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_2Days_MaterialReceive()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today.AddDays( -1 ), CswEnumNbtContainerUseTypes.Closed );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, UseType: CswEnumNbtContainerUseTypes.Open );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 2, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 1.5, Data.Materials[0].AverageQty );
+            Assert.AreEqual( 2, Data.Materials[0].DaysOnSite );
         }
 
         /// <summary>
@@ -264,7 +313,21 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_2Days_MaterialDispenseForUse()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            CswNbtNode ContainerNode = TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today.AddDays( -1 ), CswEnumNbtContainerUseTypes.Closed );
+            TestData.Nodes.createContainerDispenseTransactionNode( ContainerNode, Quantity: .5, Type: CswEnumNbtContainerDispenseType.Dispense.ToString() );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 1, Data.Materials[0].MaxQty );
+            Assert.AreEqual( .75, Data.Materials[0].AverageQty );
         }
 
         /// <summary>
@@ -276,7 +339,23 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_2Days_MaterialDispenseIntoChildContainer()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            CswNbtObjClassContainer SourceContainer = TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today.AddDays( -1 ), CswEnumNbtContainerUseTypes.Closed );
+            CswNbtNode ChildContainer = TestData.Nodes.createContainerNode( "Container", 0, PoundsUnit, ChemicalNode, LocationId );
+            SourceContainer.DispenseOut( CswEnumNbtContainerDispenseType.Dispense, 0.5, PoundsUnit.NodeId, DestinationContainer: ChildContainer );
+            ChildContainer.postChanges( false );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 1, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 1, Data.Materials[0].AverageQty );
         }
 
         /// <summary>
@@ -289,7 +368,21 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_2Days_ContainerMoveToUnrelatedLocation()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationIdA = TestData.Nodes.createLocationNode().NodeId;
+            CswPrimaryKey LocationIdB = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            CswNbtNode ContainerNode = TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationIdA, DateTime.Today.AddDays( -1 ), CswEnumNbtContainerUseTypes.Closed );
+            TestData.Nodes.createContainerLocationNode( ContainerNode, Type: CswEnumNbtContainerLocationTypeOptions.Move.ToString(), LocationId: LocationIdB );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationIdA.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials[0].Locations.Count );
+            Assert.AreEqual( 1, Data.Materials[0].DaysOnSite );
         }
 
         /// <summary>
@@ -303,7 +396,22 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_2Days_ContainerMoveToOtherChildLocation()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationIdA = TestData.Nodes.createLocationNode().NodeId;
+            CswPrimaryKey LocationIdB = TestData.Nodes.createLocationNode( ParentLocationId: LocationIdA ).NodeId;
+            CswPrimaryKey LocationIdC = TestData.Nodes.createLocationNode( ParentLocationId: LocationIdA ).NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            CswNbtNode ContainerNode = TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationIdB, DateTime.Today.AddDays( -1 ), CswEnumNbtContainerUseTypes.Closed );
+            TestData.Nodes.createContainerLocationNode( ContainerNode, Type: CswEnumNbtContainerLocationTypeOptions.Move.ToString(), LocationId: LocationIdC );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationIdA.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 2, Data.Materials[0].DaysOnSite );
+            Assert.AreEqual( 2, Data.Materials[0].Locations.Count );
         }
 
         /// <summary>
@@ -317,22 +425,22 @@ namespace ChemSW.Nbt.Test.Actions
         [Test]
         public void TierII_2Days_ContainerDispose()
         {
-            Assert.Inconclusive( "Write Me!" );
-        }
-
-        /// <summary>
-        /// Given a container of a given TierII material in a given location on the first day,
-        /// Given that the container is disposed on the second day,
-        /// Given that the container is undisposed on the third day,
-        /// When the TierII report is run for three days on the given location,
-        /// Assert that the given material is listed with MaxQty set to the container's quantity on Day 1,
-        /// AvgQty set to ( MaxQty * 2 ) / 3,
-        /// and DaysOnSite set to 2
-        /// </summary>
-        [Test]
-        public void TierII_3Days_ContainerDisposeAndUndispose()
-        {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId, DateTime.Today.AddDays( -1 ), CswEnumNbtContainerUseTypes.Closed );
+            ContainerNode.DisposeContainer( true );
+            ContainerNode.postChanges( false );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials[0].MaxQty );
+            Assert.AreEqual( .5, Data.Materials[0].AverageQty );//one of these is wrong, but which one?
+            Assert.AreEqual( 1, Data.Materials[0].DaysOnSite );
         }
 
         #endregion Acceptance Criteria
