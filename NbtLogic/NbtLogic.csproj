@@ -80,7 +80,6 @@
   <ItemGroup>
     <Compile Include="csw\Actions\Container\CswNbtContainerDispenseTransactionBuilder.cs" />
     <Compile Include="csw\Actions\Container\CswNbtContainerDisposer.cs" />
-    <Compile Include="csw\Actions\CswNbtActBatchEdit.cs" />
     <Compile Include="csw\Actions\CswNbtActMerge.cs" />
     <Compile Include="csw\Actions\ChemWatch\CswNbtChemWatchCookie.cs" />
     <Compile Include="csw\Actions\ChemWatch\CswNbtChemWatchDataContract.cs" />

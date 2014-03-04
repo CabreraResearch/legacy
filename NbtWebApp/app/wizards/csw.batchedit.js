@@ -174,11 +174,74 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    cswPrivate.setStepHeader(StepNo, 'Download the excel spreadsheet, make changes, and upload the edited spreadsheet.');
+                    //cswPrivate.setStepHeader(StepNo, 'Download the excel spreadsheet, make changes, and upload the edited spreadsheet.');
                     var div = cswPrivate['divStep' + StepNo];
+                    var tbl = div.table();
+                    var row = 1;
                     
+                    tbl.cell(row,1).text("1. Download the excel spreadsheet (.csv format): ");
+                    row++;
+                    
+                    cswPrivate.downloadButton = tbl.cell(row, 1).buttonExt({
+                        name: 'downloadDataBtn',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docexport),
+                        enabledText: 'Download',
+                        disabledText: 'Download',
+                        disableOnClick: false,
+                        onClick: function() {
 
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Nodes/downloadBatchEditData',
+                                data: {
+                                    CAFSchema: fields['CAF Database Name'].val(),
+                                    CAFPassword: fields['CAF Database Password'].val(),
+                                    CAFDatabase: fields['CAF Server'].val(),
+                                },
+                                success: function(data) {
+                                    // show success or show progress
+                                    inputDialog.close();
+                                }
+                            });
+                        }
+                    }); // downloadButton buttonExt()
+                    row++;
+                    
+                    tbl.cell(row,1).append("&nbsp;");
+                    row++;
 
+                    tbl.cell(row,1).text("2. Make desired changes to the spreadsheet, and save it as an .xlsx.");
+                    row++;
+
+                    tbl.cell(row,1).append("&nbsp;");
+                    row++;
+
+                    tbl.cell(row,1).text("3. Upload the edited excel spreadsheet (.xlsx format): ");
+                    row++;
+
+                    cswPrivate.uploadButton = tbl.cell(row,1).buttonExt({
+                        name: 'uploadDataBtn',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
+                        enabledText: 'Upload',
+                        disabledText: 'Upload',
+                        disableOnClick: false,
+                        onClick: function () {
+                            Csw.dialogs.fileUpload({
+                                urlMethod: 'Services/Nodes/uploadBatchEditData',
+//                                params: {
+//                                    defname: cswPrivate.selDefName.val(),
+//                                    overwrite: cswPrivate.cbOverwrite.checked
+//                                },
+                                forceIframeTransport: true,
+                                dataType: 'iframe',
+                                onSuccess: function (response) {
+                                    var batchid = Csw.number(Csw.getPropFromIFrame(response, 'batchid', false), Csw.int32MinVal);
+                                    //cswPrivate.makeStatusTable();
+                                }
+                            }).open();
+                        }
+                    }); // uploadButton buttonExt()
+                    row++;
+                    
                 };
             }()),
             onStepChange: function () {}
