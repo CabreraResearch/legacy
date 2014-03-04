@@ -9,7 +9,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassEquipmentAssembly: CswNbtObjClass, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable
+    public class CswNbtObjClassEquipmentAssembly: CswNbtObjClass, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable, ICswNbtKioskModeTransferable, ICswNbtKioskModeStatusable
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -53,12 +53,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         private readonly CswNbtKioskModeMoveableImpl _Mover;
         private readonly CswNbtKioskModeOwnerableImpl _Ownerer;
+        private readonly CswNbtKioskModeTransferableImpl _Transferer;
+        private readonly CswNbtKioskModeStatusableImpl _Statuser;
 
         public CswNbtObjClassEquipmentAssembly( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _Mover = new CswNbtKioskModeMoveableImpl( CswNbtResources, this );
             _Ownerer = new CswNbtKioskModeOwnerableImpl( CswNbtResources, this );
+            _Transferer = new CswNbtKioskModeTransferableImpl( CswNbtResources, this );
+            _Statuser = new CswNbtKioskModeStatusableImpl( CswNbtResources, this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -167,19 +171,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        #region Custom Logic
-
-        public void TransferAssembly( CswNbtObjClassUser NewUser )
-        {
-            Location.SelectedNodeId = NewUser.DefaultLocationId;
-            Location.SyncGestalt();
-            Location.RefreshNodeName();
-
-            UpdateOwner( NewUser );
-        }
-
-        #endregion
-
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
@@ -243,6 +234,34 @@ namespace ChemSW.Nbt.ObjClasses
         public void UpdateOwner( CswNbtObjClassUser NewOwner )
         {
             _Ownerer.UpdateOwner( NewOwner );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeTransferable
+
+        public bool CanTransfer( out string Error )
+        {
+            return _Transferer.CanTransfer( out Error );
+        }
+
+        public void Transfer( CswNbtObjClassUser NewUser )
+        {
+            _Transferer.Transfer( NewUser );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeStatusable
+
+        public bool CanChangeStatus( out string Error )
+        {
+            return _Statuser.CanChangeStatus( out Error );
+        }
+
+        public void ChangeStatus( string newStatus )
+        {
+            _Statuser.ChangeStatus( newStatus );
         }
 
         #endregion

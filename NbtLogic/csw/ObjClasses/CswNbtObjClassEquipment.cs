@@ -7,7 +7,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassEquipment: CswNbtObjClass, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable
+    public class CswNbtObjClassEquipment: CswNbtObjClass, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable, ICswNbtKioskModeTransferable, ICswNbtKioskModeStatusable
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -52,12 +52,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         private readonly CswNbtKioskModeMoveableImpl _Mover;
         private readonly CswNbtKioskModeOwnerableImpl _Ownerer;
+        private readonly CswNbtKioskModeTransferableImpl _Transferer;
+        private readonly CswNbtKioskModeStatusableImpl _Statuser;
 
         public CswNbtObjClassEquipment( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _Mover = new CswNbtKioskModeMoveableImpl( CswNbtResources, this );
             _Ownerer = new CswNbtKioskModeOwnerableImpl( CswNbtResources, this );
+            _Transferer = new CswNbtKioskModeTransferableImpl( CswNbtResources, this );
+            _Statuser = new CswNbtKioskModeStatusableImpl( CswNbtResources, this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -249,15 +253,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // SynchEquipmentToAssembly()
 
-        public void TransferEquipment( CswNbtObjClassUser NewUser )
-        {
-            Location.SelectedNodeId = NewUser.DefaultLocationId;
-            Location.SyncGestalt();
-            Location.RefreshNodeName();
-
-            UpdateOwner( NewUser );
-        }
-        
         #region ICswNbtKioskModeMoveable
 
         /// <summary>
@@ -304,12 +299,55 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void UpdateOwner( CswNbtObjClassUser NewUser )
         {
-            User.RelatedNodeId = NewUser.NodeId;
-            User.RefreshNodeName();
-            User.SyncGestalt();
+            _Ownerer.UpdateOwner( NewUser );
         }
 
         #endregion
+
+        #region ICswNbtKioskModeTransferable
+
+        public bool CanTransfer( out string Error )
+        {
+            //Intentionally not using default implementation
+            bool ret = true;
+            Error = string.Empty;
+            if( false == Assembly.Empty )
+            {
+                Error = "This equipment belongs to an assembly and cannot be changed directly.";
+                ret = false;
+            }
+            return ret;
+        }
+
+        public void Transfer( CswNbtObjClassUser NewUser )
+        {
+            _Transferer.Transfer( NewUser );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeStatusable
+
+        public bool CanChangeStatus( out string Error )
+        {
+            //Intentionally not using default implementation
+            bool ret = true;
+            Error = string.Empty;
+            if( false == Assembly.Empty )
+            {
+                Error = "Cannot perform STATUS operation on Equipment (" + EquipmentId.Barcode + ") when it belongs to Assembly (" + Assembly.CachedNodeName + ")";
+                ret = false;
+            }
+            return ret;
+        }
+
+        public void ChangeStatus( string newStatus )
+        {
+            _Statuser.ChangeStatus( newStatus );
+        }
+
+        #endregion
+
 
     }//CswNbtObjClassEquipment
 

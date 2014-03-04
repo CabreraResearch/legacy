@@ -106,6 +106,10 @@
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleStatus.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeDataContracts.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRule.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\CswNbtKioskModeStatusableImpl.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\ICswNbtKioskModeStatusable.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\CswNbtKioskModeTransferableImpl.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\OperationClasses\ICswNbtKioskModeTransferable.cs" />
     <Compile Include="csw\Actions\KioskModeRules\OperationClasses\CswNbtKioskModeOwnerableImpl.cs" />
     <Compile Include="csw\Actions\KioskModeRules\OperationClasses\ICswNbtKioskModeOwnerable.cs" />
     <Compile Include="csw\Actions\KioskModeRules\OperationClasses\CswNbtKioskModeMoveableImpl.cs" />

@@ -18,7 +18,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable
+    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable, ICswNbtKioskModeTransferable
     {
         #region Properties
 
@@ -78,6 +78,7 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtKioskModeOpenableImpl _Opener;
         private CswNbtKioskModeMoveableImpl _Mover;
         private CswNbtKioskModeOwnerableImpl _Ownerer;
+        private readonly CswNbtKioskModeTransferableImpl _Transferer;
 
         public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
@@ -87,6 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
             _Opener = new CswNbtKioskModeOpenableImpl( _CswNbtResources, this );
             _Mover = new CswNbtKioskModeMoveableImpl( _CswNbtResources, this );
             _Ownerer = new CswNbtKioskModeOwnerableImpl( _CswNbtResources, this );
+            _Transferer = new CswNbtKioskModeTransferableImpl( CswNbtResources, this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -1107,6 +1109,20 @@ namespace ChemSW.Nbt.ObjClasses
         public void UpdateOwner( CswNbtObjClassUser NewOwner )
         {
             _Ownerer.UpdateOwner( NewOwner );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeTransferable
+
+        public bool CanTransfer( out string Error )
+        {
+            return _Transferer.CanTransfer( out Error );
+        }
+
+        public void Transfer( CswNbtObjClassUser NewUser )
+        {
+            _Transferer.Transfer( NewUser );
         }
 
         #endregion
