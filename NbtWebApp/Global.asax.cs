@@ -77,7 +77,7 @@ namespace NbtWebApp
             if( HttpContext.Current.Request.HttpMethod == "OPTIONS" )
             {
                 HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Methods", "GET, POST, DELETE, PUT" );
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Headers", "Content-Type, Accept" );
+                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Headers", "Content-Type, Accept, X-NBT-SessionId" );
                 HttpContext.Current.Response.AddHeader( "Access-Control-Max-Age", "1728000" );
                 HttpContext.Current.Response.End();
             }
