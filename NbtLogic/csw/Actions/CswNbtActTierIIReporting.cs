@@ -10,6 +10,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Conversion;
+using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -25,6 +26,8 @@ namespace ChemSW.Nbt.Actions
 
         [DataMember]
         public Collection<TierIIMaterial> Materials;
+        [DataMember]
+        public String DuplicateMaterialsReportId = String.Empty;
 
         [DataContract]
         public class TierIIMaterial
@@ -141,6 +144,25 @@ namespace ChemSW.Nbt.Actions
         #endregion Properties and ctor
 
         #region Public Methods
+
+        public TierIIData getDuplicateMaterialsReport()
+        {
+            TierIIData Data = new TierIIData();
+            CswNbtMetaDataObjectClass ReportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+            CswNbtSearch FindReport = new CswNbtSearch( _CswNbtResources );
+            FindReport.addFilter( ReportOC, false );
+            FindReport.SearchType = CswEnumSqlLikeMode.Exact;
+            FindReport.SearchTerm = "Duplicate Chemicals";
+            ICswNbtTree SearchResults = FindReport.Results();
+            if( SearchResults.getChildNodeCount() > 0 )
+            {
+                SearchResults.goToNthChild( 0 );
+                CswNbtObjClassReport ReportNode = SearchResults.getNodeForCurrentPosition();
+                Data.DuplicateMaterialsReportId = ReportNode.NodeId.ToString();
+                SearchResults.goToParentNode();
+            }
+            return Data;
+        }
 
         public TierIIData getTierIIData( TierIIData.TierIIDataRequest Request )
         {
