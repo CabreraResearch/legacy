@@ -219,6 +219,7 @@
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborNode.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtWebServiceNodeExplorer.cs" />
     <Compile Include="WebSvc\Logic\Actions\Receiving\CswNbtWebServiceReceiving.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceDELETE.cs" />
     <Compile Include="WebSvc\Logic\API\CswNbtWebServiceAPI.cs" />
     <Compile Include="WebSvc\Logic\API\CswNbtWebServicePUT.cs" />
     <Compile Include="WebSvc\Logic\API\CswNbtWebServicePOST.cs" />
