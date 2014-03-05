@@ -15,8 +15,9 @@
                 finish: 'finish',
                 cancel: 'cancel'
             },
-            onFinish: function() {},
-            onCancel: function() {},
+            onFinish: function () { },
+            onCancel: function () { },
+            wizardStepSelectView_init: false,
             wizardStepSelectNodeType_init: false,
             wizardStepSelectProperties_init: false,
             nodeTypeSel: null,
@@ -77,10 +78,13 @@
                 wizardStep.stepNo = cswPrivate.stepCount;
                 wizardSteps[cswPrivate.stepCount] = wizardStep.stepName;
             };
+
             //Add steps here:
+            setWizardStep(cswPrivate.wizardStepSelectView);
             setWizardStep(cswPrivate.wizardStepSelectNodeType);
             setWizardStep(cswPrivate.wizardStepSelectProperties);
             setWizardStep(cswPrivate.wizardStepPerformEdits);
+
             cswPrivate.reinitSteps(1);
             return wizardSteps;
         };
@@ -105,10 +109,38 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a parent.', '', 'csw.receivematerial.js', 57));
             }
             //cswPrivate.validateState();
-        }());
+        } ());
         //#endregion ctor preInit
 
         //#region Steps
+        cswPrivate.wizardStepSelectView = {
+            stepName: 'Choose View',
+            stepNo: '',
+            makeStep: (function () {
+                return function (StepNo) {
+                    cswPrivate.toggleStepButtons(StepNo);
+                    if (false === cswPrivate.wizardStepSelectView_init) {
+                        cswPrivate.wizardStepSelectView_init = true;
+                        cswPrivate.setStepHeader(StepNo, 'Select a view to edit.');
+                        var div = cswPrivate['divStep' + StepNo];
+
+                        cswPrivate.viewSel = div.div().viewSelect({
+                            name: 'batchEditViewSelect',
+                            issearchable: true,
+                            includeRecent: false,
+                            useCache: false,
+                            onSelect: function () {
+                                cswPrivate.wizardStepSelectNodeTypes_init = false;
+                                cswPrivate.wizardStepSelectProperties_init = false;
+                            },
+                            useSecondaryPromise: true
+                        });
+                    }
+                };
+            } ()),
+            onStepChange: function () { }
+        }; // wizardStepSelectView
+
         cswPrivate.wizardStepSelectNodeType = {
             stepName: 'Select Type',
             stepNo: '',
@@ -121,16 +153,16 @@
                         var div = cswPrivate['divStep' + StepNo];
 
                         cswPrivate.nodeTypeSel = div.nodeTypeSelect({
-                            onSelect: function() {
+                            onSelect: function () {
                                 cswPrivate.wizardStepSelectProperties_init = false;
                             }
                         });
                     }
                 };
-            }()),
-            onStepChange: function () {}
+            } ()),
+            onStepChange: function () { }
         }; // wizardStepSelectNodeType
-        
+
         cswPrivate.wizardStepSelectProperties = {
             stepName: 'Select Properties',
             stepNo: '',
@@ -151,7 +183,7 @@
                             },
                             success: function (data) {
                                 var opts = [];
-                                Csw.iterate(data, function(prop) {
+                                Csw.iterate(data, function (prop) {
                                     opts[opts.length] = { value: prop.id, selected: false, text: prop.name };
                                 });
                                 cswPrivate.propSel = Csw.dialogs.multiselectedit({
@@ -163,10 +195,10 @@
                         }); // ajax
                     }
                 };
-            }()),
-            onStepChange: function () {}
+            } ()),
+            onStepChange: function () { }
         }; // wizardStepSelectProperties
-        
+
 
         cswPrivate.wizardStepPerformEdits = {
             stepName: 'Perform Edits',
@@ -174,51 +206,40 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    //cswPrivate.setStepHeader(StepNo, 'Download the excel spreadsheet, make changes, and upload the edited spreadsheet.');
+                    cswPrivate.setStepHeader(StepNo, '');
                     var div = cswPrivate['divStep' + StepNo];
                     var tbl = div.table();
                     var row = 1;
-                    
-                    tbl.cell(row,1).text("1. Download the excel spreadsheet (.csv format): ");
-                    row++;
-                    
-                    cswPrivate.downloadButton = tbl.cell(row, 1).buttonExt({
-                        name: 'downloadDataBtn',
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docexport),
-                        enabledText: 'Download',
-                        disabledText: 'Download',
-                        disableOnClick: false,
-                        onClick: function() {
 
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Nodes/downloadBatchEditData',
-                                data: {
-                                    CAFSchema: fields['CAF Database Name'].val(),
-                                    CAFPassword: fields['CAF Database Password'].val(),
-                                    CAFDatabase: fields['CAF Server'].val(),
-                                },
-                                success: function(data) {
-                                    // show success or show progress
-                                    inputDialog.close();
-                                }
-                            });
-                        }
-                    }); // downloadButton buttonExt()
-                    row++;
-                    
-                    tbl.cell(row,1).append("&nbsp;");
+                    tbl.cell(row, 1).text("1. Download the excel spreadsheet (.csv format): ");
                     row++;
 
-                    tbl.cell(row,1).text("2. Make desired changes to the spreadsheet, and save it as an .xlsx.");
+                    var selectedProps = cswPrivate.propSel.val().join(',');
+
+                    cswPrivate.downloadButton = tbl.cell(row, 1).a({
+                        ID: 'downloadDataLink',
+                        text: 'Download',
+                        href: "Services/BlobData/downloadBatchEditData?" +
+                            "ViewId=" + cswPrivate.viewSel.val().value +
+                            "&NodeTypeId=" + Csw.string(cswPrivate.nodeTypeSel.val()) +
+                            "&PropIds=" + selectedProps,
+                        target: '_blank'
+                    });  // downloadButton a()
                     row++;
 
-                    tbl.cell(row,1).append("&nbsp;");
+                    tbl.cell(row, 1).append("&nbsp;");
                     row++;
 
-                    tbl.cell(row,1).text("3. Upload the edited excel spreadsheet (.xlsx format): ");
+                    tbl.cell(row, 1).text("2. Make desired changes to the spreadsheet, and save it as an .xlsx.");
                     row++;
 
-                    cswPrivate.uploadButton = tbl.cell(row,1).buttonExt({
+                    tbl.cell(row, 1).append("&nbsp;");
+                    row++;
+
+                    tbl.cell(row, 1).text("3. Upload the edited excel spreadsheet (.xlsx format): ");
+                    row++;
+
+                    cswPrivate.uploadButton = tbl.cell(row, 1).buttonExt({
                         name: 'uploadDataBtn',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
                         enabledText: 'Upload',
@@ -226,11 +247,11 @@
                         disableOnClick: false,
                         onClick: function () {
                             Csw.dialogs.fileUpload({
-                                urlMethod: 'Services/Nodes/uploadBatchEditData',
-//                                params: {
-//                                    defname: cswPrivate.selDefName.val(),
-//                                    overwrite: cswPrivate.cbOverwrite.checked
-//                                },
+                                urlMethod: 'Services/BlobData/uploadBatchEditData',
+                                // params: {
+                                //     defname: cswPrivate.selDefName.val(),
+                                //     overwrite: cswPrivate.cbOverwrite.checked
+                                // },
                                 forceIframeTransport: true,
                                 dataType: 'iframe',
                                 onSuccess: function (response) {
@@ -241,26 +262,26 @@
                         }
                     }); // uploadButton buttonExt()
                     row++;
-                    
+
                 };
-            }()),
-            onStepChange: function () {}
+            } ()),
+            onStepChange: function () { }
         }; // wizardStepPerformEdits
 
-        
+
         //#endregion Steps
 
 
         //#region Finish
         cswPrivate.finalize = function () {
             cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-            
+
             Csw.ajaxWcf.post({
                 urlMethod: 'Nodes/finishBatchEdit',
                 data: {
                     //Choices: cswPrivate.mergeData
                 },
-                success: function(data) {
+                success: function (data) {
                     Csw.tryExec(cswPrivate.onFinish);
                 } // success()
             }); // ajax
@@ -285,9 +306,9 @@
                 doNextOnInit: false
             });
             cswPrivate.stepFunc[1](1);
-        }());
+        } ());
         //#endregion ctor _post
 
         return cswPublic;
     });
-}());
+} ());

@@ -5,8 +5,10 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
+using System.Text;
 using System.Web;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
@@ -236,6 +238,71 @@ namespace NbtWebApp
 
             return mem;
         }
+
+
+        #region Batch Edit
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "downloadBatchEditData?ViewId={ViewId}&NodeTypeId={NodeTypeId}&PropIds={PropIds}" )]
+        [Description( "Download Batch Edit Data" )]
+        [FaultContract( typeof( FaultException ) )]
+        //public Stream downloadBatchEditData( CswNbtWebServiceBatchEdit.BatchEditParams Request )
+        public Stream downloadBatchEditData( string ViewId, string NodeTypeId, string PropIds )
+        {
+            CswNbtWebServiceBatchEdit.BatchEditDownload Ret = new CswNbtWebServiceBatchEdit.BatchEditDownload();
+            
+            CswNbtWebServiceBatchEdit.BatchEditParams Params = new CswNbtWebServiceBatchEdit.BatchEditParams();
+            Params.ViewId = ViewId;
+            Params.NodeTypeId = CswConvert.ToInt32( NodeTypeId );
+            CswCommaDelimitedString PropIdsCds = new CswCommaDelimitedString();
+            PropIdsCds.FromString( PropIds );
+            Params.PropIds = PropIdsCds.ToIntCollection();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditDownload, CswNbtWebServiceBatchEdit.BatchEditParams>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceBatchEdit.DownloadBatchEditData,
+                ParamObj: Params
+                );
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment;filename=\"batchedit.csv\";" );
+            WebOperationContext.Current.OutgoingResponse.ContentType = "text/csv";
+
+            MemoryStream mem = new MemoryStream();
+            BinaryWriter BWriter = new BinaryWriter( mem );
+            BWriter.Write( Encoding.UTF8.GetBytes( wsTools.DataTableToCSV( Ret.CsvData ) ) );
+            mem.Position = 0;
+
+            return mem; 
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Upload Batch Edit Data" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceBatchEdit.BatchEditReturn uploadBatchEditData()
+        {
+            CswNbtWebServiceBatchEdit.BatchEditReturn ret = new CswNbtWebServiceBatchEdit.BatchEditReturn();
+            if( _Context.Request.Files.Count > 0 )
+            {
+                CswNbtWebServiceBatchEdit.BatchEditUpload parms = new CswNbtWebServiceBatchEdit.BatchEditUpload();
+                parms.PostedFile = _Context.Request.Files[0];
+
+                var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditReturn, CswNbtWebServiceBatchEdit.BatchEditUpload>(
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: ret,
+                    WebSvcMethodPtr: CswNbtWebServiceBatchEdit.UploadBatchEditData,
+                    ParamObj: parms
+                    );
+
+                SvcDriver.run();
+            }
+
+            return ret;
+        }
+
+        #endregion Batch Edit
     }
 
     [DataContract]

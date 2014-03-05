@@ -6,8 +6,6 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Nbt;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.WebServices;
@@ -220,53 +218,5 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-
-        #region Batch Edit
-
-        [OperationContract]
-        [WebInvoke( Method = "POST" )]
-        [Description( "Download Batch Edit Data" )]
-        [FaultContract( typeof( FaultException ) )]
-        public void downloadBatchEditData( CswNbtWebServiceBatchEdit.BatchEditParams Request )
-        {
-            CswNbtWebServiceBatchEdit.BatchEditDownload Ret = new CswNbtWebServiceBatchEdit.BatchEditDownload();
-
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditDownload, CswNbtWebServiceBatchEdit.BatchEditParams>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceBatchEdit.DownloadBatchEditData,
-                ParamObj: Request
-                );
-
-            wsTools.ReturnCSV( _Context, Ret.CsvData );
-        }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST" )]
-        [Description( "Upload Batch Edit Data" )]
-        [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceBatchEdit.BatchEditReturn uploadBatchEditData()
-        {
-            CswNbtWebServiceBatchEdit.BatchEditReturn ret = new CswNbtWebServiceBatchEdit.BatchEditReturn();
-            if( _Context.Request.Files.Count > 0 )
-            {
-                CswNbtWebServiceBatchEdit.BatchEditUpload parms = new CswNbtWebServiceBatchEdit.BatchEditUpload();
-                parms.PostedFile = _Context.Request.Files[0];
-
-                var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditReturn, CswNbtWebServiceBatchEdit.BatchEditUpload>(
-                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj: ret,
-                    WebSvcMethodPtr: CswNbtWebServiceBatchEdit.UploadBatchEditData,
-                    ParamObj: parms
-                    );
-
-                SvcDriver.run();
-            }
-
-            return ret;
-        }
-
-        #endregion Batch Edit
-
     }
 }

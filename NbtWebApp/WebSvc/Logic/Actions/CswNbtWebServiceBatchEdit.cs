@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Actions
         public class BatchEditParams
         {
             [DataMember( IsRequired = true )]
-            public CswNbtViewId ViewId;
+            public string ViewId;
             [DataMember( IsRequired = true )]
             public Int32 NodeTypeId;
             [DataMember( IsRequired = true )]
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Actions
                     ret.CsvData.Columns.Add( Prop.PropName );  // danger?
                 }
 
-                CswNbtView View = NbtResources.ViewSelect.restoreView( Params.ViewId );
+                CswNbtView View = NbtResources.ViewSelect.restoreView( new CswNbtViewId( Params.ViewId ) );
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( View, RequireViewPermissions: true, IncludeSystemNodes: false, IncludeHiddenNodes: false );
                 _recurseBatchEditData( NodeType, Tree, ret, Params );
             }

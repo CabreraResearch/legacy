@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Text;
 using System.Web;
 using System.Web.Script.Serialization;
 using ChemSW.Core;
@@ -55,20 +56,19 @@ namespace ChemSW.Nbt.WebServices
 
         #region CSV
 
-        public static void ReturnCSV( HttpContext Context, DataTable DT )
+        public static string DataTableToCSV( DataTable DT )
         {
-            Context.Response.ClearContent();
-            //Context.Response.ContentType = "application/vnd.ms-excel";
+            StringBuilder ret = new StringBuilder();
 
             // Headers
             Int32 idx = 0;
             foreach( DataColumn dc in DT.Columns )
             {
-                if( idx > 0 ) Context.Response.Write( "," );
-                Context.Response.Write( "\"" + _csvSafe( dc.ColumnName.ToString() ) + "\"" );
+                if( idx > 0 ) ret.Append( "," );
+                ret.Append( "\"" + _csvSafe( dc.ColumnName.ToString() ) + "\"" );
                 idx++;
             }
-            Context.Response.Write( "\r\n" );
+            ret.Append( "\r\n" );
 
             // Rows
             foreach( DataRow dr in DT.Rows )
@@ -76,16 +76,25 @@ namespace ChemSW.Nbt.WebServices
                 idx = 0;
                 foreach( DataColumn dc in DT.Columns )
                 {
-                    if( idx > 0 ) Context.Response.Write( "," );
-                    Context.Response.Write( "\"" + _csvSafe( dr[dc].ToString() ) + "\"" );
+                    if( idx > 0 ) ret.Append( "," );
+                    ret.Append( "\"" + _csvSafe( dr[dc].ToString() ) + "\"" );
                     idx++;
                 }
-                Context.Response.Write( "\r\n" );
+                ret.Append( "\r\n" );
             }
+            return ret.ToString();
+        }
+
+        public static void ReturnCSV( HttpContext Context, DataTable DT )
+        {
+            Context.Response.ClearContent();
+
+            Context.Response.Write( DataTableToCSV( DT ) );
 
             Context.Response.AddHeader( "Content-Disposition", "attachment; filename=export.csv;" );
             Context.Response.End();
         }
+
         // Need to double " in string values
         private static string _csvSafe( string str )
         {
@@ -97,29 +106,9 @@ namespace ChemSW.Nbt.WebServices
             MemoryStream stream = new MemoryStream();
             StreamWriter sw = new StreamWriter( stream );
 
-            int idx = 0;
-            byte[] data = new byte[0];
-            foreach( DataColumn dc in DT.Columns )
-            {
-                if( idx > 0 ) sw.Write( "," );
-                sw.Write( "\"" + _csvSafe( dc.ColumnName.ToString() ) + "\"" );
-                idx++;
-            }
-            sw.Write( "\r\n" );
+            sw.Write( DataTableToCSV( DT ) );
 
-            // Rows
-            foreach( DataRow dr in DT.Rows )
-            {
-                idx = 0;
-                foreach( DataColumn dc in DT.Columns )
-                {
-                    if( idx > 0 ) sw.Write( "," );
-                    sw.Write( "\"" + _csvSafe( dr[dc].ToString() ) + "\"" );
-                    idx++;
-                }
-                sw.Write( "\r\n" );
-            }
-            sw.Flush();
+            //sw.Flush();
             stream.Position = 0;
             return stream;
         }
