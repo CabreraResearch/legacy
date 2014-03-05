@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Net;
 using ChemSW;
 using ChemSW.Core;
@@ -15,13 +12,13 @@ using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
 {
-    public class CswNbtWebServicePOST: CswNbtWebServiceAPI
+    public class CswNbtWebServiceCREATE: CswNbtWebServiceAPI
     {
         public const string VERB = "POST";
 
         #region Non Static
 
-        public CswNbtWebServicePOST( CswNbtResources NbtResources )
+        public CswNbtWebServiceCREATE( CswNbtResources NbtResources )
         {
             _CswNbtResources = NbtResources;
         }
@@ -65,7 +62,7 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         public static void Create( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
         {
-            CswNbtWebServicePOST POST = new CswNbtWebServicePOST( (CswNbtResources) CswResources );
+            CswNbtWebServiceCREATE POST = new CswNbtWebServiceCREATE( (CswNbtResources) CswResources );
             POST.Create( Return, Request );
         }
 

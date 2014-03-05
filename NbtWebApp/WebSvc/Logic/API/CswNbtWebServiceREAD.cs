@@ -13,13 +13,13 @@ using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
 {
-    public class CswNbtWebServiceGET: CswNbtWebServiceAPI
+    public class CswNbtWebServiceREAD: CswNbtWebServiceAPI
     {
         public const string VERB = "GET";
 
         #region Non-Static
 
-        public CswNbtWebServiceGET( CswNbtResources NbtResources )
+        public CswNbtWebServiceREAD( CswNbtResources NbtResources )
         {
             _CswNbtResources = NbtResources;
         }
@@ -97,13 +97,13 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         public static void GetResource( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
         {
-            CswNbtWebServiceGET GET = new CswNbtWebServiceGET( (CswNbtResources) CswResources );
+            CswNbtWebServiceREAD GET = new CswNbtWebServiceREAD( (CswNbtResources) CswResources );
             GET.GetResource( Return, Request );
         }
 
         public static void GetCollection( ICswResources CswResources, CswNbtResourceCollection Return, CswNbtAPIRequest Request )
         {
-            CswNbtWebServiceGET GET = new CswNbtWebServiceGET( (CswNbtResources) CswResources );
+            CswNbtWebServiceREAD GET = new CswNbtWebServiceREAD( (CswNbtResources) CswResources );
             GET.GetCollection( Return, Request );
         }
 

@@ -221,9 +221,9 @@
     <Compile Include="WebSvc\Logic\Actions\Receiving\CswNbtWebServiceReceiving.cs" />
     <Compile Include="WebSvc\Logic\API\CswNbtWebServiceDELETE.cs" />
     <Compile Include="WebSvc\Logic\API\CswNbtWebServiceAPI.cs" />
-    <Compile Include="WebSvc\Logic\API\CswNbtWebServicePUT.cs" />
-    <Compile Include="WebSvc\Logic\API\CswNbtWebServicePOST.cs" />
-    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceGET.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceUPDATE.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceCREATE.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceREAD.cs" />
     <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtAPIReturn.cs" />
     <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtResourceCollection.cs" />
     <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtResourceWithProperties.cs" />

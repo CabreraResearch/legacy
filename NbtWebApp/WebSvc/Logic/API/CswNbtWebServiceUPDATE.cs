@@ -10,13 +10,13 @@ using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
 {
-    public class CswNbtWebServicePUT: CswNbtWebServiceAPI
+    public class CswNbtWebServiceUPDATE: CswNbtWebServiceAPI
     {
         public const string VERB = "PUT";
 
         #region Non Static
 
-        public CswNbtWebServicePUT( CswNbtResources NbtResources )
+        public CswNbtWebServiceUPDATE( CswNbtResources NbtResources )
         {
             _CswNbtResources = NbtResources;
         }
@@ -64,7 +64,7 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         public static void Edit( ICswResources CswResources, CswNbtAPIReturn Return, CswNbtAPIRequest Request )
         {
-            CswNbtWebServicePUT PUT = new CswNbtWebServicePUT( (CswNbtResources) CswResources );
+            CswNbtWebServiceUPDATE PUT = new CswNbtWebServiceUPDATE( (CswNbtResources) CswResources );
             PUT.Edit( Return, Request );
         }
 
