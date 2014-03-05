@@ -1,61 +1,48 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Net;
 using ChemSW;
 using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
 {
-    public class CswNbtWebServicePUT
+    public class CswNbtWebServicePUT: CswNbtWebServiceAPI
     {
-        /// <summary>
-        /// Based on the input, verifies if the user has permission to continue
-        /// </summary>
-        private static bool hasPermission( CswNbtResources NbtResources, CswNbtAPIRequest Request, CswNbtAPIReturn Return )
+        public const string VERB = "PUT";
+
+        #region Non Static
+
+        public CswNbtWebServicePUT( CswNbtResources NbtResources )
         {
-            bool ret = false;
-            CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Request.NodeType );
-            if( null != NodeType )
-            {
-                if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType, User : NbtResources.CurrentNbtUser ) )
-                {
-                    ret = true;
-                }
-                else
-                {
-                    Return.Status = Return.Status = HttpStatusCode.Forbidden; //Permission denied
-                }
-            }
-            else
-            {
-                Return.Status = Return.Status = HttpStatusCode.NotFound;
-            }
-            return ret;
+            _CswNbtResources = NbtResources;
         }
 
-        public static void Edit( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        protected override bool hasPermission( CswNbtAPIRequest Request, CswNbtAPIReturn Return )
         {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            if( hasPermission( NbtResources, Request, Return ) )
+            return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, Request, Return );
+        }
+
+        public void Edit( CswNbtAPIReturn Return, CswNbtAPIRequest Request )
+        {
+            if( hasPermission( Request, Return ) )
             {
                 try
                 {
-                    //CswNbtNode Node = NbtResources.Nodes.GetNode( Request.NodeId );
-                    //if( null != Node )
-                    //{
-                    //    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( NbtResources );
-                    //    //SdTabsAndProps.saveNodeProps( Node, Request.PropData );
-                    //}
-                    //else
-                    //{
-                    //    Return.Status = HttpStatusCode.NotFound;
-                    //}
+                    CswNbtNode Node = _CswNbtResources.Nodes.GetNode( Request.NodeId );
+                    if( null != Node )
+                    {
+                        CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                        SdTabsAndProps.saveNodeProps( Node, Request.PropData );
+                        Node.postChanges( false );
+                    }
+                    else
+                    {
+                        Return.Status = HttpStatusCode.NotFound;
+                    }
                 }
                 catch( Exception ex )
                 {
@@ -63,5 +50,17 @@ namespace NbtWebApp.WebSvc.Logic.API
                 }
             }
         }
+
+        #endregion
+
+        #region Static
+
+        public static void Edit( ICswResources CswResources, CswNbtAPIReturn Return, CswNbtAPIRequest Request )
+        {
+            CswNbtWebServicePUT PUT = new CswNbtWebServicePUT( (CswNbtResources) CswResources );
+            PUT.Edit( Return, Request );
+        }
+
+        #endregion
     }
 }
