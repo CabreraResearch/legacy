@@ -37,7 +37,14 @@ namespace NbtWebApp.WebSvc.Logic.API
                     {
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         SdTabsAndProps.saveNodeProps( Node, Request.PropData );
-                        Node.postChanges( false );
+                        if( Node.IsTemp )
+                        {
+                            Node.PromoteTempToReal();
+                        }
+                        else
+                        {
+                            Node.postChanges( false );
+                        }
                     }
                     else
                     {

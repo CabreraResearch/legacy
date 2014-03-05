@@ -15,51 +15,39 @@ using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
 {
-    public class CswNbtWebServicePOST
+    public class CswNbtWebServicePOST: CswNbtWebServiceAPI
     {
-        /// <summary>
-        /// Based on the input, verifies if the user has permission to continue
-        /// </summary>
-        private static bool hasPermission( CswNbtResources NbtResources, CswNbtAPIRequest Request, CswNbtAPIReturn Return )
+        public const string VERB = "POST";
+
+        #region Non Static
+
+        public CswNbtWebServicePOST( CswNbtResources NbtResources )
         {
-            bool ret = false;
-            CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Request.NodeType );
-            if( null != NodeType )
-            {
-                if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType, User : NbtResources.CurrentNbtUser ) )
-                {
-                    ret = true;
-                }
-                else
-                {
-                    Return.Status = Return.Status = HttpStatusCode.Forbidden; //Permission denied
-                }
-            }
-            else
-            {
-                Return.Status = Return.Status = HttpStatusCode.NotFound;
-            }
-            return ret;
+            _CswNbtResources = NbtResources;
         }
 
-        public static void Create( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        protected override bool hasPermission( CswNbtAPIRequest Request, CswNbtAPIReturn Return )
         {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            if( hasPermission( NbtResources, Request, Return ) )
+            return base.hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.Create, Request, Return );
+        }
+
+        public void Create( CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        {
+            if( hasPermission( Request, Return ) )
             {
                 try
                 {
-                    CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Request.NodeType );
-                    CswNbtNode NewNode = NbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp: true );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Request.MetaDataName );
+                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : true );
 
                     Return.NodeId = NewNode.NodeId;
                     Return.NodeName = NewNode.NodeName;
                     Return.NodeType = NewNode.getNodeType().NodeTypeName;
                     Return.ObjectClass = NewNode.ObjClass.ObjectClass.ObjectClassName;
-                    Return.URI = "api/v1/" + NodeType.NodeTypeName + "/" + NewNode.NodeId.PrimaryKey;
+                    Return.URI = "api/v1/" + NodeType.NodeTypeName + "/" + NewNode.NodeId.PrimaryKey; //TODO: this URI is incomplete
 
-                    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( NbtResources );
-                    //see CswNbtWebServiceGET for the problems with the line below
+                    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                    //TODO: see CswNbtWebServiceGET for the problems with the line below
                     Return.PropertyData = CswConvert.ToJObject( SdTabsAndProps.getProps( NewNode, string.Empty, null, CswEnumNbtLayoutType.Add )["properties"] );
 
                     Return.Status = HttpStatusCode.Created;
@@ -70,5 +58,18 @@ namespace NbtWebApp.WebSvc.Logic.API
                 }
             }
         }
+
+        #endregion
+
+        #region Static
+
+        public static void Create( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        {
+            CswNbtWebServicePOST POST = new CswNbtWebServicePOST( (CswNbtResources) CswResources );
+            POST.Create( Return, Request );
+        }
+
+        #endregion
+
     }
 }
