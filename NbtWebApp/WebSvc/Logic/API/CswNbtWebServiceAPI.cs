@@ -10,15 +10,15 @@ namespace NbtWebApp.WebSvc.Logic.API
     public abstract class CswNbtWebServiceAPI
     {
         protected CswNbtResources _CswNbtResources;
-        protected abstract bool hasPermission( CswNbtAPIRequest Request, CswNbtAPIReturn Return );
+        protected abstract bool hasPermission( CswNbtAPIGenericRequest GenericRequest, CswNbtAPIReturn Return );
 
         /// <summary>
         /// Based on the input, verifies if the user has permission to continue
         /// </summary>
-        public bool hasPermission( CswNbtResources NbtResources, CswEnumNbtNodeTypePermission Permission, CswNbtAPIRequest Request, CswNbtAPIReturn Return )
+        public bool hasPermission( CswNbtResources NbtResources, CswEnumNbtNodeTypePermission Permission, CswNbtAPIGenericRequest GenericRequest, CswNbtAPIReturn Return )
         {
             bool ret = false;
-            CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Request.MetaDataName );
+            CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
             if( null != NodeType )
             {
                 if( NbtResources.Permit.canNodeType( Permission, NodeType, User : NbtResources.CurrentNbtUser ) )

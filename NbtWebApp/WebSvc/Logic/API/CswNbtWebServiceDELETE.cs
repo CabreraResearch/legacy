@@ -20,18 +20,18 @@ namespace NbtWebApp.WebSvc.Logic.API
             _CswNbtResources = NbtResources;
         }
 
-        protected override bool hasPermission( CswNbtAPIRequest Request, CswNbtAPIReturn Return )
+        protected override bool hasPermission( CswNbtAPIGenericRequest GenericRequest, CswNbtAPIReturn Return )
         {
-            return base.hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.Delete, Request, Return );
+            return base.hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.Delete, GenericRequest, Return );
         }
 
-        public void Delete( CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        public void Delete( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
         {
-            if( hasPermission( Request, Return ) )
+            if( hasPermission( GenericRequest, Return ) )
             {
                 try
                 {
-                    CswNbtNode DoomedNode = _CswNbtResources.Nodes.GetNode( Request.NodeId );
+                    CswNbtNode DoomedNode = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
                     if( null != DoomedNode )
                     {
                         DoomedNode.delete();
@@ -54,10 +54,10 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void Delete( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        public static void Delete( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceDELETE POST = new CswNbtWebServiceDELETE( (CswNbtResources) CswResources );
-            POST.Delete( Return, Request );
+            POST.Delete( Return, GenericRequest );
         }
 
         #endregion

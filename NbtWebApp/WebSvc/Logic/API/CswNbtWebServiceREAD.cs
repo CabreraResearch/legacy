@@ -24,26 +24,26 @@ namespace NbtWebApp.WebSvc.Logic.API
             _CswNbtResources = NbtResources;
         }
 
-        protected override bool hasPermission( CswNbtAPIRequest Request, CswNbtAPIReturn Return )
+        protected override bool hasPermission( CswNbtAPIGenericRequest GenericRequest, CswNbtAPIReturn Return )
         {
-            return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, Request, Return );
+            return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, GenericRequest, Return );
         }
         
-        public void GetResource( CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        public void GetResource( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
         {
-            if( hasPermission( Request, Return ) )
+            if( hasPermission( GenericRequest, Return ) )
             {
                 try
                 {
-                    CswNbtNode Node = _CswNbtResources.Nodes.GetNode( Request.NodeId );
+                    CswNbtNode Node = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
                     if( null != Node )
                     {
-                        Return.NodeId = Request.NodeId;
+                        Return.NodeId = GenericRequest.NodeId;
                         Return.NodeName = Node.NodeName;
                         Return.NodeType = Node.getNodeType().NodeTypeName;
                         Return.ObjectClass = Node.ObjClass.ObjectClass.ObjectClassName;
                         Return.PropertySet = Node.getObjectClass().getPropertySet().Name;
-                        Return.URI = "api/v1/" + Node.getNodeType().NodeTypeName + "/" + Request.NodeId.PrimaryKey; //TODO: this URI needs to have the "localhost/NbtDev" part
+                        Return.URI = "api/v1/" + Node.getNodeType().NodeTypeName + "/" + GenericRequest.NodeId.PrimaryKey; //TODO: this URI needs to have the "localhost/NbtDev" part
                         
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         CswNbtMetaDataNodeType NodeType = Node.getNodeType();
@@ -65,13 +65,13 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         }
 
-        public void GetCollection( CswNbtResourceCollection Return, CswNbtAPIRequest Request )
+        public void GetCollection( CswNbtResourceCollection Return, CswNbtAPIGenericRequest GenericRequest )
         {
-            if( hasPermission( Request, Return ) )
+            if( hasPermission( GenericRequest, Return ) )
             {
                 try
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Request.MetaDataName );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
                     if( null != NodeType )
                     {
                         foreach( KeyValuePair<CswPrimaryKey, string> pair in NodeType.getNodeIdAndNames( false, false ) )
@@ -95,16 +95,16 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void GetResource( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        public static void GetResource( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceREAD GET = new CswNbtWebServiceREAD( (CswNbtResources) CswResources );
-            GET.GetResource( Return, Request );
+            GET.GetResource( Return, GenericRequest );
         }
 
-        public static void GetCollection( ICswResources CswResources, CswNbtResourceCollection Return, CswNbtAPIRequest Request )
+        public static void GetCollection( ICswResources CswResources, CswNbtResourceCollection Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceREAD GET = new CswNbtWebServiceREAD( (CswNbtResources) CswResources );
-            GET.GetCollection( Return, Request );
+            GET.GetCollection( Return, GenericRequest );
         }
 
         #endregion

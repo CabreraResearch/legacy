@@ -23,18 +23,18 @@ namespace NbtWebApp.WebSvc.Logic.API
             _CswNbtResources = NbtResources;
         }
 
-        protected override bool hasPermission( CswNbtAPIRequest Request, CswNbtAPIReturn Return )
+        protected override bool hasPermission( CswNbtAPIGenericRequest GenericRequest, CswNbtAPIReturn Return )
         {
-            return base.hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.Create, Request, Return );
+            return base.hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.Create, GenericRequest, Return );
         }
 
-        public void Create( CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        public void Create( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
         {
-            if( hasPermission( Request, Return ) )
+            if( hasPermission( GenericRequest, Return ) )
             {
                 try
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Request.MetaDataName );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
                     CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : true );
 
                     Return.NodeId = NewNode.NodeId;
@@ -60,10 +60,10 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void Create( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIRequest Request )
+        public static void Create( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceCREATE POST = new CswNbtWebServiceCREATE( (CswNbtResources) CswResources );
-            POST.Create( Return, Request );
+            POST.Create( Return, GenericRequest );
         }
 
         #endregion

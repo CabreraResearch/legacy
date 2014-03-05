@@ -21,22 +21,22 @@ namespace NbtWebApp.WebSvc.Logic.API
             _CswNbtResources = NbtResources;
         }
 
-        protected override bool hasPermission( CswNbtAPIRequest Request, CswNbtAPIReturn Return )
+        protected override bool hasPermission( CswNbtAPIGenericRequest GenericRequest, CswNbtAPIReturn Return )
         {
-            return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, Request, Return );
+            return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, GenericRequest, Return );
         }
 
-        public void Edit( CswNbtAPIReturn Return, CswNbtAPIRequest Request )
+        public void Edit( CswNbtAPIReturn Return, CswNbtAPIGenericRequest GenericRequest )
         {
-            if( hasPermission( Request, Return ) )
+            if( hasPermission( GenericRequest, Return ) )
             {
                 try
                 {
-                    CswNbtNode Node = _CswNbtResources.Nodes.GetNode( Request.NodeId );
+                    CswNbtNode Node = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
                     if( null != Node )
                     {
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        SdTabsAndProps.saveNodeProps( Node, Request.PropData );
+                        SdTabsAndProps.saveNodeProps( Node, GenericRequest.PropData );
                         if( Node.IsTemp )
                         {
                             Node.PromoteTempToReal();
@@ -62,10 +62,10 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void Edit( ICswResources CswResources, CswNbtAPIReturn Return, CswNbtAPIRequest Request )
+        public static void Edit( ICswResources CswResources, CswNbtAPIReturn Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceUPDATE PUT = new CswNbtWebServiceUPDATE( (CswNbtResources) CswResources );
-            PUT.Edit( Return, Request );
+            PUT.Edit( Return, GenericRequest );
         }
 
         #endregion
