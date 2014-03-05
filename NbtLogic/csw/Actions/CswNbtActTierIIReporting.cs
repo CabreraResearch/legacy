@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.Actions
             CswArbitrarySelect TierIISelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Material Select",
                 "select * from table(TIER_II_DATA_MANAGER.GET_TIER_II_DATA(" + CswConvert.ToPrimaryKey( Request.LocationId ).PrimaryKey + 
                 ", " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ) +
-                ", " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) +"))" );
+                ", " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) +")) where casno is not null" );
             DataTable TierIITable = TierIISelect.getTable();
             foreach( DataRow MaterialRow in TierIITable.Rows )
             {
