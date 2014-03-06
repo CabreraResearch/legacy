@@ -23,8 +23,13 @@
             actionHandler.add('batch edit', function (o) {
                 return Csw.nbt.batchEditWizard(Csw.main.centerTopDiv, {
                     onCancel: onCancel,
-                    onFinish: function () {
-                        onCancel();
+                    onFinish: function (viewid) {
+                        Csw.main.clear({ 'all': true });
+                        Csw.main.handleItemSelect({
+                            type: 'view',
+                            mode: 'tree',
+                            itemid: viewid
+                        });
                     }
                 });
             });

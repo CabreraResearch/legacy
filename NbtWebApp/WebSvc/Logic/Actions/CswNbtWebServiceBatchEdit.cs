@@ -55,8 +55,8 @@ namespace ChemSW.Nbt.Actions
         public class BatchEditReturn : CswWebSvcReturn
         {
             [DataMember( IsRequired = true )]
-            [Description( "Batch Id" )]
-            public Int32 BatchId;
+            [Description( "ViewId" )]
+            public string ViewId;
         }
 
         public static void DownloadBatchEditData( ICswResources CswResources, BatchEditDownload ret, BatchEditParams Params )
@@ -141,9 +141,16 @@ namespace ChemSW.Nbt.Actions
                 DataTable uploadTable = uploadDataSet.Tables[0];
                 
                 CswNbtBatchOpBatchEdit batch = new CswNbtBatchOpBatchEdit( NbtResources );
-                CswNbtObjClassBatchOp batchOp = batch.makeBatchOp( uploadTable );
-
-                ret.BatchId = batchOp.NodeId.PrimaryKey;
+                CswNbtObjClassBatchOp batchNode = batch.makeBatchOp( uploadTable );
+                
+                CswNbtView BatchOpsView = new CswNbtView( (CswNbtResources) CswResources );
+                BatchOpsView.ViewName = "New Batch Operations";
+                BatchOpsView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
+                CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( batchNode.NodeType, false );
+                BatchRel.NodeIdsToFilterIn.Add( batchNode.NodeId );
+                
+                BatchOpsView.SaveToCache( true );
+                ret.ViewId = BatchOpsView.SessionViewId.ToString();
 
             } // if( uploadDataSet.Tables.Count > 0 )
         } // UploadBatchEditData()

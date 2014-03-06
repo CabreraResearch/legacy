@@ -178,8 +178,12 @@ namespace ChemSW.Nbt.Batch
                         if( null != _BatchData["excelData"] )
                         {
                             _excelData = new DataTable();
-                            StringReader sr = new StringReader( _BatchData["excelData"].ToString() );
-                            _excelData.ReadXml( sr );
+
+                            StringReader sr1 = new StringReader( _BatchData["excelDataSchema"].ToString() );
+                            _excelData.ReadXmlSchema( sr1 );
+
+                            StringReader sr2 = new StringReader( _BatchData["excelData"].ToString() );
+                            _excelData.ReadXml( sr2 );
                         }
                     }
                     return _excelData;
@@ -189,11 +193,15 @@ namespace ChemSW.Nbt.Batch
                     _excelData = value;
                     TotalRows = value.Rows.Count;
 
-                    StringBuilder sb = new StringBuilder();
-                    StringWriter sw = new StringWriter( sb );
-                    _excelData.WriteXml( sw );
+                    StringBuilder sb1 = new StringBuilder();
+                    StringWriter sw1 = new StringWriter( sb1 );
+                    _excelData.WriteXmlSchema( sw1 );
+                    _BatchData["excelDataSchema"] = sb1.ToString();
 
-                    _BatchData["excelData"] = sb.ToString();
+                    StringBuilder sb2 = new StringBuilder();
+                    StringWriter sw2 = new StringWriter( sb2 );
+                    _excelData.WriteXml( sw2 );
+                    _BatchData["excelData"] = sb2.ToString();
                 }
             } // excelData
 

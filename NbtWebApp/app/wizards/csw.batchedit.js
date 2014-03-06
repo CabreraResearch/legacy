@@ -248,15 +248,11 @@
                         onClick: function () {
                             Csw.dialogs.fileUpload({
                                 urlMethod: 'Services/BlobData/uploadBatchEditData',
-                                // params: {
-                                //     defname: cswPrivate.selDefName.val(),
-                                //     overwrite: cswPrivate.cbOverwrite.checked
-                                // },
                                 forceIframeTransport: true,
                                 dataType: 'iframe',
                                 onSuccess: function (response) {
-                                    var batchid = Csw.number(Csw.getPropFromIFrame(response, 'batchid', false), Csw.int32MinVal);
-                                    //cswPrivate.makeStatusTable();
+                                    var viewid = Csw.getPropFromIFrame(response, 'viewid', false);
+                                    Csw.tryExec(cswPrivate.onFinish, viewid);
                                 }
                             }).open();
                         }
@@ -273,19 +269,19 @@
 
 
         //#region Finish
-        cswPrivate.finalize = function () {
-            cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+//        cswPrivate.finalize = function () {
+//            cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-            Csw.ajaxWcf.post({
-                urlMethod: 'Nodes/finishBatchEdit',
-                data: {
-                    //Choices: cswPrivate.mergeData
-                },
-                success: function (data) {
-                    Csw.tryExec(cswPrivate.onFinish);
-                } // success()
-            }); // ajax
-        };
+//            Csw.ajaxWcf.post({
+//                urlMethod: 'Nodes/finishBatchEdit',
+//                data: {
+//                    //Choices: cswPrivate.mergeData
+//                },
+//                success: function (data) {
+//                    Csw.tryExec(cswPrivate.onFinish);
+//                } // success()
+//            }); // ajax
+//        };
         //#endregion Finish
 
         //#region ctor _post
@@ -302,7 +298,7 @@
                 onNext: cswPrivate.handleStep,
                 onPrevious: cswPrivate.handleStep,
                 onCancel: cswPrivate.onCancel,
-                onFinish: cswPrivate.finalize,
+                //onFinish: cswPrivate.finalize,
                 doNextOnInit: false
             });
             cswPrivate.stepFunc[1](1);
