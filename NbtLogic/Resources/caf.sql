@@ -35,31 +35,44 @@ create or replace procedure pivotPropertiesValues(viewname in varchar, propstbln
   c       cur_typ;
   propid  varchar(200);
   viewsql clob;
-  line    clob;
+  cols    clob;
+  joins   clob;
+  withs   clob;
 
 begin
-  props_sql := 'select distinct pv.propertyid from properties p join ' || propstblname ||  ' pv on p.propertyid = pv.propertyid';
-
-  viewsql   := 'create or replace view ' || viewname || ' as select m.' || joincol;
+  props_sql := 'select distinct pv.propertyid from properties p join ' ||
+               propstblname || ' pv on p.propertyid = pv.propertyid';
 
   open c for props_sql;
   loop
     fetch c
       into propid;
     exit when c%NOTFOUND;
-
-    line    := ', (select max(' || proptblpkcol || ') propvalid from ' || propstblname || ' where propertyid = ' ||
-               propid || ' and ' || joincol || ' = m.' || joincol || ') prop' || propid;
-    viewsql := viewsql || line;
-
+  
+    withs := withs || ' pv' || propid || ' as (select ' || joincol ||
+             ', max(' || proptblpkcol || ') as prop' || propid || ' from ' ||
+             propstblname || ' where propertyid = ' || propid ||
+             ' group by ' || joincol || '),';
+    cols  := cols || ', pv' || propid || '.prop' || propid;
+    joins := joins || ' left outer join pv' || propid || ' on pv' || propid || '.' ||
+             joincol || ' = m.' || joincol;
+  
   end loop;
   close c;
 
-  viewsql := viewsql || ' from ' || fromtbl || ' m';
+  withs   := dbms_lob.substr(withs, (dbms_lob.getlength(withs) - 1), 1);
+  viewsql := 'create or replace view ' || viewname || ' as ';
+  if dbms_lob.getlength(withs) > 1 then
+    viewsql := viewsql || ' with ' || withs;
+  end if;
+  viewsql := viewsql || '
+    select m. ' || joincol || cols || '
+      from ' || fromtbl || ' m ' || joins;
 
-  execute immediate (viewsql);
+  execute immediate(viewsql);
 end;
 /
+
 begin
   -- Call the procedure
   pivotpropertiesvalues(viewname => 'chemicals_props_view',
