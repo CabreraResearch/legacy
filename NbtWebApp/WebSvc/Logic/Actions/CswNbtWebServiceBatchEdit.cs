@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
+using ChemSW.Nbt.csw.ImportExport;
 using NbtWebApp.Actions.Receiving;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
@@ -64,17 +65,28 @@ namespace ChemSW.Nbt.Actions
             if( null != NodeType )
             {
                 ret.CsvData = new DataTable();
+                ret.CsvData.Columns.Add( "nodeid" );
                 foreach( Int32 PropId in Params.PropIds )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = NodeType.getNodeTypeProp( PropId );
-                    ret.CsvData.Columns.Add( Prop.PropName );  // danger?
+                    if( Prop.getFieldTypeRule().SubFields.Count > 1 )
+                    {
+                        foreach( CswNbtSubField SubField in Prop.getFieldTypeRule().SubFields )
+                        {
+                            ret.CsvData.Columns.Add( Prop.PropName + " " + SubField.Name );
+                        }
+                    }
+                    else
+                    {
+                        ret.CsvData.Columns.Add( Prop.PropName );
+                    }
                 }
 
                 CswNbtView View = NbtResources.ViewSelect.restoreView( new CswNbtViewId( Params.ViewId ) );
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( View, RequireViewPermissions: true, IncludeSystemNodes: false, IncludeHiddenNodes: false );
                 _recurseBatchEditData( NodeType, Tree, ret, Params );
             }
-        }
+        } // DownloadBatchEditData()
 
         private static void _recurseBatchEditData( CswNbtMetaDataNodeType NodeType, ICswNbtTree Tree, BatchEditDownload ret, BatchEditParams Params )
         {
@@ -90,23 +102,72 @@ namespace ChemSW.Nbt.Actions
 
                 Tree.goToParentNode();
             }
-        }
+        } // _recurseBatchEditData()
 
         private static void _addNodeToData( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, BatchEditDownload ret, BatchEditParams Params )
         {
             DataRow row = ret.CsvData.NewRow();
+            row["nodeid"] = Node.NodeId.ToString();
+
             foreach( Int32 PropId in Params.PropIds )
             {
                 CswNbtMetaDataNodeTypeProp Prop = NodeType.getNodeTypeProp( PropId );
-                row[Prop.PropName] = Node.Properties[Prop].Gestalt;
+                if( Prop.getFieldTypeRule().SubFields.Count > 1 )
+                {
+                    foreach( CswNbtSubField SubField in Prop.getFieldTypeRule().SubFields )
+                    {
+                        row[Prop.PropName + " " + SubField.Name] = Node.Properties[Prop].GetSubFieldValue( SubField );
+                    }
+                }
+                else
+                {
+                    row[Prop.PropName] = Node.Properties[Prop].GetSubFieldValue( Prop.getFieldTypeRule().SubFields.Default );
+                }
             }
             ret.CsvData.Rows.Add( row );
-        }
+        } // _addNodeToData()
 
         public static void UploadBatchEditData( ICswResources CswResources, BatchEditReturn ret, BatchEditUpload Params )
         {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-        }
+            CswTempFile temp = new CswTempFile( CswResources );
+            string tempPath = temp.saveToTempFile( Params.PostedFile.InputStream, CswResources.AccessId + "_batchedit_" + DateTime.Now.Ticks.ToString() );
+
+            DataSet uploadDataSet = CswNbtImportTools.ReadExcel( tempPath );
+            if( uploadDataSet.Tables.Count > 0 )
+            {
+                DataTable uploadTable = uploadDataSet.Tables[0];
+                if( null != uploadTable.Columns["nodeid"] )
+                {
+                    foreach( DataRow row in uploadTable.Rows )
+                    {
+                        CswNbtNode Node = wsTools.getNode( NbtResources, row["nodeid"].ToString(), "", null );
+                        foreach( DataColumn col in uploadTable.Columns )
+                        {
+                            if( col.ColumnName != "nodeid" )
+                            {
+                                CswNbtMetaDataNodeTypeProp Prop = Node.getNodeType().getNodeTypeProp( col.ColumnName );
+                                CswNbtSubField SubField;
+                                if( null != Prop )
+                                {
+                                    SubField = Prop.getFieldTypeRule().SubFields.Default;
+                                }
+                                else
+                                {
+                                    string propName = col.ColumnName.Substring( 0, col.ColumnName.LastIndexOf( " " ) );
+                                    string subFieldName = col.ColumnName.Substring( col.ColumnName.LastIndexOf( " " ) + 1 );
+                                    Prop = Node.getNodeType().getNodeTypeProp( propName );
+                                    SubField = Prop.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) subFieldName];
+                                }
+                                Node.Properties[Prop].SetSubFieldValue( SubField, row[col.ColumnName] );
+                            }
+                        }
+                        Node.postChanges( false );
+                    } // foreach( DataRow row in uploadTable.Rows )
+                } // if( null != uploadTable.Columns["nodeid"] )
+            } // if( uploadDataSet.Tables.Count > 0 )
+        } // UploadBatchEditData()
 
     } // class CswNbtWebServiceBatchEdit
 }// namespace ChemSW.Nbt.Actions

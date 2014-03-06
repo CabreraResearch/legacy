@@ -246,7 +246,6 @@ namespace NbtWebApp
         [WebInvoke( Method = "GET", UriTemplate = "downloadBatchEditData?ViewId={ViewId}&NodeTypeId={NodeTypeId}&PropIds={PropIds}" )]
         [Description( "Download Batch Edit Data" )]
         [FaultContract( typeof( FaultException ) )]
-        //public Stream downloadBatchEditData( CswNbtWebServiceBatchEdit.BatchEditParams Request )
         public Stream downloadBatchEditData( string ViewId, string NodeTypeId, string PropIds )
         {
             CswNbtWebServiceBatchEdit.BatchEditDownload Ret = new CswNbtWebServiceBatchEdit.BatchEditDownload();
