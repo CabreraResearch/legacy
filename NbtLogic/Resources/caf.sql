@@ -952,3 +952,58 @@ select distinct r.roleid,
           r.roledescription,
           r.timeout,
           r.deleted;
+		  
+--Materials: Biologicals
+create or replace view biologicals_view as
+SELECT p.productno,
+       m.materialname,
+       v.vendorid,
+       m.refno,
+       m.type,
+       m.species,
+       m.biosafety,
+       m.vectors,
+       m.materialid,
+       p.packageid,
+       (CASE
+         WHEN (SELECT ENABLED FROM modules WHERE NAME = 'pkg_approval') = '0' THEN
+          '1'
+         ELSE
+          p.APPROVED
+       END) approved_trans,
+       m.storage_conditions,
+       m.deleted
+  FROM materials m
+  join packages p ON p.MATERIALID = m.MATERIALID
+  join vendors v ON p.SUPPLIERID = v.VENDORID
+  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
+                                m.MATERIALSUBCLASSID
+  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
+ WHERE m.DELETED = 0
+   AND p.DELETED = 0
+   AND mc.CLASSNAME = 'BIOLOGICAL';
+
+--Materials: Supplies
+create or replace view supplies_view as
+SELECT p.productno,
+       m.materialname,
+       v.vendorid,
+       p.productdescription,
+       m.materialid,
+       p.packageid,
+       (CASE
+         WHEN (SELECT ENABLED FROM modules WHERE NAME = 'pkg_approval') = '0' THEN
+          '1'
+         ELSE
+          p.APPROVED
+       END) approved_trans,
+	   m.deleted
+  FROM materials m
+  join packages p ON p.MATERIALID = m.MATERIALID
+  join vendors v ON p.SUPPLIERID = v.VENDORID
+  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
+                                m.MATERIALSUBCLASSID
+  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
+ WHERE m.DELETED = 0
+   AND p.DELETED = 0
+   AND mc.CLASSNAME = 'SUPPLY';
