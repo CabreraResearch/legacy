@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Runtime.Serialization;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
@@ -138,34 +139,12 @@ namespace ChemSW.Nbt.Actions
             if( uploadDataSet.Tables.Count > 0 )
             {
                 DataTable uploadTable = uploadDataSet.Tables[0];
-                if( null != uploadTable.Columns["nodeid"] )
-                {
-                    foreach( DataRow row in uploadTable.Rows )
-                    {
-                        CswNbtNode Node = wsTools.getNode( NbtResources, row["nodeid"].ToString(), "", null );
-                        foreach( DataColumn col in uploadTable.Columns )
-                        {
-                            if( col.ColumnName != "nodeid" )
-                            {
-                                CswNbtMetaDataNodeTypeProp Prop = Node.getNodeType().getNodeTypeProp( col.ColumnName );
-                                CswNbtSubField SubField;
-                                if( null != Prop )
-                                {
-                                    SubField = Prop.getFieldTypeRule().SubFields.Default;
-                                }
-                                else
-                                {
-                                    string propName = col.ColumnName.Substring( 0, col.ColumnName.LastIndexOf( " " ) );
-                                    string subFieldName = col.ColumnName.Substring( col.ColumnName.LastIndexOf( " " ) + 1 );
-                                    Prop = Node.getNodeType().getNodeTypeProp( propName );
-                                    SubField = Prop.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) subFieldName];
-                                }
-                                Node.Properties[Prop].SetSubFieldValue( SubField, row[col.ColumnName] );
-                            }
-                        }
-                        Node.postChanges( false );
-                    } // foreach( DataRow row in uploadTable.Rows )
-                } // if( null != uploadTable.Columns["nodeid"] )
+                
+                CswNbtBatchOpBatchEdit batch = new CswNbtBatchOpBatchEdit( NbtResources );
+                CswNbtObjClassBatchOp batchOp = batch.makeBatchOp( uploadTable );
+
+                ret.BatchId = batchOp.NodeId.PrimaryKey;
+
             } // if( uploadDataSet.Tables.Count > 0 )
         } // UploadBatchEditData()
 
