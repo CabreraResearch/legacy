@@ -119,8 +119,11 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    
                     if (false === cswPrivate.wizardStepSelectView_init) {
                         cswPrivate.wizardStepSelectView_init = true;
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         cswPrivate.setStepHeader(StepNo, 'Select a view to edit.');
                         var div = cswPrivate['divStep' + StepNo];
 
@@ -130,8 +133,9 @@
                             includeRecent: false,
                             useCache: false,
                             onSelect: function () {
-                                cswPrivate.wizardStepSelectNodeTypes_init = false;
+                                cswPrivate.wizardStepSelectNodeType_init = false;
                                 cswPrivate.wizardStepSelectProperties_init = false;
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                             },
                             useSecondaryPromise: true
                         });
@@ -147,12 +151,15 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+
                     if (false === cswPrivate.wizardStepSelectNodeType_init) {
                         cswPrivate.wizardStepSelectNodeType_init = true;
                         cswPrivate.setStepHeader(StepNo, 'Select which type you would like to edit.');
                         var div = cswPrivate['divStep' + StepNo];
 
                         cswPrivate.nodeTypeSel = div.nodeTypeSelect({
+                            filterToView: cswPrivate.viewSel.val().value,
                             onSelect: function () {
                                 cswPrivate.wizardStepSelectProperties_init = false;
                             }
@@ -169,6 +176,7 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     if (false === cswPrivate.wizardStepSelectProperties_init) {
                         cswPrivate.wizardStepSelectProperties_init = true;
                         cswPrivate.setStepHeader(StepNo, 'Select which properties you would like to edit.');
@@ -206,6 +214,8 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+
                     cswPrivate.setStepHeader(StepNo, '');
                     var div = cswPrivate['divStep' + StepNo];
                     var tbl = div.table();

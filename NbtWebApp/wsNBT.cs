@@ -2113,7 +2113,9 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string PropertySetName, string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
+        public string getNodeTypes( string PropertySetName, string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds,
+                                    string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId,
+                                    string FilterToPermission, string FilterToView, string Searchable )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2153,8 +2155,15 @@ namespace ChemSW.Nbt.WebServices
                             PropertySet = _CswNbtResources.MetaData.getPropertySet( PS );
                         }
                     }
+
+                    CswNbtViewId FilterToViewId = null;
+                    if( false == string.IsNullOrEmpty( FilterToView ) )
+                    {
+                        FilterToViewId = new CswNbtViewId( FilterToView );
+                    }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( PropertySet, ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, realRelationshipNodeTypePropId, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
+                    ReturnVal = ws.getNodeTypes( PropertySet, ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName,
+                                                 realRelationshipNodeTypePropId, FilterToPermission, FilterToViewId, CswConvert.ToBoolean( Searchable ) );
                 }
 
                 _deInitResources();
