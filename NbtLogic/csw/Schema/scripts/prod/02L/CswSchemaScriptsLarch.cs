@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02L_Case31907(),
                     new CswUpdateSchema_02L_Case32003(),
                     new CswUpdateSchema_02L_Case31909(),
-                    new CswUpdateSchema_02L_Case31611()
+                    new CswUpdateSchema_02L_Case31611(),
                     new CswUpdateSchema_02L_Case31893_Biologicals(),
                     new CswUpdateSchema_02L_Case31893_Supplies(),
                     new CswUpdateSchema_02L_Case31893_Constituents(),
