@@ -1,12 +1,13 @@
 ﻿using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02L_Case31893 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02L_Case31893B : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -20,17 +21,17 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Update CAF Import Order"; }
+            get { return "Promote Legacy Material Id to PS property"; }
         }
 
         public override string AppendToScriptName()
         {
-            return "A";
+            return "B";
         }
 
         public override void update()
         {
-            CswNbtImportDefOrder.updateOrderEntries( _CswNbtSchemaModTrnsctn );
+            _CswNbtSchemaModTrnsctn.createPropertySetProp( CswEnumNbtPropertySetName.MaterialSet, CswNbtPropertySetMaterial.PropertyName.LegacyMaterialId, CswEnumNbtFieldType.Text );
         } // update()
 
     }

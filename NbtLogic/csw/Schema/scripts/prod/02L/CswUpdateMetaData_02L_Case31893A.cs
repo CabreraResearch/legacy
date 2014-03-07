@@ -1,31 +1,36 @@
 ﻿using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.ImportExport;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02L_CaseXXXXX: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02L_Case31893A : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
-            get { return CswEnumDeveloper.NBT; }
+            get { return CswEnumDeveloper.CM; }
         }
 
         public override int CaseNo
         {
-            get { return 0; }
+            get { return 31893; }
         }
 
         public override string Title
         {
-            get { return "Placeholder Script"; }
+            get { return "Update CAF Import Order"; }
+        }
+
+        public override string AppendToScriptName()
+        {
+            return "A";
         }
 
         public override void update()
         {
-            // This is a placeholder script that does nothing.
+            CswNbtImportDefOrder.updateOrderEntries( _CswNbtSchemaModTrnsctn );
         } // update()
 
     }

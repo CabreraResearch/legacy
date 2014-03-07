@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "B";
+            return "C";
         }
 
         public override void update()
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.CAFimportOrder( "Biological", "packages", "biologicals_view", "packageid" );
 
             //Simple Props
-            //ImpMgr.importBinding( "materialid", "LegacyMaterialId", "" );
+            ImpMgr.importBinding( "materialid", CswNbtPropertySetMaterial.PropertyName.LegacyMaterialId, "" );
             ImpMgr.importBinding( "refno", "Reference Number", "" );
             ImpMgr.importBinding( "type", "Type", "" );
             ImpMgr.importBinding( "species", "Species Origin", "" );
