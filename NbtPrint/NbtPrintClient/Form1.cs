@@ -24,6 +24,7 @@ namespace NbtPrintClient
             _svcThread.OnLabelById += new CswPrintJobServiceThread.LabelByIdEventHandler( _ServiceThread_LabelById );
             // printers = new PrinterSetupDataCollection();
             config = new NbtPrintClientConfig();
+
         }
 
         #region CAN NOT TOUCH UI
@@ -44,16 +45,16 @@ namespace NbtPrintClient
 
         #endregion
 
+        private CswPrintJobServiceThread.NbtAuth _authParams = new CswPrintJobServiceThread.NbtAuth();
         private CswPrintJobServiceThread.NbtAuth _getAuth()
         {
-            return new CswPrintJobServiceThread.NbtAuth()
-            {
-                AccessId = tbAccessId.Text,
-                UserId = tbUsername.Text,
-                Password = tbPassword.Text,
-                baseURL = _formatUrl( tbURL.Text ),
-                useSSL = ( tbURL.Text.ToLower().IndexOf( "https:" ) > -1 )
-            };
+            _authParams.AccessId = tbAccessId.Text;
+            _authParams.UserId = tbUsername.Text;
+            _authParams.Password = tbPassword.Text;
+            _authParams.baseURL = _formatUrl( tbURL.Text );
+            _authParams.useSSL = ( tbURL.Text.ToLower().IndexOf( "https:" ) > -1 );
+
+            return _authParams;
         }
 
         private delegate void InitNextJobHandler( CswPrintJobServiceThread.NextJobEventArgs e );
@@ -255,7 +256,7 @@ namespace NbtPrintClient
             tbAccessId.Text = config.accessid;
             tbUsername.Text = config.logon;
             cbServiceMode.Checked = config.serviceMode;
-            tbPassword.Text = config.password;
+            tbPassword.Text = config.getDecryptedPassword();
             tbURL.Text = config.url;
         }
 

@@ -902,7 +902,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public Int32 createModule( string Description, string Name )
         {
-            return createModule( Description, Name, Enabled : isMaster() );
+            return createModule( Description, Name, Enabled: isMaster() );
         }
 
         /// <summary>
@@ -937,7 +937,7 @@ namespace ChemSW.Nbt.Schema
                 //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
-                DataTable RuleTable = RulesUpdate.getTable( WhereClause : " where lower(rulename)='" + RuleName.ToString().ToLower() + "' " );
+                DataTable RuleTable = RulesUpdate.getTable( WhereClause: " where lower(rulename)='" + RuleName.ToString().ToLower() + "' " );
                 if( 0 == RuleTable.Rows.Count )
                 {
                     DataRow NewRuleRow = RuleTable.NewRow();
@@ -1040,6 +1040,40 @@ namespace ChemSW.Nbt.Schema
             return RetProp;
         }
 
+        /// <summary>
+        /// Convenience wrapper for creating a record in jct_propertyset_ocprop and object class properties for each object class of the property set
+        /// </summary>
+        /// <param name="PropertySet"></param>
+        /// <param name="NewProperty"></param>
+        /// <param name="NewPropertyFieldType"></param>
+        public void createPropertySetProp( CswEnumNbtPropertySetName PropertySet, string NewProperty, CswEnumNbtFieldType NewPropertyFieldType )
+        {
+            string UniqueTblUpdateName = PropertySet + "_jctpsocp_update";
+            CswTableUpdate JctPSOCPUpdate = makeCswTableUpdate( UniqueTblUpdateName, "jct_propertyset_ocprop" );
+            DataTable JctPSOCPTable = JctPSOCPUpdate.getEmptyTable();
+
+            CswNbtMetaDataPropertySet PS = MetaData.getPropertySet( PropertySet );
+            foreach( CswNbtMetaDataObjectClass CurrentOC in PS.getObjectClasses() )
+            {
+                CswNbtMetaDataObjectClassProp NewOCP = CurrentOC.getObjectClassProp( NewProperty );
+                if( null == NewOCP )
+                {
+                    NewOCP = createObjectClassProp( CurrentOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CurrentOC )
+                    {
+                        PropName = NewProperty,
+                        FieldType = NewPropertyFieldType
+                    } );
+
+                    DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();
+                    NewJctPSOCPRow["objectclasspropid"] = NewOCP.PropId;
+                    NewJctPSOCPRow["propertysetid"] = CswConvert.ToDbVal( PS.PropertySetId );
+                    JctPSOCPTable.Rows.Add( NewJctPSOCPRow );
+                }
+            }
+            JctPSOCPUpdate.update( JctPSOCPTable );
+        }//createPropertySetProperty
+
+
         #endregion Create Schema/Meta Data
 
         #region Delete Schema/Meta Data
@@ -1047,7 +1081,7 @@ namespace ChemSW.Nbt.Schema
         public void deleteModule( string ModuleName )
         {
             Int32 ModuleId = Modules.GetModuleId( ModuleName );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId : Int32.MinValue );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId: Int32.MinValue );
             deleteAllModuleObjectClassJunctions( ModuleId );
 
             CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
@@ -1167,7 +1201,7 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds().Keys )
             {
-                deleteModuleNodeTypeJunction( ModuleId : Int32.MinValue, NodeTypeId : NodeTypeId );
+                deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
             }
 
             CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );

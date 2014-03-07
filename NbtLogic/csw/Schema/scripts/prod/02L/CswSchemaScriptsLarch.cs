@@ -21,7 +21,9 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>()
                 {
                     new CswUpdateMetaData_02L_Case29446A(),
-                    new CswUpdateMetaData_02L_Case31750()
+                    new CswUpdateMetaData_02L_Case31750(),
+                    new CswUpdateMetaData_02L_Case31893A(),
+                    new CswUpdateMetaData_02L_Case31893B()
                 };
         } // _MetaDataScripts()
 
@@ -33,7 +35,12 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02L_Case31907(),
                     new CswUpdateSchema_02L_Case32003(),
                     new CswUpdateSchema_02L_Case31909(),
-                    new CswUpdateSchema_02L_Case31611()
+                    new CswUpdateSchema_02L_Case31611(),
+                    new CswUpdateSchema_02L_Case31893_Biologicals(),
+                    new CswUpdateSchema_02L_Case31893_Supplies(),
+                    new CswUpdateSchema_02L_Case31893_Constituents(),
+                    new CswUpdateSchema_02L_Case31893_MaterialComps(),
+                    new CswUpdateSchema_02L_Case31893()
                 };
         } // _SchemaScripts()
 

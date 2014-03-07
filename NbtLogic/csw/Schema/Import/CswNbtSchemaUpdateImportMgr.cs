@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Schema.Import;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
@@ -15,44 +16,48 @@ namespace ChemSW.Nbt.csw.Schema
     {
         private CswNbtSchemaModTrnsctn SchemaModTrnsctn;
 
-        /// <summary>
-        /// The ordering of CAF imported nodetypes. Used to make ordering imports convenient for CAFimportOrder.
-        /// </summary>
-        private Dictionary<string, Int32> _CAFOrder = new Dictionary<string, int>
-            {
-                //{Nodetype, Order}
-                {"Control Zone", 1},
-                {"Work Unit", 2},
-                {"Inventory Group", 3},
-                {"Site", 4},
-                {"Building", 5},
-                {"Room", 6},
-                {"Cabinet", 7},
-                {"Shelf", 8},
-                {"Box", 9},
-                {"Vendor", 10},
-                {"Role", 11},
-                {"User", 12},
-                {"Regulatory List", 13},
-                {"Regulatory List CAS", 14},
-                {"Unit_Weight", 15},
-                {"Unit_Volume", 16},
-                {"Unit_Each", 17},
-                {"DSD Phrase", 18}, //DSD Phrases
-                {"Chemical", 19},
-                {"Size", 20},
-                {"SDS Document", 21},
-                {"Material Document", 22},
-                {"Receipt Lot", 23},
-                {"C of A Document", 24},
-                {"Container Group", 25},
-                {"Container", 26},
-                {"Inventory Level", 27},
-                {"Jurisdiction", 28},
-                {"GHS Phrase", 29},
-                {"GHS", 30},
-                {"Material Synonym", 31}
-            };
+        ///// <summary>
+        ///// The ordering of CAF imported nodetypes. Used to make ordering imports convenient for CAFimportOrder.
+        ///// </summary>
+        //private readonly Dictionary<string, Int32> _CAFOrder = new Dictionary<string, int>
+        //    {
+        //        //{Nodetype, Order}
+        //        {"Control Zone", 1},
+        //        {"Work Unit", 2},
+        //        {"Inventory Group", 3},
+        //        {"Site", 4},
+        //        {"Building", 5},
+        //        {"Room", 6},
+        //        {"Cabinet", 7},
+        //        {"Shelf", 8},
+        //        {"Box", 9},
+        //        {"Vendor", 10},
+        //        {"Role", 11},
+        //        {"User", 12},
+        //        {"Regulatory List", 13},
+        //        {"Regulatory List CAS", 14},
+        //        {"Unit_Weight", 15},
+        //        {"Unit_Volume", 16},
+        //        {"Unit_Each", 17},
+        //        {"DSD Phrase", 18}, //DSD Phrases
+        //        {"Constituent", 19},
+        //        {"Chemical", 20},
+        //        {"Supply", 21},
+        //        {"Biological", 22},
+        //        {"Material Component", 23},
+        //        {"Size", 24},
+        //        {"SDS Document", 25},
+        //        {"Material Document", 26},
+        //        {"Receipt Lot", 27},
+        //        {"C of A Document", 28},
+        //        {"Container Group", 29},
+        //        {"Container", 30},
+        //        {"Inventory Level", 31},
+        //        {"Jurisdiction", 32},
+        //        {"GHS Phrase", 33},
+        //        {"GHS", 34},
+        //        {"Material Synonym", 35}
+        //    };
 
         private DataTable _importDefTable;
         private DataTable _importOrderTable;
@@ -78,6 +83,14 @@ namespace ChemSW.Nbt.csw.Schema
         private CswCommaDelimitedString _SourceColumns;
 
         /// <summary>
+        /// Public accessor for the _CAFOrder dictionary so we can use it to change the order in the future
+        /// </summary>
+        //public Dictionary<string, Int32> CAFImportOrder
+        //{
+        //    get { return _CAFOrder; }
+        //}
+
+        /// <summary>
         /// Build a new UpdateImportMgr for a particular definition
         /// </summary>
         /// <param name="SchemaModTrnsctn">The schema script resources class</param>
@@ -95,7 +108,7 @@ namespace ChemSW.Nbt.csw.Schema
             _importBindingsTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getBindings", "import_def_bindings" ).getTable();
             _importRelationshipsTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getRelationships", "import_def_relationships" ).getTable();
 
-            
+
             _DefinitionName = DefinitionName;
             _SourceColumns = new CswCommaDelimitedString();
 
@@ -114,7 +127,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="SheetName">The name used to identify this sheet</param>
         /// <param name="OverrideImportDefId">Manually set the ImportDefId for this import. Use only when a sheet
         /// has been deleted with removeImportDef and a new one must be defined with the same importdefid.</param>
-        public void importDef(int SheetOrder, string SheetName, int OverrideImportDefId = int.MinValue)
+        public void importDef( int SheetOrder, string SheetName, int OverrideImportDefId = int.MinValue )
         {
             DataRow row = _importDefTable.NewRow();
             if( OverrideImportDefId != int.MinValue )
@@ -138,7 +151,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="NodeTypeName">The string used to identify this nodetype</param>
         /// <param name="SheetName">The sheet to which this order is attached</param>
         /// <param name="Instance">Used to differentiate the same nodetype imported from multiple places</param>
-        public void importOrder( Int32 Order, string NodeTypeName, string SheetName, Int32 Instance = Int32.MinValue)
+        public void importOrder( Int32 Order, string NodeTypeName, string SheetName, Int32 Instance = Int32.MinValue )
         {
             DefaultNodetype = NodeTypeName;
             DataRow row = _importOrderTable.NewRow();
@@ -169,7 +182,7 @@ namespace ChemSW.Nbt.csw.Schema
                 DataRow row = _importOrderTable.NewRow();
                 row["importdefid"] = _SheetDefinitions[CswScheduleLogicNbtCAFImport.DefinitionName];
                 row["nodetypename"] = NodeTypeName;
-                row["importorder"] = _CAFOrder[NodeTypeName];
+                row["importorder"] = CswNbtCAFImportOrder.CAFOrder[NodeTypeName];
                 row["instance"] = Instance;
                 row["tablename"] = TableName;
                 row["viewname"] = ViewName;
@@ -178,16 +191,16 @@ namespace ChemSW.Nbt.csw.Schema
 
                 if( createLegacyId )
                 {
-                    if( string.IsNullOrEmpty(PkColumnName) )
+                    if( string.IsNullOrEmpty( PkColumnName ) )
                     {
-                        throw new CswDniException(CswEnumErrorType.Error, "Tried to autogenerate legacyid binding, but did not supply a PK column name.", "");
+                        throw new CswDniException( CswEnumErrorType.Error, "Tried to autogenerate legacyid binding, but did not supply a PK column name.", "" );
                     }
                     importBinding( PkColumnName, CswNbtObjClass.PropertyName.LegacyId, "" );
                 }
             }
             else
             {
-                throw new CswDniException(CswEnumErrorType.Error, "Failed to validate inputs for CAF import order: " + NodeTypeName, "One of the required fields was missing.");
+                throw new CswDniException( CswEnumErrorType.Error, "Failed to validate inputs for CAF import order: " + NodeTypeName, "One of the required fields was missing." );
             }
         }// CAFimportOrder()
 
@@ -272,7 +285,7 @@ namespace ChemSW.Nbt.csw.Schema
             //this select should only ever return one row
             DataRow SheetToDelete = _importDefTable.Select( "sheetname = '" + SheetName + "'" )[0];
             SheetToDelete.Delete();
-                
+
             if( CascadeDelete )
             {
                 DataRow[] OrdersToDelete = _importOrderTable.Select( "importdefid = " + DeletedImportDef );
@@ -308,7 +321,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="NodetypeName">the name of the nodetype to be removed</param>
         /// <param name="Instance">the instance associated with this nodetype</param>
         /// <param name="CascadeDelete">whether to delete any bindings associated with this import order</param>
-        public void removeImportOrder(string Sheetname, string NodetypeName, int Instance = Int32.MinValue, bool CascadeDelete = false )
+        public void removeImportOrder( string Sheetname, string NodetypeName, int Instance = Int32.MinValue, bool CascadeDelete = false )
         {
             //this query should only ever return one row
             DataRow OrderToDelete = _importOrderTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' and instance = " + Instance )[0];
@@ -340,7 +353,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="PropName">The prop where the source column data was stored</param>
         /// <param name="SubfieldName">The subfield on the prop of the nodetype for this binding</param>
         /// <param name="Instance">Which import order instance this binding was associated with</param>
-        public void removeImportBinding(string Sheetname, string SourceColumn, string NodetypeName, string PropName, string SubfieldName, int Instance = int.MinValue)
+        public void removeImportBinding( string Sheetname, string SourceColumn, string NodetypeName, string PropName, string SubfieldName, int Instance = int.MinValue )
         {
             //this should never return more than one result
             DataRow[] Bindings = _importBindingsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and sourcecolumnname = '" + SourceColumn + "' and destnodetypename = '"
@@ -359,7 +372,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="NodetypeName">The Nodetype that data was imported to</param>
         /// <param name="Relationship">the relationship which was bound</param>
         /// <param name="Instance">Which import order instance this binding was associated with</param>
-        public void removeImportRelationship(string Sheetname, string NodetypeName, string Relationship, int Instance = int.MinValue)
+        public void removeImportRelationship( string Sheetname, string NodetypeName, string Relationship, int Instance = int.MinValue )
         {
             //this should only ever return one result
             DataRow RelationshipToDelete = _importRelationshipsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' " +
@@ -413,7 +426,7 @@ namespace ChemSW.Nbt.csw.Schema
                 }
                 else
                 {
-                    throw new CswDniException("Attempted to " + UpdateMethod + " " + PrimaryKeyName + " " + Row[PrimaryKeyName] + " from Import " + DefinitionType + ", but this row does not exist.");
+                    throw new CswDniException( "Attempted to " + UpdateMethod + " " + PrimaryKeyName + " " + Row[PrimaryKeyName] + " from Import " + DefinitionType + ", but this row does not exist." );
                 }
             }
 
@@ -432,7 +445,7 @@ namespace ChemSW.Nbt.csw.Schema
                     //copy over each cell from the dictionary to the data row
                     foreach( string Column in Row.Keys )
                     {
-                        if( Column.ToLower() != "sheetname" && Row[Column] != "")
+                        if( Column.ToLower() != "sheetname" && Row[Column] != "" )
                         {
                             DataRow[Column] = Row[Column];
                         }
@@ -447,7 +460,7 @@ namespace ChemSW.Nbt.csw.Schema
                     //copy over each cell from the dictionary to the data row
                     foreach( string Column in Row.Keys )
                     {
-                        if( Column.ToLower() != "sheetname" && Row[Column] != "")
+                        if( Column.ToLower() != "sheetname" && Row[Column] != "" )
                         {
                             DataRow[Column] = Row[Column];
                         }
@@ -455,11 +468,11 @@ namespace ChemSW.Nbt.csw.Schema
                     break;
 
                 default:
-                    throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted an invalid operation on the data table", "Value supplied was: " + UpdateMethod);
+                    throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted an invalid operation on the data table", "Value supplied was: " + UpdateMethod );
 
             }//switch ( UpdateMethod )
 
-    }//updateDefinitionElementByPK
+        }//updateDefinitionElementByPK
 
 
 
@@ -487,7 +500,7 @@ namespace ChemSW.Nbt.csw.Schema
 
         /// <summary>
         /// Post the new import definitions created in this ImportMgr to the database.
-        /// </summary>
+        /// </summary> 
         public void finalize()
         {
             if( null == _NbtImporter )
