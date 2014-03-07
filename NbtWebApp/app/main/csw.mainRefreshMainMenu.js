@@ -65,6 +65,14 @@
                         }
                     });
                 },
+                onBatchEdit: function () {
+                    Csw.main.handleAction({
+                        'actionname': 'Batch_Edit',
+                        'ActionOptions': {
+                            'viewid': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
+                        }
+                    });
+                },
                 onSaveView: function (newviewid) {
                     Csw.main.handleItemSelect({ 'viewid': newviewid, 'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode) });
                 },

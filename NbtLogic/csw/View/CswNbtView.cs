@@ -1589,7 +1589,7 @@ namespace ChemSW.Nbt
         {
             var OrderedViewProps = new LinkedList<CswNbtViewProperty>();
             var ViewRelationships = new Collection<CswNbtViewRelationship>();
-            ViewRelationships = getAllNbtViewRelationships( Root );
+            ViewRelationships = getAllNbtViewRelationships();
             var ViewProps = new Collection<CswNbtViewProperty>();
             var ViewPropNames = new Collection<string>();
 
@@ -1623,7 +1623,7 @@ namespace ChemSW.Nbt
             return OrderedViewProps;
         }
 
-        private Collection<CswNbtViewRelationship> getAllNbtViewRelationships( CswNbtViewRoot Root )
+        public Collection<CswNbtViewRelationship> getAllNbtViewRelationships()
         {
             var RelationshipCollection = new Collection<CswNbtViewRelationship>();
             foreach( CswNbtViewRelationship ChildRelationship in Root.ChildRelationships )

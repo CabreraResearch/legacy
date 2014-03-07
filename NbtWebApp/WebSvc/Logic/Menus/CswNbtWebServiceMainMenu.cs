@@ -53,7 +53,8 @@ namespace ChemSW.Nbt.WebServices
             "Print",
             "Export",
             "Edit View",
-            "Multi-Edit"
+            "Multi-Edit",
+            "Batch Edit"
         };
 
         private CswNbtResources _CswNbtResources;
@@ -347,6 +348,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     MoreObj["Multi-Edit"] = new JObject();
                     MoreObj["Multi-Edit"]["action"] = CswEnumNbtMainMenuActions.multiedit.ToString();
+                }
+                if( _MenuItems.Contains( "Batch Edit" ) &&
+                    false == ReadOnly &&
+                    null != View &&
+                    _CswNbtResources.Permit.can( CswEnumNbtActionName.Batch_Edit ) )
+                {
+                    MoreObj["Batch Edit"] = new JObject();
+                    MoreObj["Batch Edit"]["action"] = CswEnumNbtMainMenuActions.batchedit.ToString();
                 }
 
                 if( MoreObj.Count > 0 )

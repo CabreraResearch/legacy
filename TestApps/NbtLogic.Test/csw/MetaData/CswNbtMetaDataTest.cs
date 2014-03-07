@@ -79,8 +79,8 @@ namespace ChemSW.Nbt.Test.MetaData
 
             // makemissingnodetypeprops
             _SchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-            Assert.IsNotNull( fakeTestNT.getNodeTypeProp( "Num" ), "fakeTestNT was null" );
-            Assert.IsNotNull( fakeTestNT.getNodeTypeProp( "Num" ).DesignNode, "fakeTestNT.DesignNode was null" );
+            Assert.IsNotNull( fakeTestNT.getNodeTypeProp( "Num" ), "fakeTestNT.getNodeTypeProp( Num ) was null" );
+            Assert.IsNotNull( fakeTestNT.getNodeTypeProp( "Num" ).DesignNode, "fakeTestNT.DesignNode.getNodeTypeProp( Num ).DesignNode was null" );
 
         } // testMetaData()
 
