@@ -1,9 +1,11 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.OleDb;
+using System.Linq;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
 using ChemSW.Config;
@@ -24,26 +26,42 @@ namespace ChemSW.Nbt.csw.ImportExport
 {
     public static class CswNbtImportTools
     {
+
+        #region Custom CAF Properties
+
         public static void CreateAllCAFProps( CswNbtResources NbtResources, CswEnumSetupMode SetupMode )
         {
-            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ChemicalClass, "properties_values", "propertiesvaluesid", SetupMode );
-            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_cont", "contpropsvaluesid", SetupMode );
-            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_lot", "lotpropsvaluesid", SetupMode );
+            // Chemical Class -- Excluding Constituents
+            CswNbtMetaDataObjectClass ChemicalOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            List<string> ChemicalNts = ( from NodeType in ChemicalOC.getNodeTypes() where NodeType.NodeTypeName != "Constituent" select NodeType.NodeTypeName ).ToList();
+
+            // Container Class
+            CswNbtMetaDataObjectClass ContainerOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            List<string> ContainerNts = ContainerOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
+
+            // Receipt Lot Class
+            CswNbtMetaDataObjectClass ReceiptLotOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            List<string> ReceiptLotNts = ReceiptLotOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
+
+            CreateCafProps( NbtResources, ChemicalNts, "properties_values", "propertiesvaluesid", SetupMode );
+            CreateCafProps( NbtResources, ContainerNts, "properties_values_cont", "contpropsvaluesid", SetupMode );
+            CreateCafProps( NbtResources, ReceiptLotNts, "properties_values_lot", "lotpropsvaluesid", SetupMode );
         }
 
-        public static void CreateCafProps( CswNbtResources NbtResources, CswEnumNbtObjectClass ObjClass, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
+        public static void CreateCafProps( CswNbtResources NbtResources, List<string> NodeTypes, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
         {
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode : SetupMode );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode: SetupMode );
 
-            CswNbtMetaDataObjectClass MetaDataObjClass = NbtResources.MetaData.getObjectClass( ObjClass );
             string sql = GetCAFPropertiesSQL( PropsValsTblName );
-            CswArbitrarySelect cafChemPropAS = NbtResources.makeCswArbitrarySelect( "cafProps_" + ObjClass.Value, sql );
+            CswArbitrarySelect cafChemPropAS = NbtResources.makeCswArbitrarySelect( "cafProps_" + PropsValsPKName, sql );
             DataTable cafChemPropsDT = cafChemPropAS.getTable();
 
             foreach( DataRow row in cafChemPropsDT.Rows )
             {
-                foreach( CswNbtMetaDataNodeType NodeType in MetaDataObjClass.getNodeTypes() )
+                foreach( string nt in NodeTypes )
                 {
+                    CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( nt );
+
                     string PropName = row["propertyname"].ToString();
                     int PropId = CswConvert.ToInt32( row["propertyid"] );
                     PropName = GetUniquePropName( NodeType, PropName ); //keep appending numbers until we have a unique prop name
@@ -51,9 +69,6 @@ namespace ChemSW.Nbt.csw.ImportExport
                     CswEnumNbtFieldType propFT = GetFieldTypeFromCAFPropTypeCode( row["propertytype"].ToString() );
 
                     CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName ) );
-                    //newProp.IsRequired = CswConvert.ToBoolean( row["required"] );
-                    //newProp.ReadOnly = CswConvert.ToBoolean( row["readonly"] );
-                    //newProp.ListOptions = row["listopts"].ToString();
                     newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Required].AsLogical.Checked = CswConvert.ToTristate( row["required"] );
                     newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.ReadOnly].AsLogical.Checked = CswConvert.ToTristate( row["readonly"] );
                     if( newProp.DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Options ) )
@@ -75,16 +90,18 @@ namespace ChemSW.Nbt.csw.ImportExport
                     }
 
                     ImpMgr.importBinding( cafSourceCol, PropName, "", "CAF", NodeType.NodeTypeName,
-                        ClobTableName : PropsValsTblName,
-                        LobDataPkColOverride : cafColPropName,
-                        LobDataPkColName : PropsValsPKName,
-                        LegacyPropId : PropId );
+                                         ClobTableName: PropsValsTblName,
+                                         LobDataPkColOverride: cafColPropName,
+                                         LobDataPkColName: PropsValsPKName,
+                                         LegacyPropId: PropId );
                 }
             }
 
             NbtResources.commitTransaction();
             ImpMgr.finalize();
         }
+
+        #endregion
 
 
         public static void startCAFImportImpl( ICswResources CswResources, string CAFDatabase, string CAFSchema, string CAFPassword, CswEnumSetupMode SetupMode )

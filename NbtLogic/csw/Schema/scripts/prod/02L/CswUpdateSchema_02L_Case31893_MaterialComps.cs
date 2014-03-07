@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.Schema
 
             //Simple Props
             ImpMgr.importBinding( "quantity", CswNbtObjClassMaterialComponent.PropertyName.TargetPercentageValue, "" );
+            ImpMgr.importBinding( "quantity", CswNbtObjClassMaterialComponent.PropertyName.HighPercentageValue, "" );
 
             //Relationships
             ImpMgr.importBinding( "packageid", CswNbtObjClassMaterialComponent.PropertyName.Mixture, CswEnumNbtSubFieldName.NodeID.ToString() );
