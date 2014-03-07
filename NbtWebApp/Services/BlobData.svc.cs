@@ -243,6 +243,28 @@ namespace NbtWebApp
         #region Batch Edit
 
         [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "getBatchEditProperties?NodeTypeId={NodeTypeId}" )]
+        [Description( "Get properties available for batch editing" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceBatchEdit.BatchEditProperties getBatchEditProperties( string NodeTypeId )
+        {
+            CswNbtWebServiceBatchEdit.BatchEditProperties Ret = new CswNbtWebServiceBatchEdit.BatchEditProperties();
+            
+            CswNbtWebServiceBatchEdit.BatchEditParams Params = new CswNbtWebServiceBatchEdit.BatchEditParams();
+            Params.NodeTypeId = CswConvert.ToInt32( NodeTypeId );
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditProperties, CswNbtWebServiceBatchEdit.BatchEditParams>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceBatchEdit.getBatchEditProperties,
+                ParamObj: Params
+                );
+            SvcDriver.run();
+
+            return Ret;
+        }
+
+        [OperationContract]
         [WebInvoke( Method = "GET", UriTemplate = "downloadBatchEditData?ViewId={ViewId}&NodeTypeId={NodeTypeId}&PropIds={PropIds}" )]
         [Description( "Download Batch Edit Data" )]
         [FaultContract( typeof( FaultException ) )]

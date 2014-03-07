@@ -156,7 +156,6 @@
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
-debugger;
                     cswPrivate.toggleStepButtons(StepNo);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
@@ -189,12 +188,10 @@ debugger;
                         cswPrivate.setStepHeader(StepNo, 'Select which properties you would like to edit.');
                         var div = cswPrivate['divStep' + StepNo];
 
-                        Csw.ajax.deprecatedWsNbt({
-                            urlMethod: 'getNodeTypeProps',
+                        Csw.ajaxWcf.get({
+                            urlMethod: 'BlobData/getBatchEditProperties',
                             data: {
-                                NodeTypeName: '',
-                                NodeTypeId: Csw.string(cswPrivate.nodeTypeSel.val()),
-                                EditablePropsOnly: true
+                                NodeTypeId: Csw.string(cswPrivate.nodeTypeSel.val())
                             },
                             success: function (data) {
                                 var opts = [];
