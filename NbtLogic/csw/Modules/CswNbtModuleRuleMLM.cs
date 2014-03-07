@@ -57,6 +57,19 @@ namespace ChemSW.Nbt
             _toggleMaterialSupplierView( false );
             _toggleReceiptLotManufacturerView( false );
 
+            //Case CIS-52280 on enable show Material props...
+            //   Manufacturing Sites Grid
+            //   Requires Cleaning Event
+            CswNbtMetaDataPropertySet materialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass materialOC in materialPS.getObjectClasses() )
+            {
+                foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+                {
+                    _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.ManufacturingSites );
+                    _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.RequiresCleaningEvent );
+                }
+            }
+
         }
 
         protected override void OnDisable()
@@ -103,6 +116,19 @@ namespace ChemSW.Nbt
 
             _toggleMaterialSupplierView( true );
             _toggleReceiptLotManufacturerView( true );
+
+            //Case CIS-52280 on disable hide Material props...
+            //   Manufacturing Sites Grid
+            //   Requires Cleaning Event
+            CswNbtMetaDataPropertySet materialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass materialOC in materialPS.getObjectClasses() )
+            {
+                foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+                {
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.ManufacturingSites );
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.RequiresCleaningEvent );
+                }
+            }
 
         } // OnDisable()
 

@@ -766,6 +766,10 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case31076.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52280B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52280.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52280C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52280.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52446.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateDDL_02L_Case52544.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52266.cs" />
