@@ -10,23 +10,31 @@ namespace NbtPrintLib
         public PrinterSetupDataCollection printers = null;
         public string accessid;
         public string logon;
-        public string password;
+        private string _password;
+        public string password { 
+            set { _password = encryptor.encrypt( value ); }
+            get { return _password; }
+        }
+
         public string url;
         public bool serviceMode;
         public string logMessages;
+        private CswEncryption encryptor = null;
 
         public NbtPrintClientConfig()
         {
 
             printers = new PrinterSetupDataCollection();
+
+            //hardcoding the NBT seed into the print client, because [3/5/2014] Steven Salter: just use the same seed and provide it in your app
+            encryptor = new CswEncryption( "52978" );
+
             logMessages = string.Empty;
         }
 
 
         public void SaveToReg( RegistryKey rootKey )
         {
-            CswEncryption _CswEncryption = new CswEncryption( string.Empty );
-            _CswEncryption.Method = EncryptionMethod.TypeZero;
 
             RegistryKey akey = rootKey.OpenSubKey( "printers", true );
             if( akey == null )
@@ -45,7 +53,6 @@ namespace NbtPrintLib
             String pwd = password;
             if( pwd.Length > 0 )
             {
-                pwd = _CswEncryption.encrypt( pwd );
                 rootKey.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
             }
             if( string.IsNullOrEmpty( url ) )
@@ -58,8 +65,6 @@ namespace NbtPrintLib
 
         public void LoadFromReg( RegistryKey rootKey )
         {
-            CswEncryption _CswEncryption = new CswEncryption( string.Empty );
-            _CswEncryption.Method = EncryptionMethod.TypeZero;
 
             try
             {
@@ -70,7 +75,7 @@ namespace NbtPrintLib
                 pwd = pwd.Replace( "\0", string.Empty );
                 if( pwd.Length > 4 )
                 {
-                    password = _CswEncryption.decrypt( pwd );
+                    password = encryptor.decrypt(pwd);
                 }
                 url = rootKey.GetValue( "serverurl" ).ToString();
                 if( url == string.Empty )
@@ -99,6 +104,15 @@ namespace NbtPrintLib
                 logMessages = "No configuration data found.";
             }
 
+        }//LoadFromReg
+
+        /// <summary>
+        /// Get the actual value for password, necessary when making web requests
+        /// </summary>
+        /// <returns></returns>
+        public string getDecryptedPassword()
+        {
+            return encryptor.decrypt( _password );
         }
 
     }
