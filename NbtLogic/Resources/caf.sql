@@ -35,31 +35,44 @@ create or replace procedure pivotPropertiesValues(viewname in varchar, propstbln
   c       cur_typ;
   propid  varchar(200);
   viewsql clob;
-  line    clob;
+  cols    clob;
+  joins   clob;
+  withs   clob;
 
 begin
-  props_sql := 'select distinct pv.propertyid from properties p join ' || propstblname ||  ' pv on p.propertyid = pv.propertyid';
-
-  viewsql   := 'create or replace view ' || viewname || ' as select m.' || joincol;
+  props_sql := 'select distinct pv.propertyid from properties p join ' ||
+               propstblname || ' pv on p.propertyid = pv.propertyid';
 
   open c for props_sql;
   loop
     fetch c
       into propid;
     exit when c%NOTFOUND;
-
-    line    := ', (select max(' || proptblpkcol || ') propvalid from ' || propstblname || ' where propertyid = ' ||
-               propid || ' and ' || joincol || ' = m.' || joincol || ') prop' || propid;
-    viewsql := viewsql || line;
-
+  
+    withs := withs || ' pv' || propid || ' as (select ' || joincol ||
+             ', max(' || proptblpkcol || ') as prop' || propid || ' from ' ||
+             propstblname || ' where propertyid = ' || propid ||
+             ' group by ' || joincol || '),';
+    cols  := cols || ', pv' || propid || '.prop' || propid;
+    joins := joins || ' left outer join pv' || propid || ' on pv' || propid || '.' ||
+             joincol || ' = m.' || joincol;
+  
   end loop;
   close c;
 
-  viewsql := viewsql || ' from ' || fromtbl || ' m';
+  withs   := dbms_lob.substr(withs, (dbms_lob.getlength(withs) - 1), 1);
+  viewsql := 'create or replace view ' || viewname || ' as ';
+  if dbms_lob.getlength(withs) > 1 then
+    viewsql := viewsql || ' with ' || withs;
+  end if;
+  viewsql := viewsql || '
+    select m. ' || joincol || cols || '
+      from ' || fromtbl || ' m ' || joins;
 
-  execute immediate (viewsql);
+  execute immediate(viewsql);
 end;
 /
+
 begin
   -- Call the procedure
   pivotpropertiesvalues(viewname => 'chemicals_props_view',
@@ -939,3 +952,124 @@ select distinct r.roleid,
           r.roledescription,
           r.timeout,
           r.deleted;
+		  
+--Materials: Biologicals
+create or replace view biologicals_view as
+SELECT p.productno,
+       m.materialname,
+       v.vendorid,
+       m.refno,
+       m.type,
+       m.species,
+       m.biosafety,
+       m.vectors,
+       m.materialid,
+       p.packageid,
+       (CASE
+         WHEN (SELECT ENABLED FROM modules WHERE NAME = 'pkg_approval') = '0' THEN
+          '1'
+         ELSE
+          p.APPROVED
+       END) approved_trans,
+       m.storage_conditions,
+       m.deleted
+  FROM materials m
+  join packages p ON p.MATERIALID = m.MATERIALID
+  join vendors v ON p.SUPPLIERID = v.VENDORID
+  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
+                                m.MATERIALSUBCLASSID
+  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
+ WHERE m.DELETED = 0
+   AND p.DELETED = 0
+   AND mc.CLASSNAME = 'BIOLOGICAL';
+
+--Materials: Supplies
+create or replace view supplies_view as
+SELECT p.productno,
+       m.materialname,
+       v.vendorid,
+       p.productdescription,
+       m.materialid,
+       p.packageid,
+       (CASE
+         WHEN (SELECT ENABLED FROM modules WHERE NAME = 'pkg_approval') = '0' THEN
+          '1'
+         ELSE
+          p.APPROVED
+       END) approved_trans,
+	   m.deleted
+  FROM materials m
+  join packages p ON p.MATERIALID = m.MATERIALID
+  join vendors v ON p.SUPPLIERID = v.VENDORID
+  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
+                                m.MATERIALSUBCLASSID
+  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
+ WHERE m.DELETED = 0
+   AND p.DELETED = 0
+   AND mc.CLASSNAME = 'SUPPLY';
+   
+--Material Components
+create or replace view materialcomps_view as
+select componentcasnoid || '_' || pk.packageid as legacyid,
+       mc.materialid || '_' || componentcasnoid as constituentid,
+       pk.packageid,
+       quantity,
+       mc.deleted
+  from component_casnos mc
+  join packages pk on pk.materialid = mc.materialid
+ where mc.deleted = 0
+   and mc.componentmaterialid is null
+ 
+ union
+ 
+ select componentcasnoid || '_' || pk.packageid as legacyid,
+       '' || mc.materialid as constituentid,
+       pk.packageid a,
+       quantity,
+       mc.deleted
+  from component_casnos mc
+  join packages pk on pk.materialid = mc.materialid
+ where mc.deleted = 0
+   and pk.deleted = 0
+   and mc.componentmaterialid is not null;
+
+--Constituents
+create or replace view constituents_view as
+select mc.materialid || '_' || mc.componentcasnoid as legacyid,
+       mc.componentname as name,
+       mc.casno,
+       '' as einecs,
+       deleted
+  from component_casnos mc
+ where mc.deleted = 0
+   and mc.componentmaterialid is null
+ 
+ union
+ 
+ SELECT '' || m.materialid as legacyid, 
+        m.materialname as name, 
+        m.casno, 
+        m.einecs, 
+        m.deleted
+  FROM materials m
+  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
+                                m.MATERIALSUBCLASSID
+  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
+  join component_casnos cc on cc.componentmaterialid = m.materialid
+ WHERE m.DELETED = 0
+   AND mc.CLASSNAME <> 'CONSTITUENT'
+   
+   union
+   
+   SELECT '' || m.materialid as legacyid, 
+          m.materialname as name, 
+          m.casno, 
+          m.einecs, 
+          m.deleted
+  FROM materials m
+  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
+                                m.MATERIALSUBCLASSID
+  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
+ WHERE m.DELETED = 0
+   AND mc.CLASSNAME = 'CONSTITUENT';
+

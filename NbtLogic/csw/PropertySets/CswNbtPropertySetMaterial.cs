@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerExpirationLocked = "Container Expiration Locked";
             public const string Documents = "Documents";
             public const string Synonyms = "Synonyms";
+            public const string LegacyMaterialId = "Legacy Material Id";
         }
 
         public sealed class CswEnumPhysicalState
@@ -466,7 +467,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid Synonyms { get { return ( _CswNbtNode.Properties[PropertyName.Synonyms] ); } }
-        
+        public CswNbtNodePropText LegacyMaterialId { get { return _CswNbtNode.Properties[PropertyName.LegacyMaterialId]; } }
+
         #endregion
 
     }//CswNbtPropertySetMaterial

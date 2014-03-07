@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Schema.Import;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -67,17 +70,17 @@ namespace ChemSW.Nbt.ImportExport
             CswTableUpdate importOrderUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDefOrder_addOrderEntries_Update", CswNbtImportTables.ImportDefOrder.TableName );
             foreach( DataRow OrderRow in OrderDataTable.Select() )
             {
-                    //set blank instances to min value
-                    if( OrderRow["instance"] == DBNull.Value || String.IsNullOrEmpty( OrderRow["instance"].ToString() ) )
-                    {
-                        OrderRow["instance"] = Int32.MinValue;
-                    }
+                //set blank instances to min value
+                if( OrderRow["instance"] == DBNull.Value || String.IsNullOrEmpty( OrderRow["instance"].ToString() ) )
+                {
+                    OrderRow["instance"] = Int32.MinValue;
+                }
 
                 string NTName = OrderRow["nodetypename"].ToString();
                 CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NTName );
 
                 if( null == NodeType )
-                    {
+                {
                     throw new CswDniException( CswEnumErrorType.Error, "Error reading definition", "Invalid NodeType defined in 'Order' sheet: " + NTName );
                 } // if(false == string.IsNullOrEmpty(SheetName) )
             } // foreach( DataRow OrderRow in OrderDataTable.Rows )
@@ -87,6 +90,34 @@ namespace ChemSW.Nbt.ImportExport
             importOrderUpdate.update( OrderDataTable );
 
         } // addOrderEntries()
+
+        /// <summary>
+        /// // first get importdefid from import_def
+        // then get each row from import_order that has above importdefid
+        // iterate rows, change order column value
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
+        public static void updateOrderEntries( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        {
+            Dictionary<string, Int32> CafImportOrder = CswNbtCAFImportOrder.CAFOrder;
+
+            CswTableSelect TblSelect1 = CswNbtSchemaModTrnsctn.makeCswTableSelect( "get_caf_importdefid", CswNbtImportTables.ImportDef.TableName );
+            DataTable ImportDefDt = TblSelect1.getTable( "where " + CswNbtImportTables.ImportDef.definitionname + " = 'CAF'" );
+            Int32 CAFImportDefId = Int32.MinValue;
+            if( ImportDefDt.Rows.Count > 0 )
+            {
+                CAFImportDefId = CswConvert.ToInt32( ImportDefDt.Rows[0][CswNbtImportTables.ImportDef.importdefid] );
+            }
+            CswTableUpdate TblUpdate1 = CswNbtSchemaModTrnsctn.makeCswTableUpdate( "update_import_order_caf", CswNbtImportTables.ImportDefOrder.TableName );
+            DataTable ImportOrderDt = TblUpdate1.getTable( "where " + CswNbtImportTables.ImportDefOrder.importdefid + " = " + CAFImportDefId );
+            foreach( DataRow CurrentRow in ImportOrderDt.Rows )
+            {
+                string currentNt = CswConvert.ToString( CurrentRow[CswNbtImportTables.ImportDefOrder.nodetypename] );
+                Int32 newOrder = CafImportOrder[currentNt];
+                CurrentRow[CswNbtImportTables.ImportDefOrder.importorder] = newOrder;
+            }
+            TblUpdate1.update( ImportOrderDt );
+        }
 
     }
 }
