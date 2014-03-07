@@ -22,6 +22,7 @@
         (function buildActHandler() {
             actionHandler.add('batch edit', function (o) {
                 return Csw.nbt.batchEditWizard(Csw.main.centerTopDiv, {
+                    viewid: o.ActionOptions.viewid,
                     onCancel: onCancel,
                     onFinish: function (viewid) {
                         Csw.main.clear({ 'all': true });

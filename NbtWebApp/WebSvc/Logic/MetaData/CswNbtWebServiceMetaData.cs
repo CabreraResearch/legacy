@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebServices
                                      string RelationshipObjectClassPropName = "",
                                      Int32 RelationshipNodeTypePropId = Int32.MinValue,
                                      string FilterToPermission = null,
-                                     CswNbtViewId FilterToViewId = null,
+                                     CswNbtView FilterToView = null,
                                      bool Searchable = false )
         {
             JObject ReturnVal = new JObject();
@@ -87,10 +87,9 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipNodeTypePropId );
                 NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatches( nt ) );
             }
-            else if( null != FilterToViewId && FilterToViewId.isSet() )
+            else if( null != FilterToView )
             {
                 NodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                CswNbtView FilterToView = _CswNbtResources.ViewSelect.restoreView( FilterToViewId );
                 Collection<CswNbtViewRelationship> relationships = FilterToView.getAllNbtViewRelationships();
                 foreach( CswNbtViewRelationship rel in relationships )
                 {

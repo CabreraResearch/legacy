@@ -21,7 +21,8 @@
             wizardStepSelectNodeType_init: false,
             wizardStepSelectProperties_init: false,
             nodeTypeSel: null,
-            propSel: null
+            propSel: null,
+            viewid: ''
         };
 
         var cswPublic = {};
@@ -109,6 +110,11 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a parent.', '', 'csw.receivematerial.js', 57));
             }
             //cswPrivate.validateState();
+            
+            if (false === Csw.isNullOrEmpty(cswPrivate.viewid)) {
+                cswPrivate.startingStep = 2;
+            }
+            
         } ());
         //#endregion ctor preInit
 
@@ -150,6 +156,7 @@
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
+debugger;
                     cswPrivate.toggleStepButtons(StepNo);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
@@ -159,7 +166,7 @@
                         var div = cswPrivate['divStep' + StepNo];
 
                         cswPrivate.nodeTypeSel = div.nodeTypeSelect({
-                            filterToView: cswPrivate.viewSel.val().value,
+                            filterToView: (cswPrivate.viewid || cswPrivate.viewSel.val().value),
                             onSelect: function () {
                                 cswPrivate.wizardStepSelectProperties_init = false;
                             }
@@ -231,7 +238,7 @@
                         ID: 'downloadDataLink',
                         text: 'Download',
                         href: "Services/BlobData/downloadBatchEditData?" +
-                            "ViewId=" + cswPrivate.viewSel.val().value +
+                            "ViewId=" + (cswPrivate.viewid || cswPrivate.viewSel.val().value) +
                             "&NodeTypeId=" + Csw.string(cswPrivate.nodeTypeSel.val()) +
                             "&PropIds=" + selectedProps,
                         target: '_blank'
@@ -312,7 +319,9 @@
                 //onFinish: cswPrivate.finalize,
                 doNextOnInit: false
             });
-            cswPrivate.stepFunc[1](1);
+            if (false === Csw.isNullOrEmpty(cswPrivate.stepFunc[cswPrivate.currentStepNo])) {
+                cswPrivate.stepFunc[cswPrivate.currentStepNo](cswPrivate.currentStepNo);
+            }
         } ());
         //#endregion ctor _post
 

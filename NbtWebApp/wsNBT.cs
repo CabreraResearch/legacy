@@ -2156,14 +2156,20 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    CswNbtViewId FilterToViewId = null;
-                    if( false == string.IsNullOrEmpty( FilterToView ) )
+                    CswNbtView FilterToViewObj = null;
+                    if( CswNbtViewId.isViewIdString( FilterToView ) )
                     {
-                        FilterToViewId = new CswNbtViewId( FilterToView );
+                        CswNbtViewId FilterToViewId = new CswNbtViewId( FilterToView );
+                        FilterToViewObj = _CswNbtResources.ViewSelect.restoreView( FilterToViewId );
+                    }
+                    if( CswNbtSessionDataId.isSessionDataIdString( FilterToView ) )
+                    {
+                        CswNbtSessionDataId FilterToViewId = new CswNbtSessionDataId( FilterToView );
+                        FilterToViewObj = _CswNbtResources.ViewSelect.getSessionView( FilterToViewId );
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
                     ReturnVal = ws.getNodeTypes( PropertySet, ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName,
-                                                 realRelationshipNodeTypePropId, FilterToPermission, FilterToViewId, CswConvert.ToBoolean( Searchable ) );
+                                                 realRelationshipNodeTypePropId, FilterToPermission, FilterToViewObj, CswConvert.ToBoolean( Searchable ) );
                 }
 
                 _deInitResources();
