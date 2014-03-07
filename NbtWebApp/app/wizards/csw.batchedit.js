@@ -196,6 +196,7 @@
                                 });
                                 cswPrivate.propSel = Csw.dialogs.multiselectedit({
                                     parent: div,
+                                    disableChangeWarnings: true,
                                     inDialog: false,
                                     opts: opts
                                 });

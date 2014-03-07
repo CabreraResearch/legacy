@@ -20,7 +20,8 @@
             cswPrivate.currentPage = 1;
             cswPrivate.visibleOptions = [];
             cswPrivate.filter = '';
-
+            cswPrivate.disableChangeWarnings = cswPrivate.disableChangeWarnings;
+            
             //javascript does not have a concept of a deep copy, so we must perform one manually so that 
             //we can add data for rendering each option without messing up our webservices
             //Also note that cswPrivate.opts is the value actually passed in when calling multiselectedit 
@@ -267,7 +268,9 @@
             //set the option to the right value in the data model
             option.selected = isChecked;
             //register that the user has been modifying this component (for warnings before page reload)
-            Csw.clientChanges.setChanged();
+            if (false === Csw.bool(cswPrivate.disableChangeWarnings)) {
+                Csw.clientChanges.setChanged();
+            }
             //fire a change event attached to this component
             cswPrivate.onChange(cswPrivate.getSelectedOptions());
         };//onCheck()
