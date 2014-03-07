@@ -5,6 +5,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropertySets;
@@ -17,7 +18,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget
+    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable
     {
         #region Properties
 
@@ -74,12 +75,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtContainerDispenser Dispenser;
         private CswNbtContainerDisposer _Disposer;
+        private CswNbtKioskModeOpenableImpl _Opener;
 
         public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
             _Disposer = new CswNbtContainerDisposer( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
+            _Opener = new CswNbtKioskModeOpenableImpl( _CswNbtResources, this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -310,7 +313,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Open:
                         ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         HasPermission = true;
-                        OpenContainer();
+                        OpenItem();
                         postChanges( true );
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -386,29 +389,6 @@ namespace ChemSW.Nbt.ObjClasses
         public void DisposeContainer( bool OverridePermissions = false )
         {
             _Disposer.Dispose( OverridePermissions );
-        }
-
-        /// <summary>
-        /// Checks if the Container has an Expiration Date and that the chemical has an open expiration interval set
-        /// </summary>
-        public bool CanOpen()
-        {
-            CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            return ( DateTime.MinValue != ExpirationDate.DateTimeValue || ( false == String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) && false == Double.IsNaN( Chemical.OpenExpireInterval.Quantity ) ) );
-        }
-
-        public void OpenContainer()
-        {
-            CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-
-            if( false == CanOpen() )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning,
-                    "Cannot open container when Container does not have an expiration date set or the material does not have an open expiration interval set",
-                    "Container.ExpirationDate isn't set or Container.Material.OpenExpirationInterval is not set, cannot open container" );
-            }
-            OpenedDate.DateTimeValue = DateTime.Now;
-            ExpirationDate.DateTimeValue = ( ExpirationDate.DateTimeValue < Chemical.getDefaultOpenExpirationDate( DateTime.Now ) ? ExpirationDate.DateTimeValue : Chemical.getDefaultOpenExpirationDate( DateTime.Now ) );
         }
 
         /// <summary>
@@ -1086,6 +1066,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        #region ICswNbtKioskModeOpenable
+
+        public void OpenItem()
+        {
+            _Opener.OpenItem();
+        }
+
+        public bool CanOpen()
+        {
+            return _Opener.CanOpen();
+        }
+
+        #endregion
 
     }//CswNbtObjClassContainer
 

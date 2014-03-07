@@ -702,11 +702,16 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         join specgrav sg on sg.nodeid = t2.materialid
         group by t2.materialid, t2.the_date, t2.locationid
     ),
-    --select * from tier2qtyPerLocation;
+    tier2qtyPerDate as (
+    select t2.materialid, sum(t2.qty) as qty, t2.the_date
+      from tier2qtyPerLocation t2
+      group by t2.materialid, t2.the_date
+    ),
+    --select * from tier2qtyPerDate;
     tier2quantities as (
     select 
       t2.materialid, max(t2.qty) as maxqty, round(avg(t2.qty), 6) as avgqty
-      from tier2qtyPerLocation t2
+      from tier2qtyPerDate t2
       group by t2.materialid
     ),
     --select * from tier2quantities;
