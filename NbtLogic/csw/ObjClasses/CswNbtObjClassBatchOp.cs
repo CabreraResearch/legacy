@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassBatchOp : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string BatchData = "Batch Data";
             public const string CreatedDate = "Created Date";
@@ -20,8 +20,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Status = "Status";
             public const string User = "User";
         }
-        
-        public CswNbtObjClassBatchOp( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+
+        public CswNbtObjClassBatchOp( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -80,13 +80,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// For use by CswNbtBatchOps: mark an operation errored
         /// </summary>
-        public void error( Exception ex )
+        public void error( Exception ex, string Message = "" )
         {
-            string Message = "Error: " + ex.Message + "; ";
-            if(  _CswNbtResources.ShowFullStackTraceInUI )
+            Message += "Exception: " + ex.Message + "; ";
+            if( _CswNbtResources.ShowFullStackTraceInUI )
             {
                 Message += ex.StackTrace;
-            } 
+            }
             appendToLog( Message );
             Status.Value = CswEnumNbtBatchOpStatus.Error.ToString();
             postChanges( false );
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Inherited Events
 
         //Extend CswNbtObjClass events here
-        
+
         #endregion
 
         #region Object class specific properties

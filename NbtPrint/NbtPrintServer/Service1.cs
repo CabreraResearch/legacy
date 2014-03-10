@@ -172,7 +172,7 @@ namespace NbtPrintServer
             {
                 AccessId = config.accessid,
                 UserId = config.logon,
-                Password = config.password,
+                Password = config.getDecryptedPassword(),
                 baseURL = config.url,
                 useSSL = ( config.url.ToLower().IndexOf( "https:" ) > -1 )
             };

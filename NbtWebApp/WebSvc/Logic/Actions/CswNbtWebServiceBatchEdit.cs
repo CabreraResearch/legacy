@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.WebServices;
 using ChemSW.Nbt.csw.ImportExport;
 using NbtWebApp.Actions.Receiving;
@@ -24,6 +26,21 @@ namespace ChemSW.Nbt.Actions
     /// </summary>
     public class CswNbtWebServiceBatchEdit
     {
+        [DataContract]
+        public class BatchEditProperties : CswWebSvcReturn
+        {
+            [DataMember( IsRequired = true )]
+            public Collection<BatchEditProperty> Data;
+        }
+        [DataContract]
+        public class BatchEditProperty
+        {
+            [DataMember( IsRequired = true )]
+            public Int32 id;
+            [DataMember( IsRequired = true )]
+            public string name;
+        }
+
         [DataContract]
         public class BatchEditParams
         {
@@ -58,6 +75,40 @@ namespace ChemSW.Nbt.Actions
             [Description( "ViewId" )]
             public string ViewId;
         }
+
+        public static void getBatchEditProperties( ICswResources CswResources, BatchEditProperties ret, BatchEditParams Params )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Params.NodeTypeId );
+            if( null != NodeType )
+            {
+                ret.Data = new Collection<BatchEditProperty>();
+                if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) )
+                {
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps()
+                                                                        .Where( p => false == p.getFieldType().IsDisplayType() &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.File &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.Image &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.ImageList &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.LogicalSet &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.MOL &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.MetaDataList &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.Password &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.TimeInterval &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.ViewPickList &&
+                                                                                     p.getFieldType().FieldType != CswEnumNbtFieldType.ViewReference )
+                                                                        .OrderBy( p => p.PropName ) )
+                    {
+                        ret.Data.Add( new BatchEditProperty()
+                            {
+                                id = Prop.PropId,
+                                name = Prop.PropNameWithQuestionNo
+                            } );
+                    }
+                }
+            }
+        } // getBatchEditProperties()
+
 
         public static void DownloadBatchEditData( ICswResources CswResources, BatchEditDownload ret, BatchEditParams Params )
         {
@@ -139,16 +190,16 @@ namespace ChemSW.Nbt.Actions
             if( uploadDataSet.Tables.Count > 0 )
             {
                 DataTable uploadTable = uploadDataSet.Tables[0];
-                
+
                 CswNbtBatchOpBatchEdit batch = new CswNbtBatchOpBatchEdit( NbtResources );
                 CswNbtObjClassBatchOp batchNode = batch.makeBatchOp( uploadTable );
-                
+
                 CswNbtView BatchOpsView = new CswNbtView( (CswNbtResources) CswResources );
                 BatchOpsView.ViewName = "New Batch Operations";
                 BatchOpsView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                 CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( batchNode.NodeType, false );
                 BatchRel.NodeIdsToFilterIn.Add( batchNode.NodeId );
-                
+
                 BatchOpsView.SaveToCache( true );
                 ret.ViewId = BatchOpsView.SessionViewId.ToString();
 

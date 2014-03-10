@@ -52,10 +52,11 @@ namespace ChemSW.Nbt.Batch
         /// </summary>
         public void runBatchOp( CswNbtObjClassBatchOp BatchNode )
         {
-            try
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.BatchEdit )
             {
-                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.BatchEdit )
+                try
                 {
+                    bool NoErrors = true;
                     BatchNode.start();
 
                     BatchEditBatchData BatchData = new BatchEditBatchData( BatchNode.BatchData.Text );
@@ -66,47 +67,68 @@ namespace ChemSW.Nbt.Batch
                         {
                             int NodesProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                             Int32 r;
-                            for( r = BatchData.CurrentRow; r < BatchData.excelData.Rows.Count && ( r - BatchData.CurrentRow ) < NodesProcessedPerIteration; r++ )
+                            for( r = BatchData.CurrentRow; r < BatchData.excelData.Rows.Count && ( r - BatchData.CurrentRow ) < NodesProcessedPerIteration && NoErrors; r++ )
                             {
-                                DataRow row = BatchData.excelData.Rows[r];
-
-                                CswPrimaryKey NodeId = new CswPrimaryKey();
-                                NodeId.FromString( row["nodeid"].ToString() );
-                                if( CswTools.IsPrimaryKey( NodeId ) )
+                                try
                                 {
-                                    CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-                                    if( null != Node )
+                                    DataRow row = BatchData.excelData.Rows[r];
+
+                                    CswPrimaryKey NodeId = new CswPrimaryKey();
+                                    NodeId.FromString( row["nodeid"].ToString() );
+                                    if( CswTools.IsPrimaryKey( NodeId ) )
                                     {
-                                        foreach( DataColumn col in BatchData.excelData.Columns )
+                                        CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
+                                        if( null != Node )
                                         {
-                                            if( col.ColumnName != "nodeid" )
+                                            foreach( DataColumn col in BatchData.excelData.Columns )
                                             {
-                                                CswNbtMetaDataNodeTypeProp Prop = Node.getNodeType().getNodeTypeProp( col.ColumnName );
-                                                CswNbtSubField SubField;
-                                                if( null != Prop )
+                                                if( NoErrors )
                                                 {
-                                                    SubField = Prop.getFieldTypeRule().SubFields.Default;
+                                                    try
+                                                    {
+                                                        if( col.ColumnName != "nodeid" )
+                                                        {
+                                                            CswNbtMetaDataNodeTypeProp Prop = Node.getNodeType().getNodeTypeProp( col.ColumnName );
+                                                            CswNbtSubField SubField;
+                                                            if( null != Prop )
+                                                            {
+                                                                SubField = Prop.getFieldTypeRule().SubFields.Default;
+                                                            }
+                                                            else
+                                                            {
+                                                                string propName = col.ColumnName.Substring( 0, col.ColumnName.LastIndexOf( " " ) );
+                                                                string subFieldName = col.ColumnName.Substring( col.ColumnName.LastIndexOf( " " ) + 1 );
+                                                                Prop = Node.getNodeType().getNodeTypeProp( propName );
+                                                                SubField = Prop.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) subFieldName];
+                                                            }
+                                                            Node.Properties[Prop].SetSubFieldValue( SubField, row[col.ColumnName] );
+                                                        } // if( col.ColumnName != "nodeid" )
+                                                    } // try
+                                                    catch( Exception ex )
+                                                    {
+                                                        BatchNode.error( ex, "Error on row: " + ( r + 1 ).ToString() + ", column: " + col.ColumnName + "; " );
+                                                        NoErrors = false;
+                                                    }
                                                 }
-                                                else
-                                                {
-                                                    string propName = col.ColumnName.Substring( 0, col.ColumnName.LastIndexOf( " " ) );
-                                                    string subFieldName = col.ColumnName.Substring( col.ColumnName.LastIndexOf( " " ) + 1 );
-                                                    Prop = Node.getNodeType().getNodeTypeProp( propName );
-                                                    SubField = Prop.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) subFieldName];
-                                                }
-                                                Node.Properties[Prop].SetSubFieldValue( SubField, row[col.ColumnName] );
-                                            } // if( col.ColumnName != "nodeid" )
-                                        } // foreach( DataColumn col in BatchData.excelData.Columns )
-                                    } // if( null != Node )
-                                    Node.postChanges( false );
-                                } // if( CswTools.IsPrimaryKey( NodeId ) )
+                                            } // foreach( DataColumn col in BatchData.excelData.Columns )
+                                        } // if( null != Node )
+                                        Node.postChanges( false );
+                                    } // if( CswTools.IsPrimaryKey( NodeId ) )
+                                } // try
+                                catch( Exception ex )
+                                {
+                                    BatchNode.error( ex, "Error on row: " + ( r + 1 ).ToString() + "; " );
+                                    NoErrors = false;
+                                }
                             } // for
 
-                            // Setup for next iteration
-                            BatchData.CurrentRow = r;
-                            BatchNode.BatchData.Text = BatchData.ToString();
-                            BatchNode.PercentDone.Value = getPercentDone( BatchNode );
-
+                            if( NoErrors )
+                            {
+                                // Setup for next iteration
+                                BatchData.CurrentRow = r;
+                                BatchNode.BatchData.Text = BatchData.ToString();
+                                BatchNode.PercentDone.Value = getPercentDone( BatchNode );
+                            }
                         } // if( null != BatchData.excelData.Columns["nodeid"] )
                     } // if(BatchData.CurrentRow < BatchData.TotalRows)
                     else
@@ -114,12 +136,12 @@ namespace ChemSW.Nbt.Batch
                         BatchNode.finish();
                     }
                     BatchNode.postChanges( false );
-                } // if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
-            }
-            catch( Exception ex )
-            {
-                BatchNode.error( ex );
-            }
+                }
+                catch( Exception ex )
+                {
+                    BatchNode.error( ex );
+                }
+            } // if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
         } // runBatchOp()
 
 
