@@ -21,7 +21,7 @@ namespace BalanceReaderClient
         private Dictionary<string, BalanceConfiguration> _configurationList; 
         private Timer _balancePollTimer;
         private NbtAuth _authenticationClient;
-        private static string ConfigPath = Path.GetDirectoryName( Application.ExecutablePath ) + "/BalanceReaderClient.cfg";
+        private static string ConfigPath = Path.GetDirectoryName( Application.ExecutablePath ) + "\\BalanceReaderClient.cfg";
 
         public Form1()
         {
@@ -144,11 +144,12 @@ namespace BalanceReaderClient
         public void saveUserSettings( object Sender, EventArgs E )
         {
             CswEncryption Encryptor = new CswEncryption( "" );
+            string PasswordString = string.IsNullOrEmpty( _authenticationClient.Password ) ? "" : Encryptor.encrypt( _authenticationClient.Password );
 
             string[] ConfigurationFileLines = new string[5 + _balanceList.Count];
             ConfigurationFileLines[0] = _authenticationClient.AccessId;
             ConfigurationFileLines[1] = _authenticationClient.UserId;
-            ConfigurationFileLines[2] = Encryptor.encrypt(_authenticationClient.Password);
+            ConfigurationFileLines[2] = PasswordString;
             ConfigurationFileLines[3] = _authenticationClient.baseURL;
             ConfigurationFileLines[4] = pollingFrequencyField.Value.ToString();
 
@@ -174,18 +175,28 @@ namespace BalanceReaderClient
         {
             if( File.Exists( ConfigPath ) )
             {
-                CswEncryption Encryptor = new CswEncryption( "" );
-
                 string[] ConfigurationFileLines = File.ReadAllLines( ConfigPath );
 
+                
+                string PasswordDecrypted;
+                if( string.IsNullOrEmpty( ConfigurationFileLines[2] ) )
+                {
+                    //need to manually avoid calling decrypt on an empty string to avoid an infinite loop
+                    PasswordDecrypted = "";
+                }
+                else
+                {
+                    CswEncryption Encryptor = new CswEncryption( "" );
+                    PasswordDecrypted = Encryptor.decrypt( ConfigurationFileLines[2] );
+                }
                 AccessIdField.Text = ConfigurationFileLines[0];
                 UsernameField.Text = ConfigurationFileLines[1];
-                PasswordField.Text = Encryptor.decrypt(ConfigurationFileLines[2]);
+                PasswordField.Text = PasswordDecrypted;
                 AddressField.Text = ConfigurationFileLines[3];
                 pollingFrequencyField.Value = Decimal.Parse( ConfigurationFileLines[4] );
                 _authenticationClient.AccessId = ConfigurationFileLines[0];
                 _authenticationClient.UserId = ConfigurationFileLines[1];
-                _authenticationClient.Password = Encryptor.decrypt(ConfigurationFileLines[2]);
+                _authenticationClient.Password = PasswordDecrypted;
                 _authenticationClient.baseURL = ConfigurationFileLines[3];
                 constructPollTimer( int.Parse( ConfigurationFileLines[4] ) );
 

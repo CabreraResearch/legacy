@@ -24,6 +24,14 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\common\cswcommon\CswCore\CswCore.csproj">
+      <Name>CswCore</Name>
+      <Project>{9498738d-42c2-4bbf-875b-846918a8821b}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\BalanceReaderClient\BalanceReaderClient.csproj">
       <Name>BalanceReaderClient</Name>
       <Project>{45ca3286-792a-4ef3-ac24-b68c4065bac4}</Project>
