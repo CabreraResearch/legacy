@@ -1,7 +1,9 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -32,6 +34,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            bool DefinitionExists = CswNbtImportDef.checkForDefinitionEntries( _CswNbtSchemaModTrnsctn, CswScheduleLogicNbtCAFImport.DefinitionName );
+            if( DefinitionExists )
+            {
             // CAF bindings definitions for Supplies
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
             ImpMgr.CAFimportOrder( "Supply", "packages", "supplies_view", "packageid" );
@@ -50,6 +55,7 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "struct_pict", CswNbtObjClassNonChemical.PropertyName.Picture, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName: "materials", LobDataPkColOverride: "materialid" );
 
             ImpMgr.finalize();
+            }
         } // update()
 
     }

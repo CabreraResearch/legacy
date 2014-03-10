@@ -5,6 +5,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -186,6 +187,26 @@ namespace ChemSW.Nbt.ImportExport
 
             return ret;
         } // _addDefinitionEntries();
+
+        /// <summary>
+        /// Check for existence of a definition entry in a schema script before adding bindings.
+        /// </summary>
+        /// <param name="CswNbtSchemaModTrnsctn"></param>
+        /// <param name="ImportDefinitionName"></param>
+        /// <returns></returns>
+        public static bool checkForDefinitionEntries( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, string ImportDefinitionName )
+        {
+            bool Ret = false;
+
+            CswTableSelect importDefSelect = CswNbtSchemaModTrnsctn.makeCswTableSelect( "CswNbtImportDef_findDefinitionEntry", CswNbtImportTables.ImportDef.TableName );
+            DataTable importDefTable = importDefSelect.getTable( "where definitionname = '" + ImportDefinitionName + "'" );
+            if( importDefTable.Rows.Count > 0 )
+            {
+                Ret = true;
+            }
+
+            return Ret;
+        }
 
     } // class CswNbtImportDef
 } // namespace
