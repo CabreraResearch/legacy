@@ -270,13 +270,14 @@ namespace BalanceReaderClient
 
 
             //define how to update UI when the authentication attempt resolves
-            NbtAuth.SessionCompleteEvent fetchConfigurations = delegate( NbtPublicClient Client, string StatusText )
+            NbtAuth.SessionCompleteEvent fetchConfigurations = delegate( NbtPublicClient Client )
             {
+                CswNbtBalanceReturn ReceivedConfigurations = Client.ListBalanceConfigurations();
+                string StatusText = ReceivedConfigurations.Authentication.AuthenticationStatus;
                 if( "Authenticated" == StatusText )
                 {
                     Dictionary<string, BalanceConfiguration> NewConfigurationList = new Dictionary<string, BalanceConfiguration>();
 
-                    CswNbtBalanceReturn ReceivedConfigurations = Client.ListBalanceConfigurations();
                     foreach( BalanceConfiguration Item in ReceivedConfigurations.Data.ConfigurationList )
                     {
                         NewConfigurationList.Add( Item.Name, Item );
@@ -295,18 +296,20 @@ namespace BalanceReaderClient
                     ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Please provide connection details for ChemSW Live.\r\n"; } ) );
                     tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
                 }
-                else
+                else if( "NonExistentSession" != StatusText )
                 {
                      ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection Error: " + StatusText + "\r\n"; } ) );
                      tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
                 }
+
+                return StatusText;
+
             };//SessionCompleteEvent fetchConfigurations
 
             //Perform a test connection asynchronously, using the managed thread pool
             BackgroundWorker GetConfigurations = new BackgroundWorker();
             GetConfigurations.DoWork += _authenticationClient.PerformActionAsync;
             GetConfigurations.RunWorkerAsync( fetchConfigurations );
-
 
         }//refreshConfigurationList()
 
@@ -518,8 +521,26 @@ namespace BalanceReaderClient
         {
 
           //define how to update UI when the authentication attempt resolves
-            NbtAuth.SessionCompleteEvent PrintStatusMessage = delegate(NbtPublicClient Client, string StatusText )
+            NbtAuth.SessionCompleteEvent PrintStatusMessage = delegate(NbtPublicClient Client )
                 {
+                    string StatusText = "";
+                    try
+                    {
+                        CswNbtWebServiceSessionCswNbtAuthReturn AuthenticationRequest = Client.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest
+                            {
+                                CustomerId = _authenticationClient.AccessId,
+                                UserName = _authenticationClient.UserId,
+                                Password = _authenticationClient.Password,
+                                IsMobile = true,
+                                SuppressLog = true
+                            } );
+
+                        StatusText = AuthenticationRequest.Authentication.AuthenticationStatus;
+                    }
+                    catch( Exception E )
+                    {
+                        StatusText += E.Message;
+                    }
                     switch( StatusText )
                     {
                         case "Failed":
@@ -546,12 +567,16 @@ namespace BalanceReaderClient
                             ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Please check the host address for your connection.\r\n"; } ) );
                             break;
 
+                        case "ShowLicense": 
+                            ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "An administrator must accept the license for Cispro Cloud before using the client.\r\n"; } ) );
+                            break;
+
                         default:
                             ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection Error: " + StatusText + "\r\n"; } ) );
                             break;
 
                     }//switch ( StatusText )
-
+                    return StatusText;
                 };//SessionCompleteEvent PrintStatusMessage
 
 
@@ -594,11 +619,10 @@ namespace BalanceReaderClient
         private void saveTemplateButton_Click( object sender, EventArgs e )
         {
 
-            NbtAuth.SessionCompleteEvent sendConfiguration = delegate( NbtPublicClient Client, string StatusText )
-            {
-                if( "Authenticated" == StatusText )
+            NbtAuth.SessionCompleteEvent sendConfiguration = delegate( NbtPublicClient Client )
                 {
-                  BalanceConfiguration ConfigurationToSend = new BalanceConfiguration();
+                    string StatusText = "";
+                    BalanceConfiguration ConfigurationToSend = new BalanceConfiguration();
                     ConfigurationToSend.Name = templateNameBox.Text;
                     ConfigurationToSend.RequestFormat = templateRequestBox.Text;
                     ConfigurationToSend.ResponseFormat = templateExpressionBox.Text;
@@ -609,21 +633,18 @@ namespace BalanceReaderClient
                     templateHandshakeBox.Invoke( (Action) ( () => { ConfigurationToSend.Handshake = templateHandshakeBox.SelectedValue.ToString(); } ) );
 
 
-                    BalanceConfiguration RegisteredBalance = Client.registerBalanceConfiguration( ConfigurationToSend ).Data.ConfigurationList[0];
-                    if( null != RegisteredBalance )
+                    StatusText = Client.registerBalanceConfiguration( ConfigurationToSend ).Authentication.AuthenticationStatus;
+                    if( StatusText == "Authenticated" )
                     {
                         saveUserSettings( this, new EventArgs() );
                         refreshConfigurationList();
                     }
-
-
-                } //if( "Authenticated" == StatusText )
-                else
-                {
-                    ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection Error: " + StatusText + "\r\n"; } ) );
-                    tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
-                }
-            };//SessionCompleteEvent fetchConfigurations
+                    else if ( StatusText != "NonExistentSession" )
+                    {
+                        tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
+                    }
+                    return StatusText;
+                };//SessionCompleteEvent fetchConfigurations
 
 
             //Perform a test connection asynchronously, using the managed thread pool
