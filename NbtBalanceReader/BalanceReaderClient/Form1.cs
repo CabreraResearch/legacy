@@ -9,6 +9,7 @@ using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BalanceReaderClient.NbtPublic;
+using ChemSW.Encryption;
 
 namespace BalanceReaderClient
 {
@@ -142,11 +143,12 @@ namespace BalanceReaderClient
         /// <param name="E"></param>
         public void saveUserSettings( object Sender, EventArgs E )
         {
+            CswEncryption Encryptor = new CswEncryption( "" );
 
             string[] ConfigurationFileLines = new string[5 + _balanceList.Count];
             ConfigurationFileLines[0] = _authenticationClient.AccessId;
             ConfigurationFileLines[1] = _authenticationClient.UserId;
-            ConfigurationFileLines[2] = _authenticationClient.Password;
+            ConfigurationFileLines[2] = Encryptor.encrypt(_authenticationClient.Password);
             ConfigurationFileLines[3] = _authenticationClient.baseURL;
             ConfigurationFileLines[4] = pollingFrequencyField.Value.ToString();
 
@@ -172,16 +174,18 @@ namespace BalanceReaderClient
         {
             if( File.Exists( ConfigPath ) )
             {
+                CswEncryption Encryptor = new CswEncryption( "" );
+
                 string[] ConfigurationFileLines = File.ReadAllLines( ConfigPath );
 
                 AccessIdField.Text = ConfigurationFileLines[0];
                 UsernameField.Text = ConfigurationFileLines[1];
-                PasswordField.Text = ConfigurationFileLines[2];
+                PasswordField.Text = Encryptor.decrypt(ConfigurationFileLines[2]);
                 AddressField.Text = ConfigurationFileLines[3];
                 pollingFrequencyField.Value = Decimal.Parse( ConfigurationFileLines[4] );
                 _authenticationClient.AccessId = ConfigurationFileLines[0];
                 _authenticationClient.UserId = ConfigurationFileLines[1];
-                _authenticationClient.Password = ConfigurationFileLines[2];
+                _authenticationClient.Password = Encryptor.decrypt(ConfigurationFileLines[2]);
                 _authenticationClient.baseURL = ConfigurationFileLines[3];
                 constructPollTimer( int.Parse( ConfigurationFileLines[4] ) );
 
