@@ -760,7 +760,7 @@
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31611.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case31893B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31909.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52761.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893_MaterialComps.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893_Constituents.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case31893A.cs" />

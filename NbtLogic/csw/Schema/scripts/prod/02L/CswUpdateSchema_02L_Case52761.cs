@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02L_Case31909: CswUpdateSchemaTo
+    public class CswUpdateSchema_02L_Case52761 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema
 
         public override int CaseNo
         {
-            get { return 31909; }
+            get { return 52761; }
         }
 
         public override string AppendToScriptName()
@@ -42,13 +42,36 @@ select * from(
 ),
 counts as (
   select count(nodeid) counts, casno from chemicals group by casno
+),
+chemical_dupes as (
+  select c.nodeid as materialid, c.casno, c.tradename, decode(c.istierii, null, 'N', c.istierii) istierii from chemicals c
+  join counts ct on ct.casno = c.casno
+  where counts > 1
+),
+tier_ii_casnos as (
+  select distinct casno, istierii from chemical_dupes where istierii = 'Y'
 )
-select c.nodeid as materialid, c.casno, c.tradename, decode(c.istierii, null, 'N', c.istierii) istierii from chemicals c
-join counts ct on ct.casno = c.casno
-where counts > 1";
+select * from chemical_dupes where casno in (select casno from tier_ii_casnos)
+order by casno, tradename";
             CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtObjClassReportGroup CISProReportGroup = _getReportGroup();
-            _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
+            CswNbtMetaDataNodeType GenericReportNT = ReportOC.FirstNodeType;
+            foreach( CswNbtMetaDataNodeType ReportNT in ReportOC.getNodeTypes() )
+            {
+                if( ReportNT.NodeTypeName == "Report" )
+                {
+                    GenericReportNT = ReportNT;
+                    break;
+                }
+            }
+            foreach( CswNbtObjClassReport DupChemsReport in ReportOC.getNodes( false, false, false ) )
+            {
+                if( DupChemsReport.ReportName.Text == "Duplicate Chemicals" )
+                {
+                    DupChemsReport.Node.delete( false, true );
+                }
+            }
+            _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( GenericReportNT.NodeTypeId, delegate( CswNbtNode NewNode )
             {
                 CswNbtObjClassReport ReportNode = NewNode;
                 if( null != CISProReportGroup )
