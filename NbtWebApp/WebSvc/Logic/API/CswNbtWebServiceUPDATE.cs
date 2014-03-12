@@ -51,7 +51,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         Return.Status = HttpStatusCode.NotFound;
                     }
                 }
-                catch( Exception ex )
+                catch( Exception )
                 {
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
