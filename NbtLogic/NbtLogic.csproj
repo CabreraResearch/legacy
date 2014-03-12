@@ -765,6 +765,7 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case31076.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52266.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31611.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case31893B.cs" />
