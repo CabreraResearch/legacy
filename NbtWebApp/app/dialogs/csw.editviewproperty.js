@@ -26,12 +26,13 @@
 
                 },
                 onOpen: function () {
-                    var div = editViewPropDialog.div;
+                    var form = editViewPropDialog.div.form();
+                    var div = form.div();
                     var attributesTbl = div.table({
                         cellspacing: 2,
                         cellpadding: 2
                     });
-                    var sortByCheckBox = attributesTbl.cell(1, 1).div().input({
+                    var sortByCheckBox = attributesTbl.cell(1, 2).div().input({
                         type: Csw.enums.inputTypes.checkbox,
                         checked: cswPrivate.propertyNode.SortBy,
                         canCheck: true,
@@ -55,7 +56,38 @@
                             cswPrivate.propertyNode.SortBy = sortByCheckBox.checked();
                         }
                     });
-                    attributesTbl.cell(1, 2).div().text('Sort By');
+                    attributesTbl.cell(1, 1).div().text('Sort By');
+
+                    if (cswPrivate.view.ViewMode == 'Grid') {
+                        attributesTbl.cell(2, 2).div().numberTextBox({
+                            MinValue: 0,
+                            MaxValue: 500,
+                            width: 25,
+                            value: (cswPrivate.propertyNode.Width == Csw.int32MinVal ? '' : cswPrivate.propertyNode.Width),
+                            onChange: function (newVal) {
+                                if (form.isFormValid()) {
+                                    Csw.tryExec(cswPrivate.onBeforeEdit);
+                                    var updateProp = function (child) {
+                                        var updated = false;
+                                        Csw.iterate(child.Properties, function (prop) {
+                                            if (prop.ArbitraryId === cswPrivate.propertyNode.ArbitraryId) {
+                                                prop.Width = newVal;
+                                                updated = true;
+                                            }
+                                        });
+                                        if (false === updated) {
+                                            Csw.iterate(child.ChildRelationships, function (childRel) {
+                                                updateProp(childRel);
+                                            });
+                                        }
+                                    };
+                                    updateProp(cswPrivate.view.Root);
+                                    cswPrivate.propertyNode.Width = newVal;
+                                }
+                            }
+                        });
+                        attributesTbl.cell(2, 1).div().text('Width');
+                    }
 
                     div.br({ number: 2 });
 
