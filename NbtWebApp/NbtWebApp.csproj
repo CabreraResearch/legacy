@@ -113,6 +113,9 @@
     <Compile Include="Services\ChemWatch.svc.cs">
       <DependentUpon>ChemWatch.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\API.svc.cs">
+      <DependentUpon>API.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Explorer.svc.cs">
       <DependentUpon>Explorer.svc</DependentUpon>
     </Compile>
@@ -217,6 +220,19 @@
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborNode.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtWebServiceNodeExplorer.cs" />
     <Compile Include="WebSvc\Logic\Actions\Receiving\CswNbtWebServiceReceiving.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceApiViews.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceApiSearch.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceDELETE.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceAPI.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceUPDATE.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceCREATE.cs" />
+    <Compile Include="WebSvc\Logic\API\CswNbtWebServiceREAD.cs" />
+    <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtAPITree.cs" />
+    <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtAPIGrid.cs" />
+    <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtAPIReturn.cs" />
+    <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtResourceCollection.cs" />
+    <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtResourceWithProperties.cs" />
+    <Compile Include="WebSvc\Logic\API\DataContracts\CswNbtResource.cs" />
     <Compile Include="WebSvc\Logic\Balances\CswNbtBalanceData.cs" />
     <Compile Include="WebSvc\Logic\Balances\CswNbtWebServiceSerialBalance.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceLocationsCis.cs" />
@@ -803,6 +819,7 @@
     <Content Include="Scripts\q.js" />
     <Content Include="Scripts\q.min.js" />
     <Content Include="Services\ChemWatch.svc" />
+    <Content Include="Services\API.svc" />
     <Content Include="Services\Explorer.svc" />
     <Content Include="Services\Import.svc" />
     <Content Include="Services\Properties.svc" />

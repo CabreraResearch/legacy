@@ -24,6 +24,7 @@
                 containerNodeTypeId: '',
                 containerAddLayout: {},
                 tradeName: '',
+                nodeName: '',
                 selectedSizeId: '',
                 customBarcodes: false,
                 nodetypename: '',
@@ -512,7 +513,7 @@
             cswPrivate.currentStepNo = cswPrivate.startingStep;
 
             cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
-                Title: 'Receive: ' + cswPrivate.state.tradeName,
+                Title: 'Receive: ' + cswPrivate.state.nodeName,
                 StepCount: cswPrivate.stepCount,
                 Steps: wizardSteps,
                 StartingStep: cswPrivate.startingStep,

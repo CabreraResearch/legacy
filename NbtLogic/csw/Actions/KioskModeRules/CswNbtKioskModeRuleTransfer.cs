@@ -1,9 +1,9 @@
 ﻿using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Actions.KioskMode
 {
@@ -51,40 +51,13 @@ namespace ChemSW.Nbt.Actions.KioskMode
             CswNbtMetaDataNodeType NodeType = node.getNodeType();
             string itemName = NodeType.NodeTypeName;
 
-            switch( OpData.Field2.FoundObjClass )
+            ICswNbtKioskModeTransferable AsTransferable = (ICswNbtKioskModeTransferable) node.ObjClass;
+            if( AsTransferable.CanTransfer( out statusMsg ) )
             {
-                case CswEnumNbtObjectClass.EquipmentAssemblyClass:
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
-                    {
-                        CswNbtObjClassEquipmentAssembly assemblyNode = node;
-                        assemblyNode.TransferAssembly( newTransferOwner );
-                        succeeded = true;
-                    }
-                    break;
-                case CswEnumNbtObjectClass.EquipmentClass:
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
-                    {
-                        CswNbtObjClassEquipment equipmentNode = node;
-                        if( false == equipmentNode.Assembly.Empty )
-                        {
-                            statusMsg = "This equipment belongs to an assembly and cannot be changed directly.";
-                        }
-                        else
-                        {
-                            equipmentNode.TransferEquipment( newTransferOwner );
-                            succeeded = true;
-                        }
-                    }
-                    break;
-                case CswEnumNbtObjectClass.ContainerClass:
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
-                    {
-                        CswNbtObjClassContainer containerNode = node;
-                        containerNode.TransferContainer( newTransferOwner );
-                        succeeded = true;
-                    }
-                    break;
+                AsTransferable.Transfer( newTransferOwner );
+                succeeded = true;
             }
+            
             if( null != node && succeeded )
             {
                 node.postChanges( false );

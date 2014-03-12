@@ -52,6 +52,9 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Properties", Factory, typeof( Properties ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Explorer", Factory, typeof( Explorer ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/ChemWatch", Factory, typeof( ChemWatch ) ) );
+
+            //Proof of concept for REST api:
+            RouteTable.Routes.Add( new ServiceRoute( "api", Factory, typeof( API ) ) );
         }
 
         /// <summary>
@@ -71,10 +74,10 @@ namespace NbtWebApp
         private void EnableCrossDmainAjaxCall()
         {
             HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Origin", "*" );
+            HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Headers", "Content-Type, Accept, X-NBT-SessionId" );
             if( HttpContext.Current.Request.HttpMethod == "OPTIONS" )
             {
                 HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Methods", "GET, POST, DELETE, PUT" );
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Headers", "Content-Type, Accept" );
                 HttpContext.Current.Response.AddHeader( "Access-Control-Max-Age", "1728000" );
                 HttpContext.Current.Response.End();
             }
