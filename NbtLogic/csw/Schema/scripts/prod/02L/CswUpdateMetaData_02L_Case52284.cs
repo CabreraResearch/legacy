@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "B";
+            return "";
         }
 
         public override void update()
@@ -50,10 +50,15 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ManufacturerOCP, CswEnumNbtObjectClassPropAttributes.viewxml, ManufacturerView.ToString() );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ManufacturerOCP, CswEnumNbtObjectClassPropAttributes.fktype, CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ManufacturerOCP, CswEnumNbtObjectClassPropAttributes.fkvalue, ManufacturerOC.ObjectClassId.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ManufacturerOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
+                    CswNbtMetaDataObjectClassProp EPOCP = MEPOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.EnterprisePart );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EPOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
                     foreach( CswNbtMetaDataNodeType MEPNT in MEPOC.getNodeTypes() )
                     {
                         CswNbtMetaDataNodeTypeProp ManufacturerNTP = MEPNT.getNodeTypePropByObjectClassProp( ManufacturerOCP );
                         ManufacturerNTP.DesignNode.syncFromObjectClassProp();
+                        CswNbtMetaDataNodeTypeProp EPNTP = MEPNT.getNodeTypePropByObjectClassProp( EPOCP );
+                        EPNTP.DesignNode.syncFromObjectClassProp();
                     }
                 }
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MEPOC.ObjectClassId );
