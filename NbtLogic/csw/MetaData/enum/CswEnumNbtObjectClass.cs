@@ -58,6 +58,7 @@ namespace ChemSW.Nbt.MetaData
             { MailReportClass                   , MailReportClass                    },
             { MailReportGroupClass              , MailReportGroupClass               },
             { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
+            { ManufacturerClass                 , ManufacturerClass                  },
             { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
             { MaterialComponentClass            , MaterialComponentClass             },
             { MaterialSynonymClass              , MaterialSynonymClass               },
@@ -185,6 +186,7 @@ namespace ChemSW.Nbt.MetaData
         public const string MailReportClass = "MailReportClass";
         public const string MailReportGroupClass = "MailReportGroupClass";
         public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";
+        public const string ManufacturerClass = "ManufacturerClass";
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
