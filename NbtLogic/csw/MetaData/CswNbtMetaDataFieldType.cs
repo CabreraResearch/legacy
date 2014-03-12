@@ -97,10 +97,13 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public bool IsDisplayType()
         {
-            return ( FieldType == CswEnumNbtFieldType.Composite ||
+            return ( FieldType == CswEnumNbtFieldType.Button ||
+                     FieldType == CswEnumNbtFieldType.ChildContents ||
+                     FieldType == CswEnumNbtFieldType.Composite ||
                      FieldType == CswEnumNbtFieldType.External ||
                      FieldType == CswEnumNbtFieldType.Grid ||
                      FieldType == CswEnumNbtFieldType.PropertyReference ||
+                     FieldType == CswEnumNbtFieldType.ReportLink ||
                      FieldType == CswEnumNbtFieldType.Static );
         }
 

@@ -7,7 +7,7 @@
     //Case 30479: gods help you if you need more than viewSelect in the same page at the same time.
     //until that day, let's self-satisfy our promises.
     var promise = null;
-
+    var promise2 = null;   // kludge around the above for CIS-52469
 
     Csw.composites.register('viewSelect', function (cswParent, params) {
 
@@ -26,6 +26,7 @@
 
             },
             useCache: true,
+            useSecondaryPromise: false,
             div: null
         };
 
@@ -111,10 +112,15 @@
             toDo.push(ctor);
 
             var getAjaxPromise = function () {
-                if (promise && promise.abort) {
-                    promise.abort();
+                var thisPromise = promise;
+                if (cswPrivate.useSecondaryPromise) {
+                    thisPromise = promise2;
                 }
-                promise = Csw.ajaxWcf.post({
+
+                if (thisPromise && thisPromise.abort) {
+                    thisPromise.abort();
+                }
+                thisPromise = Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.viewMethod,
                     watchGlobal: false,
                     data: {
@@ -122,14 +128,20 @@
                         IncludeRecent: cswPrivate.includeRecent
                     },
                     success: function (ret) {
-                        if (!Csw.compare(ret, cswPrivate.data)) {
+                        if (false === Csw.compare(ret, cswPrivate.data)) {
                             makeSelect(ret);
                             Csw.setCachedWebServiceCall('Services/' + cswPrivate.viewMethod, ret);
                             return Csw.tryExec(cswPrivate.onSuccess);
                         }
                     }
                 });
-                return promise;
+
+                if (cswPrivate.useSecondaryPromise) {
+                    promise2 = thisPromise;
+                } else {
+                    promise = thisPromise;
+                }
+                return thisPromise;
             };
 
             var makeSelect = function (data) {
@@ -145,7 +157,7 @@
                     cswPrivate.comboBox = cswPrivate.div.comboBox({
                         name: cswPrivate.name + '_combo',
                         topContent: 'Select a View',
-                        selectContent: cswPrivate.vsdiv.$, /* NO! Refactor to use Csw.literals and more wholesome methods. */
+                        selectContent: cswPrivate.vsdiv.$,
                         width: '266px'
                     });
 
@@ -177,8 +189,12 @@
             }
             //getAjaxPromise();
 
-            toDo.push(promise);
-            return promise;
+            var thisPromise = promise;
+            if (cswPrivate.useSecondaryPromise) {
+                thisPromise = promise2;
+            }
+            toDo.push(thisPromise);
+            return thisPromise;
         })();
 
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 using System.Windows.Forms;
 using BalanceReaderClient.NbtPublic;
 
@@ -13,15 +14,15 @@ namespace BalanceReaderClient
         public string Password;
         public bool useSSL;
         public string baseURL;
+        private string sessionId;
         public Timer announceBalanceTimer;
 
         /// <summary>
         /// This delegate is used to specify what an NbtPublicClient should do after an authentication attempt.
         /// Passed as a parameter to PerformAction, which handles the entire authentication process.
         /// </summary>
-        /// <param name="Client">an NbtPublicClient that has already attempted authentication</param>
-        /// <param name="AuthenticationStatus">result of the authentication attempt from AuthenticationRequest.Authentication.AuthenticationStatus</param>
-        public delegate void SessionCompleteEvent( NbtPublicClient Client, string AuthenticationStatus );
+        /// <param name="Client">an NbtPublicClient that has been initialized</param>
+        public delegate string SessionCompleteEvent( NbtPublicClient Client );
 
 
 
@@ -29,10 +30,9 @@ namespace BalanceReaderClient
         /// <summary>
         /// Starts a new NBT session and performs the action specified.
         /// </summary>
-        /// <param name="CompletionCallback">The delegate to be executed when the authentication attempt succeeds or fails</param>
-        public void PerformAction( SessionCompleteEvent CompletionCallback )
+        /// <param name="RequestCallback">The delegate to be executed when the authentication attempt succeeds or fails</param>
+        public string PerformAction( SessionCompleteEvent RequestCallback )
         {
-
             string StatusText = "";
 
             NbtPublicClient NbtClient = new NbtPublicClient();
@@ -49,19 +49,38 @@ namespace BalanceReaderClient
                                 Mode = useSSL ? WebHttpSecurityMode.Transport : WebHttpSecurityMode.None
                             }
                     };
+                //create a scope so that we can send the sessionId header
+                using( OperationContextScope Scope = new OperationContextScope( NbtClient.InnerChannel ) )
+                {
+                    WebOperationContext.Current.OutgoingRequest.Headers.Add( "X-NBT-SessionId", sessionId );
+                    StatusText = RequestCallback( NbtClient );
+                }
 
 
-                CswNbtWebServiceSessionCswNbtAuthReturn AuthenticationRequest = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest
+                if( StatusText == "NonExistentSession" )
+                {//if the session doesn't exist, make an authentication request to get a new session ID
+
+                    //create a scope so we can extract the session id header
+                    using( OperationContextScope Scope = new OperationContextScope( NbtClient.InnerChannel ) )
                     {
-                        CustomerId = AccessId,
-                        UserName = UserId,
-                        Password = Password,
-                        IsMobile = true,
-                        SuppressLog = true
-                    } );
+                        CswNbtWebServiceSessionCswNbtAuthReturn AuthenticationRequest = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest
+                            {
+                                CustomerId = AccessId,
+                                UserName = UserId,
+                                Password = Password,
+                                IsMobile = true,
+                                SuppressLog = true
+                            } );
 
-            
-               StatusText += AuthenticationRequest.Authentication.AuthenticationStatus;
+                        StatusText = AuthenticationRequest.Authentication.AuthenticationStatus;
+                        if( StatusText == "Authenticated" )
+                        {//if the authentication was successful, re-send the web request
+                            sessionId = WebOperationContext.Current.IncomingResponse.Headers["X-NBT-SessionId"];
+                            PerformAction( RequestCallback );
+                        }
+                    }//operationContextScope
+                }//if the session doesn't exist
+               
 
             } //try
 
@@ -70,17 +89,13 @@ namespace BalanceReaderClient
                 StatusText += Ex.Message;
             }
 
-            CompletionCallback( NbtClient, StatusText );
-            if( StatusText == "Authenticated" )
-            {
-                NbtClient.SessionEnd();
-            }
-            else
+            if( StatusText != "Authenticated" )
             {
                 announceBalanceTimer.Stop();
             }
             NbtClient.Close();
 
+            return StatusText;
 
         }//performAction()
 

@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string AddLabelCodes = "Add Label Codes";
             public const string LinkChemWatch = "Link ChemWatch";
             public const string ProductDescription = "Product Description";
-            public const string LegacyMaterialId = "Legacy Material Id";
+            
         }
 
         #endregion Enums
@@ -1630,7 +1630,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid LabelCodesGrid { get { return _CswNbtNode.Properties[PropertyName.LabelCodesGrid]; } }
         public CswNbtNodePropGrid LinkChemWatch { get { return _CswNbtNode.Properties[PropertyName.LinkChemWatch]; } }
         public CswNbtNodePropMemo ProductDescription { get { return _CswNbtNode.Properties[PropertyName.ProductDescription]; } }
-        public CswNbtNodePropText LegacyMaterialId { get { return _CswNbtNode.Properties[PropertyName.LegacyMaterialId]; } }
+        
 
         #endregion Object class specific properties
 

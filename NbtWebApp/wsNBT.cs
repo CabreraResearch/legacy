@@ -2113,7 +2113,9 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string PropertySetName, string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
+        public string getNodeTypes( string PropertySetName, string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds,
+                                    string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId,
+                                    string FilterToPermission, string FilterToView, string Searchable )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2153,8 +2155,21 @@ namespace ChemSW.Nbt.WebServices
                             PropertySet = _CswNbtResources.MetaData.getPropertySet( PS );
                         }
                     }
+
+                    CswNbtView FilterToViewObj = null;
+                    if( CswNbtViewId.isViewIdString( FilterToView ) )
+                    {
+                        CswNbtViewId FilterToViewId = new CswNbtViewId( FilterToView );
+                        FilterToViewObj = _CswNbtResources.ViewSelect.restoreView( FilterToViewId );
+                    }
+                    if( CswNbtSessionDataId.isSessionDataIdString( FilterToView ) )
+                    {
+                        CswNbtSessionDataId FilterToViewId = new CswNbtSessionDataId( FilterToView );
+                        FilterToViewObj = _CswNbtResources.ViewSelect.getSessionView( FilterToViewId );
+                    }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( PropertySet, ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, realRelationshipNodeTypePropId, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
+                    ReturnVal = ws.getNodeTypes( PropertySet, ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName,
+                                                 realRelationshipNodeTypePropId, FilterToPermission, FilterToViewObj, CswConvert.ToBoolean( Searchable ) );
                 }
 
                 _deInitResources();
@@ -2194,6 +2209,31 @@ namespace ChemSW.Nbt.WebServices
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
             return ReturnVal.ToString();
         } // getNodeTypeTabs()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getNodeTypeProps( string NodeTypeName, string NodeTypeId, string EditablePropsOnly )
+        {
+            JObject ReturnVal = new JObject();
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
+                    ReturnVal = ws.getNodeTypeProps( NodeTypeName, NodeTypeId, CswConvert.ToBoolean( EditablePropsOnly ) );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // getNodeTypeProps()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

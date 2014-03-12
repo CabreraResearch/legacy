@@ -51,9 +51,8 @@ namespace ChemSW.Nbt.WebServices
         /// </param>
         /// <param name="RelationshipObjectClassPropName">(Optional [Requires RelationshipObjectClassPropName]) 
         /// <para>The name of the Object Class Prop which defines the relationship to RelationshipTargetNodeTypeId</para>
-        /// <param name="FilterToCreate">(Optional) 
-        /// <para>When set to true, only gets NodeTypes user has permission to create</para>
-        /// </param>
+        /// <param name="FilterToPermission">Restrict nodeTypes to those to which the user has this permission (default is 'View')</param>
+        /// <param name="FilterToViewId">(Optional) Limit to nodetypes within this view</param>
         /// <param name="Searchable">If true, only include searchable nodetypes</param>
         /// <returns></returns>
         public JObject getNodeTypes( CswNbtMetaDataPropertySet PropertySet = null,
@@ -63,14 +62,14 @@ namespace ChemSW.Nbt.WebServices
                                      string RelationshipObjectClassPropName = "",
                                      Int32 RelationshipNodeTypePropId = Int32.MinValue,
                                      string FilterToPermission = null,
+                                     CswNbtView FilterToView = null,
                                      bool Searchable = false )
         {
             JObject ReturnVal = new JObject();
 
-            // We default the Permission type to 'View' otherwise, if FilterTOPermission is null or empty,
-            // the default becomes 'Unknown' and the User will not have permission to do anything.
             if( string.IsNullOrEmpty( FilterToPermission ) )
             {
+                // We default the Permission type to 'View'
                 FilterToPermission = CswEnumNbtNodeTypePermission.View;
             }
 
@@ -87,6 +86,26 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipNodeTypePropId );
                 NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatches( nt ) );
+            }
+            else if( null != FilterToView )
+            {
+                NodeTypes = new Collection<CswNbtMetaDataNodeType>();
+                Collection<CswNbtViewRelationship> relationships = FilterToView.getAllNbtViewRelationships();
+                foreach( CswNbtViewRelationship rel in relationships )
+                {
+                    if( rel.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                    {
+                        ( (Collection<CswNbtMetaDataNodeType>) NodeTypes ).Add( _CswNbtResources.MetaData.getNodeType( rel.SecondId ) );
+                    }
+                    else if( rel.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                    {
+                        NodeTypes = NodeTypes.Union( _CswNbtResources.MetaData.getObjectClass( rel.SecondId ).getNodeTypes() );
+                    }
+                    else if( rel.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                    {
+                        NodeTypes = NodeTypes.Union( _CswNbtResources.MetaData.getPropertySet( rel.SecondId ).getNodeTypes() );
+                    }
+                }
             }
             else if( null != PropertySet )
             {
@@ -177,6 +196,36 @@ namespace ChemSW.Nbt.WebServices
             }
             return ReturnVal;
         }
+
+        public JObject getNodeTypeProps( string NodeTypeName, string NodeTypeId, bool EditablePropsOnly )
+        {
+            JObject ReturnVal = new JObject();
+            CswNbtMetaDataNodeType NodeType;
+            if( false == String.IsNullOrEmpty( NodeTypeName ) )
+            {
+                NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
+            }
+            else
+            {
+                NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
+            }
+            if( null != NodeType )
+            {
+                if( _userHasPermission( CswEnumNbtNodeTypePermission.View, NodeType ) )
+                {
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps()
+                                                                        .Where( p => EditablePropsOnly && false == p.getFieldType().IsDisplayType() )
+                                                                        .OrderBy( p => p.PropName ) )
+                    {
+                        string PropKey = "prop_" + Prop.PropId;
+                        ReturnVal[PropKey] = new JObject();
+                        ReturnVal[PropKey]["id"] = Prop.PropId;
+                        ReturnVal[PropKey]["name"] = Prop.PropName;
+                    }
+                }
+            }
+            return ReturnVal;
+        } // getNodeTypeProps()
 
         //Get fieldtypes
         public JArray getFieldTypes( string LayoutType )

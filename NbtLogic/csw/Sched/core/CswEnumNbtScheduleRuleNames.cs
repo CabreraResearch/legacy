@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Sched
         public const string BatchOp = "BatchOp";
         public const string CAFImport = "CAFImport";
         public const string ContainerReconciliationActions = "ContainerReconciliationActions";
-        public const string ContainerRecords = "ContainerRecordss";
+        public const string ContainerRecords = "ContainerRecords";
         public const string DisableChemSwAdmin = "DisableChemSwAdmin";
         public const string ExpiredContainers = "ExpiredContainers";
         public const string ExtChemDataSync = "ExtChemDataSync";

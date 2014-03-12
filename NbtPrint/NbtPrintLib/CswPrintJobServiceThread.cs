@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 using System.Xml;
 //using ChemSW;
 using NbtPrintLib.NbtPublic;
@@ -48,41 +49,34 @@ namespace NbtPrintLib
             public string Password;
             public bool useSSL;
             public string baseURL;
+            public string sessionId = "";
         }
 
         public delegate void AuthSuccessHandler( NbtPublicClient Client );
 
-        private void _Authenticate( NbtAuth auth, ServiceThreadEventArgs e, AuthSuccessHandler success )
+        private CswNbtWebServiceSessionCswNbtAuthReturn _Authenticate( NbtAuth auth, ServiceThreadEventArgs e, NbtPublicClient NbtClient )
         {
-            NbtPublicClient NbtClient = _getClient( auth );
-            
+            CswNbtWebServiceSessionCswNbtAuthReturn ret = null;
             try
             {
-                CswNbtWebServiceSessionCswNbtAuthReturn ret = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+                using( OperationContextScope Scope = new OperationContextScope(NbtClient.InnerChannel) )
                 {
-                    CustomerId = auth.AccessId,
-                    UserName = auth.UserId,
-                    Password = auth.Password,
-                    IsMobile = true,
-                    SuppressLog = true
-                } );
-                if( ret.Authentication.AuthenticationStatus == "Authenticated" )
-                {
-                    if( null != success )
+                    ret = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+                        {
+                            CustomerId = auth.AccessId,
+                            UserName = auth.UserId,
+                            Password = auth.Password,
+                            IsMobile = true,
+                            SuppressLog = true
+                        } );
+                    if( ret.Authentication.AuthenticationStatus == "Authenticated" )
                     {
-                        try
-                        {
-                            success( NbtClient );
-                        }
-                        finally
-                        {
-                            NbtClient.SessionEnd();
-                        }
+                        auth.sessionId = WebOperationContext.Current.IncomingResponse.Headers["X-NBT-SessionId"];
                     }
-                }
-                else
-                {
-                    e.Message += "Authentication error: " + ret.Authentication.AuthenticationStatus;
+                    else
+                    {
+                        e.Message += "Authentication error: " + ret.Authentication.AuthenticationStatus;
+                    }
                 }
             }
             catch( Exception ex )
@@ -93,6 +87,8 @@ namespace NbtPrintLib
             {
                 NbtClient.Close();
             }
+
+            return ret;
         } // _Authenticate
 
 
@@ -114,45 +110,59 @@ namespace NbtPrintLib
         {
             RegisterEventArgs e = new RegisterEventArgs();
 
-            _Authenticate( auth, e,
-                           delegate( NbtPublicClient NbtClient ) // Success
-                           {
-                               try
-                               {
-                                   LabelPrinter lblPrn = new LabelPrinter();
-                                   lblPrn.LpcName = aprinter.LPCname;
-                                   lblPrn.Description = aprinter.Description;
-
-                                   CswNbtLabelPrinterReg Ret = NbtClient.LpcRegister( lblPrn );
-
-                                   if( Ret.Status.Success )
-                                   {
-                                       e.printer.PrinterKey = Ret.PrinterKey;
-                                       e.printer.Message = "Registered PrinterKey=" + e.printer.PrinterKey;
-                                       e.printer.Succeeded = true;
-                                   }
-                                   else
-                                   {
-                                       e.printer.Message = "Printer \"" + aprinter.LPCname + "\" registration failed. ";
-                                       e.printer.PrinterKey = string.Empty;
-                                       if( Ret.Status.Errors.Length > 0 )
-                                       {
-                                           e.printer.Message += Ret.Status.Errors[0].Message;
-                                       }
-                                   }
-                               } //try
-                               catch( Exception Error )
-                               {
-                                   e.Message = "Printer registration failed. Please check server settings.";
-                                   e.printer.Message = "Printer registration failed. Please check server settings.";
-                               }
-                           }
-                        );
-
-            if( OnRegisterLpc != null )
+            try
             {
-                OnRegisterLpc( e );
+                NbtPublicClient NbtClient = _getClient( auth );
+                LabelPrinter lblPrn = new LabelPrinter();
+                lblPrn.LpcName = aprinter.LPCname;
+                lblPrn.Description = aprinter.Description;
+
+                CswNbtLabelPrinterReg Ret;
+                using( OperationContextScope Scope = new OperationContextScope( NbtClient.InnerChannel ) )
+                {
+                    WebOperationContext.Current.OutgoingRequest.Headers.Add( "X-NBT-SessionId", auth.sessionId );
+                    Ret = NbtClient.LpcRegister( lblPrn );
+                }
+                if( Ret.Authentication.AuthenticationStatus == "NonExistentSession" )
+                {
+                    //the old session has timed out, and we need to authenticate again
+                    CswNbtWebServiceSessionCswNbtAuthReturn authAttempt = _Authenticate( auth, e, NbtClient );
+                    if( authAttempt.Authentication.AuthenticationStatus == "Authenticated" )
+                    {
+                        Register( auth, aprinter );
+                    }
+                }//if previous authentication timed out
+                else if ( Ret.Authentication.AuthenticationStatus == "Authenticated" ) 
+                {
+                    if( Ret.Status.Success )
+                    {
+                        e.printer.PrinterKey = Ret.PrinterKey;
+                        e.printer.Message = "Registered PrinterKey=" + e.printer.PrinterKey;
+                        e.printer.Succeeded = true;
+                    }
+                    else
+                    {
+                        e.printer.Message = "Printer \"" + aprinter.LPCname + "\" registration failed. ";
+                        e.printer.PrinterKey = string.Empty;
+                        if( Ret.Status.Errors.Length > 0 )
+                        {
+                            e.printer.Message += Ret.Status.Errors[0].Message;
+                        }
+                    }
+
+
+                    if( OnRegisterLpc != null )
+                    {
+                        OnRegisterLpc( e );
+                    }
+                }//else when authentication was successful
+            }//try
+            catch( Exception Error )
+            {
+                e.Message = "Printer registration failed. Please check server settings.";
+                e.printer.Message = "Printer registration failed. Please check server settings.";
             }
+
         } // Register()
 
         #endregion
@@ -171,43 +181,56 @@ namespace NbtPrintLib
         public delegate void LabelByIdInvoker( NbtAuth auth, string labelid, string targetid, PrinterSetupData aprinter );
         public void LabelById( NbtAuth auth, string labelid, string targetid, PrinterSetupData aprinter )
         {
+            NbtPublicClient NbtClient = _getClient( auth );
+
             LabelByIdEventArgs e = new LabelByIdEventArgs();
             e.printer.PrinterName = aprinter.PrinterName;
 
-            _Authenticate( auth, e,
-                           delegate( NbtPublicClient NbtClient ) // Success
-                           {
-                               NbtPrintLabelRequestGet nbtLabelget = new NbtPrintLabelRequestGet();
-                               nbtLabelget.LabelId = labelid;
-                               nbtLabelget.TargetId = targetid;
+            NbtPrintLabelRequestGet nbtLabelget = new NbtPrintLabelRequestGet();
+            nbtLabelget.LabelId = labelid;
+            nbtLabelget.TargetId = targetid;
 
-                               CswNbtLabelEpl epl = NbtClient.LpcGetLabel( nbtLabelget );
-
-                               if( epl.Status.Success )
-                               {
-                                   if( epl.Data.Labels.Length < 1 )
-                                   {
-                                       e.Message = "No labels returned.";
-                                   }
-                                   else
-                                   {
-                                       e.Succeeded = true;
-                                       foreach( PrintLabel p in epl.Data.Labels )
-                                       {
-                                           e.LabelData += p.EplText + "\r\n";
-                                       }
-                                   }
-                               }
-                               else
-                               {
-                                   e.Message += epl.Status.Errors[0].Message;
-                               }
-                           }
-                        );
-
-            if( OnLabelById != null )
+            CswNbtLabelEpl Ret;
+            using( OperationContextScope Scope = new OperationContextScope( NbtClient.InnerChannel ) )
             {
-                OnLabelById( e );
+                WebOperationContext.Current.OutgoingRequest.Headers.Add( "X-NBT-SessionId", auth.sessionId );
+                Ret = NbtClient.LpcGetLabel( nbtLabelget );
+            }
+
+            if( Ret.Authentication.AuthenticationStatus == "NonExistentSession" )
+            {
+                //the old session has timed out, and we need to authenticate again
+                CswNbtWebServiceSessionCswNbtAuthReturn authAttempt = _Authenticate( auth, e, NbtClient );
+                if( authAttempt.Authentication.AuthenticationStatus == "Authenticated" )
+                {
+                    LabelById( auth, labelid, targetid, aprinter );
+                }
+            }
+            else if( Ret.Authentication.AuthenticationStatus == "Authenticated" )
+            {
+                if( Ret.Status.Success )
+                {
+                    if( Ret.Data.Labels.Length < 1 )
+                    {
+                        e.Message = "No labels returned.";
+                    }
+                    else
+                    {
+                        e.Succeeded = true;
+                        foreach( PrintLabel p in Ret.Data.Labels )
+                        {
+                            e.LabelData += p.EplText + "\r\n";
+                        }
+                    }
+                }
+                else
+                {
+                    e.Message += Ret.Status.Errors[0].Message;
+                }
+                if( OnLabelById != null )
+                {
+                    OnLabelById( e );
+                }
             }
         } // LabelById()
 
@@ -228,6 +251,8 @@ namespace NbtPrintLib
         public delegate void NextJobInvoker( NbtAuth auth, PrinterSetupData aprinter );
         public void NextJob( NbtAuth auth, PrinterSetupData aprinter )
         {
+            NbtPublicClient NbtClient = _getClient( auth );
+
             NextJobEventArgs e = new NextJobEventArgs();
             e.printer.PrinterKey = aprinter.PrinterKey;
             e.printer.PrinterName = aprinter.PrinterName;
@@ -238,36 +263,49 @@ namespace NbtPrintLib
             e.auth.baseURL = auth.baseURL;
             e.auth.useSSL = auth.useSSL;
 
-            _Authenticate( auth, e,
-                           delegate( NbtPublicClient NbtClient ) // Success
-                           {
-                               CswNbtLabelJobRequest labelReq = new CswNbtLabelJobRequest();
-                               labelReq.PrinterKey = e.printer.PrinterKey;
+            CswNbtLabelJobRequest labelReq = new CswNbtLabelJobRequest();
+            labelReq.PrinterKey = e.printer.PrinterKey;
 
-                               CswNbtLabelJobResponse Ret = NbtClient.LpcGetNextJob( labelReq );
-
-                               if( Ret.Status.Success )
-                               {
-                                   e.Succeeded = true;
-                                   e.Job = Ret;
-                                   aprinter.LPCname = Ret.PrinterName;
-                               }
-                               else
-                               {
-                                   e.Message = "Error calling NextLabelJob web service. ";
-                                   if( Ret.Status.Errors.Length > 0 )
-                                   {
-                                       e.Message += Ret.Status.Errors[0].Message;
-                                   }
-                               }
-                           }
-                        );
-
-            if( OnNextJob != null )
+            CswNbtLabelJobResponse Ret;
+            using( OperationContextScope Scope = new OperationContextScope( NbtClient.InnerChannel ) )
             {
-                OnNextJob( e );
+                WebOperationContext.Current.OutgoingRequest.Headers.Add( "X-NBT-SessionId", auth.sessionId );
+                Ret = NbtClient.LpcGetNextJob( labelReq );
             }
-        }
+
+            if( Ret.Authentication.AuthenticationStatus == "NonExistentSession" )
+            {
+                //the old session has timed out, and we need to authenticate again
+                CswNbtWebServiceSessionCswNbtAuthReturn authAttempt = _Authenticate( auth, e, NbtClient );
+                if( authAttempt.Authentication.AuthenticationStatus == "Authenticated" )
+                {
+                    NextJob(  auth, aprinter );
+                }
+            }
+            else if( Ret.Authentication.AuthenticationStatus == "Authenticated" )
+            {
+                if( Ret.Status.Success )
+                {
+                    e.Succeeded = true;
+                    e.Job = Ret;
+                    aprinter.LPCname = Ret.PrinterName;
+                }
+                else
+                {
+                    e.Message = "Error calling NextLabelJob web service. ";
+                    if( Ret.Status.Errors.Length > 0 )
+                    {
+                        e.Message += Ret.Status.Errors[0].Message;
+                    }
+                }
+
+
+                if( OnNextJob != null )
+                {
+                    OnNextJob( e );
+                }
+            }
+        }//NextJob()
 
         #endregion
 
@@ -285,37 +323,54 @@ namespace NbtPrintLib
 
         public void updateJob( NbtAuth auth, string jobKey, bool success, string errorMsg )
         {
+            NbtPublicClient NbtClient = _getClient( auth );
+
             UpdateJobEventArgs e = new UpdateJobEventArgs();
 
-            _Authenticate( auth, e,
-                           delegate( NbtPublicClient NbtClient ) // Success
-                           {
-                               CswNbtLabelJobUpdateRequest Request = new CswNbtLabelJobUpdateRequest();
-                               Request.JobKey = jobKey;
-                               Request.Succeeded = success;
-                               Request.ErrorMessage = errorMsg;
+            CswNbtLabelJobUpdateRequest Request = new CswNbtLabelJobUpdateRequest();
+            Request.JobKey = jobKey;
+            Request.Succeeded = success;
+            Request.ErrorMessage = errorMsg;
 
-                               CswNbtLabelJobUpdateResponse Ret = NbtClient.LpcUpdateJob( Request );
-
-                               if( Ret.Status.Success )
-                               {
-                                   e.Succeeded = true;
-                               }
-                               else
-                               {
-                                   e.Message = "Error updating job: ";
-                                   if( Ret.Status.Errors.Length > 0 )
-                                   {
-                                       e.Message += Ret.Status.Errors[0].Message;
-                                   }
-                               }
-                           }
-                );
-
-            if( OnUpdateJob != null )
+            CswNbtLabelJobUpdateResponse Ret;
+            using( OperationContextScope Scope = new OperationContextScope( NbtClient.InnerChannel ) )
             {
-                OnUpdateJob( e );
+                WebOperationContext.Current.OutgoingRequest.Headers.Add( "X-NBT-SessionId", auth.sessionId );
+                Ret = NbtClient.LpcUpdateJob( Request );
             }
+
+            if( Ret.Authentication.AuthenticationStatus == "NonExistentSession" )
+            {
+                //the old session has timed out, and we need to authenticate again
+                CswNbtWebServiceSessionCswNbtAuthReturn authAttempt = _Authenticate( auth, e, NbtClient );
+                if( authAttempt.Authentication.AuthenticationStatus == "Authenticated" )
+                {
+                    updateJob( auth, jobKey, success, errorMsg );
+                }
+            }
+            else if( Ret.Authentication.AuthenticationStatus == "Authenticated" )
+            {
+                if( Ret.Status.Success )
+                {
+                    e.Succeeded = true;
+                }
+                else
+                {
+                    e.Message = "Error updating job: ";
+                    if( Ret.Status.Errors.Length > 0 )
+                    {
+                        e.Message += Ret.Status.Errors[0].Message;
+                    }
+                }
+
+
+                if( OnUpdateJob != null )
+                {
+                    OnUpdateJob( e );
+                }
+            }
+
+
         } // updateJob()
 
         #endregion updateJob

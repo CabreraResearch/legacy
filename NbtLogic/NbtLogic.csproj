@@ -118,6 +118,7 @@
     <Compile Include="csw\Actions\KioskModeRules\OperationClasses\ICswNbtKioskModeOpenable.cs" />
     <Compile Include="csw\Actions\Receiving\CswNbtAmountsGridQuantity.cs" />
     <Compile Include="csw\Actions\Receiving\CswNbtReceivingDefinition.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpBatchEdit.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpReceiving.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiButtonClick.cs" />
     <Compile Include="csw\Batch\CswEnumNbtBatchOpStatus.cs" />
@@ -594,6 +595,7 @@
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29563.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29717.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29428.cs" />
+    <Compile Include="csw\Schema\Import\CswNbtCAFImportOrder.cs" />
     <Compile Include="csw\Schema\Import\CswNbtSchemaUpdateImportMgr.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgrHlprImpl.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgr.cs" />
@@ -763,7 +765,15 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case31076.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31909.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31611.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case31893B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52761.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893_MaterialComps.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893_Constituents.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case31893A.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893_Biologicals.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31893_Supplies.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case32003.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case31907.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateDDL_02L_Case31907.cs" />
@@ -1045,7 +1055,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28254.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28260.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947_part2.cs" />

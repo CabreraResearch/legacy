@@ -20,6 +20,7 @@
             width: '200px',
             blankOptionText: '',
             filterToPermission: '',
+            filterToView: '',
             labelText: null,
             excludeNodeTypeIds: '',
             relatedToNodeTypeId: '',
@@ -65,6 +66,7 @@
                     RelatedToNodeTypeId: cswPrivate.relatedToNodeTypeId,
                     RelatedObjectClassPropName: cswPrivate.relatedObjectClassPropName,
                     FilterToPermission: cswPrivate.filterToPermission,
+                    FilterToView: cswPrivate.filterToView,
                     RelationshipNodeTypePropId: cswPrivate.relationshipNodeTypePropId,
                     Searchable: false
                 },

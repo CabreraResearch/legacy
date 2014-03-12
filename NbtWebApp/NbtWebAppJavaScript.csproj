@@ -62,6 +62,7 @@
     <DocumentationFile>..\bin\NbtJavaScript.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\wizards\csw.batchedit.js" />
     <Content Include="app\actions\csw.explorer.js" />
     <Content Include="app\actions\csw.deletedemodata.js" />
     <Content Include="app\actions\csw.managelocations.js" />

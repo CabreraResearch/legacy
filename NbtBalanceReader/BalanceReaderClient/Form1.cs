@@ -9,6 +9,7 @@ using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BalanceReaderClient.NbtPublic;
+using ChemSW.Encryption;
 
 namespace BalanceReaderClient
 {
@@ -20,7 +21,7 @@ namespace BalanceReaderClient
         private Dictionary<string, BalanceConfiguration> _configurationList; 
         private Timer _balancePollTimer;
         private NbtAuth _authenticationClient;
-        private static string ConfigPath = Path.GetDirectoryName( Application.ExecutablePath ) + "/BalanceReaderClient.cfg";
+        private static string ConfigPath = Path.GetDirectoryName( Application.ExecutablePath ) + "\\BalanceReaderClient.cfg";
 
         public Form1()
         {
@@ -142,11 +143,13 @@ namespace BalanceReaderClient
         /// <param name="E"></param>
         public void saveUserSettings( object Sender, EventArgs E )
         {
+            CswEncryption Encryptor = new CswEncryption( "" );
+            string PasswordString = string.IsNullOrEmpty( _authenticationClient.Password ) ? "" : Encryptor.encrypt( _authenticationClient.Password );
 
             string[] ConfigurationFileLines = new string[5 + _balanceList.Count];
             ConfigurationFileLines[0] = _authenticationClient.AccessId;
             ConfigurationFileLines[1] = _authenticationClient.UserId;
-            ConfigurationFileLines[2] = _authenticationClient.Password;
+            ConfigurationFileLines[2] = PasswordString;
             ConfigurationFileLines[3] = _authenticationClient.baseURL;
             ConfigurationFileLines[4] = pollingFrequencyField.Value.ToString();
 
@@ -174,14 +177,26 @@ namespace BalanceReaderClient
             {
                 string[] ConfigurationFileLines = File.ReadAllLines( ConfigPath );
 
+                
+                string PasswordDecrypted;
+                if( string.IsNullOrEmpty( ConfigurationFileLines[2] ) )
+                {
+                    //need to manually avoid calling decrypt on an empty string to avoid an infinite loop
+                    PasswordDecrypted = "";
+                }
+                else
+                {
+                    CswEncryption Encryptor = new CswEncryption( "" );
+                    PasswordDecrypted = Encryptor.decrypt( ConfigurationFileLines[2] );
+                }
                 AccessIdField.Text = ConfigurationFileLines[0];
                 UsernameField.Text = ConfigurationFileLines[1];
-                PasswordField.Text = ConfigurationFileLines[2];
+                PasswordField.Text = PasswordDecrypted;
                 AddressField.Text = ConfigurationFileLines[3];
                 pollingFrequencyField.Value = Decimal.Parse( ConfigurationFileLines[4] );
                 _authenticationClient.AccessId = ConfigurationFileLines[0];
                 _authenticationClient.UserId = ConfigurationFileLines[1];
-                _authenticationClient.Password = ConfigurationFileLines[2];
+                _authenticationClient.Password = PasswordDecrypted;
                 _authenticationClient.baseURL = ConfigurationFileLines[3];
                 constructPollTimer( int.Parse( ConfigurationFileLines[4] ) );
 
@@ -270,13 +285,14 @@ namespace BalanceReaderClient
 
 
             //define how to update UI when the authentication attempt resolves
-            NbtAuth.SessionCompleteEvent fetchConfigurations = delegate( NbtPublicClient Client, string StatusText )
+            NbtAuth.SessionCompleteEvent fetchConfigurations = delegate( NbtPublicClient Client )
             {
+                CswNbtBalanceReturn ReceivedConfigurations = Client.ListBalanceConfigurations();
+                string StatusText = ReceivedConfigurations.Authentication.AuthenticationStatus;
                 if( "Authenticated" == StatusText )
                 {
                     Dictionary<string, BalanceConfiguration> NewConfigurationList = new Dictionary<string, BalanceConfiguration>();
 
-                    CswNbtBalanceReturn ReceivedConfigurations = Client.ListBalanceConfigurations();
                     foreach( BalanceConfiguration Item in ReceivedConfigurations.Data.ConfigurationList )
                     {
                         NewConfigurationList.Add( Item.Name, Item );
@@ -295,18 +311,20 @@ namespace BalanceReaderClient
                     ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Please provide connection details for ChemSW Live.\r\n"; } ) );
                     tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
                 }
-                else
+                else if( "NonExistentSession" != StatusText )
                 {
                      ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection Error: " + StatusText + "\r\n"; } ) );
                      tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
                 }
+
+                return StatusText;
+
             };//SessionCompleteEvent fetchConfigurations
 
             //Perform a test connection asynchronously, using the managed thread pool
             BackgroundWorker GetConfigurations = new BackgroundWorker();
             GetConfigurations.DoWork += _authenticationClient.PerformActionAsync;
             GetConfigurations.RunWorkerAsync( fetchConfigurations );
-
 
         }//refreshConfigurationList()
 
@@ -518,8 +536,26 @@ namespace BalanceReaderClient
         {
 
           //define how to update UI when the authentication attempt resolves
-            NbtAuth.SessionCompleteEvent PrintStatusMessage = delegate(NbtPublicClient Client, string StatusText )
+            NbtAuth.SessionCompleteEvent PrintStatusMessage = delegate(NbtPublicClient Client )
                 {
+                    string StatusText = "";
+                    try
+                    {
+                        CswNbtWebServiceSessionCswNbtAuthReturn AuthenticationRequest = Client.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest
+                            {
+                                CustomerId = _authenticationClient.AccessId,
+                                UserName = _authenticationClient.UserId,
+                                Password = _authenticationClient.Password,
+                                IsMobile = true,
+                                SuppressLog = true
+                            } );
+
+                        StatusText = AuthenticationRequest.Authentication.AuthenticationStatus;
+                    }
+                    catch( Exception E )
+                    {
+                        StatusText += E.Message;
+                    }
                     switch( StatusText )
                     {
                         case "Failed":
@@ -546,12 +582,16 @@ namespace BalanceReaderClient
                             ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Please check the host address for your connection.\r\n"; } ) );
                             break;
 
+                        case "ShowLicense": 
+                            ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "An administrator must accept the license for Cispro Cloud before using the client.\r\n"; } ) );
+                            break;
+
                         default:
                             ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection Error: " + StatusText + "\r\n"; } ) );
                             break;
 
                     }//switch ( StatusText )
-
+                    return StatusText;
                 };//SessionCompleteEvent PrintStatusMessage
 
 
@@ -594,11 +634,10 @@ namespace BalanceReaderClient
         private void saveTemplateButton_Click( object sender, EventArgs e )
         {
 
-            NbtAuth.SessionCompleteEvent sendConfiguration = delegate( NbtPublicClient Client, string StatusText )
-            {
-                if( "Authenticated" == StatusText )
+            NbtAuth.SessionCompleteEvent sendConfiguration = delegate( NbtPublicClient Client )
                 {
-                  BalanceConfiguration ConfigurationToSend = new BalanceConfiguration();
+                    string StatusText = "";
+                    BalanceConfiguration ConfigurationToSend = new BalanceConfiguration();
                     ConfigurationToSend.Name = templateNameBox.Text;
                     ConfigurationToSend.RequestFormat = templateRequestBox.Text;
                     ConfigurationToSend.ResponseFormat = templateExpressionBox.Text;
@@ -609,21 +648,18 @@ namespace BalanceReaderClient
                     templateHandshakeBox.Invoke( (Action) ( () => { ConfigurationToSend.Handshake = templateHandshakeBox.SelectedValue.ToString(); } ) );
 
 
-                    BalanceConfiguration RegisteredBalance = Client.registerBalanceConfiguration( ConfigurationToSend ).Data.ConfigurationList[0];
-                    if( null != RegisteredBalance )
+                    StatusText = Client.registerBalanceConfiguration( ConfigurationToSend ).Authentication.AuthenticationStatus;
+                    if( StatusText == "Authenticated" )
                     {
                         saveUserSettings( this, new EventArgs() );
                         refreshConfigurationList();
                     }
-
-
-                } //if( "Authenticated" == StatusText )
-                else
-                {
-                    ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection Error: " + StatusText + "\r\n"; } ) );
-                    tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
-                }
-            };//SessionCompleteEvent fetchConfigurations
+                    else if ( StatusText != "NonExistentSession" )
+                    {
+                        tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
+                    }
+                    return StatusText;
+                };//SessionCompleteEvent fetchConfigurations
 
 
             //Perform a test connection asynchronously, using the managed thread pool
