@@ -28,7 +28,7 @@ namespace NbtWebApp.WebSvc.Logic.API
         {
             return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, GenericRequest, Return );
         }
-        
+
         public void GetResource( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
         {
             if( hasPermission( GenericRequest, Return ) )
@@ -44,7 +44,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         Return.ObjectClass = Node.ObjClass.ObjectClass.ObjectClassName;
                         Return.PropertySet = Node.getObjectClass().getPropertySet().Name;
                         Return.URI = "api/v1/" + Node.getNodeType().NodeTypeName + "/" + GenericRequest.NodeId.PrimaryKey; //TODO: this URI needs to have the "localhost/NbtDev" part
-                        
+
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         CswNbtMetaDataNodeType NodeType = Node.getNodeType();
                         //TODO: better way to get property data - we're forcing it to be by tab...we should get ALL properties, regardless of what tab they're on
@@ -57,7 +57,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         Return.Status = HttpStatusCode.NotFound;
                     }
                 }
-                catch( Exception ex )
+                catch( Exception )
                 {
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
@@ -84,7 +84,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         Return.Status = HttpStatusCode.NotFound;
                     }
                 }
-                catch( Exception ex )
+                catch( Exception )
                 {
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
