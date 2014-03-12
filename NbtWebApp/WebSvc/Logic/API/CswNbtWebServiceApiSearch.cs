@@ -59,7 +59,7 @@ namespace NbtWebApp.WebSvc.Logic.API
 
                 Return.Status = HttpStatusCode.OK;
             }
-            catch( Exception ex )
+            catch( Exception )
             {
                 Return.Status = HttpStatusCode.InternalServerError;
             }
