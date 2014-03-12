@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -120,7 +122,24 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return string.Empty;
         }
 
-        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode ) { }
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+            CswNbtNodePropText OptionsProp = DesignNTPNode.AttributeProperty[AttributeName.Options].AsText;
+            CswDelimitedString ListOptions = new CswDelimitedString( ',' );
+            ListOptions.FromString( OptionsProp.Text.Trim() );
+            List<string> ValidOptions = new List<string>();
+            for( int i = 0; i < ListOptions.Count; i++ )
+            {
+                if( ValidOptions.Contains( ListOptions[i] ))
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "All options must be unique", "Duplicate option: " + ListOptions[i] );
+                }
+                else
+                {
+                    ValidOptions.Add( ListOptions[i] );
+                }
+            }
+        }
 
     }//ICswNbtFieldTypeRule
 
