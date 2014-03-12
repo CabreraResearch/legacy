@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType GhsClassNT = GhsClassOC.FirstNodeType;
 
             View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
-            View.ViewMode = CswEnumNbtViewRenderingMode.Grid; 
+            View.ViewMode = CswEnumNbtViewRenderingMode.Grid;
             View.Root.ChildRelationships.Clear();
             if( SelectedClassIds.Count > 0 )
             {
@@ -226,7 +226,16 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( LabelCodes.Options.ContainsValue( LabelCode.Trim().ToUpper() ) )
                 {
-                    LabelCodes.AddValue( LabelCodes.Options.FirstOrDefault( x => x.Value == LabelCode.Trim().ToUpper() ).Key );
+                    KeyValuePair<string, string> first = new KeyValuePair<string, string>();
+                    foreach( KeyValuePair<string, string> x in LabelCodes.Options.Where( x => x.Value == LabelCode.Trim().ToUpper() ) )
+                    {
+                        first = x;
+                        break;
+                    }
+                    if( false == LabelCodes.Value.Contains( first.Key ) )
+                    {
+                        LabelCodes.AddValue( first.Key );
+                    }
                 }
             }
             AddLabelCodes.Text = string.Empty;
