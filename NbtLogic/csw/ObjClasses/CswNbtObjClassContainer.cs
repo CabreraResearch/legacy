@@ -18,7 +18,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable
+    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable, ICswNbtKioskModeTransferable
     {
         #region Properties
 
@@ -76,6 +76,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtContainerDispenser Dispenser;
         private CswNbtContainerDisposer _Disposer;
         private CswNbtKioskModeOpenableImpl _Opener;
+        private CswNbtKioskModeMoveableImpl _Mover;
+        private CswNbtKioskModeOwnerableImpl _Ownerer;
+        private readonly CswNbtKioskModeTransferableImpl _Transferer;
 
         public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
@@ -83,6 +86,9 @@ namespace ChemSW.Nbt.ObjClasses
             Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
             _Disposer = new CswNbtContainerDisposer( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
             _Opener = new CswNbtKioskModeOpenableImpl( _CswNbtResources, this );
+            _Mover = new CswNbtKioskModeMoveableImpl( _CswNbtResources, this );
+            _Ownerer = new CswNbtKioskModeOwnerableImpl( _CswNbtResources, this );
+            _Transferer = new CswNbtKioskModeTransferableImpl( CswNbtResources, this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -525,11 +531,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             this.Owner.RelatedNodeId = newOwner;
             this.Owner.RefreshNodeName();
-        }
-
-        public void UpdateOwner( CswNbtObjClassUser userNode )
-        {
-            UpdateOwner( userNode.NodeId );
         }
 
         /// <summary>
@@ -981,6 +982,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[PropertyName.Dispose] ); } }
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[PropertyName.Undispose] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
+
+        //For ICswNbtKioskModeOwnerable
+        public CswNbtNodePropRelationship User { get { return Owner; } }
+
         private void OnOwnerPropChange( CswNbtNodeProp Prop, bool Creating ) //case 28514
         {
             // Case 28800 - Fixes received container's location always defaulting to current user
@@ -1076,6 +1081,48 @@ namespace ChemSW.Nbt.ObjClasses
         public bool CanOpen()
         {
             return _Opener.CanOpen();
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeMoveable
+
+        public bool CanMove( out string Error )
+        {
+            return _Mover.CanMove( out Error );
+        }
+
+        public void Move( CswNbtObjClassLocation LocationToMoveTo )
+        {
+            _Mover.Move( LocationToMoveTo );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeOwnerable
+
+        public bool CanUpdateOwner( out string Error )
+        {
+            return _Ownerer.CanMove( out Error );
+        }
+
+        public void UpdateOwner( CswNbtObjClassUser NewOwner )
+        {
+            _Ownerer.UpdateOwner( NewOwner );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeTransferable
+
+        public bool CanTransfer( out string Error )
+        {
+            return _Transferer.CanTransfer( out Error );
+        }
+
+        public void Transfer( CswNbtObjClassUser NewUser )
+        {
+            _Transferer.Transfer( NewUser );
         }
 
         #endregion

@@ -1,9 +1,9 @@
 ﻿using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Actions.KioskMode
 {
@@ -50,41 +50,13 @@ namespace ChemSW.Nbt.Actions.KioskMode
             string itemName = NodeType.NodeTypeName;
             string statusMsg = null;
 
-            switch( OpData.Field2.FoundObjClass )
+            ICswNbtKioskModeOwnerable AsOwnerable = (ICswNbtKioskModeOwnerable) node.ObjClass;
+            if( AsOwnerable.CanUpdateOwner( out statusMsg ) )
             {
-                case CswEnumNbtObjectClass.EquipmentAssemblyClass:
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
-                    {
-                        CswNbtObjClassEquipmentAssembly assemblyNode = node;
-                        assemblyNode.UpdateOwner( newOwner );
-                        succeeded = true;
-                    }
-                    break;
-                case CswEnumNbtObjectClass.EquipmentClass:
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
-                    {
-                        CswNbtObjClassEquipment equipmentNode = node;
-
-                        if( false == equipmentNode.Assembly.Empty )
-                        {
-                            statusMsg = "This equipment belongs to an assembly and cannot be changed directly.";
-                        }
-                        else
-                        {
-                            equipmentNode.UpdateOwner( newOwner );
-                            succeeded = true;
-                        }
-                    }
-                    break;
-                case CswEnumNbtObjectClass.ContainerClass:
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
-                    {
-                        CswNbtObjClassContainer containerNode = node;
-                        containerNode.UpdateOwner( newOwner );
-                        succeeded = true;
-                    }
-                    break;
+                AsOwnerable.UpdateOwner( newOwner );
+                succeeded = true;
             }
+            
             if( null != node && succeeded )
             {
                 node.postChanges( false );

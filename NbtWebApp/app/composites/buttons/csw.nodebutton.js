@@ -155,7 +155,7 @@
                         Csw.publish('onAnyNodeButtonClickFinish', true);
                         Csw.publish(Csw.enums.events.main.refreshHeader);
                         break;
-                    case 'Request':
+                    case 'Request'://This is specific to Material's Request button
                         //when the button is clicked without opening the menu, open the menu
                         cswPublic.button.menu.showMenu();
                         Csw.publish('onAnyNodeButtonClickFinish', true);

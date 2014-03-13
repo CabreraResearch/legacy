@@ -797,6 +797,12 @@
 
         //#region Finish
         cswPrivate.finalize = function () {
+            // CIS-52749: We want all buttons to be disabled on click of Finish, especially Finish 
+            cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
+            cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
+            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+            cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+
             function getMaterialDefinition() {
                 var createMaterialDef = {
                     useexistingmaterial: cswPrivate.state.useExistingTempNode,
@@ -842,6 +848,7 @@
                 } else {
                     Csw.tryExec(cswPrivate.makeAttachSDSStep.onStepCleanup);
                 }
+                
 
                 // Return the created object
                 return JSON.stringify(createMaterialDef);

@@ -303,6 +303,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["materialId"] = NodeId.ToString();
                             ButtonData.Data["state"]["materialNodeTypeId"] = NodeTypeId;
                             ButtonData.Data["state"]["tradeName"] = TradeName.Text;
+                            ButtonData.Data["state"]["nodeName"] = NodeName;
 
                             Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString() ) );
                             ButtonData.Data["state"]["containerlimit"] = ContainerLimit;

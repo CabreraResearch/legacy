@@ -1,5 +1,6 @@
 ﻿using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
@@ -43,46 +44,32 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public override void CommitOperation( ref OperationData OpData )
         {
             CswNbtNode itemToMove = _CswNbtResources.Nodes[OpData.Field2.NodeId];
-            string locationPropName = "Location";
-            switch( OpData.Field2.FoundObjClass )
-            {
-                case CswEnumNbtObjectClass.EquipmentClass:
-                    locationPropName = CswNbtObjClassEquipment.PropertyName.Location;
-                    break;
-                case CswEnumNbtObjectClass.EquipmentAssemblyClass:
-                    locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location;
-                    break;
-                case CswEnumNbtObjectClass.ContainerClass:
-                    locationPropName = CswNbtObjClassContainer.PropertyName.Location;
-                    break;
-            }
-            string itemType = itemToMove.getNodeType().NodeTypeName;
+            CswNbtMetaDataNodeType thisNT = itemToMove.getNodeType();
+            string itemType = thisNT.NodeTypeName;
 
-            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, itemToMove.getNodeType() ) && false == itemToMove.Properties[locationPropName].ReadOnly )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, itemToMove.getNodeType() ) && false == thisNT.getLocationProperty().ReadOnly )
             {
-                CswNbtObjClassLocation locationToMoveTo = _CswNbtResources.Nodes[OpData.Field1.NodeId];
-                itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
-                itemToMove.Properties[locationPropName].AsLocation.SyncGestalt();
-                itemToMove.Properties[locationPropName].AsLocation.RefreshNodeName();
-                itemToMove.postChanges( false );
-                OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Location.Gestalt + " > " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
-                base.CommitOperation( ref OpData );
+                ICswNbtKioskModeMoveable AsMoveable = (ICswNbtKioskModeMoveable) itemToMove.ObjClass;
+                string specificStatusError = string.Empty;
+                if( AsMoveable.CanMove( out specificStatusError ) )
+                {
+                    CswNbtObjClassLocation locationToMoveTo = _CswNbtResources.Nodes[OpData.Field1.NodeId];
+                    AsMoveable.Move( locationToMoveTo );
+                    itemToMove.postChanges( false );
+                    OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Location.Gestalt + " > " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
+                    base.CommitOperation( ref OpData );
+                }
+                else
+                {
+                    OpData.Field2.FoundObjClass = string.Empty;
+                    OpData.Field2.StatusMsg = specificStatusError;
+                    OpData.Field2.ServerValidated = false;
+                    OpData.Log.Add( DateTime.Now + " - ERROR: " + specificStatusError );
+                }
             }
             else
             {
                 string statusMsg = "You do not have permission to edit " + itemType + " (" + OpData.Field2.Value + ")";
-                if( OpData.Field2.FoundObjClass.Equals( CswEnumNbtObjectClass.EquipmentClass ) )
-                {
-                    CswNbtObjClassEquipment nodeAsEquip = itemToMove;
-                    if( null != nodeAsEquip.Assembly.RelatedNodeId )
-                    {
-                        CswNbtObjClassEquipmentAssembly assembly = _CswNbtResources.Nodes[nodeAsEquip.Assembly.RelatedNodeId];
-                        if( null != assembly )
-                        {
-                            statusMsg = "Cannot perform MOVE operation on Equipment (" + OpData.Field2.Value + ") when it belongs to Assembly (" + assembly.Barcode.Barcode + ")";
-                        }
-                    }
-                }
                 OpData.Field2.FoundObjClass = string.Empty;
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;

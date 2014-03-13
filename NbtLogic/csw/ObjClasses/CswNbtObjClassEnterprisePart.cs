@@ -49,7 +49,6 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                             CswNbtObjClassRequestItem RequestItem = RequestAct.makeEnterprisePartRequestItem( this, ButtonData );
                             ButtonData.Data["titleText"] = "Add to Cart: " + RequestItem.Type.Value;
-                            ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( RequestItem.Node );
                             ButtonData.Data["requestItemNodeTypeId"] = RequestItem.NodeTypeId;
                         }
