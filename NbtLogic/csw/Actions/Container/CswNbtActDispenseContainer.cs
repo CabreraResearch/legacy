@@ -227,7 +227,6 @@ namespace ChemSW.Nbt.Actions
             CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItemId];
             if( null != NodeAsRequestItem )
             {
-                //TODO - if we're dispensing a specific container or EP, we don't care about the specific material
                 CswNbtNode TargetNode = _CswNbtResources.Nodes[NodeAsRequestItem.Target.RelatedNodeId];
                 if( null != TargetNode )
                 {
