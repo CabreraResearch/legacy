@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
@@ -9,7 +10,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Actions.KioskMode
 {
-    public class CswNbtKioskModeRuleStatus : CswNbtKioskModeRule
+    public class CswNbtKioskModeRuleStatus: CswNbtKioskModeRule
     {
         public CswNbtKioskModeRuleStatus( CswNbtResources NbtResources )
             : base( NbtResources )
@@ -45,41 +46,31 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public override void CommitOperation( ref OperationData OpData )
         {
             CswNbtNode item = _CswNbtResources.Nodes[OpData.Field2.NodeId];
-            string statusPropName = "Status";
-            switch( OpData.Field2.FoundObjClass )
-            {
-                case CswEnumNbtObjectClass.EquipmentClass:
-                    statusPropName = CswNbtObjClassEquipment.PropertyName.Status;
-                    break;
-                case CswEnumNbtObjectClass.EquipmentAssemblyClass:
-                    statusPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status;
-                    break;
-            }
             string itemTypeName = item.getNodeType().NodeTypeName;
+            ICswNbtKioskModeStatusable AsStatusable = (ICswNbtKioskModeStatusable) item.ObjClass;
+            string statusMsg = string.Empty;
 
-            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, item.getNodeType() ) && false == item.Properties[statusPropName].ReadOnly )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, item.getNodeType() ) && false == AsStatusable.Status.ReadOnly )
             {
-                item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
-                item.postChanges( false );
+                if( AsStatusable.CanChangeStatus( out statusMsg ) )
+                {
+                    AsStatusable.ChangeStatus( OpData.Field1.Value );
+                    item.postChanges( false );
 
-                OpData.Log.Add( DateTime.Now + " - Status of " + itemTypeName + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
-                base.CommitOperation( ref OpData );
+                    OpData.Log.Add( DateTime.Now + " - Status of " + itemTypeName + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
+                    base.CommitOperation( ref OpData );
+                }
+                else
+                {
+                    OpData.Field2.FoundObjClass = string.Empty;
+                    OpData.Field2.StatusMsg = statusMsg;
+                    OpData.Field2.ServerValidated = false;
+                    OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
+                }
             }
             else
             {
-                string statusMsg = "You do not have permission to edit " + itemTypeName + " (" + OpData.Field2.Value + ")";
-                if( OpData.Field2.FoundObjClass.Equals( CswEnumNbtObjectClass.EquipmentClass ) )
-                {
-                    CswNbtObjClassEquipment nodeAsEquip = item;
-                    if( null != nodeAsEquip.Assembly.RelatedNodeId )
-                    {
-                        CswNbtObjClassEquipmentAssembly assembly = _CswNbtResources.Nodes[nodeAsEquip.Assembly.RelatedNodeId];
-                        if( null != assembly )
-                        {
-                            statusMsg = "Cannot perform STATUS operation on Equipment (" + OpData.Field2.Value + ") when it belongs to Assembly (" + assembly.Barcode.Barcode + ")";
-                        }
-                    }
-                }
+                statusMsg = "You do not have permission to edit " + itemTypeName + " (" + OpData.Field2.Value + ")";
                 OpData.Field2.FoundObjClass = string.Empty;
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;

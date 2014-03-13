@@ -2,15 +2,16 @@ using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.Actions.KioskModeRules.OperationClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassEquipmentAssembly : CswNbtObjClass
+    public class CswNbtObjClassEquipmentAssembly: CswNbtObjClass, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable, ICswNbtKioskModeTransferable, ICswNbtKioskModeStatusable
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Type = "Assembly Type";
             public const string AssemblyParts = "Assembly Parts";
@@ -50,7 +51,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static string PartsXValueName = "Uses";
 
-        public CswNbtObjClassEquipmentAssembly( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        private readonly CswNbtKioskModeMoveableImpl _Mover;
+        private readonly CswNbtKioskModeOwnerableImpl _Ownerer;
+        private readonly CswNbtKioskModeTransferableImpl _Transferer;
+        private readonly CswNbtKioskModeStatusableImpl _Statuser;
+
+        public CswNbtObjClassEquipmentAssembly( CswNbtResources CswNbtResources, CswNbtNode Node )
+            : base( CswNbtResources, Node )
+        {
+            _Mover = new CswNbtKioskModeMoveableImpl( CswNbtResources, this );
+            _Ownerer = new CswNbtKioskModeOwnerableImpl( CswNbtResources, this );
+            _Transferer = new CswNbtKioskModeTransferableImpl( CswNbtResources, this );
+            _Statuser = new CswNbtKioskModeStatusableImpl( CswNbtResources, this );
+        }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -105,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NodesUpdate.update( NodesTable );
                 }
             }
-        }      
+        }
 
         protected override void afterPopulateProps()
         {
@@ -158,26 +171,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        #region Custom Logic
-
-        public void TransferAssembly( CswNbtObjClassUser NewUser )
-        {
-            Location.SelectedNodeId = NewUser.DefaultLocationId;
-            Location.SyncGestalt();
-            Location.RefreshNodeName();
-
-            UpdateOwner( NewUser );
-        }
-
-        public void UpdateOwner( CswNbtObjClassUser NewUser )
-        {
-            User.RelatedNodeId = NewUser.NodeId;
-            User.SyncGestalt();
-            User.RefreshNodeName();
-        }
-
-        #endregion
-
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
@@ -216,6 +209,63 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropPropertyReference UserPhone { get { return ( _CswNbtNode.Properties[PropertyName.UserPhone] ); } }
 
         #endregion
+
+        #region ICswNbtKioskModeMovable
+
+        public bool CanMove( out string Error )
+        {
+            return _Mover.CanMove( out Error );
+        }
+
+        public void Move( CswNbtObjClassLocation LocationToMoveTo )
+        {
+            _Mover.Move( LocationToMoveTo );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeOwnerable
+
+        public bool CanUpdateOwner( out string Error )
+        {
+            return _Ownerer.CanMove( out Error );
+        }
+
+        public void UpdateOwner( CswNbtObjClassUser NewOwner )
+        {
+            _Ownerer.UpdateOwner( NewOwner );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeTransferable
+
+        public bool CanTransfer( out string Error )
+        {
+            return _Transferer.CanTransfer( out Error );
+        }
+
+        public void Transfer( CswNbtObjClassUser NewUser )
+        {
+            _Transferer.Transfer( NewUser );
+        }
+
+        #endregion
+
+        #region ICswNbtKioskModeStatusable
+
+        public bool CanChangeStatus( out string Error )
+        {
+            return _Statuser.CanChangeStatus( out Error );
+        }
+
+        public void ChangeStatus( string newStatus )
+        {
+            _Statuser.ChangeStatus( newStatus );
+        }
+
+        #endregion
+
     }//CswNbtObjClassEquipmentAssembly
 
 }//namespace ChemSW.Nbt.ObjClasses

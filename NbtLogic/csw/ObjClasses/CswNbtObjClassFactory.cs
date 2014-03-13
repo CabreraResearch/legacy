@@ -191,6 +191,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassLQNo( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.ManufacturerClass:
+                    ReturnVal = new CswNbtObjClassManufacturer( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.ManufacturerEquivalentPartClass:
                     ReturnVal = new CswNbtObjClassManufacturerEquivalentPart( CswNbtResources, Node );
                     break;
