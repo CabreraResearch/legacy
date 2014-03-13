@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.RscAdo;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
@@ -96,6 +98,12 @@ namespace ChemSW.Nbt.WebServices
                 DesignResponse.ObjectClassId = FieldTypeNT.ObjectClassId;
                 Return.Data = DesignResponse;
             }
+        }
+
+        public static void createNTViews( ICswResources CswResources, string Ret, string Req )
+        {
+            List<CswStoredProcParam> Params = new List<CswStoredProcParam>();
+            CswResources.execStoredProc( "CREATEALLNTVIEWS", Params );
         }
 
     }//CswNbtWebServiceDesign class

@@ -602,11 +602,6 @@ namespace ChemSW.Nbt.Schema
             ActionsTable.update( ActionsDataTable );
 
             // Grant permission to Administrator
-            CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-            if( RoleNode != null )
-            {
-                _CswNbtResources.Permit.set( Name, (CswNbtObjClassRole) RoleNode, true );
-            }
             CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             if( RoleNode2 != null )
             {
