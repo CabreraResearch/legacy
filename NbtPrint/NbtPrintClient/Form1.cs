@@ -218,7 +218,7 @@ namespace NbtPrintClient
             config.accessid = tbAccessId.Text;
             config.logon = tbUsername.Text;
             config.serviceMode = cbServiceMode.Checked;
-            config.password = tbPassword.Text;
+            config.encryptPassword( tbPassword.Text );
             config.SaveToReg( Application.UserAppDataRegistry );
             if( false == timer1.Enabled )
             {

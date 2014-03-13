@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ViewNodesButton = "View Nodes";
         }
 
+        private bool _overrideNodeConversionCheck = false;
 
         //private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -670,7 +671,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     ObjectClassProperty.ServerManaged = true;
                 }
-                else
+                else if ( false == _overrideNodeConversionCheck )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this NodeType", "Nodetype " + RelationalNodeType.NodeTypeName + " (" + RelationalNodeType.NodeTypeId + ") cannot be converted because it is not Generic" );
                 }
@@ -895,6 +896,27 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
         } // RecalculateQuestionNumbers()
+
+        /// <summary>
+        /// STOP. IS THIS REALLY WHAT YOU WANT TO DO? 
+        /// Change the object class of the nodetype referenced by this DNT node. Make sure you update all the props manually
+        /// </summary>
+        /// <param name="NewOC">the object class you want to apply to this NT</param>
+        public void changeParentObjectClass( CswNbtMetaDataObjectClass NewOC )
+        {
+            _overrideNodeConversionCheck = true;
+            //The ObjectClass is a bit of a 'fake' prop, so we can't just set it directly. Instead, use reassign, then update the value on the DNT manually
+            ObjectClass.Reassign( NewOC._DataRow );
+            Node.Properties[PropertyName.ObjectClass].SetSubFieldValue( CswEnumNbtSubFieldName.Value, NewOC.ObjectClassId );
+            //TODO: we could probably dynamically handle reassignment of the OCPs here.... but should we?
+            
+            Node.postOnlyChanges( true );
+
+            _overrideNodeConversionCheck = false;
+        }
+
+
+
 
     }//CswNbtObjClassDesignNodeType
 
