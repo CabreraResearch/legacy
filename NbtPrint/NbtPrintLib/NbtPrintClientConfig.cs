@@ -10,11 +10,7 @@ namespace NbtPrintLib
         public PrinterSetupDataCollection printers = null;
         public string accessid;
         public string logon;
-        private string _password;
-        public string password { 
-            set { _password = encryptor.encrypt( value ); }
-            get { return _password; }
-        }
+        public string password;
 
         public string url;
         public bool serviceMode;
@@ -75,7 +71,7 @@ namespace NbtPrintLib
                 pwd = pwd.Replace( "\0", string.Empty );
                 if( pwd.Length > 4 )
                 {
-                    password = encryptor.decrypt(pwd);
+                    password = pwd;
                 }
                 url = rootKey.GetValue( "serverurl" ).ToString();
                 if( url == string.Empty )
@@ -112,7 +108,23 @@ namespace NbtPrintLib
         /// <returns></returns>
         public string getDecryptedPassword()
         {
-            return encryptor.decrypt( _password );
+            return encryptor.decrypt( password );
+        }
+
+        public string getEncryptedPassword()
+        {
+            return password;
+        }
+
+        /// <summary>
+        /// get the DES-hashed value of the entered password
+        /// </summary>
+        /// <param name="newPass">the password to be encrypted</param>
+        /// <returns></returns>
+        public string encryptPassword(string newPass)
+        {
+            password = encryptor.encrypt( newPass );
+            return password;
         }
 
     }
