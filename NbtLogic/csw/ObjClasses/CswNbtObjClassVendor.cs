@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CorporateEntityName = "Corporate Entity";
             public const string VendorTypeName = "Vendor Type";
             public const string Country = "Country";
+            public const string Internal = "Internal";
         }
 
         public sealed class VendorTypes
