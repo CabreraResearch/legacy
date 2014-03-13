@@ -46,6 +46,7 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02L_Case31893_MaterialComps(),
                     new CswUpdateSchema_02L_Case31893(),
                     new CswUpdateSchema_02L_Case52266(),
+                    new CswUpdateSchema_02L_Case52446(),
                     new CswUpdateSchema_02L_Case52285()
                 };
         } // _SchemaScripts()
