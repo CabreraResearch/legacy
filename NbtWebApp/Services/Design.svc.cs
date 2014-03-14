@@ -175,5 +175,20 @@ namespace NbtWebApp.Services
             GetViewDriverType.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        public void createNTViews()
+        {
+            var GetViewDriverType = new CswWebSvcDriver<string, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : string.Empty,
+                WebSvcMethodPtr : CswNbtWebServiceDesign.createNTViews,
+                ParamObj : string.Empty
+                );
+
+            GetViewDriverType.run();
+        }
     }
 }

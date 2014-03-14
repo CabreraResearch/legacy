@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -35,6 +36,18 @@ namespace ChemSW.Nbt.ObjClasses
         #region Inherited Events
 
         //Extend CswNbtObjClass events here
+
+        protected override void afterPopulateProps()
+        {
+            Qualified.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+                {
+                    if( null != ManufacturingSite.RelatedNodeId )
+                    {
+                        CswNbtObjClassVendor ManufacturingSiteVendor = _CswNbtResources.Nodes[ManufacturingSite.RelatedNodeId];
+                        Qualified.setReadOnly( ManufacturingSiteVendor.Internal.Checked != CswEnumTristate.True, true );
+                    }
+                });
+        }
 
         #endregion
 
