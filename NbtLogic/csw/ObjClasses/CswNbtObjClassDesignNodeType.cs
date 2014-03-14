@@ -671,8 +671,11 @@ namespace ChemSW.Nbt.ObjClasses
 
                     ObjectClassProperty.ServerManaged = true;
                 }
-                else if ( false == _overrideNodeConversionCheck )
+                else if( _overrideNodeConversionCheck )
                 {
+                    _requiresSync = true;
+                }
+                else {
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this NodeType", "Nodetype " + RelationalNodeType.NodeTypeName + " (" + RelationalNodeType.NodeTypeId + ") cannot be converted because it is not Generic" );
                 }
             }
@@ -782,8 +785,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
 
-            CswNbtMetaDataObjectClass DesignPropOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-            CswNbtMetaDataObjectClassProp NtpNodeTypeOCP = DesignPropOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+            CswNbtMetaDataObjectClass DesignPropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+            CswNbtMetaDataObjectClassProp NtpNodeTypeOCP = DesignPropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
 
             CswNbtView PropsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship ocRel = PropsView.AddViewRelationship( this.ObjectClass, false );
@@ -905,12 +908,10 @@ namespace ChemSW.Nbt.ObjClasses
         public void changeParentObjectClass( CswNbtMetaDataObjectClass NewOC )
         {
             _overrideNodeConversionCheck = true;
-            //The ObjectClass is a bit of a 'fake' prop, so we can't just set it directly. Instead, use reassign, then update the value on the DNT manually
-            ObjectClass.Reassign( NewOC._DataRow );
+
             Node.Properties[PropertyName.ObjectClass].SetSubFieldValue( CswEnumNbtSubFieldName.Value, NewOC.ObjectClassId );
-            //TODO: we could probably dynamically handle reassignment of the OCPs here.... but should we?
             
-            Node.postOnlyChanges( true );
+            Node.postChanges( true );
 
             _overrideNodeConversionCheck = false;
         }
