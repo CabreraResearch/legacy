@@ -91,7 +91,8 @@ namespace ChemSW.Nbt.ObjClasses
             Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>
             {
                 CswEnumNbtObjectClass.ChemicalClass,
-                CswEnumNbtObjectClass.NonChemicalClass
+                CswEnumNbtObjectClass.NonChemicalClass,
+                CswEnumNbtObjectClass.BiologicalClass,
             };
             return Ret;
         }
