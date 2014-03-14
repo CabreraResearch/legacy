@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.PropTypes
         public void AddValue( string ValueToAdd )
         {
             CswCommaDelimitedString myValue = Value;
-            myValue.Add( ValueToAdd );
+            myValue.Add( ValueToAdd, IsUnique: true );
             Value = myValue;
         }
 
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.PropTypes
         public void RemoveValue( string ValueToRemove )
         {
             CswCommaDelimitedString myValue = Value;
-            myValue.Remove( ValueToRemove );
+            myValue.RemoveAll( ValueToRemove );
             Value = myValue;
         }
 

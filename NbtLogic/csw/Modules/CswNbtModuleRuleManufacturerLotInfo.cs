@@ -36,6 +36,8 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.ShowProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ViewCofA );
             }
+
+            CswNbtModuleRuleMLM.setReceiptLotPermissions( _CswNbtResources, true );
         }
 
         protected override void OnDisable()
@@ -63,6 +65,12 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.HideProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.ViewCofA );
             }
+
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+            {
+                CswNbtModuleRuleMLM.setReceiptLotPermissions( _CswNbtResources, false );
+            }
+
         } // OnDisable()
     } // class CswNbtModuleRuleCofA
 }// namespace ChemSW.Nbt
