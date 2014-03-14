@@ -1,5 +1,4 @@
 using System;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -60,7 +59,7 @@ namespace ChemSW.Nbt
 
             _toggleMaterialSupplierView( false );
             _toggleReceiptLotManufacturerView( false );
-            
+
             setReceiptLotPermissions( _CswNbtResources, true );
 
             //Case CIS-52280 on enable show Material props...
@@ -75,9 +74,8 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.RequiresCleaningEvent );
                 }
             }
-            
-            } // OnEnable()
 
+        } // OnEnable()
 
 
         protected override void OnDisable()
