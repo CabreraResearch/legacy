@@ -237,7 +237,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty viewProp2 = ParentRelationship.View.AddViewProperty( ParentRelationship, MaterialObsoleteOCP );
             viewProp2.ShowInGrid = false;
             // NOTE: Value is 'N' when the Obsolete property on the Material is false
-            ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode: CswEnumNbtFilterMode.Equals, Value: "N", ShowAtRuntime: true );
+            ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: "Y", ShowAtRuntime: true );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )

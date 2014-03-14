@@ -285,7 +285,15 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 // case 22486 - Don't allow deleting targets of required relationships
                 CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
-                string WhereClause = " where nodetypepropid in (select nodetypepropid from nodetype_props where isrequired = '1') and field1_fk = " + _CswNbtNode.NodeId.PrimaryKey.ToString();
+                // Case CIS-52536 - Delete validation should ignore temp nodes
+                string WhereClause = @"np 
+                                        WHERE  nodetypepropid IN (SELECT nodetypepropid 
+                                                                  FROM   nodetype_props 
+                                                                  WHERE  isrequired = '1') 
+                                               AND field1_fk = " + _CswNbtNode.NodeId.PrimaryKey.ToString() + @" 
+                                               AND (SELECT istemp 
+                                                    FROM   nodes n 
+                                                    WHERE  n.nodeid = np.nodeid) <> '1' ";
                 CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodeid" };
                 DataTable MatchTable = JctSelect.getTable( SelectClause, WhereClause );
 

@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -6,10 +10,6 @@ using ChemSW.Mail;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -352,10 +352,10 @@ namespace ChemSW.Nbt.Sched
                 }//for( Int32 u = 0; u < BatchData.RecipientIds.Count() && u < NodeLimit; u++ )
 
                 // case 27720, 28006, 31205, 30959
-                CurrentMailReport.ClearNodesToReport();                        
-                CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;  
-                
-                CurrentMailReport.RunStatus.AddComment( EmailReportStatusMessage ); 
+                CurrentMailReport.ClearNodesToReport();
+                CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;
+
+                CurrentMailReport.RunStatus.AddComment( EmailReportStatusMessage );
                 CurrentMailReport.postChanges( false );
             }//if( !CurrentMailReport.Recipients.Empty )
         }//processMailReport()
