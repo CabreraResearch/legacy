@@ -182,7 +182,7 @@
         };
 
         cswPrivate.onNodeClick = function(node) {
-            cswPrivate.startingNodeId = node.data.selectedId;
+            cswPrivate.startingNodeId = node.data.NodeId;
             $.ajax({
                 method: 'GET',
                 url: node.data.URI,
@@ -195,7 +195,7 @@
                         propsPanel.add({
                             title: prop.name,
                             html: prop.gestalt,
-                            bodyPadding: 20,
+                            bodyPadding: 10,
                             autoScroll: true
                         });
                     });
