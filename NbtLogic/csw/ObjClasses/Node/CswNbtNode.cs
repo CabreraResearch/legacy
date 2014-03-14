@@ -112,6 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             _SessionId = CswConvert.ToString( row["sessionid"] );
             _PendingUpdate = CswConvert.ToBoolean( row["pendingupdate"] );
             _Searchable = CswConvert.ToBoolean( row["searchable"] );
+            PendingEvents = CswConvert.ToBoolean( row["pendingevents"] );
             if( row.Table.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
             {
                 _AuditLevel = row[_CswAuditMetaData.AuditLevelColName].ToString();
@@ -171,6 +172,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _IsTemp; }
         }
+
+        /// <summary>
+        /// When set to true, the NodeUpdateEvents Scheduled Rule will perform update events for this Node
+        /// </summary>
+        public bool PendingEvents { get; set; }
 
         /// <summary>
         /// Converts a temp node to a real one.  
