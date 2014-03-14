@@ -80,6 +80,7 @@ order by casno, tradename";
                 }
                 ReportNode.SQL.Text = ReportSQL;
                 ReportNode.ReportName.Text = "Duplicate Chemicals";
+                ReportNode.Category.Text = "Materials";
             } );
         } // update()
 

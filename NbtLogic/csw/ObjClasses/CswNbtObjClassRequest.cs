@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
+        protected override void beforePromoteNodeLogic()
         {
             _setDefaultValues();
         }

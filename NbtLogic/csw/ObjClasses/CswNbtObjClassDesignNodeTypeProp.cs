@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
+        protected override void beforePromoteNodeLogic()
         {
             // Make sure propname is unique for this nodetype
             if( false == CswTools.IsPrimaryKey( NodeTypeValue.RelatedNodeId ) )
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                                            "Property must be attached to a nodetype",
                                            "Attempted to save a new property without a nodetype" );
             }
-            if( false == OverrideUniqueValidation &&
+            if( false == Node.OverrideValidation &&
                 null != RelationalNodeType && null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterPromoteNode()
 
-        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             // If display condition is set, required must be false
             if( false == DisplayConditionProperty.Empty )

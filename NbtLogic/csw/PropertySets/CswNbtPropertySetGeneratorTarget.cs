@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public virtual void beforePropertySetWriteNode( bool Creating ) { }
 
-        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             beforePropertySetWriteNode( Creating );
 

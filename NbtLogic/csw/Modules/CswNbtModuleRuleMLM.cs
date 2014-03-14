@@ -1,12 +1,15 @@
+using System;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
     /// <summary>
     /// Represents the CISPro Module
     /// </summary>
-    public class CswNbtModuleRuleMLM: CswNbtModuleRule
+    public class CswNbtModuleRuleMLM : CswNbtModuleRule
     {
         public CswNbtModuleRuleMLM( CswNbtResources CswNbtResources ) :
             base( CswNbtResources )
@@ -57,7 +60,23 @@ namespace ChemSW.Nbt
             _toggleMaterialSupplierView( false );
             _toggleReceiptLotManufacturerView( false );
 
-        }
+            setReceiptLotPermissions( _CswNbtResources, true );
+
+            //Case CIS-52280 on enable show Material props...
+            //   Manufacturing Sites Grid
+            //   Requires Cleaning Event
+            CswNbtMetaDataPropertySet materialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass materialOC in materialPS.getObjectClasses() )
+            {
+                foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+                {
+                    _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.ManufacturingSites );
+                    _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.RequiresCleaningEvent );
+                }
+            }
+
+        } // OnEnable()
+
 
         protected override void OnDisable()
         {
@@ -104,6 +123,23 @@ namespace ChemSW.Nbt
             _toggleMaterialSupplierView( true );
             _toggleReceiptLotManufacturerView( true );
 
+            //Case CIS-52280 on disable hide Material props...
+            //   Manufacturing Sites Grid
+            //   Requires Cleaning Event
+            CswNbtMetaDataPropertySet materialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass materialOC in materialPS.getObjectClasses() )
+            {
+                foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+                {
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.ManufacturingSites );
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtPropertySetMaterial.PropertyName.RequiresCleaningEvent );
+                }
+            }
+
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
+            {
+                setReceiptLotPermissions( _CswNbtResources, false );
+            }
         } // OnDisable()
 
         private void _toggleMaterialSupplierView( bool MLMDisabled )
@@ -122,9 +158,9 @@ namespace ChemSW.Nbt
                     {
                         CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
                         supplierView.AddViewPropertyAndFilter( parent,
-                                                               MetaDataProp : vendorTypeOCP,
-                                                               Value : CswNbtObjClassVendor.VendorTypes.Corporate,
-                                                               FilterMode : CswEnumNbtFilterMode.Equals );
+                                                               MetaDataProp: vendorTypeOCP,
+                                                               Value: CswNbtObjClassVendor.VendorTypes.Corporate,
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
                     }
                     supplierView.Visibility = CswEnumNbtViewVisibility.Property;
                     supplierView.ViewName = "Supplier";
@@ -147,15 +183,72 @@ namespace ChemSW.Nbt
                 {
                     CswNbtMetaDataObjectClassProp VendorTypeOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
                     ManufacturerView.AddViewPropertyAndFilter( Parent,
-                        MetaDataProp : VendorTypeOCP,
-                        Value : CswNbtObjClassVendor.VendorTypes.Manufacturing,
-                        FilterMode : CswEnumNbtFilterMode.Equals );
+                        MetaDataProp: VendorTypeOCP,
+                        Value: CswNbtObjClassVendor.VendorTypes.Manufacturing,
+                        FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 ManufacturerView.Visibility = CswEnumNbtViewVisibility.Property;
                 ManufacturerView.ViewName = "Manufacturer";
                 ManufacturerView.save();
             }
         }
+
+        public static void setReceiptLotPermissions( CswNbtResources CswNbtResources, bool PermValue )
+        {
+            // CIS-52258 - grant Receipt Lot permissions to cispro_ roles
+
+            CswNbtMetaDataObjectClass ReceiptLotOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+
+            CswNbtMetaDataObjectClass RoleOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClassProp RoleNameOCP = RoleOC.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
+
+            CswNbtView View = new CswNbtView( CswNbtResources );
+            View.ViewName = "MLM Enable - Find CISPro roles";
+            CswNbtViewRelationship roleRelationship = View.AddViewRelationship( RoleOC, false );
+            CswNbtViewProperty roleNameProp = View.AddViewProperty( roleRelationship, RoleNameOCP );
+            View.AddViewPropertyFilter( roleNameProp,
+                                        SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
+                                        FilterMode: CswEnumNbtFilterMode.Begins,
+                                        Value: "cispro_",
+                                        CaseSensitive: false );
+            ICswNbtTree RoleTree = CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes: true );
+            for( Int32 r = 0; r < RoleTree.getChildNodeCount(); r++ )
+            {
+                RoleTree.goToNthChild( r );
+
+                CswNbtObjClassRole RoleNode = RoleTree.getCurrentNode();
+                foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
+                {
+                    if( false == PermValue )
+                    {
+                        CswNbtResources.Permit.set( new CswEnumNbtNodeTypePermission[]
+                            {
+                                CswEnumNbtNodeTypePermission.View,
+                                CswEnumNbtNodeTypePermission.Create,
+                                CswEnumNbtNodeTypePermission.Edit,
+                                CswEnumNbtNodeTypePermission.Delete
+                            },
+                            ReceiptLotNT, RoleNode, PermValue );
+                    }
+                    else
+                    {
+                        CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.View, ReceiptLotNT, RoleNode, PermValue );
+                        if( "cispro_receiver" == RoleNode.Name.Text.ToLower() ||
+                            "cispro_admin" == RoleNode.Name.Text.ToLower() )
+                        {
+                            CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Edit, ReceiptLotNT, RoleNode, PermValue );
+                        }
+                        if( "cispro_admin" == RoleNode.Name.Text.ToLower() )
+                        {
+                            CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Delete, ReceiptLotNT, RoleNode, PermValue );
+                        }
+                    }
+                }
+                //RoleNode.postChanges( false );  CswNbtPermit does this.
+
+                RoleTree.goToParentNode();
+            }
+        } // setReceiptLotPermissions()
 
     } // class CswNbtModuleCISPro
 }// namespace ChemSW.Nbt

@@ -643,6 +643,11 @@
                                                 }]
                                             }
                                         });
+                                        
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'Design/createNTViews'
+                                        });
+                                        
                                         cswPrivate.nodeLayout.refresh();
                                     }
                                 });

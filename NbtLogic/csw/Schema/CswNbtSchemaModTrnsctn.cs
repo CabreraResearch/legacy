@@ -602,11 +602,6 @@ namespace ChemSW.Nbt.Schema
             ActionsTable.update( ActionsDataTable );
 
             // Grant permission to Administrator
-            CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-            if( RoleNode != null )
-            {
-                _CswNbtResources.Permit.set( Name, (CswNbtObjClassRole) RoleNode, true );
-            }
             CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             if( RoleNode2 != null )
             {
@@ -1046,7 +1041,7 @@ namespace ChemSW.Nbt.Schema
         /// <param name="PropertySet"></param>
         /// <param name="NewProperty"></param>
         /// <param name="NewPropertyFieldType"></param>
-        public void createPropertySetProp( CswEnumNbtPropertySetName PropertySet, string NewProperty, CswEnumNbtFieldType NewPropertyFieldType )
+        public void createPropertySetProp( CswEnumNbtPropertySetName PropertySet, string NewProperty, CswEnumNbtFieldType NewPropertyFieldType, bool IsRequired = false )
         {
             string UniqueTblUpdateName = PropertySet + "_jctpsocp_update";
             CswTableUpdate JctPSOCPUpdate = makeCswTableUpdate( UniqueTblUpdateName, "jct_propertyset_ocprop" );
@@ -1061,7 +1056,8 @@ namespace ChemSW.Nbt.Schema
                     NewOCP = createObjectClassProp( CurrentOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CurrentOC )
                     {
                         PropName = NewProperty,
-                        FieldType = NewPropertyFieldType
+                        FieldType = NewPropertyFieldType,
+                        IsRequired = IsRequired
                     } );
 
                     DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();

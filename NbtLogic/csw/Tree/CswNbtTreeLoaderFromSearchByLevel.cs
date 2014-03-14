@@ -32,7 +32,7 @@ namespace ChemSW.Nbt
         {
             _CswNbtResources = CswNbtResources;
             _RunAsUser = RunAsUser;
-            _SearchTerm = _makeSafeSearchTerm(SearchTerm);
+            _SearchTerm = _makeSafeSearchTerm( SearchTerm );
             _SearchType = SearchType;
             _ExtraWhereClause = WhereClause;
             _IncludeSystemNodes = IncludeSystemNodes;
@@ -301,6 +301,7 @@ namespace ChemSW.Nbt
                                           where op.propname in ('Location', 'Inventory Group', 'Report Group', 'Mail Report Group')
                                         ),
                                 permgrp as ( " + _makePermissionGroupSQL() + @" ),
+                                obsoleteprops as ( " + _makeMaterialObsoleteFilterSQL() + @" ),
                                   srch as ( select n.nodeid,
                                                    n.relationalid, n.relationaltable,
                                                    n.nodename,
@@ -327,13 +328,15 @@ namespace ChemSW.Nbt
                                                    propval.hidden,
                                                    propval.field1_big,
                                                    i.permissiongroupid,
-                                                   f.userid
+                                                   f.userid,
+                                                   oprops.obsolete
                                               from nodes n
                                               join nodetypes t on (n.nodetypeid = t.nodetypeid)
                                               join object_class o on (t.objectclassid = o.objectclassid)
                                               left outer join favorites f on n.nodeid = f.itemid " + CurrentUserIdClause + @"
                                               left outer join permgrp i on (n.nodeid = i.nodeid)
                                               left outer join props on (props.nodetypeid = t.nodetypeid)
+                                              left outer join obsoleteprops oprops on (oprops.nodeid = n.nodeid)
                                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
                                               left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid)
                                              where n.istemp = '0' ";
@@ -381,6 +384,8 @@ namespace ChemSW.Nbt
                     Query += @"                    and t.searchdeferpropid is null";
                 }
                 Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";
+                // Cas CIS-52280
+                Query += @"                    and ( oprops.obsolete is null or oprops.obsolete = '0' or oprops.obsolete = 'N')";
                 Query += _ExtraWhereClause;
                 // Case 31351: Exclude specific nodes
                 if( _ExcludeNodeIds.Count > 0 )
@@ -422,6 +427,21 @@ namespace ChemSW.Nbt
                            select n.nodeid, mrgval.field1_fk permissiongroupid
                              from nodes n
                              join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')";
+            return SQL;
+        }
+
+        private string _makeMaterialObsoleteFilterSQL()
+        {
+            string SQL = @"SELECT j.nodeid, 
+                                op.propname, 
+                                j.field1 as obsolete
+                         FROM   object_class_props op 
+                                join nodetype_props p 
+                                  ON op.objectclasspropid = p.objectclasspropid 
+                                join jct_nodes_props j 
+                                  ON j.nodetypepropid = p.nodetypepropid 
+                         WHERE  op.propname IN ( 'Obsolete', 'Material Obsolete' )";
+
             return SQL;
         }
 

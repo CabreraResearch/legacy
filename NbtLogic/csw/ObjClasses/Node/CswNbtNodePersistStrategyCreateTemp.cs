@@ -23,7 +23,6 @@ namespace ChemSW.Nbt.ObjClasses
             SkipEvents = false;
             AllowAuditing = false;
             Creating = true;
-            OverrideMailReportEvents = false;
         }
 
         public bool ForceUpdate { get; set; }
@@ -32,22 +31,27 @@ namespace ChemSW.Nbt.ObjClasses
         public bool SkipEvents { get; set; }
         public bool AllowAuditing { get; set; }
         public bool Creating { get; set; }
-        public bool OverrideMailReportEvents { get; set; }
         
         public void postChanges( CswNbtNode Node )
         {
+            Node.OverrideValidation = OverrideUniqueValidation;
             if( null != Node.ObjClass && false == SkipEvents )
             {
-                Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+                Node.ObjClass.beforeWriteNode( IsCopy, Creating );
             }
 
             Node.SessionId = _CswNbtResources.Session.SessionId;
 
-            Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+            if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies )
+            {
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+                Node.syncNodeName();
+                Node.write( ForceUpdate );
+            }
 
             if( null != Node.ObjClass && false == SkipEvents )
             {
-                Node.ObjClass.afterWriteNode( OverrideMailReportEvents );
+                Node.ObjClass.afterWriteNode();
             }
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );
