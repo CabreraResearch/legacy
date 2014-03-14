@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override CswEnumDeveloper Author
         {
-            get { return CswEnumDeveloper.NBT; }
+            get { return CswEnumDeveloper.CM; }
         }
 
         public override int CaseNo
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "B";
+            return "D";
         }
 
         public override void update()
