@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Base Node Event Logic
 
-        public void beforePromoteNode( bool OverrideUniqueValidation = false )
+        public void beforePromoteNode()
         {
             beforePromoteNodeLogic();
         }
@@ -160,10 +160,6 @@ namespace ChemSW.Nbt.ObjClasses
                 if( CurrentProp.wasAnySubFieldModified() )
                 {
                     _updateReferenceProps( CurrentProp );
-                    if( false == Creating )
-                    {
-                        _CswNbtNode.PendingEvents = true;
-                    }
                 }
             }
             if( false == Node.OverrideValidation )

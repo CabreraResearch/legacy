@@ -39,11 +39,16 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass && false == SkipEvents )
             {
-                Node.ObjClass.beforePromoteNode( OverrideUniqueValidation: OverrideUniqueValidation );
+                Node.ObjClass.beforePromoteNode();
                 Node.ObjClass.beforeWriteNode( IsCopy, Creating );
             }
 
-            Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+            if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies )
+            {
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+                Node.syncNodeName();
+                Node.write( ForceUpdate );
+            }
 
             if( null != Node.ObjClass && false == SkipEvents )
             {

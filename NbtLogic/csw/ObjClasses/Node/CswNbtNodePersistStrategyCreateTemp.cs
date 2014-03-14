@@ -42,7 +42,12 @@ namespace ChemSW.Nbt.ObjClasses
 
             Node.SessionId = _CswNbtResources.Session.SessionId;
 
-            Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+            if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies )
+            {
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+                Node.syncNodeName();
+                Node.write( ForceUpdate );
+            }
 
             if( null != Node.ObjClass && false == SkipEvents )
             {

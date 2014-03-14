@@ -40,9 +40,21 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != Node.ObjClass && false == SkipEvents)
                 {
                     Node.ObjClass.beforeWriteNode( IsCopy, Creating );
+                    //TODO - only do this if a prop has been modified
+                    Node.PendingEvents = true;
                 }
 
-                Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing && ( false == Node.IsTemp ), SkipEvents );
+                if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies )
+                {
+                    Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing && ( false == Node.IsTemp ), SkipEvents );
+                    string OldNodeName = Node.NodeName;
+                    Node.syncNodeName();
+                    if( Node.NodeName != OldNodeName )
+                    {
+                        Node.PendingEvents = true;
+                    }
+                    Node.write( ForceUpdate );
+                }
 
                 if( null != Node.ObjClass && false == SkipEvents )
                 {

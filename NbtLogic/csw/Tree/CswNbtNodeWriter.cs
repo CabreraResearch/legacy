@@ -104,19 +104,11 @@ namespace ChemSW.Nbt
             }
         }//makeNewNodeEntry()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
+        public void write( CswNbtNode Node, bool ForceSave )
         {
             if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
                 ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
             {
-                //TODO - CIS-52562 - can we derive a propUpdater based on the type of NodeUpdater we're using?
-
-                //propcoll knows whether or not he's got new values to update (presumably)
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
-
-                //set nodename with updated prop values
-                _synchNodeName( Node, Creating );
-
                 // save nodename and pendingupdate
                 if( Node.NodeId.TableName != "nodes" )
                     throw new CswDniException( CswEnumErrorType.Error, "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
@@ -150,10 +142,7 @@ namespace ChemSW.Nbt
                     NodesTable.Rows[0]["relationaltable"] = Node.RelationalId.TableName;
                 }
                 CswTableUpdateNodes.update( NodesTable );
-
-
             }//if node was modified
-
         }//write()
 
         private string _makeDefaultNodeName( CswNbtNode Node )
@@ -264,7 +253,7 @@ namespace ChemSW.Nbt
 
         }//delete()
 
-        private void _synchNodeName( CswNbtNode Node, bool Creating )
+        public void syncNodeName( CswNbtNode Node )
         {
             string OldNodeName = Node.NodeName;
             string NewNodeName = string.Empty;
@@ -309,12 +298,7 @@ namespace ChemSW.Nbt
             {
                 Node.NodeName = _makeDefaultNodeName( Node );
             }
-
-            if( Node.NodeName != OldNodeName && false == Creating )
-            {
-                Node.PendingEvents = true;
-            }
-        }//_synchNodeName()
+        }//syncNodeName()
 
         /// <summary>
         /// Create audit records as if the node is being inserted, for use with temp nodes
