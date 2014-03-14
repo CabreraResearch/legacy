@@ -92,7 +92,7 @@ namespace NbtWebApp.Actions.Explorer
                 CswNbtViewRelationship parent = view.AddViewRelationship( ObjClass, true );
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Req.NodeId );
                 view.AddViewPropertyAndFilter( parent, objectClassProp, Value : pk.PrimaryKey.ToString(), SubFieldName : CswEnumNbtSubFieldName.NodeID );
-                }
+            }
             else
             {
                 int NtId = CswConvert.ToInt32( Req.RelatingId.Substring( Req.RelatingId.LastIndexOf( '_' ) + 1 ) );
@@ -101,7 +101,7 @@ namespace NbtWebApp.Actions.Explorer
 
                 CswNbtViewRelationship parent = view.AddViewRelationship( NodeType, true );
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Req.NodeId );
-                view.AddViewPropertyAndFilter( parent, ntp, Value : pk.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+                view.AddViewPropertyAndFilter( parent, ntp, Value : pk.PrimaryKey.ToString(), SubFieldName : CswEnumNbtSubFieldName.NodeID );
             }
 
             ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, false, false, false );
@@ -162,7 +162,7 @@ namespace NbtWebApp.Actions.Explorer
             }
             return ret;
         }
-        
+
         private static void _recurseForRelatedNTs( CswNbtResources NbtResources, CswNbtExplorerReturn Return, int NodeTypeId, int level, string OwnerIdStr )
         {
             if( false == SEEN.Contains( NodeTypeId ) && level <= MAX_DEPTH )
@@ -181,6 +181,7 @@ namespace NbtWebApp.Actions.Explorer
                 string IconFilename = string.Empty;
                 string Id = string.Empty;
 
+                Random rand = new Random( DateTime.Now.Millisecond );
                 Collection<CswNbtViewRelationship> RelatedTypes = ViewRule.getViewChildRelationshipOptions( View, Relationship.ArbitraryId );
                 foreach( CswNbtViewRelationship Related in RelatedTypes )
                 {
@@ -194,12 +195,11 @@ namespace NbtWebApp.Actions.Explorer
 
                     if( Related.PropOwner == CswEnumNbtViewPropOwnerType.Second )
                     {
-
                         if( IdType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                         {
                             CswNbtMetaDataNodeType RelatedNodeType = NbtResources.MetaData.getNodeType( id );
                             IconFilename = RelatedNodeType.IconFileName;
-                            TargetIdStr = OwnerIdStr + "_NT_" + RelatedNodeType.NodeTypeId;
+                            TargetIdStr = OwnerIdStr + "_NT_" + RelatedNodeType.NodeTypeId + "_" + rand.Next();
                             Id = "NT_" + RelatedNodeType.NodeTypeId;
 
                             CswNbtMetaDataObjectClass ObjClass = RelatedNodeType.getObjectClass();
@@ -212,7 +212,7 @@ namespace NbtWebApp.Actions.Explorer
                         {
                             CswNbtMetaDataObjectClass RelatedObjClass = NbtResources.MetaData.getObjectClass( id );
                             IconFilename = RelatedObjClass.IconFileName;
-                            TargetIdStr = OwnerIdStr + "_OC_" + RelatedObjClass.ObjectClassId;
+                            TargetIdStr = OwnerIdStr + "_OC_" + RelatedObjClass.ObjectClassId + "_" + rand.Next();
                             Id = "OC_" + RelatedObjClass.ObjectClassId;
                             MetaDataName = RelatedObjClass.ObjectClassName;
                         }
@@ -220,7 +220,6 @@ namespace NbtWebApp.Actions.Explorer
                         if( ( ( IdType == CswEnumNbtViewRelatedIdType.NodeTypeId && FilterVal.Contains( "NT_" + id ) || ObjClassAllowed ) )
                             || ( IdType == CswEnumNbtViewRelatedIdType.ObjectClassId && FilterVal.Contains( "OC_" + id ) ) )
                         {
-
                             _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFilename, level, "Category", Id, MetaDataName, Related.PropId );
 
                             if( level + 1 <= MAX_DEPTH && WasNT )
@@ -275,6 +274,6 @@ namespace NbtWebApp.Actions.Explorer
                     } );
             }
         }
-        
+
     }
 }
