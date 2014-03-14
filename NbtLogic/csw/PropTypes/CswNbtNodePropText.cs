@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.PropTypes
                 Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
         }
-        
+
         public override void SyncGestalt()
         {
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
@@ -144,13 +144,14 @@ namespace ChemSW.Nbt.PropTypes
         {
             bool isUnique = false;
             CswTableSelect JctNodePropSelect = _CswNbtResources.makeCswTableSelect( NodeTypePropId + "_matching select", "jct_nodes_props" );
-            int PropNum = 1;
+            int PropNum = 2;
+            string NewText = Text;
             while( false == isUnique )
             {
-                DataTable MatchingPropsTable = JctNodePropSelect.getTable( "where nodetypepropid = " + NodeTypePropId + " and " + _TextSubField.Column + " = '" + Text + "'" );
+                DataTable MatchingPropsTable = JctNodePropSelect.getTable( "where nodetypepropid = " + NodeTypePropId + " and " + _TextSubField.Column + " = '" + NewText + "'" );
                 if( MatchingPropsTable.Rows.Count > 1 )
                 {
-                    Text = Text + PropNum;
+                    NewText = Text + " " + PropNum;
                     PropNum++;
                 }
                 else
@@ -158,7 +159,8 @@ namespace ChemSW.Nbt.PropTypes
                     isUnique = true;
                 }
             }
-        }
+            Text = NewText;
+        } // makeUnique()
 
     }//CswNbtNodePropText
 
