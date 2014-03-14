@@ -47,7 +47,6 @@ namespace ChemSW.Nbt
             }
         }//clear() 
 
-        //public void makeNewNodeEntry( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         public void makeNewNodeEntry( CswNbtNode Node )
         {
             // case 20970
@@ -63,6 +62,7 @@ namespace ChemSW.Nbt
             NewNodeRow["nodename"] = Node.NodeName;
             NewNodeRow["nodetypeid"] = CswConvert.ToDbVal( Node.NodeTypeId );
             NewNodeRow["pendingupdate"] = CswConvert.ToDbVal( false );
+            NewNodeRow["pendingevents"] = CswConvert.ToDbVal( false );
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
@@ -104,27 +104,11 @@ namespace ChemSW.Nbt
             }
         }//makeNewNodeEntry()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
+        public void write( CswNbtNode Node, bool ForceSave )
         {
             if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
                 ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
             {
-                //When CswNbtNode.NodeId is Int32.MinValue, we know that the node data was not 
-                //filled from an existing node and therefore needs to be written to 
-                //the db, after which it will have a node id
-                if( null == Node.NodeId )
-                {
-                    makeNewNodeEntry( Node );
-                    //makeNewNodeEntry( Node, IsCopy, OverrideUniqueValidation );
-                }
-
-                //bz # 5878
-                //propcoll knows whether or not he's got new values to update (presumably)
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
-
-                //set nodename with updated prop values
-                _synchNodeName( Node );
-
                 // save nodename and pendingupdate
                 if( Node.NodeId.TableName != "nodes" )
                     throw new CswDniException( CswEnumErrorType.Error, "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
@@ -144,11 +128,12 @@ namespace ChemSW.Nbt
                 NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
                 NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
                 NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+                NodesTable.Rows[0]["pendingevents"] = CswConvert.ToDbVal( Node.PendingEvents );
 
                 // case 29311 - Sync with relational data
                 if( Node.getNodeType().DoRelationalSync )
                 {
-                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy, AllowAuditing );
+                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave );
                 }
 
                 if( null != Node.RelationalId )
@@ -157,10 +142,7 @@ namespace ChemSW.Nbt
                     NodesTable.Rows[0]["relationaltable"] = Node.RelationalId.TableName;
                 }
                 CswTableUpdateNodes.update( NodesTable );
-
-
             }//if node was modified
-
         }//write()
 
         private string _makeDefaultNodeName( CswNbtNode Node )
@@ -204,31 +186,6 @@ namespace ChemSW.Nbt
                     }
                 }
             }
-        }
-
-        public void updateRelationsToThisNode( CswNbtNode Node )
-        {
-            if( Node.NodeId.TableName != "nodes" )
-                throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
-
-            string SQL = @"update jct_nodes_props 
-                              set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"' 
-                            where jctnodepropid in (select j.jctnodepropid
-                                                      from jct_nodes_props j
-                                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid
-                                                      join field_types f on p.fieldtypeid = f.fieldtypeid
-                                                     where (f.fieldtype = 'Relationship' or f.fieldtype = 'Location' or f.fieldtype = 'Quantity')
-                                                       and j.field1_fk = " + Node.NodeId.PrimaryKey.ToString() + ")";
-
-            // We're not doing this in a CswTableUpdate because it might be a large operation, 
-            // and we don't care about auditing for this change.
-            _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
-
-            //// case 29311 - Sync with relational data
-            //if( Node.getNodeType().DoRelationalSync )
-            //{
-            //    _CswNbtNodeWriterRelationalDb.updateRelationsToThisNode( Node );
-            //}
         }
 
         public void delete( CswNbtNode Node )
@@ -296,7 +253,7 @@ namespace ChemSW.Nbt
 
         }//delete()
 
-        private void _synchNodeName( CswNbtNode Node )
+        public void syncNodeName( CswNbtNode Node )
         {
             string OldNodeName = Node.NodeName;
             string NewNodeName = string.Empty;
@@ -341,15 +298,7 @@ namespace ChemSW.Nbt
             {
                 Node.NodeName = _makeDefaultNodeName( Node );
             }
-
-            // When a node's name changes, we need to update any relationships (and locations) referencing that node
-            if( Node.NodeName != OldNodeName )
-            {
-                updateRelationsToThisNode( Node );
-            }
-
-        }//_synchNodeName()
-
+        }//syncNodeName()
 
         /// <summary>
         /// Create audit records as if the node is being inserted, for use with temp nodes

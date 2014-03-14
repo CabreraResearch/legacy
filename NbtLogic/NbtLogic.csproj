@@ -223,6 +223,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
     <Compile Include="csw\ObjClasses\enum\CswNbtEnumMaterialRequestApprovalLevels.cs" />
+    <Compile Include="csw\ObjClasses\Node\CswNbtNodeUpdateEvents.cs" />
     <Compile Include="csw\ObjClasses\Node\CswNbtNodePersistStrategyCreateTemp.cs" />
     <Compile Include="csw\ObjClasses\Node\CswNbtNodePersistStrategyUpdate.cs" />
     <Compile Include="csw\ObjClasses\Node\CswNbtNodePersistStrategyPromoteReal.cs" />
@@ -254,6 +255,7 @@
     <Compile Include="csw\Requesting\CswNbtRequestItemType.cs" />
     <Compile Include="csw\Requesting\CswNbtRequestItemTypeMaterialCreate.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeUpdateEvents.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerRecords.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
@@ -766,7 +768,10 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case31076.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case53015.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52786.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52562.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateDDL_02L_Case52562.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52281.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52285.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52280B.cs" />
