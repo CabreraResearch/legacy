@@ -108,12 +108,6 @@ namespace ChemSW.Nbt.Schema
                 AuditLevel = true,
             } );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( BiologicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = "Tradename",
-                FieldType = CswEnumNbtFieldType.Text,
-                AuditLevel = true,
-            } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( BiologicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
@@ -142,12 +136,6 @@ namespace ChemSW.Nbt.Schema
                 AuditLevel = true,
             } );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( BiologicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = "Tradename",
-                FieldType = CswEnumNbtFieldType.Text,
-                AuditLevel = true,
-            } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( BiologicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
@@ -244,7 +232,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     string[] PropsToAdd = new string[]
                         {
-                            CswNbtObjClassBiological.PropertyName.TradeName,
                             CswNbtObjClassBiological.PropertyName.LegacyMaterialId,
                             CswNbtObjClassBiological.PropertyName.ApprovedForReceiving,
                             CswNbtObjClassBiological.PropertyName.C3ProductId,

@@ -732,7 +732,8 @@ namespace ChemSW.Nbt.ObjClasses
                     NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, PropNode );
                 } // if-else( null != PropNode )
 
-                PropNode.syncFromObjectClassProp();
+                //only update the layout when we're not overriding an existing nodetype
+                PropNode.syncFromObjectClassProp( false == _overrideNodeConversionCheck); 
 
             } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )
 
