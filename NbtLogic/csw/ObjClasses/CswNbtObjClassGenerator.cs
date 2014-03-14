@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             //Case 24572
             updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.wasAnySubFieldModified() || ParentType.wasAnySubFieldModified() ) );

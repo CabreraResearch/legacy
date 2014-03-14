@@ -34,12 +34,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void postChanges( CswNbtNode Node )
         {
+            Node.OverrideValidation = OverrideUniqueValidation;
             Node.removeTemp();
 
             if( null != Node.ObjClass && false == SkipEvents )
             {
                 Node.ObjClass.beforePromoteNode( OverrideUniqueValidation: OverrideUniqueValidation );
-                Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+                Node.ObjClass.beforeWriteNode( IsCopy, Creating );
             }
 
             Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
