@@ -101,6 +101,13 @@
                     xtype: 'panel',
                     width: 300,
                     id: 'west-region-container',
+                    tools: [{
+                        xtype: 'button',
+                        text: 'Center on This',
+                        handler: function() {
+                            cswPrivate.initSystem();
+                        }
+                    }],
                     autoScroll: true,
                     layout: {
                         // layout-specific configs go here
@@ -125,12 +132,12 @@
         };
 
         cswPrivate.initSystem = function () {
+            if (cswPrivate.sys) {
+                delete cswPrivate.sys;
+            }
+
             cswPrivate.sys = arbor.ParticleSystem(1000, 1000, 0.7);
             cswPrivate.sys.parameters({ gravity: true });
-
-            //if (Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
-            //    cswPrivate.startingNodeId = 'nodes_2';
-            //}
 
             Csw.ajaxWcf.post({
                 urlMethod: "Explorer/Initialize",
@@ -175,23 +182,83 @@
                         nodes: response.Nodes,
                         edges: response.Edges,
                         startNodeId: cswPrivate.startingNodeId,
-                        onNodeClick: cswPrivate.onNodeClick
+                        onNodeClick: cswPrivate.onNodeClick,
+                        onCategoryClick: cswPrivate.onCategoryClick
                     });
                 }
             });
         };
 
-        cswPrivate.onNodeClick = function(node) {
+        cswPrivate.onCategoryClick = function (category) {
+            Csw.ajaxWcf.post({
+                urlMethod: 'Explorer/GetRelating',
+                data: {
+                    NodeId: cswPrivate.startingNodeId,
+                    RelatingPropId: category.data.RelatingPropId,
+                    RelatingId: category.data.NodeId
+                },
+                success: function (response) {
+                    var relatingDialog = Csw.layouts.dialog({
+                        title: 'Relating',
+                        width: 800,
+                        height: 460,
+                        onOpen: function () {
+                            var data = { 'items': [] };
+                            var customColumns = [];
+                            Csw.iterate(response.entities, function (node) {
+                                data.items.push({
+                                    nodename: node.nodename,
+                                    nodeid: node.nodeid
+                                });
+                                customColumns.push('Open');
+                            });
+
+                            relatingDialog.div.grid({
+                                height: 400,
+                                showActionColumn: false,
+                                makeCustomColumns: true,
+                                onMakeCustomColumn: function (div, colObj, metaData, record, rowIndex, colIndex) {
+                                    div.data('nodeid', record.data.nodeid);
+                                    div.buttonExt({
+                                        enabledText: 'Center On This',
+                                        onClick: function () {
+                                            cswPrivate.startingNodeId = 'nodes_' + div.data('nodeid');
+                                            cswPrivate.initSystem();
+                                            relatingDialog.close();
+                                        }
+                                    });
+                                },
+                                fields: [
+                                    { name: 'nodename', type: 'string' },
+                                    { name: 'nodebtn', type: 'button' },
+                                    { name: 'nodeid', type: 'number' }
+                                ],
+                                columns: [
+                                    { header: 'Name', dataIndex: 'nodename' },
+                                    { header: 'Open', dataIndex: 'nodebtn' },
+                                    { header: 'nodeid', dataIndex: 'nodeid', hidden: true }
+                                ],
+                                data: data,
+                                customColumns: customColumns
+                            });
+                        }
+                    });
+                    relatingDialog.open();
+                }
+            });
+        };
+
+        cswPrivate.onNodeClick = function (node) {
             cswPrivate.startingNodeId = node.data.NodeId;
             $.ajax({
                 method: 'GET',
                 url: node.data.URI,
-                success: function(getResponse) {
+                success: function (getResponse) {
                     var propData = Csw.deserialize(getResponse.propdata);
                     var propsPanel = window.Ext.getCmp('west-region-container');
                     propsPanel.removeAll();
                     propsPanel.setTitle(getResponse.nodename);
-                    Csw.iterate(propData, function(prop) {
+                    Csw.iterate(propData, function (prop) {
                         propsPanel.add({
                             title: prop.name,
                             html: prop.gestalt,

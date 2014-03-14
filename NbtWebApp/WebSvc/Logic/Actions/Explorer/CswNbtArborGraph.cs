@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
+using NbtWebApp.WebSvc.Logic.API.DataContracts;
 using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.Actions.Explorer
@@ -19,6 +20,12 @@ namespace NbtWebApp.Actions.Explorer
 
         [DataMember]
         public string FilterVal { get; set; }
+
+        [DataMember]
+        public string RelatingId;
+
+        [DataMember]
+        public int RelatingPropId;
     }
 
     [DataContract]
@@ -31,6 +38,18 @@ namespace NbtWebApp.Actions.Explorer
 
         [DataMember]
         public CswNbtArborGraph Data;
+    }
+
+    [DataContract]
+    public class CswNbtExplorerRelatingReturn: CswWebSvcReturn
+    {
+        public CswNbtExplorerRelatingReturn()
+        {
+            Data = new CswNbtResourceCollection();
+        }
+
+        [DataMember]
+        public CswNbtResourceCollection Data;
     }
 
     [DataContract]

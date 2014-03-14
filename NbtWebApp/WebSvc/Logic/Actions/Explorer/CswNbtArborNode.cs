@@ -44,6 +44,9 @@ namespace NbtWebApp.Actions.Explorer
 
             [DataMember]
             public string Type { get; set; }
+
+            [DataMember]
+            public int RelatingPropId;
         }
     }
 }

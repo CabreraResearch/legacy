@@ -12,6 +12,7 @@
         var nodes = opts.nodes;
         var edges = opts.edges;
         var onNodeClick = opts.onNodeClick;
+        var onCategoryClick = opts.onCategoryClick;
 
         var that = {
             init: function (system) {
@@ -90,7 +91,21 @@
 
                 var handler = {
                     clicked: function(e) {
-                        //TODO: highlight new node
+                        //var pos = $(canvas).offset();
+                        //_mouseP = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
+                        //dragged = particleSystem.nearest(_mouseP);
+                        //
+                        //if (dragged && dragged.node !== null) {
+                        //    selected = dragged.node.data.NodeId;
+                        //
+                        //    if (dragged.node.data.Type === 'Instance') {
+                        //        onNodeClick(dragged.node);
+                        //    } else {
+                        //        onCategoryClick(dragged.node);
+                        //    }
+                        //
+                        //    dragged.node.fixed = true;
+                        //}
                     },
                     dblClicked: function (e) {
                         //trigger onDblClick events
@@ -101,12 +116,10 @@
                         if (dragged && dragged.node !== null) {
                             selected = dragged.node.data.NodeId;
                             
-                            //TODO: fire on double click?
                             if (dragged.node.data.Type === 'Instance') {
-                                //TODO: update properties panel
                                 onNodeClick(dragged.node);
                             } else {
-                                //TODO: open dialog and fetch list of Nodes relating to starting node
+                                onCategoryClick(dragged.node);
                             }
 
                             dragged.node.fixed = true;
@@ -139,8 +152,7 @@
                     //    return false;
                     //}
                 };
-
-                $(canvas).mousedown(handler.clicked);
+                $(canvas).unbind('dblclick');
                 $(canvas).dblclick(handler.dblClicked);
             },
         };
