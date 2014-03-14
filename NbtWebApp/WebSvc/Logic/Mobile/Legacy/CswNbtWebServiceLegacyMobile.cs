@@ -63,6 +63,8 @@ namespace NbtWebApp.WebSvc.Logic.Mobile.CISProNbt
             //Grab the first line and store it as programname
             CswNbtCISProNbtMobileData.MobileRequest.Data LegacyData = new CswNbtCISProNbtMobileData.MobileRequest.Data();
             LegacyData.programname = ops[0];
+            // We set the user to the user who is uploading the data
+            LegacyData.username = CswResources.CurrentUser.Username;
 
             //What to do if the first line doesn't match with enum?
             DataFormat Format;
@@ -80,7 +82,12 @@ namespace NbtWebApp.WebSvc.Logic.Mobile.CISProNbt
                         //create an operation object
                         CswNbtCISProNbtMobileData.MobileRequest.Operation NewOperation = new CswNbtCISProNbtMobileData.MobileRequest.Operation();
                         NewOperation.op = textInfo.ToTitleCase( currentOp[0].ToLower() );
-                        NewOperation.barcode = currentOp[3];
+                        string barcodeIn = currentOp[3];
+                        if( false == barcodeIn.StartsWith( "C" ) )
+                        {
+                            barcodeIn = "C" + barcodeIn;
+                        }
+                        NewOperation.barcode = barcodeIn;
                         //create an update object
                         CswNbtCISProNbtMobileData.MobileRequest.Update NewUpdate = new CswNbtCISProNbtMobileData.MobileRequest.Update();
                         NewUpdate.user = currentOp[1];
@@ -102,7 +109,12 @@ namespace NbtWebApp.WebSvc.Logic.Mobile.CISProNbt
                         //create an operation object
                         CswNbtCISProNbtMobileData.MobileRequest.Operation NewOperation = new CswNbtCISProNbtMobileData.MobileRequest.Operation();
                         NewOperation.op = "Reconcile";
-                        NewOperation.barcode = currentOp[1];
+                        string barcodeIn = currentOp[1];
+                        if( false == barcodeIn.StartsWith( "C" ) )
+                        {
+                            barcodeIn = "C" + barcodeIn;
+                        }
+                        NewOperation.barcode = barcodeIn;
                         //create an update object
                         CswNbtCISProNbtMobileData.MobileRequest.Update NewUpdate = new CswNbtCISProNbtMobileData.MobileRequest.Update();
                         NewUpdate.location = currentOp[0];

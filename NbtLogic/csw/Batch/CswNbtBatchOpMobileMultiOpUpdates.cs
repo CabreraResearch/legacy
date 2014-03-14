@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Mail;
 using ChemSW.Nbt.csw.Mobile;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -18,6 +20,8 @@ namespace ChemSW.Nbt.Batch
     {
         private CswNbtResources _CswNbtResources;
         private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MobileMultiOpUpdates;
+        private CswNbtObjClassUser _User;
+        private List<string> _HumanReadableLog = new List<string>();
 
         public CswNbtBatchOpMobileMultiOpUpdates( CswNbtResources CswNbtResources )
         {
@@ -72,10 +76,11 @@ namespace ChemSW.Nbt.Batch
                     BatchNode.start();
 
                     MobileMultiOpUpdatesBatchData BatchData = new MobileMultiOpUpdatesBatchData( BatchNode.BatchData.Text );
+                    CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( BatchData.Username );
+                    _User = UserNode;
 
                     if( BatchData.Operations.Count > 0 )
                     {
-                        CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( BatchData.Username );
                         if( null != UserNode )
                         {
                             CswNbtObjClassRole RoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( UserNode.Rolename );
@@ -87,11 +92,9 @@ namespace ChemSW.Nbt.Batch
                             {
                                 string operation = string.Empty;
                                 operation = BatchData.Operations[0]["op"].ToString();
-                                //Fix issue of operation case variations
                                 operation = operation.ToLower();
                                 operation = CultureInfo.CurrentCulture.TextInfo.ToTitleCase( operation );
 
-                                //Get parameters from record
                                 JObject update = (JObject) BatchData.Operations[0]["update"];
                                 string barcode = BatchData.Operations[0]["barcode"].ToString();
 
@@ -118,13 +121,15 @@ namespace ChemSW.Nbt.Batch
                                             _reconcile( operation, barcode, update, BatchNode );
                                             break;
                                         default:
-                                            BatchNode.appendToLog( "The operation " + operation + "doesn't exist." );
+                                            string msg = "The operation " + operation + "doesn't exist.";
+                                            _storeError( BatchNode, msg );
                                             break;
                                     } //switch (operation)
                                 }
                                 else
                                 {
-                                    BatchNode.appendToLog( "The user " + BatchData.Username + " does not have permission to edit a Container." );
+                                    string msg = "The user " + BatchData.Username + " does not have permission to edit a Container.";
+                                    _storeError( BatchNode, msg );
                                 }
 
                                 BatchData.Operations.RemoveAt( 0 );
@@ -134,11 +139,16 @@ namespace ChemSW.Nbt.Batch
                         } //if(null != Usernode)
                         else
                         {
-                            BatchNode.appendToLog( "The user " + BatchData.Username + " does not exist." );
+                            _storeError( BatchNode, "The user " + BatchData.Username + " does not exist." );
                         }
                     }
                     else
                     {
+                        // Send errors via an email
+                        if( false == BatchNode.Log.Empty )
+                        {
+                            _emailErrors( BatchNode );
+                        }
                         BatchNode.finish();
                     }
 
@@ -198,13 +208,14 @@ namespace ChemSW.Nbt.Batch
                 }
                 else
                 {
-                    string error = "A container with barcode " + barcode + " does not exist.";
-                    BatchNode.appendToLog( "Operation: " + operation + "; Container Barcode: " + barcode + "; Failure with error message: " + error );
+                    string msg = _generateErrorMessage( operation, barcode, null, "A container with barcode " + barcode + " does not exist." );
+                    _storeError( BatchNode, msg );
                 }
             }
             catch( Exception e )
             {
-                BatchNode.appendToLog( "The dispose operation failed for the container barcode " + barcode + "with exception: " + e );
+                string msg = "The dispose operation failed for the container barcode " + barcode + "with exception: " + e;
+                _storeError( BatchNode, msg );
             }
         }//_dispose()
 
@@ -227,25 +238,20 @@ namespace ChemSW.Nbt.Batch
                     }
                     else
                     {
-                        string error = "A container with barcode " + barcode + " does not exist.";
-                        BatchNode.appendToLog( "Operation: " + operation
-                              + "; Container Barcode: " + barcode
-                              + "; New Location: " + newLocationBarcode
-                              + "; Failure with error message: " + error );
+                        string msg = _generateErrorMessage( operation, barcode, new Dictionary<string, string> { { "New Location", newLocationBarcode } }, "A container with barcode " + barcode + " does not exist." );
+                        _storeError( BatchNode, msg );
                     }
                 }
                 else
                 {
-                    string error = "The Location barcode, " + newLocationBarcode + ", does not exist";
-                    BatchNode.appendToLog( "Operation: " + operation
-                              + "; Container Barcode: " + barcode
-                              + "; New Location: " + newLocationBarcode
-                              + "; Failure with error message: " + error );
+                    string msg = _generateErrorMessage( operation, barcode, new Dictionary<string, string> { { "New Location", newLocationBarcode } }, "The Location barcode, " + newLocationBarcode + ", does not exist" );
+                    _storeError( BatchNode, msg );
                 }
             }
             catch( Exception e )
             {
-                BatchNode.appendToLog( "The move operation failed for the container barcode " + barcode + "with exception: " + e );
+                string msg = "The move operation failed for the container barcode " + barcode + "with exception: " + e;
+                _storeError( BatchNode, msg );
             }
         }//_move()
 
@@ -268,25 +274,20 @@ namespace ChemSW.Nbt.Batch
                     }
                     else
                     {
-                        string error = "A container with barcode " + barcode + " does not exist.";
-                        BatchNode.appendToLog( "Operation: " + operation
-                                                                          + "; Container Barcode: " + barcode
-                                                                          + "; New Owner: " + newOwnerBarcode
-                                                                          + "; Failure with error message: " + error );
+                        string msg = _generateErrorMessage( operation, barcode, new Dictionary<string, string> { { "New Owner", newOwnerBarcode } }, "A container with barcode " + barcode + " does not exist." );
+                        _storeError( BatchNode, msg );
                     }
                 }
                 else
                 {
-                    string error = "The User barcode, " + newOwnerBarcode + ", does not exist";
-                    BatchNode.appendToLog( "Operation: " + operation
-                                                                          + "; Container Barcode: " + barcode
-                                                                          + "; New Owner: " + newOwnerBarcode
-                                                                          + "; Failure with error message: " + error );
+                    string msg = _generateErrorMessage( operation, barcode, new Dictionary<string, string> { { "New Owner", newOwnerBarcode } }, "The User barcode, " + newOwnerBarcode + ", does not exist" );
+                    _storeError( BatchNode, msg );
                 }
             }
             catch( Exception e )
             {
-                BatchNode.appendToLog( "The update owner operation failed for the container barcode " + barcode + "with exception: " + e );
+                string msg = "The update owner operation failed for the container barcode " + barcode + "with exception: " + e;
+                _storeError( BatchNode, msg );
             }
         }//_updateOwner()
 
@@ -308,27 +309,34 @@ namespace ChemSW.Nbt.Batch
                     }
                     else
                     {
-                        string error = "A container with barcode " + barcode + " does not exist.";
-                        BatchNode.appendToLog( "Operation: " + operation
-                                                                          + "; Container Barcode: " + barcode
-                                                                          + "; New Owner: " + newOwnerBarcode
-                                                                          + "; New Location: " + update["location"]
-                                                                          + "; Failure with error message: " + error );
+                        string msg = _generateErrorMessage( operation,
+                                                           barcode,
+                                                           new Dictionary<string, string>
+                                                               {
+                                                                   {"New Owner", newOwnerBarcode},
+                                                                   {"New Location", update["location"].ToString()}
+                                                               },
+                                                           "A container with barcode " + barcode + " does not exist." );
+                        _storeError( BatchNode, msg );
                     }
                 }
                 else
                 {
-                    string error = "The User barcode, " + newOwnerBarcode + ", does not exist";
-                    BatchNode.appendToLog( "Operation: " + operation
-                                                                          + "; Container Barcode: " + barcode
-                                                                          + "; New Owner: " + newOwnerBarcode
-                                                                          + "; New Location: " + update["location"]
-                                                                          + "; Failure with error message: " + error );
+                    string msg = _generateErrorMessage( operation,
+                                                           barcode,
+                                                           new Dictionary<string, string>
+                                                               {
+                                                                   {"New Owner", newOwnerBarcode},
+                                                                   {"New Location", update["location"].ToString()}
+                                                               },
+                                                           "The User barcode, " + newOwnerBarcode + ", does not exist" );
+                    _storeError( BatchNode, msg );
                 }
             }
             catch( Exception e )
             {
-                BatchNode.appendToLog( "The transfer operation failed for the container barcode " + barcode + "with exception: " + e );
+                string msg = "The transfer operation failed for the container barcode " + barcode + "with exception: " + e;
+                _storeError( BatchNode, msg );
             }
         }//_transfer()
 
@@ -358,25 +366,20 @@ namespace ChemSW.Nbt.Batch
                     }
                     else
                     {
-                        string error = "A container with barcode " + barcode + " does not exist.";
-                        BatchNode.appendToLog( "Operation: " + operation
-                                                + "; Container Barcode: " + barcode
-                                                + "; Dispense Data: " + update
-                                                + "; Failure with error message: " + error );
+                        string msg = _generateErrorMessage( operation, barcode, new Dictionary<string, string> { { "Dispense Data", update.ToString() } }, "A container with barcode " + barcode + " does not exist." );
+                        _storeError( BatchNode, msg );
                     }
                 }
                 else
                 {
-                    string error = "The UOM of " + uom + " that was provided does not exist.";
-                    BatchNode.appendToLog( "Operation: " + operation
-                                            + "; Container Barcode: " + barcode
-                                            + "; Dispense Data: " + update
-                                            + "; Failure with error message: " + error );
+                    string msg = _generateErrorMessage( operation, barcode, new Dictionary<string, string> { { "Dispense Data", update.ToString() } }, "The UOM of " + uom + " that was provided does not exist." );
+                    _storeError( BatchNode, msg );
                 }
             }
             catch( Exception e )
             {
-                BatchNode.appendToLog( "The dispense operation failed for the container barcode " + barcode + "with exception: " + e );
+                string msg = "The dispense operation failed for the container barcode " + barcode + "with exception: " + e;
+                _storeError( BatchNode, msg );
             }
         }//_dispense()
 
@@ -395,18 +398,69 @@ namespace ChemSW.Nbt.Batch
                 }
                 else
                 {
-                    string error = "A container with barcode " + barcode + " does not exist.";
-                    BatchNode.appendToLog( "Operation: " + operation
-                                            + "; Container Barcode: " + barcode
-                                            + "; Location: " + newLocationBarcode
-                                            + "; Failure with error message: " + error );
+                    string msg = _generateErrorMessage( operation, barcode, null, "A container with barcode " + barcode + " does not exist." );
+                    _storeError( BatchNode, msg );
                 }
             }
             catch( Exception e )
             {
-                BatchNode.appendToLog( "The reconcile operation failed for the container barcode " + barcode + "with exception: " + e );
+                string msg = "The reconcile operation failed for the container barcode " + barcode + "with exception: " + e;
+                _storeError( BatchNode, msg );
             }
         }//_reconcile()
+
+        private string _generateErrorMessage( string operation, string barcode, Dictionary<string, string> ExtraInfo, string error )
+        {
+            string Ret = "";
+            Ret += "Operation: " + operation + ";";
+            Ret += "Container Barcode: " + barcode + ";";
+            if( null != ExtraInfo )
+            {
+                Ret = ExtraInfo.Aggregate( Ret, ( current, keyValuePair ) => current + ( keyValuePair.Key + ": " + keyValuePair.Value + ";" ) );
+            }
+            Ret += " Failure with error message: " + error;
+
+            return Ret;
+        }//_generateErrorMessage()
+
+        private void _emailErrors( CswNbtObjClassBatchOp BatchNode )
+        {
+            if( null != _User )
+            {
+                if( false == _User.EmailProperty.Empty )
+                {
+                    CswMail cswMail = _CswNbtResources.CswMail;
+                    string Subject = BatchNode.OpName.Text;
+                    string Message = _HumanReadableLog.Aggregate( "", ( current, ErrorMessage ) => current + ( ErrorMessage + System.Environment.NewLine ) );
+                    string Email = _User.Email;
+                    string DisplayName = _User.FirstName + " " + _User.LastName;
+                    CswMailMessage mailMessage = CswMail.makeMailMessage( Subject, Message, Email, DisplayName );
+
+                    if( cswMail.send( mailMessage ) )
+                    {
+                        BatchNode.appendToLog( "Batch operation log message emailed to " + _User.Username + " successfully." );
+                    }
+                    else
+                    {
+                        BatchNode.appendToLog( "Batch operation log message email to " + _User.Username + " failed." );
+                    }
+                }
+                else
+                {
+                    BatchNode.appendToLog( "Could not email log to " + _User.Username + " because they have no provided an email address." );
+                }
+            }
+            else
+            {
+                BatchNode.appendToLog( "The user does not exist." );
+            }
+        }//_emailErrors()
+
+        private void _storeError( CswNbtObjClassBatchOp BatchNode, string error )
+        {
+            BatchNode.appendMessageOnlyToLog( error );
+            _HumanReadableLog.Add( error );
+        }//_storeError()
 
         #endregion
 
