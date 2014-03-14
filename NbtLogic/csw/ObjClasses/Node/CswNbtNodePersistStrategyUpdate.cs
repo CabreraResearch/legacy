@@ -40,7 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != Node.ObjClass && false == SkipEvents)
                 {
                     Node.ObjClass.beforeWriteNode( IsCopy, Creating );
-                    //TODO - only do this if a prop has been modified
                     Node.PendingEvents = true;
                 }
 
