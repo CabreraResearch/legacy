@@ -118,9 +118,8 @@ namespace ChemSW.Nbt.Sched
             try
             {
                 CswNbtNode Node = CswNbtResources.Nodes[NodeId];
-                
-                //TODO - put node event logic here
-                //Node.postChanges( ForceUpdate: true );
+                CswNbtNodeUpdateEvents NodeUpdateEvents = new CswNbtNodeUpdateEvents( CswNbtResources, Node );
+                NodeUpdateEvents.triggerUpdateEvents();
             }
             catch( Exception ex )
             {

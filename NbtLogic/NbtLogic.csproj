@@ -223,6 +223,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
     <Compile Include="csw\ObjClasses\enum\CswNbtEnumMaterialRequestApprovalLevels.cs" />
+    <Compile Include="csw\ObjClasses\Node\CswNbtNodeUpdateEvents.cs" />
     <Compile Include="csw\ObjClasses\Node\CswNbtNodePersistStrategyCreateTemp.cs" />
     <Compile Include="csw\ObjClasses\Node\CswNbtNodePersistStrategyUpdate.cs" />
     <Compile Include="csw\ObjClasses\Node\CswNbtNodePersistStrategyPromoteReal.cs" />

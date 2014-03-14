@@ -426,7 +426,6 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
             {
                 OverrideUniqueValidation = true,
-                OverrideMailReportEvents = true,
                 Creating = true,
                 ForceUpdate = ForceUpdate,
                 SkipEvents = SkipEvents
@@ -669,10 +668,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Methods
 
-        public void updateRelationsToThisNode()
-        {
-            _CswNbtNodeWriter.updateRelationsToThisNode( this );
-        }
         public void setSequenceValues()
         {
             _CswNbtNodeWriter.setSequenceValues( this );
