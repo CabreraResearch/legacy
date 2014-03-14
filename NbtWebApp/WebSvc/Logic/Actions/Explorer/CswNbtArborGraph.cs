@@ -77,12 +77,15 @@ namespace NbtWebApp.Actions.Explorer
         private static void _populate( CswNbtResources NbtResources, CswEnumNbtObjectClass ObjectClass, CswCommaDelimitedString Ret )
         {
             CswNbtMetaDataObjectClass ObjClass = NbtResources.MetaData.getObjectClass( ObjectClass );
-            foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+            if( null != ObjClass ) //Module permissions might cause this to be null
             {
-                Ret.Add( "NT_" + NodeType.NodeTypeId.ToString() );
-            }
+                foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                {
+                    Ret.Add( "NT_" + NodeType.NodeTypeId.ToString() );
+                }
 
-            Ret.Add("OC_" + ObjClass.ObjectClassId);
+                Ret.Add( "OC_" + ObjClass.ObjectClassId );
+            }
         }
     }
 

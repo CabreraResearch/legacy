@@ -69,8 +69,9 @@ namespace NbtWebApp.Actions.Explorer
 
 
             StartingNode = NbtResources.Nodes[NodeId];
+            CswNbtMetaDataNodeType startingNT = StartingNode.getNodeType();
             //Add the initial node to the graph
-            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), StartingNode.IconFileName, 0, "Instance", NodeId.ToString() );
+            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), startingNT.IconFileName, 0, "Instance", NodeId.ToString(), startingNT.NodeTypeName );
 
             _recurseForRelatingNodes( NbtResources, Return, StartingNode, 1, NodeId.ToString() );
 
@@ -87,11 +88,12 @@ namespace NbtWebApp.Actions.Explorer
                 if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
                 {
                     CswNbtNode TargetNode = NbtResources.Nodes[RelProp.RelatedNodeId];
+                    CswNbtMetaDataNodeType TargetNT = TargetNode.getNodeType();
 
                     if( FilterVal.Contains( "NT_" + TargetNode.NodeTypeId ) || FilterVal.Contains( "OC_" + TargetNode.getObjectClassId() ) )
                     {
                         string targetIdStr = OwnerIdStr + "_" + RelProp.RelatedNodeId.ToString();
-                        _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance", RelProp.RelatedNodeId.ToString() );
+                        _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance", RelProp.RelatedNodeId.ToString(), TargetNT.NodeTypeName );
 
                         if( Level + 1 <= MAX_DEPTH )
                         {
@@ -147,6 +149,7 @@ namespace NbtWebApp.Actions.Explorer
                     bool WasNT = false;
                     bool ObjClassAllowed = false;
                     DisplayName = Related.TextLabel;
+                    string MetaDataName = string.Empty;
 
                     int id = ( Related.PropOwner == CswEnumNbtViewPropOwnerType.First && Related.FirstId != Int32.MinValue ? Related.FirstId : Related.SecondId );
                     CswEnumNbtViewRelatedIdType IdType = ( Related.PropOwner == CswEnumNbtViewPropOwnerType.First && Related.FirstId != Int32.MinValue ? Related.FirstType : Related.SecondType );
@@ -163,6 +166,7 @@ namespace NbtWebApp.Actions.Explorer
 
                             CswNbtMetaDataObjectClass ObjClass = RelatedNodeType.getObjectClass();
                             ObjClassAllowed = FilterVal.Contains( "OC_" + ObjClass.ObjectClassId );
+                            MetaDataName = RelatedNodeType.NodeTypeName;
 
                             WasNT = true;
                         }
@@ -172,13 +176,14 @@ namespace NbtWebApp.Actions.Explorer
                             IconFilename = RelatedObjClass.IconFileName;
                             TargetIdStr = OwnerIdStr + "_OC_" + RelatedObjClass.ObjectClassId;
                             Id = "OC_" + RelatedObjClass.ObjectClassId;
+                            MetaDataName = RelatedObjClass.ObjectClassName;
                         }
 
                         if( ( ( IdType == CswEnumNbtViewRelatedIdType.NodeTypeId && FilterVal.Contains( "NT_" + id ) || ObjClassAllowed ) )
                             || ( IdType == CswEnumNbtViewRelatedIdType.ObjectClassId && FilterVal.Contains( "OC_" + id ) ) )
                         {
 
-                            _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFilename, level, "Category", Id );
+                            _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFilename, level, "Category", Id, MetaDataName );
 
                             if( level + 1 <= MAX_DEPTH && WasNT )
                             {
@@ -194,18 +199,27 @@ namespace NbtWebApp.Actions.Explorer
         /// <summary>
         /// Helper method for adding data to the return object
         /// </summary>
-        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string Type, string Id )
+        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string Type, string Id, string MetaDataName )
         {
+            string URI = "api/v1/" + MetaDataName;
+            if( "Instance" == Type )
+            {
+                CswPrimaryKey nodeid = new CswPrimaryKey();
+                nodeid.FromString( TargetId );
+                URI += "/" + nodeid.PrimaryKey;
+            }
+
             Return.Data.Nodes.Add( new CswNbtArborNode()
                 {
                     NodeIdStr = TargetId,
-                    Data = new CswNbtArborNode.CswNbtArborNodeData()
+                    data = new CswNbtArborNode.CswNbtArborNodeData()
                         {
                             Icon = "Images/newicons/100/" + Icon,
                             Label = Label,
                             NodeId = Id,
                             Level = level,
-                            Type = Type
+                            Type = Type,
+                            URI = URI
                         }
                 } );
 
@@ -215,7 +229,7 @@ namespace NbtWebApp.Actions.Explorer
                     {
                         OwnerNodeIdStr = OwnerId,
                         TargetNodeIdStr = TargetId,
-                        Data = new CswNbtArborEdge.CswNbtArborEdgeData()
+                        data = new CswNbtArborEdge.CswNbtArborEdgeData()
                             {
                                 Length = level * 10
                             }

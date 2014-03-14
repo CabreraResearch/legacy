@@ -28,7 +28,7 @@
             cswPrivate.maxDepth = 2;
             cswPrivate.filterVals = '';
             cswPrivate.filterOpts = [];
-            
+
             cswParent.empty();
 
             Csw.ajaxWcf.post({
@@ -38,7 +38,7 @@
                     cswPrivate.filterVals = response.filterVals;
                 }
             });
-            
+
         }());
 
         cswPrivate.initPanel = function () {
@@ -76,7 +76,7 @@
                             xtype: 'button',
                             text: 'Edit Filters',
                             id: 'ExtEditFiltersBtn',
-                            handler: function() {
+                            handler: function () {
                                 Csw.dialogs.multiselectedit({
                                     opts: cswPrivate.filterOpts,
                                     title: 'Edit Explorer Filters',
@@ -86,7 +86,7 @@
 
                                         cswPrivate.filterVal = updatedValues.join(',');
 
-                                        Csw.iterate(cswPrivate.filterOpts, function(opt) {
+                                        Csw.iterate(cswPrivate.filterOpts, function (opt) {
                                             opt.selected = updatedValues.indexOf(opt.value) !== -1;
                                         });
 
@@ -101,15 +101,13 @@
                     xtype: 'panel',
                     width: 300,
                     id: 'west-region-container',
-                    items: [{ //TODO: upon clicking on a node, show props here
-                        xtype: 'button',
-                        text: 'Center On This',
-                        handler: function () {
-                            if (false === Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
-                                cswPrivate.initSystem();
-                            }
-                        }
-                    }]
+                    autoScroll: true,
+                    layout: {
+                        // layout-specific configs go here
+                        type: 'accordion',
+                        titleCollapse: true,
+                        animate: true
+                    }
                 }, {
                     title: 'Relationships',
                     region: 'center',
@@ -119,7 +117,7 @@
                         autoEl: {
                             tag: 'canvas',
                             height: 510,
-                            width: 1250
+                            width: 1200
                         }
                     }
                 }]
@@ -143,40 +141,63 @@
                 },
                 success: function (response) {
                     var graph = {};
-                    
-                    Csw.iterate(response.Nodes, function (arborNode) {
 
-                        if (imgs[arborNode.Data.Icon]) {
-                            arborNode.Data.iconId = imgs[arborNode.Data.Icon];
+                    Csw.iterate(response.Nodes, function (arborNode) {
+                        if (arborNode.NodeId === cswPrivate.startingNodeId) {
+                            cswPrivate.onNodeClick(arborNode);
+                        }
+
+                        if (imgs[arborNode.data.Icon]) {
+                            arborNode.data.iconId = imgs[arborNode.data.Icon];
                         } else {
                             var secretCell = cswPrivate.actionTbl.cell(1, i);
                             var img = secretCell.img({
-                                src: arborNode.Data.Icon,
+                                src: arborNode.data.Icon,
                                 ID: arborNode.NodeId
                             }).hide();
                             i++;
-                            imgs[arborNode.Data.Icon] = img.getId();
+                            imgs[arborNode.data.Icon] = img.getId();
 
-                            arborNode.Data.iconId = img.getId();
+                            arborNode.data.iconId = img.getId();
                         }
 
-                        cswPrivate.sys.addNode(arborNode.NodeId, arborNode.Data);
+                        cswPrivate.sys.addNode(arborNode.NodeId, arborNode.data);
                         graph[arborNode.NodeId] = [];
                     });
 
                     Csw.iterate(response.Edges, function (arborEdge) {
                         //graph[arborEdge.OwnerNodeId].push(arborEdge.TargetNodeId);
                         //graph[arborEdge.TargetNodeId].push(arborEdge.OwnerNodeId);
-                        cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.Data);
+                        cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.data);
                     });
 
                     cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, {
                         nodes: response.Nodes,
                         edges: response.Edges,
                         startNodeId: cswPrivate.startingNodeId,
-                        onNodeClick: function (selectedId) {
-                            cswPrivate.startingNodeId = selectedId;
-                        }
+                        onNodeClick: cswPrivate.onNodeClick
+                    });
+                }
+            });
+        };
+
+        cswPrivate.onNodeClick = function(node) {
+            cswPrivate.startingNodeId = node.data.selectedId;
+            $.ajax({
+                method: 'GET',
+                url: node.data.URI,
+                success: function(getResponse) {
+                    var propData = Csw.deserialize(getResponse.propdata);
+                    var propsPanel = window.Ext.getCmp('west-region-container');
+                    propsPanel.removeAll();
+                    propsPanel.setTitle(getResponse.nodename);
+                    Csw.iterate(propData, function(prop) {
+                        propsPanel.add({
+                            title: prop.name,
+                            html: prop.gestalt,
+                            bodyPadding: 20,
+                            autoScroll: true
+                        });
                     });
                 }
             });

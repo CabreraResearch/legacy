@@ -140,7 +140,7 @@
         Csw.extend(cswInternal, options);
 
         cswInternal.urlMethod = 'Services/' + cswInternal.urlMethod;
-        cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlMethod);
+        cswInternal.urlMethod = Csw.string(cswInternal.url, cswInternal.urlMethod);
         cswInternal.startTime = new Date();
         if (false === Csw.isNullOrEmpty(cswInternal.data)) {
             if (verb === 'GET') {

@@ -89,7 +89,11 @@
                 var _mouseP;
 
                 var handler = {
-                    clicked: function (e) {
+                    clicked: function(e) {
+                        //TODO: highlight new node
+                    },
+                    dblClicked: function (e) {
+                        //trigger onDblClick events
                         var pos = $(canvas).offset();
                         _mouseP = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
                         dragged = particleSystem.nearest(_mouseP);
@@ -100,7 +104,7 @@
                             //TODO: fire on double click?
                             if (dragged.node.data.Type === 'Instance') {
                                 //TODO: update properties panel
-                                onNodeClick(dragged.node.data.NodeId);
+                                onNodeClick(dragged.node);
                             } else {
                                 //TODO: open dialog and fetch list of Nodes relating to starting node
                             }
@@ -108,35 +112,36 @@
                             dragged.node.fixed = true;
                         }
 
-                        $(canvas).bind('mousemove', handler.dragged);
-                        $(window).bind('mouseup', handler.dropped);
+                        //$(canvas).bind('mousemove', handler.dragged);
+                        //$(window).bind('mouseup', handler.dropped);
 
-                        return false;
-                    },
-                    dragged: function (e) {
-                        var pos = $(canvas).offset();
-                        var s = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
-
-                        if (dragged && dragged.node !== null) {
-                            var p = particleSystem.fromScreen(s);
-                            dragged.node.p = p;
-                        }
-
-                        return false;
-                    },
-                    dropped: function (e) {
-                        if (dragged === null || dragged.node === undefined) return '';
-                        if (dragged.node !== null) dragged.node.fixed = false;
-                        dragged.node.tempMass = 1000;
-                        dragged = null;
-                        $(canvas).unbind('mousemove', handler.dragged);
-                        $(window).unbind('mouseup', handler.dropped);
-                        _mouseP = null;
                         return false;
                     }
+                    //dragged: function (e) {
+                    //    var pos = $(canvas).offset();
+                    //    var s = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
+                    //
+                    //    if (dragged && dragged.node !== null) {
+                    //        var p = particleSystem.fromScreen(s);
+                    //        dragged.node.p = p;
+                    //    }
+                    //
+                    //    return false;
+                    //},
+                    //dropped: function (e) {
+                    //    if (dragged === null || dragged.node === undefined) return '';
+                    //    if (dragged.node !== null) dragged.node.fixed = false;
+                    //    dragged.node.tempMass = 1000;
+                    //    dragged = null;
+                    //    $(canvas).unbind('mousemove', handler.dragged);
+                    //    $(window).unbind('mouseup', handler.dropped);
+                    //    _mouseP = null;
+                    //    return false;
+                    //}
                 };
 
                 $(canvas).mousedown(handler.clicked);
+                $(canvas).dblclick(handler.dblClicked);
             },
         };
         return that;

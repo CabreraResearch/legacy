@@ -32,7 +32,7 @@ namespace NbtWebApp.Actions.Explorer
         public string TargetNodeIdStr { get; set; }
 
         [DataMember]
-        public CswNbtArborEdgeData Data { get; set; }
+        public CswNbtArborEdgeData data { get; set; }
 
         [DataContract]
         public class CswNbtArborEdgeData
