@@ -18,11 +18,11 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer: CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable, ICswNbtKioskModeTransferable
+    public class CswNbtObjClassContainer : CswNbtObjClass, ICswNbtPermissionTarget, ICswNbtKioskModeOpenable, ICswNbtKioskModeMoveable, ICswNbtKioskModeOwnerable, ICswNbtKioskModeTransferable
     {
         #region Properties
 
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Barcode = "Barcode";
             public const string Material = "Material";
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerFamily = "Container Family";
             public const string ReceiptLot = "Receipt Lot";
             public const string LotControlled = "Lot Controlled";
-            public const string Requisitionable = "Requisitionable";
+            public const string Requisitionable = "Requisitionable"; // Is this requestable?
             public const string ContainerGroup = "Container Group";
             public const string LabelFormat = "Label Format";
             public const string ReservedFor = "Reserved For";
@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Concentration = "Concentration";
             public const string OpenedDate = "Opened Date";
             public const string Open = "Open";
+            public const string MaterialObsolete = "Material Obsolete";
         }
 
         #endregion Properties
@@ -114,7 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPromoteNodeLogic()
         {
             // originally case 27330, moved here by case 30647
-            Size.setReadOnly( value : true, SaveToDb : true );
+            Size.setReadOnly( value: true, SaveToDb: true );
         }
 
         protected override void beforeWriteNodeLogic( bool Creating )
@@ -229,7 +230,14 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( PropertyName.Disposed );
             CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
             viewProp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode : CswEnumNbtFilterMode.Equals, Value : CswEnumTristate.False.ToString(), ShowAtRuntime : true );
+            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode: CswEnumNbtFilterMode.Equals, Value: CswEnumTristate.False.ToString(), ShowAtRuntime: true );
+
+            // Related Material.Obsolete == false
+            CswNbtMetaDataObjectClassProp MaterialObsoleteOCP = ObjectClass.getObjectClassProp( PropertyName.MaterialObsolete );
+            CswNbtViewProperty viewProp2 = ParentRelationship.View.AddViewProperty( ParentRelationship, MaterialObsoleteOCP );
+            viewProp2.ShowInGrid = false;
+            // NOTE: Value is 'N' when the Obsolete property on the Material is false
+            ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode: CswEnumNbtFilterMode.Equals, Value: "N", ShowAtRuntime: true );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
@@ -277,6 +285,13 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 throw new CswDniException( CswEnumErrorType.Warning, "Unable to Request " + NodeName + " because it does not belong to a central Inventory Group.", "Container's Inventory Group is not Central" );
                             }
+
+                            // Case CIS-52280
+                            if( MaterialObsolete.RecalculateReferenceValue() == "Y" )
+                            {
+                                throw new CswDniException( CswEnumErrorType.Warning, "Unable to Request " + NodeName + " because the Material it was created from is obsolete.", "Container's Material is obsolete" );
+                            }
+
                             ButtonData.Action = CswEnumNbtButtonAction.request;
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                             HasPermission = true;
@@ -513,6 +528,23 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Set Requisitionable to false and hide the Request button.
+        /// </summary>
+        public void ToggleAllowRequest( bool Allow )
+        {
+            if( Allow )
+            {
+                Requisitionable.Checked = CswEnumTristate.False;
+                Request.setHidden( true, true );
+            }
+            else
+            {
+                Requisitionable.Checked = CswEnumTristate.True;
+                Request.setHidden( false, true );
+            }
+        }
+
         #region CISPro/NBT CORE Mobile App Operations
 
         /// <summary>
@@ -659,24 +691,25 @@ namespace ChemSW.Nbt.ObjClasses
                                 case PropertyName.Undispose:
                                     isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], InventoryGroupId ) )
                                                || false == IsDisposed; //Hide the Undispose button when the Container is not disposed
-                                    p.setHidden( value : isHidden, SaveToDb : false );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 case PropertyName.Dispose:
                                     isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], InventoryGroupId ) )
                                                || IsDisposed;
-                                    p.setHidden( value : isHidden, SaveToDb : false );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 case PropertyName.Request:
                                     isHidden = ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) && false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId ) )
                                                || IsDisposed
                                                || ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM )
-                                                    && Requisitionable.Checked == CswEnumTristate.False );
-                                    p.setHidden( value : isHidden, SaveToDb : false );
+                                                   && Requisitionable.Checked == CswEnumTristate.False )
+                                               || ( MaterialObsolete.RecalculateReferenceValue() == "Y" ); //Case CIS-52280
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 case PropertyName.Dispense:
                                     isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer], InventoryGroupId ) )
                                                || IsDisposed;
-                                    p.setHidden( value : isHidden, SaveToDb : false );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 case PropertyName.ViewSDS:
                                     CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
@@ -689,14 +722,14 @@ namespace ChemSW.Nbt.ObjClasses
                                                                     .Contains( ( (CswNbtObjClassChemical) material.Node ).ViewSDS.NodeTypeProp )
                                         //       || IsDisposed   actually, this one we can show.
                                                );
-                                    p.setHidden( value : isHidden, SaveToDb : false );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 case PropertyName.ViewCofA:
                                     isHidden = ( false == CswNbtObjClassCofADocument.receiptLotHasActiveCofA( _CswNbtResources, ReceiptLot.RelatedNodeId ) );
-                                    p.setHidden( value : isHidden, SaveToDb : false );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 default:
-                                    p.setHidden( value : IsDisposed, SaveToDb : false );
+                                    p.setHidden( value: IsDisposed, SaveToDb: false );
                                     break;
                             } // switch
                         } // if( prop.getFieldType().FieldType == CswEnumNbtFieldType.Button )
@@ -706,28 +739,28 @@ namespace ChemSW.Nbt.ObjClasses
                             switch( p.ObjectClassPropName )
                             {
                                 case PropertyName.Barcode:
-                                    p.setReadOnly( value : false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb : true );
+                                    p.setReadOnly( value: false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb: true );
                                     break;
                                 case PropertyName.ExpirationDate:
                                     if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
                                     {
                                         CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                                        p.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb : false );
+                                        p.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb: false );
                                     }
                                     break;
                                 case PropertyName.SourceContainer:
                                     bool isHidden = ( false == CswTools.IsPrimaryKey( SourceContainer.RelatedNodeId ) );
-                                    p.setHidden( value : isHidden, SaveToDb : true );
+                                    p.setHidden( value: isHidden, SaveToDb: true );
 
                                     if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
                                     {
-                                        SourceContainer.setReadOnly( value : true, SaveToDb : true );
+                                        SourceContainer.setReadOnly( value: true, SaveToDb: true );
                                     }
                                     break;
                             } // switch
 
                             // This overrides all of the above!
-                            p.setReadOnly( IsDisposed, SaveToDb : true );
+                            p.setReadOnly( IsDisposed, SaveToDb: true );
 
                         } // if-else( prop.getFieldType().FieldType == CswEnumNbtFieldType.Button )
                     } );
@@ -840,16 +873,16 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestType );
 
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestItem.Statuses.Submitted );
-                RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, Value : NodeId.PrimaryKey.ToString() );
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
 
                 if( RequestItemType == CswNbtObjClassRequestItem.Types.ContainerMove )
                 {
                     CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
-                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName : CswNbtFieldTypeRuleLocation.SubFieldName.NodeID, Value : Location.SelectedNodeId.PrimaryKey.ToString() );
+                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtFieldTypeRuleLocation.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
                 }
 
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes : false, RequireViewPermissions : false, IncludeHiddenNodes : false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
                 if( Tree.getChildNodeCount() > 0 )
                 {
                     for( Int32 N = 0; N < Tree.getChildNodeCount(); N += 1 )
@@ -1068,6 +1101,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Concentration { get { return ( _CswNbtNode.Properties[PropertyName.Concentration] ); } }
         public CswNbtNodePropDateTime OpenedDate { get { return ( _CswNbtNode.Properties[PropertyName.OpenedDate] ); } }
         public CswNbtNodePropButton Open { get { return _CswNbtNode.Properties[PropertyName.Open]; } }
+        public CswNbtNodePropPropertyReference MaterialObsolete { get { return ( _CswNbtNode.Properties[PropertyName.MaterialObsolete] ); } }
 
         #endregion
 

@@ -47,8 +47,10 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType FirstVendorNT = VendorOC.getNodeTypes().FirstOrDefault();
             if( null != FirstVendorNT )
             {
-                CswNbtObjClassDesignNodeType NewVendorNTNode = FirstVendorNT.DesignNode.CopyNode();
-                NewVendorNTNode.NodeTypeName.Text = "Internal Vendor";
+                CswNbtObjClassDesignNodeType NewVendorNTNode = FirstVendorNT.DesignNode.CopyNode( OnCopy: delegate( CswNbtNode CopiedNode )
+                    {
+                        ( (CswNbtObjClassDesignNodeType) CopiedNode ).NodeTypeName.Text = "Internal Vendor";
+                    } );
                 NewVendorNTNode.postChanges( false );
 
                 // For the new vendor nodetype, set the default value of Internal to true.
