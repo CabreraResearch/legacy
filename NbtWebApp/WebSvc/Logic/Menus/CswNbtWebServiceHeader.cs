@@ -318,8 +318,9 @@ namespace ChemSW.Nbt.WebServices
 
                          ) );
 
+            #region ChemCatCentral Products Versions
             // Add ChemCatCentral version to the About dialog: Case 29380
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3Products ) )
             {
                 CswC3Params CswC3Params = new CswC3Params();
                 CswNbtC3ClientManager C3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
@@ -367,6 +368,27 @@ namespace ChemSW.Nbt.WebServices
 
                 }//if( C3ClientManager.checkC3ServiceReferenceStatus() )
             }
+            #endregion ChemCatCentral Products Versions
+
+            #region ACD Version
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+            {
+                CswC3Params CswC3Params = new CswC3Params();
+                CswNbtC3ClientManager C3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
+                SearchClient C3SearchClient = C3ClientManager.initializeC3Client();
+                if( null != C3SearchClient )
+                {
+                    CswRetObjSearchResults Results = C3SearchClient.getACDVersion( CswC3Params );
+                    if( null != Results )
+                    {
+                        ComponentObj.Add( new JProperty( "ACD", new JObject(
+                                                       new JProperty( "name", "Available Chemicals Directory (ACD)" ),
+                                                       new JProperty( "version", Regex.Replace( Results.ACDVersion, "_", " " ) ),
+                                                       new JProperty( "copyright", "Copyright &copy; Accelrys, Inc. 1983-" + ThisYear ) ) ) );
+                    }
+                }
+            }
+            #endregion ACD Version
 
 
             SortedList<string, CswSessionsListEntry> sessions = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
