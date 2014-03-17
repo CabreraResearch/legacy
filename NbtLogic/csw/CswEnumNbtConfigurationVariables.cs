@@ -163,8 +163,12 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Customer level limit on Ariel regions.
         /// </summary>
-        arielmodules
+        arielmodules,
 
+        /// <summary>
+        /// Domain for accessing ChemWatch
+        /// </summary>
+        chemwatchdomain
     };
 
 }
