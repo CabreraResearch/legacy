@@ -85,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// TODO - Case 31708: fix performance issues on writeNode event logic and remove this function
         /// </summary>
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postOnlyChanges( bool ForceUpdate, bool SkipEvents = false )
+        public void postOnlyChanges( bool ForceUpdate )
         {
-            _CswNbtNode.postOnlyChanges( ForceUpdate, SkipEvents );
+            _CswNbtNode.postOnlyChanges( ForceUpdate );
         }//postChanges()
 
         /// <summary>
