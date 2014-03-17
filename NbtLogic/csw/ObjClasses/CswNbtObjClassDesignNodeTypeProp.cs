@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
+        protected override void beforePromoteNodeLogic()
         {
             // Make sure propname is unique for this nodetype
             if( false == CswTools.IsPrimaryKey( NodeTypeValue.RelatedNodeId ) )
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                                            "Property must be attached to a nodetype",
                                            "Attempted to save a new property without a nodetype" );
             }
-            if( false == OverrideUniqueValidation &&
+            if( false == Node.OverrideValidation &&
                 null != RelationalNodeType && null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterPromoteNode()
 
-        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             // If display condition is set, required must be false
             if( false == DisplayConditionProperty.Empty )
@@ -935,20 +935,20 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Synchronize attributes from object class prop
         /// </summary>
-        public void syncFromObjectClassProp()
+        public void syncFromObjectClassProp(bool updateLayout=true)
         {
             Int32 PropId = RelationalId.PrimaryKey;
             CswTableUpdate PropsUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeTypeProp_afterCreateNode_PropsUpdate", "nodetype_props" );
             DataTable PropsTable = PropsUpdate.getTable( "nodetypepropid", PropId );
             if( PropsTable.Rows.Count > 0 )
             {
-                _syncFromObjectClassProp( PropsTable.Rows[0] );
+                _syncFromObjectClassProp( PropsTable.Rows[0], updateLayout );
                 PropsUpdate.update( PropsTable );
             }
         }
 
 
-        private void _syncFromObjectClassProp( DataRow PropRow )
+        private void _syncFromObjectClassProp( DataRow PropRow, bool UpdateLayout = true )
         {
             // Copy values from ObjectClassProp
             if( DerivesFromObjectClassProp )
@@ -1024,7 +1024,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
                     // Layout
-                    if( null != RelationalNodeType )
+                    if( null != RelationalNodeType && UpdateLayout )
                     {
                         CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeType.getFirstNodeTypeTab();
                         if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
@@ -1036,7 +1036,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( RelationalNodeTypeProp );
                         }
-                        else
+                        else 
                         {
                             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
                             if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&

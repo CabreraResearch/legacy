@@ -292,11 +292,9 @@
                     treeOpts.dockedItems.items.push({
                         text: 'Expand All',
                         handler: Csw.method(function () {
-                            var toolbar = this;
-                            cswPublic.toggleExpanded(toolbar);
+                            cswPublic.toggleExpanded();
                         })
                     });
-
                 }
             }
 
@@ -308,11 +306,14 @@
 
         //#region Tree Mutators
 
-        cswPublic.collapseAll = function (button, toolbar) {
+        cswPublic.collapseAll = function () {
             /// <summary>
             /// Collapses all nodes in the tree.
             /// </summary>
             /// <returns type="Csw.composites.tree">This tree</returns>
+            var toolbar = cswPublic.tree.getDockedItems()[0];
+            var button = toolbar.items.items[0];
+
             if (cswPrivate.useToggles) {
                 button.setText('Expand All');
                 cswPublic.tree.getEl().mask('Collapsing tree...');
@@ -327,11 +328,14 @@
             return cswPublic;
         };
 
-        cswPublic.expandAll = function (button, toolbar) {
+        cswPublic.expandAll = function () {
             /// <summary>
             /// Expand all nodes in the tree.
             /// </summary>
             /// <returns type="Csw.composites.tree">This tree</returns>
+            var toolbar = cswPublic.tree.getDockedItems()[0];
+            var button = toolbar.items.items[0];
+
             if (cswPrivate.useToggles) {
                 button.setText('Collapse All');
                 cswPublic.tree.getEl().mask('Expanding tree...');
@@ -348,13 +352,13 @@
 
         cswPrivate.allExpanded = false;
 
-        cswPublic.toggleExpanded = function (button) {
-            var toolbar = button.up('toolbar');
+        cswPublic.toggleExpanded = function () {
+            var toolbar = cswPublic.tree.getDockedItems()[0];
             toolbar.disable();
             if (cswPrivate.allExpanded === false) {
-                cswPublic.expandAll(button, toolbar);
+                cswPublic.expandAll();
             } else {
-                cswPublic.collapseAll(button, toolbar);
+                cswPublic.collapseAll();
             }
             cswPrivate.allExpanded = !cswPrivate.allExpanded;
         };

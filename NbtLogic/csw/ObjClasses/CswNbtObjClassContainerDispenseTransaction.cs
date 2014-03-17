@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
+        protected override void beforePromoteNodeLogic()
         {
             _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508
         }

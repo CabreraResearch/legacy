@@ -562,7 +562,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Store a nodeid on a mail report for emails later, based on node events
         /// </summary>
-        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswEnumNbtMailReportEventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
+        public void runMailReportEvents( Int32 TargetNodeTypeId, CswEnumNbtMailReportEventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
         {
             // Find any matching mail reports
             CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
@@ -578,7 +578,7 @@ namespace ChemSW.Nbt
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: TargetTypeOCP,
                                                       FilterMode: CswEnumNbtFilterMode.Contains,
-                                                      Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
+                                                      Value: TargetNodeTypeId.ToString() );
             // Event matches
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: EventOCP,

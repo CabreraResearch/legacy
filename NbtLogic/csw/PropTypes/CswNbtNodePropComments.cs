@@ -177,11 +177,11 @@ namespace ChemSW.Nbt.PropTypes
                 var dateSubmitted = CswConvert.ToDbVal( DateTime.Now );
 
                 //TODO: AddFirst()
-                _CommentsJson.Add( new JObject(
-                    new JProperty( "datetime", dateSubmitted ),
-                    new JProperty( "commenter", commenter ),
-                    new JProperty( "message", message ) ) );
-
+                JObject Comment = new JObject();
+                Comment.Add( new JProperty( "datetime", dateSubmitted ) );
+                Comment.Add( new JProperty( "commenter", commenter ) );
+                Comment.Add( new JProperty( "message", message ) );
+                _CommentsJson.Add( Comment );
 
                 //Remove exceess comments
                 Int32 CommentsTruncationLimit = 10;

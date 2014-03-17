@@ -37,6 +37,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Documents = "Documents";
             public const string Synonyms = "Synonyms";
             public const string LegacyMaterialId = "Legacy Material Id";
+            public const string Obsolete = "Obsolete";
+            // MLM _only_ properties
+            public const string ManufacturingSites = "Manufacturing Sites";
+            public const string RequiresCleaningEvent = "Requires Cleaning Event";
         }
 
         public sealed class CswEnumPhysicalState
@@ -87,7 +91,8 @@ namespace ChemSW.Nbt.ObjClasses
             Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>
             {
                 CswEnumNbtObjectClass.ChemicalClass,
-                CswEnumNbtObjectClass.NonChemicalClass
+                CswEnumNbtObjectClass.NonChemicalClass,
+                CswEnumNbtObjectClass.BiologicalClass,
             };
             return Ret;
         }
@@ -154,7 +159,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             beforePropertySetWriteNode();
 
@@ -189,6 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
             ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb: false );
             _toggleButtonVisibility();
             _toggleConstituentProps();
+            Obsolete.SetOnPropChange( OnObsoletePropChange );
         }
 
         /// <summary>
@@ -212,13 +218,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // Not IsConstituent
             ICswNbtMetaDataProp IsConstituentProp = null;
-            // case 30136 - don't add this filter if the ownertype is nodetype
-            //if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.NodeTypeId )
-            //{
-            //    CswNbtMetaDataNodeType NodeType = ParentRelationship.getNodeTypeOwner();
-            //    IsConstituentProp = NodeType.getNodeTypePropByObjectClassProp( PropertyName.IsConstituent );
-            //}
-            //else 
+            // Exclude Materials that have Obsolete == true
+            ICswNbtMetaDataProp ObsoleteProp = null;
+
+            CswNbtMetaDataPropertySet materialPs = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            CswNbtMetaDataObjectClass firstMaterialOc = materialPs.getObjectClasses().FirstOrDefault();
+
+            // Case 30136 - don't add this filter if the ownertype is nodetype
             if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.ObjectClassId )
             {
                 CswNbtMetaDataObjectClass ObjClass = ParentRelationship.getObjClassOwner();
@@ -227,18 +233,22 @@ namespace ChemSW.Nbt.ObjClasses
             else if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.PropertySetId )
             {
                 //Bug - We're adding the Chemical IsConstituent property here, but for NTPs treeloader works by PropName. Not ideal, but works unless the propname changes
-                CswNbtMetaDataPropertySet MaterialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
-                CswNbtMetaDataObjectClass FirstMaterialOC = MaterialPS.getObjectClasses().FirstOrDefault();
-                IsConstituentProp = FirstMaterialOC.getObjectClassProp( PropertyName.IsConstituent ).getNodeTypeProps().FirstOrDefault();
+                IsConstituentProp = firstMaterialOc.getObjectClassProp( PropertyName.IsConstituent ).getNodeTypeProps().FirstOrDefault();
             }
 
             if( null != IsConstituentProp )
             {
-                CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsConstituentProp );
-                viewProp.ShowInGrid = false;
-                ParentRelationship.View.AddViewPropertyFilter( viewProp,
-                                                               FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                               Value: CswEnumTristate.True.ToString() );
+                CswNbtViewProperty viewProp1 = ParentRelationship.View.AddViewProperty( ParentRelationship, IsConstituentProp );
+                viewProp1.ShowInGrid = false;
+                ParentRelationship.View.AddViewPropertyFilter( viewProp1, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True );
+            }
+
+            ObsoleteProp = firstMaterialOc.getObjectClassProp( PropertyName.Obsolete );
+            if( null != ObsoleteProp )
+            {
+                CswNbtViewProperty viewProp2 = ParentRelationship.View.AddViewProperty( ParentRelationship, ObsoleteProp );
+                viewProp2.ShowInGrid = false;
+                ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode: CswEnumNbtFilterMode.Equals, Value: CswEnumTristate.False, ShowAtRuntime: true );
             }
 
             onPropertySetAddDefaultViewFilters( ParentRelationship );
@@ -255,6 +265,12 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Request:
                         if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ) )
                         {
+                            // Case CIS-52280
+                            if( Obsolete.Checked == CswEnumTristate.True )
+                            {
+                                throw new CswDniException( CswEnumErrorType.Warning, "Can't request Material " + TradeName + " because it is obsolete.", "Material is obsolete" );
+                            }
+
                             HasPermission = true;
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
@@ -277,6 +293,12 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Receive:
                         if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
                         {
+                            // Case CIS-52280
+                            if( Obsolete.Checked == CswEnumTristate.True )
+                            {
+                                throw new CswDniException( CswEnumErrorType.Warning, "Can't receive Material " + TradeName + " because it is obsolete.", "Material is obsolete" );
+                            }
+
                             HasPermission = true;
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, NodeId );
                             _CswNbtResources.setAuditActionContext( CswEnumNbtActionName.Receiving );
@@ -452,6 +474,26 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonData.Data["state"]["canAddCofA"] = canAddCofA;
         }
 
+        private void _toggleAllowRequestForContainers( bool Allow )
+        {
+            CswNbtView MyContainers = new CswNbtView( _CswNbtResources );
+            MyContainers.ViewName = "Related Containers";
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+
+            CswNbtViewRelationship Root = MyContainers.AddViewRelationship( ContainerOC, false );
+            MyContainers.AddViewPropertyAndFilter( Root, MaterialOCP, NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+
+            ICswNbtTree ContainersTree = _CswNbtResources.Trees.getTreeFromView( MyContainers, false, false, false );
+            for( int i = 0; i < ContainersTree.getChildNodeCount(); i++ )
+            {
+                ContainersTree.goToNthChild( i );
+                CswNbtObjClassContainer CurrentContainer = ContainersTree.getNodeForCurrentPosition();
+                CurrentContainer.ToggleAllowRequest( Allow );
+            }
+        }//_toggleAllowRequestForContainers()
+
         #endregion Custom Logic
 
         #region Property Set specific properties
@@ -469,6 +511,27 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid Synonyms { get { return ( _CswNbtNode.Properties[PropertyName.Synonyms] ); } }
         public CswNbtNodePropText LegacyMaterialId { get { return _CswNbtNode.Properties[PropertyName.LegacyMaterialId]; } }
+        public CswNbtNodePropLogical Obsolete { get { return ( _CswNbtNode.Properties[PropertyName.Obsolete] ); } }
+        public void OnObsoletePropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            // See Case CIS-52280
+            if( CswEnumTristate.True == Obsolete.Checked )
+            {
+                ApprovedForReceiving.Checked = CswEnumTristate.False;
+                Receive.setHidden( true, true );
+                Request.setHidden( true, true );
+                _toggleAllowRequestForContainers( false );
+            }
+            else
+            {
+                ApprovedForReceiving.Checked = CswEnumTristate.True;
+                Receive.setHidden( false, true );
+                Request.setHidden( false, true );
+                _toggleAllowRequestForContainers( true );
+            }
+        }
+        public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
+        public CswNbtNodePropLogical RequiresCleaningEvent { get { return ( _CswNbtNode.Properties[PropertyName.RequiresCleaningEvent] ); } }
 
         #endregion
 

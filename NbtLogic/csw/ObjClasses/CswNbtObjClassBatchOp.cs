@@ -51,7 +51,6 @@ namespace ChemSW.Nbt.ObjClasses
             Log.AddComment( Message );
         }
 
-
         /// <summary>
         /// For use by CswNbtBatchOps: mark an operation started
         /// </summary>

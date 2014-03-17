@@ -112,6 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             _SessionId = CswConvert.ToString( row["sessionid"] );
             _PendingUpdate = CswConvert.ToBoolean( row["pendingupdate"] );
             _Searchable = CswConvert.ToBoolean( row["searchable"] );
+            PendingEvents = CswConvert.ToBoolean( row["pendingevents"] );
             if( row.Table.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
             {
                 _AuditLevel = row[_CswAuditMetaData.AuditLevelColName].ToString();
@@ -171,6 +172,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _IsTemp; }
         }
+
+        /// <summary>
+        /// When set to true, the NodeUpdateEvents Scheduled Rule will perform update events for this Node
+        /// </summary>
+        public bool PendingEvents { get; set; }
 
         /// <summary>
         /// Converts a temp node to a real one.  
@@ -248,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
         }//Filled
 
-        public bool DisableSave = false;
+        public bool OverrideValidation = false;
 
         public bool New
         {
@@ -420,7 +426,6 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
             {
                 OverrideUniqueValidation = true,
-                OverrideMailReportEvents = true,
                 Creating = true,
                 ForceUpdate = ForceUpdate,
                 SkipEvents = SkipEvents
@@ -428,9 +433,9 @@ namespace ChemSW.Nbt.ObjClasses
             NodePersistStrategy.postChanges( this );
         }//postChanges()
 
-        public void requestWrite( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
+        public void write( bool ForceUpdate )
         {
-            _CswNbtNodeWriter.write( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
+            _CswNbtNodeWriter.write( this, ForceUpdate );
         }
 
         public void setModificationState( String ModState )
@@ -663,10 +668,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Methods
 
-        public void updateRelationsToThisNode()
+        public void syncNodeName()
         {
-            _CswNbtNodeWriter.updateRelationsToThisNode( this );
+            _CswNbtNodeWriter.syncNodeName( this );
         }
+
         public void setSequenceValues()
         {
             _CswNbtNodeWriter.setSequenceValues( this );
