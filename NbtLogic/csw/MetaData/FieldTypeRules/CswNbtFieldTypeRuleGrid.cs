@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -9,9 +7,9 @@ using ChemSW.Nbt.Security;
 namespace ChemSW.Nbt.MetaData.FieldTypeRules
 {
 
-    public class CswNbtFieldTypeRuleGrid : ICswNbtFieldTypeRule
+    public class CswNbtFieldTypeRuleGrid: ICswNbtFieldTypeRule
     {
-        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        public sealed class SubFieldName: ICswNbtFieldTypeRuleSubFieldName
         {
         }
 
@@ -62,7 +60,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.onSetFk( DesignNTPNode );
         }
 
-        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        public sealed class AttributeName: ICswNbtFieldTypeRuleAttributeName
         {
             public const string WidthInPixels = CswEnumNbtPropertyAttributeName.WidthInPixels;
             public const string View = CswEnumNbtPropertyAttributeName.View;
@@ -115,6 +113,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
+            //Case 53001 - grid properties need to have the the current NT set as the root
+            CswNbtView propView = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( NodeTypeProp.ViewId );
+            propView.SetViewMode( CswEnumNbtViewRenderingMode.Grid );
+            propView.AddViewRelationship( NodeTypeProp.getNodeType(), true );
+            propView.save();
+
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
@@ -123,7 +127,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return string.Empty;
         }
 
-        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode ) { }
+        public void onBeforeWriteDesignNode( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        {
+
+        }
 
     }//CswNbtFieldTypeRuleGrid
 
