@@ -52,6 +52,11 @@ namespace ChemSW.Nbt.Schema
             //assign the Biological NT to the Biological OC. This will automatically force a re-sync of props
             BiologicalDNT.changeParentObjectClass( BiologicalOC );
 
+            //we need to create the nodetype props now that the object class is correct
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+            //add Physical State to the Add layout
+            CswNbtMetaDataNodeTypeProp StateNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( BiologicalNT.NodeTypeId, CswNbtObjClassBiological.PropertyName.PhysicalState );
+            StateNTP.updateLayout( CswEnumNbtLayoutType.Add, false, DisplayRow: 1 );
         }
 
         private void _cleanupNTPrecords( CswNbtMetaDataNodeType BiologicalNT )
