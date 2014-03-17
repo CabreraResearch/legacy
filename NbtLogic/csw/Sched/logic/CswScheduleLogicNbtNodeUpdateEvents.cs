@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.Sched
             for( Int32 idx = 0; ( idx < NodesPerCycle ); idx++ )
             {
                 CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRequiringUpdate.Rows[idx]["nodeid"].ToString() ) );
-                executeNodeUpdateEvents( CswNbtResources , NodeId);
+                executeNodeUpdateEvents( CswNbtResources , NodeId );
             }
         }
 
