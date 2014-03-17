@@ -19,7 +19,7 @@ namespace NbtWebApp.Actions.Explorer
         public string NodeIdStr { get; set; }
 
         [DataMember]
-        public CswNbtArborNodeData Data { get; set; }
+        public CswNbtArborNodeData data { get; set; }
 
         [DataContract]
         public class CswNbtArborNodeData
@@ -37,13 +37,16 @@ namespace NbtWebApp.Actions.Explorer
             public string NodeId { get; set; }
 
             [DataMember]
-            public string NodeType { get; set; }
+            public string URI { get; set; }
 
             [DataMember]
             public int Level { get; set; }
 
             [DataMember]
             public string Type { get; set; }
+
+            [DataMember]
+            public int RelatingPropId;
         }
     }
 }

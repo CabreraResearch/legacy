@@ -69,12 +69,51 @@ namespace NbtWebApp.Actions.Explorer
 
 
             StartingNode = NbtResources.Nodes[NodeId];
+            CswNbtMetaDataNodeType startingNT = StartingNode.getNodeType();
             //Add the initial node to the graph
-            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), StartingNode.IconFileName, 0, "Instance", NodeId.ToString() );
+            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), startingNT.IconFileName, 0, "Instance", NodeId.ToString(), startingNT.NodeTypeName, Int32.MinValue );
 
             _recurseForRelatingNodes( NbtResources, Return, StartingNode, 1, NodeId.ToString() );
 
             _recurseForRelatedNTs( NbtResources, Return, StartingNode.NodeTypeId, 1, NodeId.ToString() );
+        }
+
+        public static void GetRelating( ICswResources CswResources, CswNbtExplorerRelatingReturn RelatingNodes, CswNbtExplorerRequest Req )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtView view = new CswNbtView( NbtResources );
+            if( Req.RelatingId.StartsWith( "OC_" ) )
+            {
+                int ObjClassId = CswConvert.ToInt32( Req.RelatingId.Substring( Req.RelatingId.LastIndexOf( '_' ) + 1 ) );
+                CswNbtMetaDataObjectClass ObjClass = NbtResources.MetaData.getObjectClass( ObjClassId );
+                CswNbtMetaDataObjectClassProp objectClassProp = ObjClass.getObjectClassProp( Req.RelatingPropId );
+
+                CswNbtViewRelationship parent = view.AddViewRelationship( ObjClass, true );
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( Req.NodeId );
+                view.AddViewPropertyAndFilter( parent, objectClassProp, Value : pk.PrimaryKey.ToString(), SubFieldName : CswEnumNbtSubFieldName.NodeID );
+            }
+            else
+            {
+                int NtId = CswConvert.ToInt32( Req.RelatingId.Substring( Req.RelatingId.LastIndexOf( '_' ) + 1 ) );
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( NtId );
+                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( Req.RelatingPropId );
+
+                CswNbtViewRelationship parent = view.AddViewRelationship( NodeType, true );
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( Req.NodeId );
+                view.AddViewPropertyAndFilter( parent, ntp, Value : pk.PrimaryKey.ToString(), SubFieldName : CswEnumNbtSubFieldName.NodeID );
+            }
+
+            ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, false, false, false );
+            for( int i = 0; i < tree.getChildNodeCount(); i++ )
+            {
+                tree.goToNthChild( i );
+                CswNbtNodeKey nodeKey = tree.getNodeKeyForCurrentPosition();
+                string nodeName = tree.getNodeNameForCurrentPosition();
+                CswNbtMetaDataNodeType nodetype = NbtResources.MetaData.getNodeType( nodeKey.NodeTypeId );
+                RelatingNodes.Data.Add( nodeName, nodeKey.NodeId, nodetype.NodeTypeName, string.Empty, string.Empty );
+                tree.goToParentNode();
+            }
         }
 
         private static void _recurseForRelatingNodes( CswNbtResources NbtResources, CswNbtExplorerReturn Return, CswNbtNode Node, int Level, string OwnerIdStr )
@@ -87,11 +126,12 @@ namespace NbtWebApp.Actions.Explorer
                 if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
                 {
                     CswNbtNode TargetNode = NbtResources.Nodes[RelProp.RelatedNodeId];
+                    CswNbtMetaDataNodeType TargetNT = TargetNode.getNodeType();
 
                     if( FilterVal.Contains( "NT_" + TargetNode.NodeTypeId ) || FilterVal.Contains( "OC_" + TargetNode.getObjectClassId() ) )
                     {
                         string targetIdStr = OwnerIdStr + "_" + RelProp.RelatedNodeId.ToString();
-                        _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance", RelProp.RelatedNodeId.ToString() );
+                        _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance", RelProp.RelatedNodeId.ToString(), TargetNT.NodeTypeName, RelNTP.PropId );
 
                         if( Level + 1 <= MAX_DEPTH )
                         {
@@ -122,7 +162,7 @@ namespace NbtWebApp.Actions.Explorer
             }
             return ret;
         }
-        
+
         private static void _recurseForRelatedNTs( CswNbtResources NbtResources, CswNbtExplorerReturn Return, int NodeTypeId, int level, string OwnerIdStr )
         {
             if( false == SEEN.Contains( NodeTypeId ) && level <= MAX_DEPTH )
@@ -141,28 +181,30 @@ namespace NbtWebApp.Actions.Explorer
                 string IconFilename = string.Empty;
                 string Id = string.Empty;
 
+                Random rand = new Random( DateTime.Now.Millisecond );
                 Collection<CswNbtViewRelationship> RelatedTypes = ViewRule.getViewChildRelationshipOptions( View, Relationship.ArbitraryId );
                 foreach( CswNbtViewRelationship Related in RelatedTypes )
                 {
                     bool WasNT = false;
                     bool ObjClassAllowed = false;
                     DisplayName = Related.TextLabel;
+                    string MetaDataName = string.Empty;
 
                     int id = ( Related.PropOwner == CswEnumNbtViewPropOwnerType.First && Related.FirstId != Int32.MinValue ? Related.FirstId : Related.SecondId );
                     CswEnumNbtViewRelatedIdType IdType = ( Related.PropOwner == CswEnumNbtViewPropOwnerType.First && Related.FirstId != Int32.MinValue ? Related.FirstType : Related.SecondType );
 
                     if( Related.PropOwner == CswEnumNbtViewPropOwnerType.Second )
                     {
-
                         if( IdType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                         {
                             CswNbtMetaDataNodeType RelatedNodeType = NbtResources.MetaData.getNodeType( id );
                             IconFilename = RelatedNodeType.IconFileName;
-                            TargetIdStr = OwnerIdStr + "_NT_" + RelatedNodeType.NodeTypeId;
+                            TargetIdStr = OwnerIdStr + "_NT_" + RelatedNodeType.NodeTypeId + "_" + rand.Next();
                             Id = "NT_" + RelatedNodeType.NodeTypeId;
 
                             CswNbtMetaDataObjectClass ObjClass = RelatedNodeType.getObjectClass();
                             ObjClassAllowed = FilterVal.Contains( "OC_" + ObjClass.ObjectClassId );
+                            MetaDataName = RelatedNodeType.NodeTypeName;
 
                             WasNT = true;
                         }
@@ -170,15 +212,15 @@ namespace NbtWebApp.Actions.Explorer
                         {
                             CswNbtMetaDataObjectClass RelatedObjClass = NbtResources.MetaData.getObjectClass( id );
                             IconFilename = RelatedObjClass.IconFileName;
-                            TargetIdStr = OwnerIdStr + "_OC_" + RelatedObjClass.ObjectClassId;
+                            TargetIdStr = OwnerIdStr + "_OC_" + RelatedObjClass.ObjectClassId + "_" + rand.Next();
                             Id = "OC_" + RelatedObjClass.ObjectClassId;
+                            MetaDataName = RelatedObjClass.ObjectClassName;
                         }
 
                         if( ( ( IdType == CswEnumNbtViewRelatedIdType.NodeTypeId && FilterVal.Contains( "NT_" + id ) || ObjClassAllowed ) )
                             || ( IdType == CswEnumNbtViewRelatedIdType.ObjectClassId && FilterVal.Contains( "OC_" + id ) ) )
                         {
-
-                            _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFilename, level, "Category", Id );
+                            _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFilename, level, "Category", Id, MetaDataName, Related.PropId );
 
                             if( level + 1 <= MAX_DEPTH && WasNT )
                             {
@@ -194,18 +236,28 @@ namespace NbtWebApp.Actions.Explorer
         /// <summary>
         /// Helper method for adding data to the return object
         /// </summary>
-        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string Type, string Id )
+        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string Type, string Id, string MetaDataName, int RelatingPropId )
         {
+            string URI = "api/v1/" + MetaDataName;
+            if( "Instance" == Type )
+            {
+                CswPrimaryKey nodeid = new CswPrimaryKey();
+                nodeid.FromString( TargetId );
+                URI += "/" + nodeid.PrimaryKey;
+            }
+
             Return.Data.Nodes.Add( new CswNbtArborNode()
                 {
                     NodeIdStr = TargetId,
-                    Data = new CswNbtArborNode.CswNbtArborNodeData()
+                    data = new CswNbtArborNode.CswNbtArborNodeData()
                         {
                             Icon = "Images/newicons/100/" + Icon,
                             Label = Label,
                             NodeId = Id,
                             Level = level,
-                            Type = Type
+                            Type = Type,
+                            URI = URI,
+                            RelatingPropId = RelatingPropId
                         }
                 } );
 
@@ -215,13 +267,13 @@ namespace NbtWebApp.Actions.Explorer
                     {
                         OwnerNodeIdStr = OwnerId,
                         TargetNodeIdStr = TargetId,
-                        Data = new CswNbtArborEdge.CswNbtArborEdgeData()
+                        data = new CswNbtArborEdge.CswNbtArborEdgeData()
                             {
                                 Length = level * 10
                             }
                     } );
             }
         }
-        
+
     }
 }

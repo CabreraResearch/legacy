@@ -28,7 +28,7 @@
             cswPrivate.maxDepth = 2;
             cswPrivate.filterVals = '';
             cswPrivate.filterOpts = [];
-            
+
             cswParent.empty();
 
             Csw.ajaxWcf.post({
@@ -38,7 +38,7 @@
                     cswPrivate.filterVals = response.filterVals;
                 }
             });
-            
+
         }());
 
         cswPrivate.initPanel = function () {
@@ -76,7 +76,7 @@
                             xtype: 'button',
                             text: 'Edit Filters',
                             id: 'ExtEditFiltersBtn',
-                            handler: function() {
+                            handler: function () {
                                 Csw.dialogs.multiselectedit({
                                     opts: cswPrivate.filterOpts,
                                     title: 'Edit Explorer Filters',
@@ -86,7 +86,7 @@
 
                                         cswPrivate.filterVal = updatedValues.join(',');
 
-                                        Csw.iterate(cswPrivate.filterOpts, function(opt) {
+                                        Csw.iterate(cswPrivate.filterOpts, function (opt) {
                                             opt.selected = updatedValues.indexOf(opt.value) !== -1;
                                         });
 
@@ -101,15 +101,20 @@
                     xtype: 'panel',
                     width: 300,
                     id: 'west-region-container',
-                    items: [{ //TODO: upon clicking on a node, show props here
+                    tools: [{
                         xtype: 'button',
-                        text: 'Center On This',
-                        handler: function () {
-                            if (false === Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
-                                cswPrivate.initSystem();
-                            }
+                        text: 'Center on This',
+                        handler: function() {
+                            cswPrivate.initSystem();
                         }
-                    }]
+                    }],
+                    autoScroll: true,
+                    layout: {
+                        // layout-specific configs go here
+                        type: 'accordion',
+                        titleCollapse: true,
+                        animate: true
+                    }
                 }, {
                     title: 'Relationships',
                     region: 'center',
@@ -119,7 +124,7 @@
                         autoEl: {
                             tag: 'canvas',
                             height: 510,
-                            width: 1250
+                            width: 1200
                         }
                     }
                 }]
@@ -127,12 +132,12 @@
         };
 
         cswPrivate.initSystem = function () {
+            if (cswPrivate.sys) {
+                delete cswPrivate.sys;
+            }
+
             cswPrivate.sys = arbor.ParticleSystem(1000, 1000, 0.7);
             cswPrivate.sys.parameters({ gravity: true });
-
-            //if (Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
-            //    cswPrivate.startingNodeId = 'nodes_2';
-            //}
 
             Csw.ajaxWcf.post({
                 urlMethod: "Explorer/Initialize",
@@ -143,40 +148,123 @@
                 },
                 success: function (response) {
                     var graph = {};
-                    
-                    Csw.iterate(response.Nodes, function (arborNode) {
 
-                        if (imgs[arborNode.Data.Icon]) {
-                            arborNode.Data.iconId = imgs[arborNode.Data.Icon];
+                    Csw.iterate(response.Nodes, function (arborNode) {
+                        if (arborNode.NodeId === cswPrivate.startingNodeId) {
+                            cswPrivate.onNodeClick(arborNode);
+                        }
+
+                        if (imgs[arborNode.data.Icon]) {
+                            arborNode.data.iconId = imgs[arborNode.data.Icon];
                         } else {
                             var secretCell = cswPrivate.actionTbl.cell(1, i);
                             var img = secretCell.img({
-                                src: arborNode.Data.Icon,
+                                src: arborNode.data.Icon,
                                 ID: arborNode.NodeId
                             }).hide();
                             i++;
-                            imgs[arborNode.Data.Icon] = img.getId();
+                            imgs[arborNode.data.Icon] = img.getId();
 
-                            arborNode.Data.iconId = img.getId();
+                            arborNode.data.iconId = img.getId();
                         }
 
-                        cswPrivate.sys.addNode(arborNode.NodeId, arborNode.Data);
+                        cswPrivate.sys.addNode(arborNode.NodeId, arborNode.data);
                         graph[arborNode.NodeId] = [];
                     });
 
                     Csw.iterate(response.Edges, function (arborEdge) {
                         //graph[arborEdge.OwnerNodeId].push(arborEdge.TargetNodeId);
                         //graph[arborEdge.TargetNodeId].push(arborEdge.OwnerNodeId);
-                        cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.Data);
+                        cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.data);
                     });
 
                     cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, {
                         nodes: response.Nodes,
                         edges: response.Edges,
                         startNodeId: cswPrivate.startingNodeId,
-                        onNodeClick: function (selectedId) {
-                            cswPrivate.startingNodeId = selectedId;
+                        onNodeClick: cswPrivate.onNodeClick,
+                        onCategoryClick: cswPrivate.onCategoryClick
+                    });
+                }
+            });
+        };
+
+        cswPrivate.onCategoryClick = function (category) {
+            Csw.ajaxWcf.post({
+                urlMethod: 'Explorer/GetRelating',
+                data: {
+                    NodeId: cswPrivate.startingNodeId,
+                    RelatingPropId: category.data.RelatingPropId,
+                    RelatingId: category.data.NodeId
+                },
+                success: function (response) {
+                    var relatingDialog = Csw.layouts.dialog({
+                        title: 'Relating',
+                        width: 800,
+                        height: 460,
+                        onOpen: function () {
+                            var data = { 'items': [] };
+                            var customColumns = [];
+                            Csw.iterate(response.entities, function (node) {
+                                data.items.push({
+                                    nodename: node.nodename,
+                                    nodeid: node.nodeid
+                                });
+                                customColumns.push('Open');
+                            });
+
+                            relatingDialog.div.grid({
+                                height: 400,
+                                showActionColumn: false,
+                                makeCustomColumns: true,
+                                onMakeCustomColumn: function (div, colObj, metaData, record, rowIndex, colIndex) {
+                                    div.data('nodeid', record.data.nodeid);
+                                    div.buttonExt({
+                                        enabledText: 'Center On This',
+                                        onClick: function () {
+                                            cswPrivate.startingNodeId = 'nodes_' + div.data('nodeid');
+                                            cswPrivate.initSystem();
+                                            relatingDialog.close();
+                                        }
+                                    });
+                                },
+                                fields: [
+                                    { name: 'nodename', type: 'string' },
+                                    { name: 'nodebtn', type: 'button' },
+                                    { name: 'nodeid', type: 'number' }
+                                ],
+                                columns: [
+                                    { header: 'Name', dataIndex: 'nodename' },
+                                    { header: 'Open', dataIndex: 'nodebtn' },
+                                    { header: 'nodeid', dataIndex: 'nodeid', hidden: true }
+                                ],
+                                data: data,
+                                customColumns: customColumns
+                            });
                         }
+                    });
+                    relatingDialog.open();
+                }
+            });
+        };
+
+        cswPrivate.onNodeClick = function (node) {
+            cswPrivate.startingNodeId = node.data.NodeId;
+            $.ajax({
+                method: 'GET',
+                url: node.data.URI,
+                success: function (getResponse) {
+                    var propData = Csw.deserialize(getResponse.propdata);
+                    var propsPanel = window.Ext.getCmp('west-region-container');
+                    propsPanel.removeAll();
+                    propsPanel.setTitle(getResponse.nodename);
+                    Csw.iterate(propData, function (prop) {
+                        propsPanel.add({
+                            title: prop.name,
+                            html: prop.gestalt,
+                            bodyPadding: 10,
+                            autoScroll: true
+                        });
                     });
                 }
             });
