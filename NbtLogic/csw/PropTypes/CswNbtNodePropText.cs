@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.PropTypes
             string NewText = Text;
             while( false == isUnique )
             {
-                DataTable MatchingPropsTable = JctNodePropSelect.getTable( "where nodetypepropid = " + NodeTypePropId + " and " + _TextSubField.Column + " = '" + NewText + "'" );
+                DataTable MatchingPropsTable = JctNodePropSelect.getTable( "where nodetypepropid = " + NodeTypePropId + " and lower(" + _TextSubField.Column + ") = '" + NewText.ToLower() + "'" );
                 if( MatchingPropsTable.Rows.Count > 1 )
                 {
                     NewText = Text + " " + PropNum;
