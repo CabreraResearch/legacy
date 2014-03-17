@@ -447,7 +447,7 @@ namespace ChemSW.Nbt.Batch
                 }
                 else
                 {
-                    BatchNode.appendToLog( "Could not email log to " + _User.Username + " because they have no provided an email address." );
+                    BatchNode.appendToLog( "Could not email log to " + _User.Username + " because they have not provided an email address." );
                 }
             }
             else
@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.Batch
 
         private void _storeError( CswNbtObjClassBatchOp BatchNode, string error )
         {
-            BatchNode.appendMessageOnlyToLog( error );
+            BatchNode.appendToLog( error );
             _HumanReadableLog.Add( error );
         }//_storeError()
 

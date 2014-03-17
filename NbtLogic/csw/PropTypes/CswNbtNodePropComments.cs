@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.PropTypes
             AddComment( CswConvert.ToString( JObject["newmessage"] ), CswConvert.ToString( JObject["commenter"] ) );
         }
 
-        public void AddComment( string message, string commenter = "", bool showDate = true, bool showCommenter = true )
+        public void AddComment( string message, string commenter = "" )
         {
             if( false == String.IsNullOrEmpty( message ) )
             {
@@ -178,14 +178,8 @@ namespace ChemSW.Nbt.PropTypes
 
                 //TODO: AddFirst()
                 JObject Comment = new JObject();
-                if( showDate )
-                {
-                    Comment.Add( new JProperty( "datetime", dateSubmitted ) );
-                }
-                if( showCommenter )
-                {
-                    Comment.Add( new JProperty( "commenter", commenter ) );
-                }
+                Comment.Add( new JProperty( "datetime", dateSubmitted ) );
+                Comment.Add( new JProperty( "commenter", commenter ) );
                 Comment.Add( new JProperty( "message", message ) );
                 _CommentsJson.Add( Comment );
 
