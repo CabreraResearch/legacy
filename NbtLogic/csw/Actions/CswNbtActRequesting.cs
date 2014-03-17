@@ -302,8 +302,14 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public JObject getRequestItemAddProps( CswNbtNode RequestItemNode )
         {
+            CswEnumNbtNodeEditMode PrevMode = _CswNbtResources.EditMode;
+            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
+
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-            return PropsAction.getProps( RequestItemNode, "", null, CswEnumNbtLayoutType.Add );
+            JObject Ret = PropsAction.getProps( RequestItemNode, "", null, CswEnumNbtLayoutType.Add );
+
+            _CswNbtResources.EditMode = PrevMode;
+            return Ret;
         }
 
         public const string SubmittedItemsViewName = "Submitted Request Items";
