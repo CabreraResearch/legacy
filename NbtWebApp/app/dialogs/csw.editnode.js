@@ -33,6 +33,8 @@
             cswPrivate.editMode = cswPrivate.editMode || Csw.enums.editMode.View;
             cswPrivate.name = cswPrivate.name || 'EditNode';
             cswPrivate.title = cswPrivate.title || 'Edit';
+            cswPrivate.width = cswPrivate.width || 1100;
+            cswPrivate.height = cswPrivate.height || 700;
 
             var title = Csw.string(cswPrivate.title);
             if (cswPrivate.nodenames.length > 1) {
@@ -45,8 +47,8 @@
         (function _postCtor() {
             var editDialog = Csw.layouts.dialog({
                 title: cswPrivate.title,
-                width: 1100,
-                height: 700,
+                width: cswPrivate.width,
+                height: cswPrivate.height,
                 onOpen: function () {
                     var table = editDialog.div.table({ width: '100%' });
                     var tabCell = table.cell(1, 2);

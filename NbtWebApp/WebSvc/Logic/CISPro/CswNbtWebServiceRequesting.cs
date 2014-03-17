@@ -111,10 +111,11 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void createFavorite( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.CswRequestReturn.Ret Request )
         {
-            //...this seems so familiar..... deja vu?
             CswNbtResources NbtResources = _validate( CswResources );
             bool Succeeded = false;
-            //apparently we might already have a favorite, in which case we use that one - else we make a new one
+            //This webservice is being called in the webclient twice - once to create the temp, and again to save the changes
+            //this is really awkward - all this webservice should really do is return the Nodetypeid needed to do a traditional add
+            //...oh, but wait, we need to make sure Favorite is checked in this case (and ONLY in this case) - *sigh*
             if( null != Request && false == string.IsNullOrEmpty( Request.RequestId ) )
             {
                 CswNbtObjClassRequest Favorite = NbtResources.Nodes[Request.RequestId];
