@@ -534,7 +534,11 @@ namespace ChemSW.Nbt.Actions
                         Ret["PhysicalState"] = CswNbtPropertySetMaterial.CswEnumPhysicalState.NA;
 
                         // Add properties here!
+                        break;
 
+                    case CswEnumNbtObjectClass.BiologicalClass:
+                        CswNbtObjClassBiological BioNode = MaterialNode.Node;
+                        Ret["PhysicalState"] = BioNode.PhysicalState.Value;
                         break;
                 }
             }

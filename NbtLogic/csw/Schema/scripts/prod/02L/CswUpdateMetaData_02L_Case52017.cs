@@ -98,7 +98,8 @@ namespace ChemSW.Nbt.Schema
                 PropName = "Physical State",
                 FieldType = CswEnumNbtFieldType.List,
                 AuditLevel = true,
-                ListOptions = "solid,liquid,gas,n/a"
+                ListOptions = "solid,liquid,gas,n/a",
+                IsRequired = true,
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( BiologicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -202,7 +203,9 @@ namespace ChemSW.Nbt.Schema
                 PropName = "Tradename",
                 FieldType = CswEnumNbtFieldType.Text,
                 AuditLevel = true,
+                IsRequired = true,
             } );
+
 
         }//createBiologicalOC()
 
