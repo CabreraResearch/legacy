@@ -9,11 +9,18 @@
         var render = function () {
             'use strict';
             var cswPrivate = Csw.object();
+            
+            var cols = [];
+            var data = nodeProperty.propData.values;
+            if (false === nodeProperty.isReadOnly() && nodeProperty.propData.values.options) {
+                cols = nodeProperty.propData.values.options.columns;
+                data = nodeProperty.propData.values.options.data;
+            }
 
             var cba = nodeProperty.propDiv.checkBoxArray({
                 name: nodeProperty.name + '_cba',
-                cols: nodeProperty.propData.values.options.columns,
-                data: nodeProperty.propData.values.options.data,
+                cols: cols,
+                data: data,
                 UseRadios: false,
                 isRequired: nodeProperty.isRequired(),
                 ReadOnly: nodeProperty.isReadOnly(),
