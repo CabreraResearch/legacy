@@ -22,8 +22,9 @@ namespace ChemSW.Nbt.Actions
     public class CswNbtActChemWatch
     {
         //Leaving these here for testing purposes -- this is David's account
-        // private const string _chemWatchUserName = "chemswt";
+        // private const string _chemWatchUserName = "Admin";
         // private const string _chemWatchPassword = "1107ms";
+        // private const string _chemWatchDomain = "chemswt";
 
         private static readonly CookieManagerBehavior _cookieBehavior = new CookieManagerBehavior(); //All ChemWatch service clients must share this
 
@@ -279,13 +280,16 @@ namespace ChemSW.Nbt.Actions
             {
                 string cwUsername = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchUsername );
                 string cwPassword = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchPassword );
+                string cwDomain = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchDomain );
 
                 AuthenticateServiceClient cwAuthClient = new AuthenticateServiceClient();
                 cwAuthClient.Endpoint.Behaviors.Add( _cookieBehavior );
                 UserCredential cwUserCredential = new UserCredential()
                     {
                         UserName = cwUsername,
-                        Password = cwPassword
+                        Password = cwPassword,
+                        //TODO: Uncomment below when Alexei from ChemWatch provides us with new Authentication service
+                        //Domain = cwDomain
                     };
                 GeneralResponseOfAuthenticationResponse cwAuthResponse = cwAuthClient.Authenticate( cwUserCredential ); //providing invalid credentials will throw an exception
                 if( cwAuthResponse.ErrorCode == 0 )
