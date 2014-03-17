@@ -701,7 +701,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != RelationalNodeType )
                 {
                     PropNode = ( from Prop in RelationalNodeType.getNodeTypeProps()
-                                 where Prop.PropName == OCProp.PropName && Prop.FieldTypeId == OCProp.FieldTypeId
+                                 where (Prop.PropName == OCProp.PropName || Prop.PropName == Prop.getObjectClassPropName() ) && Prop.FieldTypeId == OCProp.FieldTypeId
                                  select _CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", Prop.PropId ) )
                                ).FirstOrDefault();
                 }
