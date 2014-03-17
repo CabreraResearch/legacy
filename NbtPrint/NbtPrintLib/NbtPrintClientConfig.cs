@@ -108,7 +108,16 @@ namespace NbtPrintLib
         /// <returns></returns>
         public string getDecryptedPassword()
         {
-            return encryptor.decrypt( password );
+            string Ret;
+            try
+            {
+                Ret = encryptor.decrypt( password );
+            }
+            catch
+            {
+                Ret = "";
+            }
+            return Ret;
         }
 
         public string getEncryptedPassword()

@@ -20,6 +20,7 @@ namespace ChemSW.Nbt
             int ChemicalOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( ChemicalOC_Id ).Keys )
             {
+                _CswNbtResources.Modules.ShowProp( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryListsGrid );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryListsGrid );
             }
 
