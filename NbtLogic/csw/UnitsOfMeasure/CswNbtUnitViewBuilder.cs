@@ -32,6 +32,11 @@ namespace ChemSW.Nbt.UnitsOfMeasure
                 CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
                 PhysicalState = ChemicalNode.PhysicalState.Value;
             }
+            else if( MaterialNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.BiologicalClass )
+            {
+                CswNbtObjClassBiological ChemicalNode = MaterialNode.Node;
+                PhysicalState = ChemicalNode.PhysicalState.Value;
+            }
             return PhysicalState;
         }
 
