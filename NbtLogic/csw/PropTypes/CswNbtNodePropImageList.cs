@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropImageList : CswNbtNodeProp
+    public class CswNbtNodePropImageList: CswNbtNodeProp
     {
         public static char Delimiter = '\n';
 
@@ -201,21 +201,20 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["allowmultiple"] = AllowMultiple;
             ParentObject["imageprefix"] = ImagePrefix;
 
-            if( IsEditModeEditable )
-            {
                 // To preserve order of the displaying/printing of pictorgrams,
                 // this must be an array.
                 JArray OptionsArr = new JArray();
                 ParentObject["options"] = OptionsArr;
-                foreach( string Key in Options.Keys )
+            foreach( string Key in Options.Keys )
+            {
+                bool isSelected = Value.Contains( Key );
+                if( IsEditModeEditable || isSelected )
                 {
                     JObject Opt = new JObject();
                     Opt["text"] = Options[Key];
                     Opt["value"] = Key;
-                    if( Value.Contains( Key ) )
-                    {
-                        Opt["selected"] = true;
-                    }
+                    Opt["selected"] = isSelected;
+                        
                     OptionsArr.Add( Opt );
 
                 }
