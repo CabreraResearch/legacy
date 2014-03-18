@@ -149,9 +149,10 @@ namespace ChemSW.Nbt.PropTypes
             while( false == isUnique )
             {
                 DataTable MatchingPropsTable = JctNodePropSelect.getTable( "where nodetypepropid = " + NodeTypePropId + " " +
-                                                                           "and lower(" + _TextSubField.Column + ") = '" + CswTools.SafeSqlParam( NewText ).ToLower() + "'" );
+                                                                           "  and nodeid <> " + this.NodeId.PrimaryKey +
+                                                                           "  and lower(" + _TextSubField.Column + ") = '" + CswTools.SafeSqlParam( NewText ).ToLower() + "'" );
 
-                if( MatchingPropsTable.Rows.Count > 1 )
+                if( MatchingPropsTable.Rows.Count > 0 )
                 {
                     NewText = Text + " " + PropNum;
                     PropNum++;
