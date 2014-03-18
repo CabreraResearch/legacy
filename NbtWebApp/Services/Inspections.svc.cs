@@ -46,7 +46,7 @@ namespace NbtWebApp
                     EndingDate = EndingDate
                 };
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, CswNbtWebServiceInspections.Dates>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceInspections.getInspectionsByDateRange,
                 ParamObj: Dates
@@ -69,7 +69,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionGet Ret = new CswNbtWebServiceInspections.CswNbtInspectionGet();
             
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.getInspectionsByUser,
                 ParamObj : ""
@@ -93,7 +93,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionGet Ret = new CswNbtWebServiceInspections.CswNbtInspectionGet();
             
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.getInspectionsByBarcode,
                 ParamObj : Barcode
@@ -116,7 +116,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionGet Ret = new CswNbtWebServiceInspections.CswNbtInspectionGet();
             
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.getInspectionsByLocation,
                 ParamObj : LocationName
@@ -140,7 +140,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionSet Ret = new CswNbtWebServiceInspections.CswNbtInspectionSet();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionSet, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection>>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.update,
                 ParamObj: Inspections
