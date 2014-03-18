@@ -135,8 +135,10 @@
 
                         cswPrivate.viewSel = div.div().viewSelect({
                             name: 'batchEditViewSelect',
-                            issearchable: true,
                             includeRecent: false,
+                            includeReports: false,
+                            includeActions: false,
+                            includeSearches: false,
                             useCache: false,
                             onSelect: function () {
                                 cswPrivate.wizardStepSelectNodeType_init = false;

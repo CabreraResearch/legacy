@@ -189,6 +189,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentCategory );
                 }
 
+                
                 ViewSelect.Response.Category FavoritesCategory = _getCategory( ref ret, "Favorites" );
                 //Add the user's stored views to Favorites
                 foreach( CswNbtView View in UserOc.FavoriteViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )
@@ -200,29 +201,32 @@ namespace ChemSW.Nbt.WebServices
                                                                            View.ViewId.ToString() );
                     ViewItem.mode = View.ViewMode.ToString();
                 }
-
-                //Add the user's stored actions to Favorites
-                DataTable ActionsTable = UserOc.FavoriteActions.GetDataAsTable( ActionName, ActionPk );
-                foreach( CswNbtAction Action in ( from DataRow ActionRow in ActionsTable.Rows
-                                                  where CswConvert.ToBoolean( ActionRow[ActionSelected] )
-                                                  select CswNbtAction.ActionNameStringToEnum( CswConvert.ToString( ActionRow[ActionPk] ) )
+                
+                if( Request.IncludeActions )
+                {
+                    //Add the user's stored actions to Favorites
+                    DataTable ActionsTable = UserOc.FavoriteActions.GetDataAsTable( ActionName, ActionPk );
+                    foreach( CswNbtAction Action in ( from DataRow ActionRow in ActionsTable.Rows
+                                                      where CswConvert.ToBoolean( ActionRow[ActionSelected] )
+                                                      select CswNbtAction.ActionNameStringToEnum( CswConvert.ToString( ActionRow[ActionPk] ) )
                                                       into NbtActionName
                                                       select CswNbtResources.Actions[NbtActionName]
-                                                          into ThisAction
-                                                          where null != ThisAction
-                                                          select ThisAction ) )
-                {
-                    if( Action.ShowInList ) //case 26555 - filter out actions like 'Multi Edit' or 'Edit View'
+                                                      into ThisAction
+                                                      where null != ThisAction
+                                                      select ThisAction ) )
                     {
-                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( FavoritesCategory, 
-                                                                                 Action.DisplayName, 
-                                                                                 CswEnumNbtViewItemType.Action,
-                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName, 
-                                                                                 Action.ActionId.ToString() );
-                        ActionItem.url = Action.Url;
-                    }
-                }
-            }
+                        if( Action.ShowInList ) //case 26555 - filter out actions like 'Multi Edit' or 'Edit View'
+                        {
+                            ViewSelect.Response.Item ActionItem = _addViewSelectObj( FavoritesCategory,
+                                                                                     Action.DisplayName,
+                                                                                     CswEnumNbtViewItemType.Action,
+                                                                                     CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName,
+                                                                                     Action.ActionId.ToString() );
+                            ActionItem.url = Action.Url;
+                        }
+                    } // foreach
+                } // if( Request.IncludeActions )
+            } // if( User != null )
 
             // Views
             Dictionary<CswNbtViewId, CswNbtView> Views = CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", CswNbtResources.CurrentNbtUser, false, false, Request.IsSearchable, CswEnumNbtViewRenderingMode.Any );
@@ -241,52 +245,61 @@ namespace ChemSW.Nbt.WebServices
             if( false == Request.IsSearchable )
             {
                 // Actions
-                foreach( CswNbtAction Action in CswNbtResources.Actions )
+                if( Request.IncludeActions )
                 {
-                    if( Action.ShowInList &&
-                        //Case 23687: "View By Location" Action is toast. Bye-bye "loc_use_images" config var check.
-                        CswNbtResources.Permit.can( Action.Name ) )
+                    foreach( CswNbtAction Action in CswNbtResources.Actions )
                     {
-                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( ref ret, 
-                                                                                 Action.Category, 
-                                                                                 Action.DisplayName, 
-                                                                                 CswEnumNbtViewItemType.Action,
-                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName, 
-                                                                                 Action.ActionId.ToString() );
-                        ActionItem.url = Action.Url;
+                        if( Action.ShowInList &&
+                            //Case 23687: "View By Location" Action is toast. Bye-bye "loc_use_images" config var check.
+                            CswNbtResources.Permit.can( Action.Name ) )
+                        {
+                            ViewSelect.Response.Item ActionItem = _addViewSelectObj( ref ret,
+                                                                                     Action.Category,
+                                                                                     Action.DisplayName,
+                                                                                     CswEnumNbtViewItemType.Action,
+                                                                                     CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName,
+                                                                                     Action.ActionId.ToString() );
+                            ActionItem.url = Action.Url;
+                        }
                     }
                 }
 
                 // Reports
-                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
-                CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
-                ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
-                ICswNbtTree ReportTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, ReportView, true, false, false );
-                for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
+                if( Request.IncludeReports )
                 {
-                    ReportTree.goToNthChild( i );
+                    CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+                    CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
+                    ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
+                    ICswNbtTree ReportTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, ReportView, true, false, false );
+                    for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
+                    {
+                        ReportTree.goToNthChild( i );
 
-                    CswNbtObjClassReport ReportNode = ReportTree.getNodeForCurrentPosition();
-                    _addViewSelectObj( ref ret, 
-                                       ReportNode.Category.Text, 
-                                       ReportNode.ReportName.Text, 
-                                       CswEnumNbtViewItemType.Report,
-                                       CswNbtMetaDataObjectClass.IconPrefix16 + "doc.png", 
-                                       ReportNode.NodeId.ToString() );
+                        CswNbtObjClassReport ReportNode = ReportTree.getNodeForCurrentPosition();
+                        _addViewSelectObj( ref ret,
+                                           ReportNode.Category.Text,
+                                           ReportNode.ReportName.Text,
+                                           CswEnumNbtViewItemType.Report,
+                                           CswNbtMetaDataObjectClass.IconPrefix16 + "doc.png",
+                                           ReportNode.NodeId.ToString() );
 
-                    ReportTree.goToParentNode();
+                        ReportTree.goToParentNode();
+                    }
                 }
 
                 // Searches
-                Collection<CswNbtSearch> Searches = CswNbtResources.SearchManager.getSearches();
-                foreach(CswNbtSearch Search in Searches)
+                if( Request.IncludeSearches )
                 {
-                    _addViewSelectObj( ref ret,
-                                       Search.Category, 
-                                       Search.Name, 
-                                       CswEnumNbtViewItemType.Search, 
-                                       CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png", 
-                                       Search.SearchId.ToString() );
+                    Collection<CswNbtSearch> Searches = CswNbtResources.SearchManager.getSearches();
+                    foreach( CswNbtSearch Search in Searches )
+                    {
+                        _addViewSelectObj( ref ret,
+                                           Search.Category,
+                                           Search.Name,
+                                           CswEnumNbtViewItemType.Search,
+                                           CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png",
+                                           Search.SearchId.ToString() );
+                    }
                 }
             } // if( false == Request.IsSearchable )
 
