@@ -65,9 +65,9 @@
                         }
                     });
                 },
-                onBatchEdit: function () {
+                onBulkEdit: function () {
                     Csw.main.handleAction({
-                        'actionname': 'Batch_Edit',
+                        'actionname': 'Bulk_Edit',
                         'ActionOptions': {
                             'viewid': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
                         }

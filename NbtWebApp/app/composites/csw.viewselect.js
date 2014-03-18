@@ -19,6 +19,9 @@
             //ClickDelay: 300,
             issearchable: false,
             includeRecent: true,
+            includeReports: true,
+            includeSearches: true,
+            includeActions: true,
             //usesession: true,
             hidethreshold: 5,
             maxHeight: '',
@@ -125,7 +128,10 @@
                     watchGlobal: false,
                     data: {
                         IsSearchable: cswPrivate.issearchable,
-                        IncludeRecent: cswPrivate.includeRecent
+                        IncludeRecent: cswPrivate.includeRecent,
+                        IncludeReports: cswPrivate.includeReports,
+                        IncludeSearches: cswPrivate.includeSearches,
+                        IncludeActions: cswPrivate.includeActions
                     },
                     success: function (ret) {
                         if (false === Csw.compare(ret, cswPrivate.data)) {
@@ -178,6 +184,9 @@
                             onSuccess: cswPrivate.onSuccess,
                             issearchable: cswPrivate.issearchable,
                             includeRecent: cswPrivate.includeRecent,
+                            includeReports: cswPrivate.includeReports,
+                            includeSearches: cswPrivate.includeSearches,
+                            includeActions: cswPrivate.includeActions,
                             hidethreshold: cswPrivate.hidethreshold,
                             maxHeight: cswPrivate.maxHeight,
                             useCache: false,

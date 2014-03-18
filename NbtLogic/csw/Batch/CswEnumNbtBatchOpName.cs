@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Batch
         }
         public static readonly CswEnumNbtBatchOpName Unknown = new CswEnumNbtBatchOpName( "Unknown" );
 
-        public static readonly CswEnumNbtBatchOpName BatchEdit = new CswEnumNbtBatchOpName( "BatchEdit" );
+        public static readonly CswEnumNbtBatchOpName BulkEdit = new CswEnumNbtBatchOpName( "BulkEdit" );
         public static readonly CswEnumNbtBatchOpName FutureNodes = new CswEnumNbtBatchOpName( "FutureNodes" );
         public static readonly CswEnumNbtBatchOpName MultiEdit = new CswEnumNbtBatchOpName( "MultiEdit" );
         public static readonly CswEnumNbtBatchOpName MultiButtonClick = new CswEnumNbtBatchOpName( "MultiButtonClick" );

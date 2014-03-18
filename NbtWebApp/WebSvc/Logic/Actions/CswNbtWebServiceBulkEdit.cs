@@ -18,16 +18,16 @@ namespace ChemSW.Nbt.Actions
     /// <summary>
     /// Holds logic for handling arbitrary batch operations
     /// </summary>
-    public class CswNbtWebServiceBatchEdit
+    public class CswNbtWebServiceBulkEdit
     {
         [DataContract]
-        public class BatchEditProperties : CswWebSvcReturn
+        public class BulkEditProperties : CswWebSvcReturn
         {
             [DataMember( IsRequired = true )]
-            public Collection<BatchEditProperty> Data;
+            public Collection<BulkEditProperty> Data;
         }
         [DataContract]
-        public class BatchEditProperty
+        public class BulkEditProperty
         {
             [DataMember( IsRequired = true )]
             public Int32 id;
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Actions
         }
 
         [DataContract]
-        public class BatchEditParams
+        public class BulkEditParams
         {
             [DataMember( IsRequired = true )]
             public string ViewId;
@@ -47,36 +47,36 @@ namespace ChemSW.Nbt.Actions
         }
 
         [DataContract]
-        public class BatchEditDownload
+        public class BulkEditDownload
         {
             [DataMember( IsRequired = true )]
-            [Description( "Excel file content for batch edit" )]
+            [Description( "Excel file content for bulk edit" )]
             public DataTable CsvData;
         }
 
         [DataContract]
-        public class BatchEditUpload
+        public class BulkEditUpload
         {
             [DataMember( IsRequired = true )]
-            [Description( "Excel file content for batch edit" )]
+            [Description( "Excel file content for bulk edit" )]
             public HttpPostedFile PostedFile;
         }
 
         [DataContract]
-        public class BatchEditReturn : CswWebSvcReturn
+        public class BulkEditReturn : CswWebSvcReturn
         {
             [DataMember( IsRequired = true )]
             [Description( "ViewId" )]
             public string ViewId;
         }
 
-        public static void getBatchEditProperties( ICswResources CswResources, BatchEditProperties ret, BatchEditParams Params )
+        public static void getBulkEditProperties( ICswResources CswResources, BulkEditProperties ret, BulkEditParams Params )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Params.NodeTypeId );
             if( null != NodeType )
             {
-                ret.Data = new Collection<BatchEditProperty>();
+                ret.Data = new Collection<BulkEditProperty>();
                 if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) )
                 {
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps()
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Actions
                                                                                      p.getFieldType().FieldType != CswEnumNbtFieldType.ViewReference )
                                                                         .OrderBy( p => p.PropName ) )
                     {
-                        ret.Data.Add( new BatchEditProperty()
+                        ret.Data.Add( new BulkEditProperty()
                             {
                                 id = Prop.PropId,
                                 name = Prop.PropNameWithQuestionNo
@@ -101,10 +101,10 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
             }
-        } // getBatchEditProperties()
+        } // getBulkEditProperties()
 
 
-        public static void DownloadBatchEditData( ICswResources CswResources, BatchEditDownload ret, BatchEditParams Params )
+        public static void DownloadBulkEditData( ICswResources CswResources, BulkEditDownload ret, BulkEditParams Params )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Params.NodeTypeId );
@@ -130,11 +130,11 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtView View = NbtResources.ViewSelect.restoreView( new CswNbtViewId( Params.ViewId ) );
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( View, RequireViewPermissions: true, IncludeSystemNodes: false, IncludeHiddenNodes: false );
-                _recurseBatchEditData( NodeType, Tree, ret, Params );
+                _recurseBulkEditData( NodeType, Tree, ret, Params );
             }
-        } // DownloadBatchEditData()
+        } // DownloadBulkEditData()
 
-        private static void _recurseBatchEditData( CswNbtMetaDataNodeType NodeType, ICswNbtTree Tree, BatchEditDownload ret, BatchEditParams Params )
+        private static void _recurseBulkEditData( CswNbtMetaDataNodeType NodeType, ICswNbtTree Tree, BulkEditDownload ret, BulkEditParams Params )
         {
             for( Int32 n = 0; n < Tree.getChildNodeCount(); n++ )
             {
@@ -144,13 +144,13 @@ namespace ChemSW.Nbt.Actions
                 {
                     _addNodeToData( NodeType, Tree.getCurrentNode(), ret, Params );
                 }
-                _recurseBatchEditData( NodeType, Tree, ret, Params );
+                _recurseBulkEditData( NodeType, Tree, ret, Params );
 
                 Tree.goToParentNode();
             }
-        } // _recurseBatchEditData()
+        } // _recurseBulkEditData()
 
-        private static void _addNodeToData( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, BatchEditDownload ret, BatchEditParams Params )
+        private static void _addNodeToData( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, BulkEditDownload ret, BulkEditParams Params )
         {
             DataRow row = ret.CsvData.NewRow();
             row["nodeid"] = Node.NodeId.ToString();
@@ -173,19 +173,19 @@ namespace ChemSW.Nbt.Actions
             ret.CsvData.Rows.Add( row );
         } // _addNodeToData()
 
-        public static void UploadBatchEditData( ICswResources CswResources, BatchEditReturn ret, BatchEditUpload Params )
+        public static void UploadBulkEditData( ICswResources CswResources, BulkEditReturn ret, BulkEditUpload Params )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             CswTempFile temp = new CswTempFile( CswResources );
-            string tempPath = temp.saveToTempFile( Params.PostedFile.InputStream, CswResources.AccessId + "_batchedit_" + DateTime.Now.Ticks.ToString() );
+            string tempPath = temp.saveToTempFile( Params.PostedFile.InputStream, CswResources.AccessId + "_bulkedit_" + DateTime.Now.Ticks.ToString() );
 
             DataSet uploadDataSet = CswNbtImportTools.ReadExcel( tempPath );
             if( uploadDataSet.Tables.Count > 0 )
             {
                 DataTable uploadTable = uploadDataSet.Tables[0];
 
-                CswNbtBatchOpBatchEdit batch = new CswNbtBatchOpBatchEdit( NbtResources );
+                CswNbtBatchOpBulkEdit batch = new CswNbtBatchOpBulkEdit( NbtResources );
                 CswNbtObjClassBatchOp batchNode = batch.makeBatchOp( uploadTable );
 
                 CswNbtView BatchOpsView = new CswNbtView( (CswNbtResources) CswResources );
@@ -198,8 +198,8 @@ namespace ChemSW.Nbt.Actions
                 ret.ViewId = BatchOpsView.SessionViewId.ToString();
 
             } // if( uploadDataSet.Tables.Count > 0 )
-        } // UploadBatchEditData()
+        } // UploadBulkEditData()
 
-    } // class CswNbtWebServiceBatchEdit
+    } // class CswNbtWebServiceBulkEdit
 }// namespace ChemSW.Nbt.Actions
 

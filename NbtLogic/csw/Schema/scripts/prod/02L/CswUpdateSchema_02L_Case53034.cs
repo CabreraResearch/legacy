@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02L_Case31611: CswUpdateSchemaTo
+    public class CswUpdateSchema_02L_Case53034 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -15,15 +15,16 @@ namespace ChemSW.Nbt.Schema
 
         public override int CaseNo
         {
-            get { return 31611; }
+            get { return 53034; }
         }
 
         public override void update()
         {
-            // Add 'Batch Edit' action
-            //_CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Batch_Edit, true, string.Empty, "System" );
+            // If present, clean up old action from 31611
+            _CswNbtSchemaModTrnsctn.deleteAction( "Batch_Edit" );
 
-            // see CIS-53034
+            // Add 'Bulk Edit' action
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Bulk_Edit, true, string.Empty, "System" );
 
         } // update()
 

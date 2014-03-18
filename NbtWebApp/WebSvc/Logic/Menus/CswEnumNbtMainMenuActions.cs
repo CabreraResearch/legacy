@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.WebServices
         editview,
         //GenericSearch,
         multiedit,
-        batchedit,
+        bulkedit,
         PrintView,
         PrintLabel,
         SaveViewAs //,
