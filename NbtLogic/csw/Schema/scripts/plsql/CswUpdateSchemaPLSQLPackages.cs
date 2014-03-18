@@ -668,7 +668,6 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     select unique materialid, containerid, the_date, usetype, pressure, temperature,
         (first_value(locationid) over( partition by containerid, the_date order by scandate desc)) as locationid
         from locations locs
-        where locationid in (select locationid from locationscope)
         order by the_date asc, materialid, containerid, locationid
     ),
     tier2info as (
@@ -677,7 +676,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         dpd.quantitydispensedunit qtyunit, cl.locationid, cl.usetype, cl.pressure, cl.temperature
         from dispensesPerDay dpd 
         left join containerLocations cl on cl.materialid = dpd.materialid and cl.containerid = dpd.containerid and cl.the_date = dpd.the_date
-        where cl.locationid is not null
+        where cl.locationid in (select locationid from locationscope)
     ),
     --select * from tier2info;
     casno as (
