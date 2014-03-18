@@ -513,10 +513,10 @@ namespace ChemSW.Nbt.ObjClasses
             DateTime DefaultExpDate = DateTime.MinValue;
 
             //No point trying to get default if both values are invalid
-            if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationIntervalProp.Quantity > 0 )
+            if( CswTools.IsPrimaryKey( ExpirationIntervalProp.UnitId ) && ExpirationIntervalProp.Quantity > 0 )
             {
                 DefaultExpDate = InitialDate == DateTime.MinValue ? DateTime.Now : InitialDate;
-                switch( this.ExpirationInterval.CachedUnitName.ToLower() )
+                switch( ExpirationIntervalProp.CachedUnitName.ToLower() )
                 {
                     case "seconds":
                         DefaultExpDate = DefaultExpDate.AddSeconds( ExpirationIntervalProp.Quantity );

@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Actions.KioskModeRules.OperationClasses
         public bool CanOpen()
         {
             CswNbtPropertySetMaterial Material = _CswNbtResources.Nodes.GetNode( _OpenableObj.Material.RelatedNodeId );
-            return ( DateTime.MinValue != _OpenableObj.ExpirationDate.DateTimeValue || ( false == String.IsNullOrEmpty( Material.OpenExpireInterval.CachedNodeName ) && false == Double.IsNaN( Material.OpenExpireInterval.Quantity ) ) );
+            return ( DateTime.MinValue != _OpenableObj.ExpirationDate.DateTimeValue && ( false == String.IsNullOrEmpty( Material.OpenExpireInterval.CachedNodeName ) && false == Double.IsNaN( Material.OpenExpireInterval.Quantity ) ) );
         }
 
         public void OpenItem()

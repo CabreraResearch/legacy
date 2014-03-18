@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -168,17 +169,120 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         /// <summary>
-        /// Given a material that has a component with a percentage of 50%,
-        /// Given that the given component points to a constituent with a valid CASNo and IsTierII set to true,
+        /// Given a material that is not Tier II, that has a component with a percentage of 10%,
+        /// Given that the component points to a constituent with a valid CASNo and IsTierII set to true,
         /// Given a container of the given material in a given location,
         /// When the TierII report is run for one day on the given location,
         /// Assert that the given material's component constituent is listed 
-        /// with MaxQty and AvgQty set to 50% of the given container's quantity
+        /// with MaxQty and AvgQty set to 10% of the given container's quantity
         /// </summary>
         [Test]
         public void TierII_1Day_MaterialComponentPresent()
         {
-            Assert.Inconclusive( "Write Me!" );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode Constituent = TestData.Nodes.createConstituentNode( IsTierII: CswEnumTristate.True );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( CASNo: "", IsTierII: CswEnumTristate.False, State: "Solid", Constituents: new Collection<CswNbtNode>{ Constituent } );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 0.1, Data.Materials[0].MaxQty );
+        }
+
+        /// <summary>
+        /// Given a material with a valid CASNo, IsTierII set to true, and a component with a percentage of 10%,
+        /// Given that the component points to a constituent with a valid CASNo and IsTierII set to true,
+        /// Given a container of the given material in a given location,
+        /// When the TierII report is run for one day on the given location,
+        /// Assert that both the given material and its component constituent is listed 
+        /// with MaxQty and AvgQty set to 100% and 10% of the given container's quantity, respectively
+        /// </summary>
+        [Test]
+        public void TierII_1Day_MaterialComponentAndBasePresent()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode Constituent = TestData.Nodes.createConstituentNode( IsTierII: CswEnumTristate.True );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( CASNo: "50-00-0", IsTierII: CswEnumTristate.True, State: "Solid", Constituents: new Collection<CswNbtNode> { Constituent } );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 2, Data.Materials.Count );
+            foreach( TierIIData.TierIIMaterial TierIIMat in Data.Materials )
+            {
+                Assert.AreEqual( TierIIMat.CASNo == "12-34-0" ? .1 : 1, TierIIMat.MaxQty );
+            }
+        }
+
+        /// <summary>
+        /// Given a Tier II material with two components, each with a percentage of 10%,
+        /// Given that one component points to a constituent with a valid CASNo and IsTierII set to true,
+        /// Given that the other component's constituent does not,
+        /// Given a container of the given material in a given location,
+        /// When the TierII report is run for one day on the given location,
+        /// Assert that only the base material and constituent with IsTierII = True is listed 
+        /// </summary>
+        [Test]
+        public void TierII_1Day_OneOfTwoMaterialComponentsPresent()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode Constituent1 = TestData.Nodes.createConstituentNode( IsTierII: CswEnumTristate.True );
+            CswNbtNode Constituent2 = TestData.Nodes.createConstituentNode( IsTierII: CswEnumTristate.False, CASNo: "67-64-1" );
+            Collection<CswNbtNode> Constituents = new Collection<CswNbtNode>{ Constituent1, Constituent2 };
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( CASNo: "50-00-0", IsTierII: CswEnumTristate.True, State: "Solid", Constituents: Constituents );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 2, Data.Materials.Count );
+            foreach( TierIIData.TierIIMaterial TierIIMat in Data.Materials )
+            {
+                Assert.AreEqual( TierIIMat.CASNo == "12-34-0" ? .1 : 1, TierIIMat.MaxQty );
+            }
+        }
+
+        /// <summary>
+        /// Given two materials with the same CASNo and IsTierII set to true,
+        /// Given two containers, one of each material, in a given location,
+        /// When the TierII report is run for one day on the given location,
+        /// Assert that the CASNo is only listed once under one of the given material's Tradenames,
+        /// and is listed with MaxQty and AvgQty set to the total of both containers' quantities
+        /// </summary>
+        [Test]
+        public void TierII_1Day_TwoMaterialsSameCASNoOnePresent()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode ChemicalNode2 = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode2, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 2, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 2, Data.Materials[0].AverageQty );
         }
 
         /// <summary>
