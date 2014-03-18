@@ -724,6 +724,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     select 
       t2.materialid, max(t2.qty) as maxqty, round(avg(t2.qty), 6) as avgqty
       from tier2qtyPerDate t2
+      where t2.qty > 0
       group by t2.materialid
     ),
     --select * from tier2quantities;
@@ -736,7 +737,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     ),
     daysonsite as (
     select materialid, count(*) as daysonsite 
-        from ( select unique materialid, the_date from tier2qtyPerLocation ) 
+        from ( select unique materialid, the_date from tier2qtyPerLocation where qty > 0 ) 
         group by materialid
     ),
     --select * from daysonsite;
