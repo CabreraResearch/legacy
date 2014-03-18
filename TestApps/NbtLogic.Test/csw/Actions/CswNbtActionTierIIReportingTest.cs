@@ -416,14 +416,14 @@ namespace ChemSW.Nbt.Test.Actions
 
         /// <summary>
         /// Given a container of a given TierII material in a given location on the first day,
-        /// Given that the container is disposed on the second day,
-        /// When the TierII report is run for two days on the given location,
+        /// Given that the container is disposed on the second day, and nothing happens on the third day,
+        /// When the TierII report is run for three days on the given location,
         /// Assert that the given material is listed with MaxQty set to the container's quantity on Day 1,
-        /// AvgQty set to MaxQty / 2,
-        /// and DaysOnSite set to 1
+        /// AvgQty set to MaxQty,
+        /// and DaysOnSite set to 2
         /// </summary>
         [Test]
-        public void TierII_2Days_ContainerDispose()
+        public void TierII_3Days_ContainerDispose()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
@@ -435,12 +435,12 @@ namespace ChemSW.Nbt.Test.Actions
             {
                 LocationId = LocationId.ToString(),
                 StartDate = DateTime.Today.AddDays( -1 ).ToString(),
-                EndDate = DateTime.Today.ToString()
+                EndDate = DateTime.Today.AddDays( 1 ).ToString()
             };
             TierIIData Data = TierIIAction.getTierIIData( Request );
             Assert.AreEqual( 1, Data.Materials[0].MaxQty );
-            Assert.AreEqual( .5, Data.Materials[0].AverageQty );//one of these is wrong, but which one?
-            Assert.AreEqual( 1, Data.Materials[0].DaysOnSite );
+            Assert.AreEqual( 1, Data.Materials[0].AverageQty );
+            Assert.AreEqual( 2, Data.Materials[0].DaysOnSite );
         }
 
         #endregion Acceptance Criteria
