@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.Batch
         private CswNbtResources _CswNbtResources;
         private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MobileMultiOpUpdates;
         private CswNbtObjClassUser _User;
-        private List<string> _HumanReadableLog = new List<string>();
 
         public CswNbtBatchOpMobileMultiOpUpdates( CswNbtResources CswNbtResources )
         {
@@ -35,7 +34,6 @@ namespace ChemSW.Nbt.Batch
             BatchData.StartingCount = MobileRequest.data.MultiOpRows.Count;
             BatchData.Operations = _operationsCollectionToJArray( MobileRequest.data.MultiOpRows );
             BatchData.Username = MobileRequest.data.username;
-            //BatchData.
 
             BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
             return BatchNode;
@@ -412,11 +410,11 @@ namespace ChemSW.Nbt.Batch
         private string _generateErrorMessage( string operation, string barcode, Dictionary<string, string> ExtraInfo, string error )
         {
             string Ret = "";
-            Ret += "Operation: " + operation + ";";
-            Ret += "Container Barcode: " + barcode + ";";
+            Ret += "Operation: " + operation + "; ";
+            Ret += "Container Barcode: " + barcode + "; ";
             if( null != ExtraInfo )
             {
-                Ret = ExtraInfo.Aggregate( Ret, ( current, keyValuePair ) => current + ( keyValuePair.Key + ": " + keyValuePair.Value + ";" ) );
+                Ret = ExtraInfo.Aggregate( Ret, ( current, keyValuePair ) => current + ( keyValuePair.Key + ": " + keyValuePair.Value + "; " ) );
             }
             Ret += " Failure with error message: " + error;
 
@@ -431,7 +429,12 @@ namespace ChemSW.Nbt.Batch
                 {
                     CswMail cswMail = _CswNbtResources.CswMail;
                     string Subject = BatchNode.OpName.Text;
-                    string Message = _HumanReadableLog.Aggregate( "", ( current, ErrorMessage ) => current + ( ErrorMessage + System.Environment.NewLine ) );
+
+                    string Message = "The batch operation " + BatchNode.OpName.Text + " was completed with the following error messages: " + Environment.NewLine + Environment.NewLine;
+                    JArray BatchLog = BatchNode.Log.CommentsJson;
+                    List<string> HumanReadableLog = ( from JObject comment in BatchLog select CswConvert.ToString( comment["message"] ) ).ToList();
+                    Message += HumanReadableLog.Aggregate( "", ( current, ErrorMessage ) => current + ( ErrorMessage + Environment.NewLine ) );
+
                     string Email = _User.Email;
                     string DisplayName = _User.FirstName + " " + _User.LastName;
                     CswMailMessage mailMessage = CswMail.makeMailMessage( Subject, Message, Email, DisplayName );
@@ -459,7 +462,6 @@ namespace ChemSW.Nbt.Batch
         private void _storeError( CswNbtObjClassBatchOp BatchNode, string error )
         {
             BatchNode.appendToLog( error );
-            _HumanReadableLog.Add( error );
         }//_storeError()
 
         #endregion
