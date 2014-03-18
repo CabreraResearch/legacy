@@ -661,10 +661,14 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
           and c.nodeid is not null
           and ls.status = 'Moved, Dispensed, or Disposed/Undisposed'--This filters out scan and placeholder records
     ),
+    locationscope as (
+      select locationid from table(TIER_II_DATA_MANAGER.GET_LOCATIONS_UNDER(locationid))
+    ),
     containerlocations as (
     select unique materialid, containerid, the_date, usetype, pressure, temperature,
         (first_value(locationid) over( partition by containerid, the_date order by scandate desc)) as locationid
         from locations locs
+        where locationid in (select locationid from locationscope)
         order by the_date asc, materialid, containerid, locationid
     ),
     tier2info as (
@@ -673,6 +677,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         dpd.quantitydispensedunit qtyunit, cl.locationid, cl.usetype, cl.pressure, cl.temperature
         from dispensesPerDay dpd 
         left join containerLocations cl on cl.materialid = dpd.materialid and cl.containerid = dpd.containerid and cl.the_date = dpd.the_date
+        where cl.locationid is not null
     ),
     --select * from tier2info;
     casno as (
@@ -711,15 +716,9 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       left join uniquetemperatures ut on uut.materialid = ut.materialid
     ),
     --select * from containerprops;
-    locationscope as (
-      --TODO: replace this collection with a call to a pipelined function that takes a locationid and returns it along with every child locationid
-      select locationid from table(TIER_II_DATA_MANAGER.GET_LOCATIONS_UNDER(locationid))
-    ),
-    --Somewhere around here is where we can split this query if we need to use a materialized view
     tier2qtyByUnit as (
     select materialid, the_date, sum(curqty) as qty, qtyunit, locationid
         from tier2infoByCASNo
-        where locationid in (select * from locationscope)
         group by materialid, the_date, qtyunit, locationid
     ),
     specgrav as (
