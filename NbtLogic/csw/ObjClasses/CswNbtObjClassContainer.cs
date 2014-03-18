@@ -214,7 +214,6 @@ namespace ChemSW.Nbt.ObjClasses
 
             Open.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
-                    CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                     if( false == CanOpen() )
                     {
                         //Do not show the Open/OpenedData props if the Container does not have an Expiration Date set or the Chemical does not have an Open Expiration Interval set

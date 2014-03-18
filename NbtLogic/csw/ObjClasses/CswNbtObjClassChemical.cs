@@ -56,7 +56,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string PhysicalState = "Physical State";
             public const string SpecificGravity = "Specific Gravity";
             public const string StorageCompatibility = "Storage Compatibility";
-            public const string ExpirationInterval = "Expiration Interval";
             public const string CasNo = "CAS No";
             //public const string RegulatoryLists = "Regulatory Lists";
             public const string RegulatoryListsGrid = "Regulatory Lists";
@@ -92,7 +91,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CompressedGas = "Compressed Gas";
             public const string SMILES = "SMILES";
             public const string DisposalInstructions = "Disposal Instructions";
-            public const string OpenExpireInterval = "Open Expire Interval";
             public const string EINECS = "EINECS";
             public const string SubclassName = "Subclass Name";
             public const string Pictograms = "Pictograms";
@@ -313,59 +311,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Inherited Events
 
         #region Custom Logic
-
-        /// <summary>
-        /// Calculates the expiration date from today based on the Material's Expiration Interval
-        /// </summary>
-        public override DateTime getDefaultExpirationDate( DateTime InitialDate )
-        {
-            return _getExpirationDateByInterval( InitialDate, this.ExpirationInterval );
-        }
-
-        public DateTime getDefaultOpenExpirationDate( DateTime InitialDate )
-        {
-            return _getExpirationDateByInterval( InitialDate, this.OpenExpireInterval );
-        }
-
-        private DateTime _getExpirationDateByInterval( DateTime InitialDate, CswNbtNodePropQuantity ExpirationIntervalProp )
-        {
-            DateTime DefaultExpDate = DateTime.MinValue;
-
-            //No point trying to get default if both values are invalid
-            if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationIntervalProp.Quantity > 0 )
-            {
-                DefaultExpDate = InitialDate == DateTime.MinValue ? DateTime.Now : InitialDate;
-                switch( this.ExpirationInterval.CachedUnitName.ToLower() )
-                {
-                    case "seconds":
-                        DefaultExpDate = DefaultExpDate.AddSeconds( ExpirationIntervalProp.Quantity );
-                        break;
-                    case "minutes":
-                        DefaultExpDate = DefaultExpDate.AddMinutes( ExpirationIntervalProp.Quantity );
-                        break;
-                    case "hours":
-                        DefaultExpDate = DefaultExpDate.AddHours( ExpirationIntervalProp.Quantity );
-                        break;
-                    case "days":
-                        DefaultExpDate = DefaultExpDate.AddDays( ExpirationIntervalProp.Quantity );
-                        break;
-                    case "weeks":
-                        DefaultExpDate = DefaultExpDate.AddDays( ExpirationIntervalProp.Quantity * 7 );
-                        break;
-                    case "months":
-                        DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( ExpirationIntervalProp.Quantity ) );
-                        break;
-                    case "years":
-                        DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( ExpirationIntervalProp.Quantity ) );
-                        break;
-                    default:
-                        DefaultExpDate = DateTime.MinValue;
-                        break;
-                }
-            }
-            return DefaultExpDate;
-        }
-
         /// <summary>
         /// Gets all the node ids of materials that use this material as a component
         /// </summary>
@@ -1538,7 +1483,6 @@ namespace ChemSW.Nbt.ObjClasses
         //}
         public CswNbtNodePropNumber SpecificGravity { get { return _CswNbtNode.Properties[PropertyName.SpecificGravity]; } }
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
-        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
         public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
 
         private void _onCasNoPropChange( CswNbtNodeProp Prop, bool Creating )
@@ -1595,7 +1539,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical CompressedGas { get { return _CswNbtNode.Properties[PropertyName.CompressedGas]; } }
         public CswNbtNodePropText SMILES { get { return _CswNbtNode.Properties[PropertyName.SMILES]; } }
         public CswNbtNodePropMemo DisposalInstructions { get { return _CswNbtNode.Properties[PropertyName.DisposalInstructions]; } }
-        public CswNbtNodePropQuantity OpenExpireInterval { get { return _CswNbtNode.Properties[PropertyName.OpenExpireInterval]; } }
         public CswNbtNodePropText EINECS { get { return _CswNbtNode.Properties[PropertyName.EINECS]; } }
         public CswNbtNodePropText SubclassName { get { return _CswNbtNode.Properties[PropertyName.SubclassName]; } }
         public CswNbtNodePropImageList Pictograms { get { return _CswNbtNode.Properties[PropertyName.Pictograms]; } }
