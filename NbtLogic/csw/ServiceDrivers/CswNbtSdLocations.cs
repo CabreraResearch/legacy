@@ -1,14 +1,14 @@
-﻿using ChemSW.Core;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System.Runtime.Serialization;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Runtime.Serialization;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -21,12 +21,12 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             _CswNbtResources = Resources;
         }
-        
+
         public CswNbtViewRelationship getLocationRelationship( string LocationSql, CswNbtView LocationsView, CswPrimaryKey StartLocationId )
         {
             CswNbtViewRelationship LocationRel = null;
             CswArbitrarySelect LocationSelect = _CswNbtResources.makeCswArbitrarySelect( "populateLocations_select", LocationSql );
-            LocationSelect.addParameter("startlocationid", StartLocationId.PrimaryKey.ToString() );
+            LocationSelect.addParameter( "startlocationid", StartLocationId.PrimaryKey.ToString() );
 
             DataTable LocationTable = null;
             try
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         Int32 LocationNodeId = CswConvert.ToInt32( Row["nodeid"] );
                         CswPrimaryKey LocationPk = new CswPrimaryKey( "nodes", LocationNodeId );
                         LocationPks.Add( LocationPk );
-                        
+
                     }
                 }
                 LocationRel.NodeIdsToFilterIn = LocationPks;
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             [DataMember]
             public string Name { get; set; }
-            
+
             [DataMember]
             public string LocationId { get; set; }
         }
@@ -117,11 +117,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView LocationsListView = LocationSystemView.SystemView;
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationsListView, true, false, false );
             Int32 LocationCount = Tree.getChildNodeCount();
-            
+
             if( LocationCount > 0 )
             {
                 CswNbtMetaDataObjectClass LocationsOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-                
+
                 for( Int32 N = 0; N < LocationCount; N += 1 )
                 {
                     Tree.goToNthChild( N );
@@ -138,7 +138,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             if( Prop.FieldType == CswEnumNbtFieldType.Location )
                             {
-                                LocationNode.Name = Prop.Gestalt + CswNbtNodePropLocation.PathDelimiter + Tree.getNodeNameForCurrentPosition();
+                                // CIS-52811: If Location != Site
+                                if( Int32.MinValue != Prop.Field1_Fk )
+                                {
+                                    LocationNode.Name = Prop.Gestalt + CswNbtNodePropLocation.PathDelimiter;
+                                }
+                                LocationNode.Name += Tree.getNodeNameForCurrentPosition();
                             }
                         }
                         Locations.Add( LocationNode );
@@ -152,14 +157,14 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     Locations.Add( Location );
                 }
-                
+
             }
             return Locations;
-        } 
+        }
 
-       
 
-        
+
+
 
     } // public class CswNbtSdLocations
 
