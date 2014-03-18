@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -185,7 +186,8 @@ namespace ChemSW.Nbt.Test
         }
 
         internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0,
-            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = null )
+            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = null, 
+            Collection<CswNbtNode> Constituents = null, int ConstPercentage = 10 )
         {
             IsTierII = IsTierII ?? CswEnumTristate.True;
 
@@ -212,8 +214,45 @@ namespace ChemSW.Nbt.Test
 
                         MaterialNode.CasNo.Text = CASNo;
                         MaterialNode.IsTierII.Checked = IsTierII;
+                        if( null != Constituents )
+                        {
+                            foreach( CswNbtNode Constituent in Constituents )
+                            {
+                                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Material Component" ), delegate( CswNbtNode Node )
+                                    {
+                                        CswNbtObjClassMaterialComponent MaterialComponentNode = Node;
+                                        MaterialComponentNode.Mixture.RelatedNodeId = MaterialNode.NodeId;
+                                        MaterialComponentNode.Constituent.RelatedNodeId = Constituent.NodeId;
+                                        MaterialComponentNode.LowPercentageValue.Value = ConstPercentage;
+                                        MaterialComponentNode.TargetPercentageValue.Value = ConstPercentage;
+                                        MaterialComponentNode.HighPercentageValue.Value = ConstPercentage;
+                                        MaterialComponentNode.Percentage.Value = ConstPercentage;
+                                    } );
+                            }
+                        }
                     }
                 }, OverrideUniqueValidation: true );
+            _finalize();
+
+            return ret;
+        }
+
+        internal CswNbtNode createConstituentNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0,
+            string CASNo = "12-34-0", CswEnumTristate IsTierII = null )
+        {
+            IsTierII = IsTierII ?? CswEnumTristate.True;
+
+            CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Constituent" ), delegate( CswNbtNode NewNode )
+            {
+                CswNbtObjClassChemical MaterialNode = NewNode;
+                if( CswTools.IsDouble( SpecificGravity ) )
+                    MaterialNode.SpecificGravity.Value = SpecificGravity;
+                MaterialNode.PhysicalState.Value = State;
+                MaterialNode.TradeName.Text = "Fake Constituent " + Sequence;
+                MaterialNode.PartNumber.Text = "ABC00" + Sequence;
+                MaterialNode.CasNo.Text = CASNo;
+                MaterialNode.IsTierII.Checked = IsTierII;
+            }, OverrideUniqueValidation: true );
             _finalize();
 
             return ret;

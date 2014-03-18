@@ -1,11 +1,11 @@
-﻿using ChemSW.Nbt;
-using ChemSW.Nbt.WebServices;
-using ChemSW.WebSvc;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt;
+using ChemSW.Nbt.WebServices;
+using ChemSW.WebSvc;
 
 namespace NbtWebApp
 {
@@ -53,7 +53,7 @@ namespace NbtWebApp
             AuthRequest.RequiredModules.Add( CswEnumNbtModuleName.SI );
             
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.CswNbtLocationReturn, bool>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceLocations.getLocationsList,
                 ParamObj: IsMobile

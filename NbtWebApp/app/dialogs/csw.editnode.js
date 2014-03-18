@@ -104,7 +104,7 @@
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, prevNodeKey);
 
 
-
+                        Csw.ajax.abortAll();
                         cswPublic.closed = true;
                         cswPublic.tabsAndProps.tearDown();
                         Csw.tryExec(cswPrivate.onClose);

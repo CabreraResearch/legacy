@@ -485,6 +485,14 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         and c.constid is not null
         and per.percentage is not null
     ),
+    allMats as (
+    select constid, istierii, materialid, percentage, decode(constid, null, materialid, constid) matid from 
+        (select null as constid, istierii, nodeid as materialid, 100 as percentage from chemicals where nodeid not in
+          (select constid from components)
+        union all 
+        select * from components) 
+        where istierii = 1
+    ),
     --ContainerDispenseTransaction Props
     DispensedDate as (
     select jnp.nodeid, jnp.field1_date as DispensedDate
@@ -551,19 +559,19 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
           where ocp.propname = 'Storage Temperature'
     ),
     containers as (
-    select n.nodeid, decode(cm.constid, null, mat.materialid, cm.constid) materialid, ut.usetype, sp.pressure, st.temperature,
-    decode(cm.percentage, null, 100, cm.percentage) as percentage
-          from nodes n
-          left join material mat on n.nodeid = mat.nodeid
-          left join chemicals m on mat.materialid = m.nodeid
-          left join components cm on mat.materialid = cm.materialid
-          left join usetype ut on n.nodeid = ut.nodeid
-          left join pressure sp on n.nodeid = sp.nodeid
-          left join temperature st on n.nodeid = st.nodeid
-          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
-            inner join object_class oc on nt.objectclassid = oc.objectclassid
-            where oc.objectclass = 'ContainerClass'
-            and (m.istierii = 1 or cm.istierii = 1)
+    select n.nodeid, 
+    am.matid materialid,
+    am.percentage,
+    ut.usetype, sp.pressure, st.temperature
+        from nodes n
+        left join material mat on n.nodeid = mat.nodeid
+        left join allMats am on mat.materialid = am.materialid
+        left join usetype ut on n.nodeid = ut.nodeid
+        left join pressure sp on n.nodeid = sp.nodeid
+        left join temperature st on n.nodeid = st.nodeid
+        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+          inner join object_class oc on nt.objectclassid = oc.objectclassid
+          where oc.objectclass = 'ContainerClass'
     ),
     dispenses as (
     select 
@@ -653,6 +661,9 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
           and c.nodeid is not null
           and ls.status = 'Moved, Dispensed, or Disposed/Undisposed'--This filters out scan and placeholder records
     ),
+    locationscope as (
+      select locationid from table(TIER_II_DATA_MANAGER.GET_LOCATIONS_UNDER(locationid))
+    ),
     containerlocations as (
     select unique materialid, containerid, the_date, usetype, pressure, temperature,
         (first_value(locationid) over( partition by containerid, the_date order by scandate desc)) as locationid
@@ -665,8 +676,23 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         dpd.quantitydispensedunit qtyunit, cl.locationid, cl.usetype, cl.pressure, cl.temperature
         from dispensesPerDay dpd 
         left join containerLocations cl on cl.materialid = dpd.materialid and cl.containerid = dpd.containerid and cl.the_date = dpd.the_date
+        where cl.locationid in (select locationid from locationscope)
     ),
     --select * from tier2info;
+    casno as (
+    select jnp.nodeid, jnp.field1 as casno
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'CAS No'
+    ),
+    tier2infoByCASNo as (
+      select first_value(t2.materialid) over(partition by cn.casno order by t2.the_date) materialid, 
+      t2.containerid, t2.the_date, t2.curqty, t2.qtyunit, t2.locationid, t2.usetype, t2.pressure, t2.temperature
+      from tier2info t2 
+      left join casno cn on cn.nodeid = t2.materialid
+    ),
+    --Comment out this block of container props to run any anteceding subqueries
     uniqueusetypes as (
       select unique materialid, listagg(usetype, ',') within group (order by usetype) usetype
       from (select unique materialid, usetype from tier2info) 
@@ -689,15 +715,9 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       left join uniquetemperatures ut on uut.materialid = ut.materialid
     ),
     --select * from containerprops;
-    locationscope as (
-      --TODO: replace this collection with a call to a pipelined function that takes a locationid and returns it along with every child locationid
-      select locationid from table(TIER_II_DATA_MANAGER.GET_LOCATIONS_UNDER(locationid))
-    ),
-    --Somewhere around here is where we can split this query if we need to use a materialized view
     tier2qtyByUnit as (
     select materialid, the_date, sum(curqty) as qty, qtyunit, locationid
-        from tier2info
-        where locationid in (select * from locationscope)
+        from tier2infoByCASNo
         group by materialid, the_date, qtyunit, locationid
     ),
     specgrav as (
@@ -747,13 +767,6 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
             inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
             inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
             where ocp.propname = 'Tradename'
-    ),
-    casno as (
-    select jnp.nodeid, jnp.field1 as casno
-            from jct_nodes_props jnp
-            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-            where ocp.propname = 'CAS No'
     ),
     materialtype as (
     select jnp.nodeid, jnp.field1 as materialtype
