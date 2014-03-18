@@ -485,6 +485,14 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         and c.constid is not null
         and per.percentage is not null
     ),
+    allMats as (
+    select constid, istierii, materialid, percentage, decode(constid, null, materialid, constid) matid from 
+        (select null as constid, istierii, nodeid as materialid, 100 as percentage from chemicals where nodeid not in
+          (select constid from components)
+        union all 
+        select * from components) 
+        where istierii = 1
+    ),
     --ContainerDispenseTransaction Props
     DispensedDate as (
     select jnp.nodeid, jnp.field1_date as DispensedDate
@@ -551,19 +559,19 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
           where ocp.propname = 'Storage Temperature'
     ),
     containers as (
-    select n.nodeid, decode(cm.constid, null, mat.materialid, cm.constid) materialid, ut.usetype, sp.pressure, st.temperature,
-    decode(cm.percentage, null, 100, cm.percentage) as percentage
-          from nodes n
-          left join material mat on n.nodeid = mat.nodeid
-          left join chemicals m on mat.materialid = m.nodeid
-          left join components cm on mat.materialid = cm.materialid
-          left join usetype ut on n.nodeid = ut.nodeid
-          left join pressure sp on n.nodeid = sp.nodeid
-          left join temperature st on n.nodeid = st.nodeid
-          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
-            inner join object_class oc on nt.objectclassid = oc.objectclassid
-            where oc.objectclass = 'ContainerClass'
-            and (m.istierii = 1 or cm.istierii = 1)
+    select n.nodeid, 
+    am.matid materialid,
+    am.percentage,
+    ut.usetype, sp.pressure, st.temperature
+        from nodes n
+        left join material mat on n.nodeid = mat.nodeid
+        left join allMats am on mat.materialid = am.materialid
+        left join usetype ut on n.nodeid = ut.nodeid
+        left join pressure sp on n.nodeid = sp.nodeid
+        left join temperature st on n.nodeid = st.nodeid
+        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+          inner join object_class oc on nt.objectclassid = oc.objectclassid
+          where oc.objectclass = 'ContainerClass'
     ),
     dispenses as (
     select 
