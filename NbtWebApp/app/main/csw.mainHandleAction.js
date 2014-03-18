@@ -20,8 +20,8 @@
 
         var actionHandler = Csw.object();
         (function buildActHandler() {
-            actionHandler.add('batch edit', function (o) {
-                return Csw.nbt.batchEditWizard(Csw.main.centerTopDiv, {
+            actionHandler.add('bulk edit', function (o) {
+                return Csw.nbt.bulkEditWizard(Csw.main.centerTopDiv, {
                     viewid: o.ActionOptions.viewid,
                     onCancel: onCancel,
                     onFinish: function (viewid) {

@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Actions
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
-            {   Batch_Edit,                 Batch_Edit                 },
+            {   Bulk_Edit,                 Bulk_Edit                 },
             {   ChemWatch,                 ChemWatch                 },                          
             {   Container_Expiration_Lock, Container_Expiration_Lock },
             {   Create_Inspection,         Create_Inspection         },
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Enum members
 
-        public const string Batch_Edit = "Batch_Edit";
+        public const string Bulk_Edit = "Bulk_Edit";
         public const string ChemWatch = "ChemWatch";
         public const string Container_Expiration_Lock = "Container_Expiration_Lock";
         public const string Create_Inspection = "Create_Inspection";

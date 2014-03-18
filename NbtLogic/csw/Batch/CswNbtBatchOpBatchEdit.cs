@@ -10,22 +10,22 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Batch
 {
-    public class CswNbtBatchOpBatchEdit : ICswNbtBatchOp
+    public class CswNbtBatchOpBulkEdit : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.BatchEdit;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.BulkEdit;
 
-        public CswNbtBatchOpBatchEdit( CswNbtResources CswNbtResources )
+        public CswNbtBatchOpBulkEdit( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }
 
         /// <summary>
-        /// Create a new batch operation to handle results of the BatchEdit action
+        /// Create a new batch operation to handle results of the BulkEdit action
         /// </summary>
         public CswNbtObjClassBatchOp makeBatchOp( DataTable excelData )
         {
-            BatchEditBatchData batchData = new BatchEditBatchData( string.Empty );
+            BulkEditBatchData batchData = new BulkEditBatchData( string.Empty );
             batchData.excelData = excelData;
             batchData.CurrentRow = 0;
 
@@ -36,9 +36,9 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.BatchEdit )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.BulkEdit )
             {
-                BatchEditBatchData BatchData = new BatchEditBatchData( BatchNode.BatchData.Text );
+                BulkEditBatchData BatchData = new BulkEditBatchData( BatchNode.BatchData.Text );
                 if( BatchData.TotalRows > 0 )
                 {
                     ret = Math.Round( (Double) BatchData.CurrentRow / BatchData.TotalRows * 100, 0 );
@@ -52,14 +52,14 @@ namespace ChemSW.Nbt.Batch
         /// </summary>
         public void runBatchOp( CswNbtObjClassBatchOp BatchNode )
         {
-            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.BatchEdit )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.BulkEdit )
             {
                 try
                 {
                     bool NoErrors = true;
                     BatchNode.start();
 
-                    BatchEditBatchData BatchData = new BatchEditBatchData( BatchNode.BatchData.Text );
+                    BulkEditBatchData BatchData = new BulkEditBatchData( BatchNode.BatchData.Text );
 
                     if( BatchData.CurrentRow < BatchData.TotalRows )
                     {
@@ -146,11 +146,11 @@ namespace ChemSW.Nbt.Batch
 
 
         // This internal class is specific to this batch operation
-        private class BatchEditBatchData
+        private class BulkEditBatchData
         {
             private JObject _BatchData;
 
-            public BatchEditBatchData( string BatchData )
+            public BulkEditBatchData( string BatchData )
             {
                 if( BatchData != string.Empty )
                 {
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.Batch
             {
                 return _BatchData.ToString();
             }
-        } // class BatchEditBatchData
+        } // class BulkEditBatchData
 
-    } // class CswNbtBatchOpMultiEdit
+    } // class CswNbtBatchOpBulkEdit
 } // namespace ChemSW.Nbt.Batch
