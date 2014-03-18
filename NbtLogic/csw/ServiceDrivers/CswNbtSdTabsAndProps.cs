@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                         {
                             if( null != After )
                             {
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( IgnorePermissions || _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                 {
-                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp: true );
+                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp : true );
                 }
                 else
                 {
@@ -324,6 +324,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             TabHasAnyEditableProp = TabHasAnyEditableProp || IdentityTabProps.Any( Prop => Prop.IsSaveable );
                         }
                         bool HasEditableProps = false == ForceReadOnly && TabHasAnyEditableProp;
+                        Ret["node"]["showeditbutton"] = HasEditableProps;
 
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
                         {
@@ -374,7 +375,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
-                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true );
             }
 
             if( Node != null )
@@ -384,7 +385,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtSdNode NodeAction = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
                 NodeAction.addSingleNodeProp( Node, PropJson, null );
                 // Some property values are reset by business logic, which needs to be emulated here
-                Node.ObjClass.beforeWriteNode( IsCopy: false, Creating: false );
+                Node.ObjClass.beforeWriteNode( IsCopy : false, Creating : false );
 
                 // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
                 // We need to do this prop as well as all conditional props
@@ -928,7 +929,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                     }
-                    CopyToNode.postChanges( ForceUpdate: false );
+                    CopyToNode.postChanges( ForceUpdate : false );
                 } // foreach( string NodeIdStr in CopyNodeIds )
             }
         }
