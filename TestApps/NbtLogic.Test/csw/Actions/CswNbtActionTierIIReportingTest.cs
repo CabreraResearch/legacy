@@ -258,6 +258,34 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         /// <summary>
+        /// Given two materials with the same CASNo and IsTierII set to true,
+        /// Given two containers, one of each material, in a given location,
+        /// When the TierII report is run for one day on the given location,
+        /// Assert that the CASNo is only listed once under one of the given material's Tradenames,
+        /// and is listed with MaxQty and AvgQty set to the total of both containers' quantities
+        /// </summary>
+        [Test]
+        public void TierII_1Day_TwoMaterialsSameCASNoOnePresent()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode ChemicalNode2 = TestData.Nodes.createMaterialNode( State: "Solid" );
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TestData.Nodes.createContainerWithRecords( "Container", 1, PoundsUnit, ChemicalNode2, LocationId );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Today.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Today.ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 2, Data.Materials[0].MaxQty );
+            Assert.AreEqual( 2, Data.Materials[0].AverageQty );
+        }
+
+        /// <summary>
         /// Given a parent location A with two child locations B and C,
         /// Given two containers of a given TierII material, one in location B and one in location C,
         /// When the TierII report is run for one day on the parent location,

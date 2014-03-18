@@ -675,6 +675,20 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         left join containerLocations cl on cl.materialid = dpd.materialid and cl.containerid = dpd.containerid and cl.the_date = dpd.the_date
     ),
     --select * from tier2info;
+    casno as (
+    select jnp.nodeid, jnp.field1 as casno
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'CAS No'
+    ),
+    tier2infoByCASNo as (
+      select first_value(t2.materialid) over(partition by cn.casno order by t2.the_date) materialid, 
+      t2.containerid, t2.the_date, t2.curqty, t2.qtyunit, t2.locationid, t2.usetype, t2.pressure, t2.temperature
+      from tier2info t2 
+      left join casno cn on cn.nodeid = t2.materialid
+    ),
+    --Comment out this block of container props to run any anteceding subqueries
     uniqueusetypes as (
       select unique materialid, listagg(usetype, ',') within group (order by usetype) usetype
       from (select unique materialid, usetype from tier2info) 
@@ -704,7 +718,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     --Somewhere around here is where we can split this query if we need to use a materialized view
     tier2qtyByUnit as (
     select materialid, the_date, sum(curqty) as qty, qtyunit, locationid
-        from tier2info
+        from tier2infoByCASNo
         where locationid in (select * from locationscope)
         group by materialid, the_date, qtyunit, locationid
     ),
@@ -755,13 +769,6 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
             inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
             inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
             where ocp.propname = 'Tradename'
-    ),
-    casno as (
-    select jnp.nodeid, jnp.field1 as casno
-            from jct_nodes_props jnp
-            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-            where ocp.propname = 'CAS No'
     ),
     materialtype as (
     select jnp.nodeid, jnp.field1 as materialtype
