@@ -233,7 +233,7 @@ namespace NbtPrintClient
                 FileInfo fileInfo = new FileInfo( path );
                 string FilePath = fileInfo.DirectoryName + "\\printersetup.config";
                 XmlSerializer writer = new XmlSerializer( typeof( NbtPrintClientConfig ) );
-                using( FileStream file = File.OpenWrite( FilePath ) )
+                using( FileStream file = File.Open( FilePath, FileMode.Create  ))
                 {
                     writer.Serialize( file, config );
                     file.Flush();
