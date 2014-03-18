@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropImageList : CswNbtNodeProp
+    public class CswNbtNodePropImageList: CswNbtNodeProp
     {
         public static char Delimiter = '\n';
 
@@ -201,19 +201,17 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["allowmultiple"] = AllowMultiple;
             ParentObject["imageprefix"] = ImagePrefix;
 
-            if( IsEditModeEditable )
+            JObject OptionsObj = new JObject();
+            ParentObject["options"] = OptionsObj;
+            foreach( string Key in Options.Keys )
             {
-                JObject OptionsObj = new JObject();
-                ParentObject["options"] = OptionsObj;
-                foreach( string Key in Options.Keys )
+                bool isSelected = Value.Contains( Key );
+                if( IsEditModeEditable || isSelected )
                 {
                     OptionsObj[Key] = new JObject();
                     OptionsObj[Key]["text"] = Options[Key];
                     OptionsObj[Key]["value"] = Key;
-                    if( Value.Contains( Key ) )
-                    {
-                        OptionsObj[Key]["selected"] = true;
-                    }
+                    OptionsObj[Key]["selected"] = isSelected;
                 }
             }
         } // ToJSON()
