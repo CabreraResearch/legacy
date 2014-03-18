@@ -307,7 +307,7 @@
 
                     cswPrivate.identityButtonDiv = cswPrivate.identityForm.div();
                     cswPrivate.makeIdentityTabButtons(cswPrivate.identityButtonDiv);
-                    if (data.node.showeditbutton) {
+                    if (data.node.showeditbutton && cswPrivate.loadEditModeButton) {
                         cswPrivate.loadEditModeButton.show();
                     }
 
@@ -967,7 +967,7 @@
                         ForceReadOnly: cswPrivate.forceReadOnly
                     },
                     success: function (data) {
-                        if (data.node.showeditbutton) {
+                        if (data.node.showeditbutton && cswPrivate.loadEditModeButton) {
                             cswPrivate.loadEditModeButton.show();
                         }
                         if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
