@@ -493,6 +493,13 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
             inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
             where ocp.propname = 'Dispensed Date'
     ),
+    DispenseType as (
+    select jnp.nodeid, jnp.field1 as DispenseType
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Dispense Type'
+    ),
     QuantityDispensed as (
     select jnp.nodeid, jnp.field1_numeric as QuantityDispensed, jnp.field1_fk as QuantityDispensedUnit
             from jct_nodes_props jnp
@@ -560,30 +567,35 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     ),
     dispenses as (
     select 
-      --Use component's id if present - else, use materialid
-      c.materialid,
-      c.nodeid containerid,
-      dd.DispensedDate DispensedDate, trunc(dd.DispensedDate) dispenseday, qd.QuantityDispensed, qd.QuantityDispensedUnit,
-      --Brings QuantityDispensed values over to RemainingQuantity column for Receiving dispenses
-      decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity) RemainingQuantity,
-      --Picks the final quantity value for all dispense records for a given day and, 
-      --if it's for a constituent, recalculates the quantity based on the constituent's percentage
-      (first_value(decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity)) 
-        over(partition by containerid, trunc(dd.DispensedDate) order by dispenseddate desc)) * c.percentage / 100 as qty
-      ,c.percentage
-          from nodes n
-          left join DispensedDate dd on n.nodeid = dd.nodeid
-          left join QuantityDispensed qd on n.nodeid = qd.nodeid
-          left join RemainingQuantity rq on n.nodeid = rq.nodeid
-          left join SourceContainer sc on n.nodeid = sc.nodeid
-          left join containers c on sc.containerid = c.nodeid
-          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        --Use component's id if present - else, use materialid (TODO - fix)
+        c.materialid,  c.nodeid containerid,  dt.DispenseType,
+        --Shift the day forward for Dispose records so that they are counted on the day they're disposed
+        decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate) DispensedDate, 
+        trunc(decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate)) dispenseday, 
+        qd.QuantityDispensed, 
+        qd.QuantityDispensedUnit,
+        --Brings QuantityDispensed values over to RemainingQuantity column for Receiving dispenses
+        decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity) RemainingQuantity,
+        --Picks the final quantity value for all dispense records for a given day and, 
+        --if it's for a constituent, recalculates the quantity based on the constituent's percentage
+        (first_value(decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity)) 
+        over(partition by containerid, trunc(decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate)) 
+        order by decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate) desc)) * c.percentage / 100 as qty
+        ,c.percentage
+            from nodes n
+            left join DispenseType dt on n.nodeid = dt.nodeid
+            left join DispensedDate dd on n.nodeid = dd.nodeid
+            left join QuantityDispensed qd on n.nodeid = qd.nodeid
+            left join RemainingQuantity rq on n.nodeid = rq.nodeid
+            left join SourceContainer sc on n.nodeid = sc.nodeid
+            left join containers c on sc.containerid = c.nodeid
+            inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
             inner join object_class oc on nt.objectclassid = oc.objectclassid
             where oc.objectclass = 'ContainerDispenseTransactionClass'
             and sc.containerid is not null
             and c.materialid is not null
     ),
-    cal as ( --TODO - if we build this as a view, we can dynamically inject the cacheThreshold timespan here
+    cal as (
     select start_date + level - 1 the_date, 0 qty 
         from dual 
         connect by level <= end_date - start_date + 1
@@ -592,7 +604,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     select 
         cdt.materialid, cdt.containerid, max(cdt.dispenseddate), cdt.dispenseday, cdt.qty, cdt.QuantityDispensedUnit, cal.the_date
         from dispenses cdt
-        join  cal  on (cal.the_date >= cdt.dispenseday AND cal.the_date <= sysdate)
+        join  cal  on (cal.the_date >= cdt.dispenseday AND cal.the_date <= end_date)
         group by cdt.materialid, cdt.containerid, cdt.dispenseday, cdt.qty, cdt.QuantityDispensedUnit, cal.the_date
     ),
     --select * from dispensesPerDay;
@@ -633,7 +645,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         left join LocContainer lc on n.nodeid = lc.nodeid
         left join LocScanDate lsd on n.nodeid = lsd.nodeid
         left join containers c on lc.containerid = c.nodeid
-        join cal on (cal.the_date >= trunc(lsd.scandate) AND cal.the_date <= sysdate)
+        join cal on (cal.the_date >= trunc(lsd.scandate) AND cal.the_date <= end_date)
         inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
           inner join object_class oc on nt.objectclassid = oc.objectclassid
           where oc.objectclass = 'ContainerLocationClass'
