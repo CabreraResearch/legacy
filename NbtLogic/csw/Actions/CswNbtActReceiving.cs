@@ -333,10 +333,13 @@ namespace ChemSW.Nbt.Actions
         public JObject getContainerAddProps( CswNbtObjClassContainer Container )
         {
             JObject Ret = new JObject();
+            CswEnumNbtNodeEditMode PrevEditMode = _CswNbtResources.EditMode;
+            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
             if( null != Container )
             {
                 Ret = _CswNbtSdTabsAndProps.getProps( Container.Node, "", null, CswEnumNbtLayoutType.Add );
             }
+            _CswNbtResources.EditMode = PrevEditMode;
             return Ret;
         }
 

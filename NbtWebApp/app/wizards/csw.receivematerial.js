@@ -327,7 +327,8 @@
                                 propertyData: cswPrivate.state.containerAddLayout,
                                 removeTempStatus: false,
                                 nodetypeid: cswPrivate.state.containerNodeTypeId,
-                                nodeid: cswPrivate.state.containerNodeId
+                                nodeid: cswPrivate.state.containerNodeId,
+                                EditMode: Csw.enums.editMode.Add
                             },
                             onSaveError: function (errorData) {
                                 console.log(errorData);
