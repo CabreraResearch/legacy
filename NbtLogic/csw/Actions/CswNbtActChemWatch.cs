@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemWatchAuthServices;
@@ -278,9 +277,9 @@ namespace ChemSW.Nbt.Actions
             bool ret = false;
             try
             {
-                string cwUsername = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchUsername );
-                string cwPassword = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchPassword );
-                string cwDomain = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchDomain );
+                string cwUsername = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.chemwatchusername.ToString() );
+                string cwPassword = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.chemwatchpassword.ToString() );
+                string cwDomain = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.chemwatchdomain.ToString() );
 
                 AuthenticateServiceClient cwAuthClient = new AuthenticateServiceClient();
                 cwAuthClient.Endpoint.Behaviors.Add( _cookieBehavior );

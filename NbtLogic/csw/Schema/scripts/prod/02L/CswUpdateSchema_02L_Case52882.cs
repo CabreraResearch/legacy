@@ -1,5 +1,4 @@
-﻿using ChemSW.Config;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -25,7 +24,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.ConfigVbls.addNewConfigurationValue( CswEnumConfigurationVariableNames.ChemWatchDomain, "", "Domain used to connect to ChemWatch.", false );
+            _CswNbtSchemaModTrnsctn.ConfigVbls.addNewConfigurationValue( CswEnumNbtConfigurationVariables.chemwatchdomain.ToString(), "", "Domain used to connect to ChemWatch.", false );
         } // update()
 
     }
