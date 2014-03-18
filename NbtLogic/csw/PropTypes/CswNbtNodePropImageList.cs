@@ -203,17 +203,21 @@ namespace ChemSW.Nbt.PropTypes
 
             if( IsEditModeEditable )
             {
-                JObject OptionsObj = new JObject();
-                ParentObject["options"] = OptionsObj;
+                // To preserve order of the displaying/printing of pictorgrams,
+                // this must be an array.
+                JArray OptionsArr = new JArray();
+                ParentObject["options"] = OptionsArr;
                 foreach( string Key in Options.Keys )
                 {
-                    OptionsObj[Key] = new JObject();
-                    OptionsObj[Key]["text"] = Options[Key];
-                    OptionsObj[Key]["value"] = Key;
+                    JObject Opt = new JObject();
+                    Opt["text"] = Options[Key];
+                    Opt["value"] = Key;
                     if( Value.Contains( Key ) )
                     {
-                        OptionsObj[Key]["selected"] = true;
+                        Opt["selected"] = true;
                     }
+                    OptionsArr.Add( Opt );
+
                 }
             }
         } // ToJSON()
@@ -231,6 +235,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswDelimitedString NewValue = new CswDelimitedString( Delimiter );
                 NewValue.FromString( JObject[_ValueSubField.ToXmlNodeName( true )].ToString() );
+
                 if( false == AllowMultiple )
                 {
                     string SingleValue = NewValue[0];
