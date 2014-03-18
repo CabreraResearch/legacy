@@ -41,7 +41,7 @@ namespace NbtWebApp.Services
             CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn Ret = new CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn, CswNbtCISProNbtMobileData.MobileRequest>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceCISProNbtMobile.saveOperations,
                 ParamObj: OperationsArray
@@ -60,7 +60,7 @@ namespace NbtWebApp.Services
         {
             CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn Ret = new CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn();
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn, RapidLoaderData.RapidLoaderDataRequest>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceCISProNbtMobile.RLSaveData,
                 ParamObj: Request
