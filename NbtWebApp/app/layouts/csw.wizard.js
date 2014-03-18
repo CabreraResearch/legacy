@@ -84,7 +84,7 @@
                 cswPrivate.SelectedStep = cswPrivate.StartingStep;
             }
 
-            cswPublic.form = cswParent.form({ action: 'javascript:void(0)' });
+            cswPublic.form = cswParent.form({ action: 'javascript:void(0)' }); //setting the action to 'javascript:void(0)' prevents the form from being submitted when pressing enter (see CIS-52814)
 
             cswPublic.table = cswPublic.form.table({
                 suffix: cswPrivate.name,
