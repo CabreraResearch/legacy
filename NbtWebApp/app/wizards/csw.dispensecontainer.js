@@ -706,6 +706,8 @@
 
                             qtyTableRow++;
                             getQuantityAfterDispense();
+                            
+                            cswPrivate.divStep2.br();
                         }
                         cswPrivate.stepTwoComplete = true;
                     } else {

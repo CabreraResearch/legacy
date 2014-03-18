@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -626,7 +625,6 @@ namespace ChemSW.Nbt.MetaData
                 bool Ret = true;
                 CswEnumNbtFieldType Ft = getFieldType().FieldType;
                 if( Ft == CswEnumNbtFieldType.Button ||
-                    Ft == CswEnumNbtFieldType.Grid ||
                     Ft == CswEnumNbtFieldType.PropertyReference ||
                     Ft == CswEnumNbtFieldType.Static ||
                     Ft == CswEnumNbtFieldType.ReportLink ||

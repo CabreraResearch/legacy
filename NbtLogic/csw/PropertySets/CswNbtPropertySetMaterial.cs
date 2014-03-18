@@ -33,6 +33,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Receive = "Receive";
             public const string C3ProductId = "C3ProductId";
             public const string IsConstituent = "Is Constituent";
+            public const string ExpirationInterval = "Expiration Interval";
+            public const string OpenExpireInterval = "Open Expire Interval";
             public const string ContainerExpirationLocked = "Container Expiration Locked";
             public const string Documents = "Documents";
             public const string Synonyms = "Synonyms";
@@ -148,8 +150,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// Mechanism to add default filters in derived classes
         /// </summary>
         public virtual void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
-
-        public virtual DateTime getDefaultExpirationDate( DateTime InitialDate ) { return DateTime.MinValue; }
 
         //public virtual void onUpdatePropertyValue() {}
 
@@ -494,6 +494,58 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//_toggleAllowRequestForContainers()
 
+
+        /// <summary>
+        /// Calculates the expiration date from today based on the Material's Expiration Interval
+        /// </summary>
+        public DateTime getDefaultExpirationDate( DateTime InitialDate )
+        {
+            return _getExpirationDateByInterval( InitialDate, this.ExpirationInterval );
+        }
+
+        public DateTime getDefaultOpenExpirationDate( DateTime InitialDate )
+        {
+            return _getExpirationDateByInterval( InitialDate, this.OpenExpireInterval );
+        }
+
+        private DateTime _getExpirationDateByInterval( DateTime InitialDate, CswNbtNodePropQuantity ExpirationIntervalProp )
+        {
+            DateTime DefaultExpDate = DateTime.MinValue;
+
+            //No point trying to get default if both values are invalid
+            if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationIntervalProp.Quantity > 0 )
+            {
+                DefaultExpDate = InitialDate == DateTime.MinValue ? DateTime.Now : InitialDate;
+                switch( this.ExpirationInterval.CachedUnitName.ToLower() )
+                {
+                    case "seconds":
+                        DefaultExpDate = DefaultExpDate.AddSeconds( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "minutes":
+                        DefaultExpDate = DefaultExpDate.AddMinutes( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "hours":
+                        DefaultExpDate = DefaultExpDate.AddHours( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "days":
+                        DefaultExpDate = DefaultExpDate.AddDays( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "weeks":
+                        DefaultExpDate = DefaultExpDate.AddDays( ExpirationIntervalProp.Quantity * 7 );
+                        break;
+                    case "months":
+                        DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( ExpirationIntervalProp.Quantity ) );
+                        break;
+                    case "years":
+                        DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( ExpirationIntervalProp.Quantity ) );
+                        break;
+                    default:
+                        DefaultExpDate = DateTime.MinValue;
+                        break;
+                }
+            }
+            return DefaultExpDate;
+        }
         #endregion Custom Logic
 
         #region Property Set specific properties
@@ -507,7 +559,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
         public CswNbtNodePropLogical IsConstituent { get { return ( _CswNbtNode.Properties[PropertyName.IsConstituent] ); } }
-        public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid Synonyms { get { return ( _CswNbtNode.Properties[PropertyName.Synonyms] ); } }
         public CswNbtNodePropText LegacyMaterialId { get { return _CswNbtNode.Properties[PropertyName.LegacyMaterialId]; } }
@@ -532,6 +583,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
         public CswNbtNodePropLogical RequiresCleaningEvent { get { return ( _CswNbtNode.Properties[PropertyName.RequiresCleaningEvent] ); } }
+        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
+        public CswNbtNodePropQuantity OpenExpireInterval { get { return _CswNbtNode.Properties[PropertyName.OpenExpireInterval]; } }
+        public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
 
         #endregion
 
