@@ -18,7 +18,8 @@
             if (nodeProperty.isReadOnly()) {
                 nodeProperty.propDiv.a({
                     href: cswPrivate.url,
-                    text: cswPrivate.text
+                    text: cswPrivate.text,
+                    target: '_blank' //CIS-52756: vanilla links should be opening in new tabs
                 });
             } else {
 
