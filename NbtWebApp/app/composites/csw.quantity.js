@@ -65,7 +65,7 @@
                 Precision: cswPrivate.precision,
                 ReadOnly: cswPrivate.isReadOnly,
                 isRequired: cswPrivate.isRequired && false === cswPrivate.quantityoptional,
-                onChange: cswPrivate.onNumberChange
+                onKeyUp: cswPrivate.onNumberChange
             });
             cswPrivate.cellCol++;
 

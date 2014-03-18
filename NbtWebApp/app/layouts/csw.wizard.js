@@ -84,7 +84,7 @@
                 cswPrivate.SelectedStep = cswPrivate.StartingStep;
             }
 
-            cswPublic.form = cswParent.form();
+            cswPublic.form = cswParent.form({ action: 'javascript:void(0)' });
 
             cswPublic.table = cswPublic.form.table({
                 suffix: cswPrivate.name,
@@ -204,7 +204,7 @@
                 }
             }
         };
-        
+
         cswPublic.isStepVisible = function (stepno) {
             return cswPrivate.stepVisibility[stepno];
         };
