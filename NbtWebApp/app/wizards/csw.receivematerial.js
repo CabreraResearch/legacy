@@ -396,7 +396,8 @@
                                 var linkCell = cswPrivate.sdsDocGrid.addCell('', row, 2);
                                 linkCell.a({
                                     href: sdsDoc.linktext,
-                                    text: sdsDoc.displaytext
+                                    text: sdsDoc.displaytext,
+                                    target: '_blank',
                                 });
                                 row++;
                             });
