@@ -720,6 +720,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 return ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit ||
+                         _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ||     
                          _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add );
             }
         }
