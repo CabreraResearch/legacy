@@ -25,6 +25,7 @@
                     updateProp(val);
                 }
             });
+            
 
             var updateProp = function (val) {
                 nodeProperty.propData.values.base = val.base;
@@ -34,7 +35,7 @@
             };
 
             if (Csw.bool(nodeProperty.isReadOnly())) {
-                nodeProperty.propDiv.span({ text: nodeProperty.propData.values.gestalt });
+                nodeProperty.propDiv.span({ text: nodeProperty.propData.gestalt });
             } else {
                 var div = nodeProperty.propDiv.div();
                 cswPrivate.valueNtb = div.numberTextBox({
