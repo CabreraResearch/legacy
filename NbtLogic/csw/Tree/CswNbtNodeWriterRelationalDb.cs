@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
             }
         }//_getDataTable()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool AllowAuditing)
+        public void write( CswNbtNode Node, bool ForceSave )
         {
             // Don't sync for temp nodes
             if( false == Node.IsTemp )
@@ -78,11 +78,6 @@ namespace ChemSW.Nbt
                 {
                     makeNewNodeEntry( Node, SyncProps: true );
                 }
-                //DataTable NodesTable;
-                //CswTableUpdate NodesUpdate;
-                //_getDataTable( Node, out NodesTable, out NodesUpdate );
-                ////NodesTable.Rows[0]["nodename"] = Node.NodeName;
-                //NodesUpdate.update( NodesTable );
             }
         }//write()
 

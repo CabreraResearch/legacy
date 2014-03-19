@@ -63,7 +63,6 @@ namespace ChemSW.Nbt
             NewNodeRow["nodename"] = Node.NodeName;
             NewNodeRow["nodetypeid"] = CswConvert.ToDbVal( Node.NodeTypeId );
             NewNodeRow["pendingupdate"] = CswConvert.ToDbVal( false );
-            NewNodeRow["pendingevents"] = CswConvert.ToDbVal( false );
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
@@ -134,7 +133,7 @@ namespace ChemSW.Nbt
                 // case 29311 - Sync with relational data
                 if( Node.getNodeType().DoRelationalSync )
                 {
-                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy, AllowAuditing );
+                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave );
                 }
 
                 if( null != Node.RelationalId )
