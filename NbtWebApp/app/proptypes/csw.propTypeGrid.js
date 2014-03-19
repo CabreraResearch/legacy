@@ -32,7 +32,7 @@
                                 NodeTypeId: '',
                                 PropIdAttr: nodeProperty.name,
                                 LimitMenuTo: '',
-                                ReadOnly: nodeProperty.isReadOnly()
+                                ReadOnly: nodeProperty.isReadOnly(true)
                             }
                         },
                         onAlterNode: function () {
