@@ -256,7 +256,6 @@
     <Compile Include="csw\Requesting\CswNbtRequestItemType.cs" />
     <Compile Include="csw\Requesting\CswNbtRequestItemTypeMaterialCreate.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
-    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeUpdateEvents.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerRecords.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
@@ -778,8 +777,6 @@
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52788.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case53015.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52786.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52562.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateDDL_02L_Case52562.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52281.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52285.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52280B.cs" />
