@@ -49,7 +49,8 @@ namespace ChemSW.Nbt.ObjClasses
                     Node.syncNodeName();
                     if( null != Node.ObjClass && false == SkipEvents )
                     {
-                        _processNodeUpdateEvents( Node );
+                        CswNbtNodeUpdateEvents NodeUpdateEvents = new CswNbtNodeUpdateEvents( _CswNbtResources, Node );
+                        NodeUpdateEvents.triggerUpdateEvents();
                     }
                     Node.write( ForceUpdate );
                 }
@@ -60,19 +61,6 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 Node.setModificationState( CswEnumNbtNodeModificationState.Posted );
-            }
-        }
-
-        private void _processNodeUpdateEvents( CswNbtNode Node )
-        {
-            if( _CswNbtResources.IsSystemUser )//Don't defer update events internally
-            {
-                CswNbtNodeUpdateEvents NodeUpdateEvents = new CswNbtNodeUpdateEvents( _CswNbtResources, Node );
-                NodeUpdateEvents.triggerUpdateEvents();
-            }
-            else
-            {
-                Node.PendingEvents = true;
             }
         }
     }

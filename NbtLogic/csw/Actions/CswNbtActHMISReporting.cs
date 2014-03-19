@@ -397,7 +397,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
-            CswNbtMetaDataObjectClassProp ControlZoneNameOCP = ControlZoneOC.getObjectClassProp( CswNbtObjClassControlZone.PropertyName.Name );
+            CswNbtMetaDataObjectClassProp ControlZoneNameOCP = ControlZoneOC.getObjectClassProp( CswNbtObjClassControlZone.PropertyName.ControlZoneName );
             CswNbtViewRelationship ControlZoneVR = ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
             if( false == string.IsNullOrEmpty( FilterToName ) )
             {

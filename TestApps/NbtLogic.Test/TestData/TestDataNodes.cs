@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Test
         {
             CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), delegate( CswNbtNode NewNode )
             {
-                CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, CswNbtObjClassControlZone.PropertyName.Name );
+                CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, CswNbtObjClassControlZone.PropertyName.ControlZoneName );
                 NewNode.Properties[NameNTP].AsText.Text = "TempNode";
             }, true );
             _finalize();

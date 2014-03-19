@@ -217,13 +217,14 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
             ParentObject[ElemName_Options] = new JObject();
 
-            if( IsEditModeEditable )
-            {
-                CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
-                CBAOptions.Columns.Add( "Include" );
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            CBAOptions.Columns.Add( "Include" );
 
-                DataTable Data = getUserOptions();
-                foreach( DataRow Row in Data.Rows )
+            DataTable Data = getUserOptions();
+            foreach( DataRow Row in Data.Rows )
+            {
+                bool isSelected = SelectedUserIds.Contains( Row[KeyColumn] );
+                if( IsEditModeEditable || isSelected )
                 {
                     CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
                     Option.Key = Row[KeyColumn].ToString();
@@ -231,9 +232,9 @@ namespace ChemSW.Nbt.PropTypes
                     Option.Values.Add( CswConvert.ToBoolean( Row[ValueColumn] ) );
                     CBAOptions.Options.Add( Option );
                 }
-
-                CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
             }
+
+            CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

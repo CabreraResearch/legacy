@@ -179,14 +179,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
-            if( IsEditModeEditable )
-            {
-                ParentObject[_ElemName_Options] = new JObject();
-                CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
-                CBAOptions.Columns.Add( "Include" );
+            ParentObject[_ElemName_Options] = new JObject();
 
-                DataTable Data = Options;
-                foreach( DataRow Row in Data.Rows )
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            CBAOptions.Columns.Add( "Include" );
+
+            DataTable Data = Options;
+            foreach( DataRow Row in Data.Rows )
+            {
+                bool isSelected = SelectedNodeTypeIds.Contains( Row[KeyColumn] );
+                if( IsEditModeEditable || isSelected )
                 {
                     CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
                     Option.Key = CswConvert.ToString( Row[KeyColumn] );
@@ -194,9 +196,10 @@ namespace ChemSW.Nbt.PropTypes
                     Option.Values.Add( CswConvert.ToBoolean( Row[ValueColumn] ) );
                     CBAOptions.Options.Add( Option );
                 }
-
-                CBAOptions.ToJSON( (JObject) ParentObject[_ElemName_Options] );
             }
+
+            CBAOptions.ToJSON( (JObject) ParentObject[_ElemName_Options] );
+
         } // ToJSON()
 
 
