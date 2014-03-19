@@ -85,12 +85,12 @@
                 );
             };
 
-            cswPublic.isReadOnly = function () {
+            cswPublic.isReadOnly = function (ignoreEditMode) {
                 return (Csw.bool(cswPublic.tabState.ReadOnly) ||
                     Csw.bool(cswPublic.tabState.Config) ||
                     cswPublic.isDisabled() ||
                     Csw.bool(cswPublic.propData.readonly) ||
-                    Csw.enums.editMode.View === cswPublic.tabState.EditMode);
+                    ((false === ignoreEditMode || undefined === ignoreEditMode) && Csw.enums.editMode.View === cswPublic.tabState.EditMode));
             };
 
             cswPublic.canOverride = function () {

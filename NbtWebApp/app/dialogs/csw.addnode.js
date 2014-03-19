@@ -49,11 +49,11 @@
                         ReloadTabOnSave: false,
                         onSave: function (nodeid, nodekey, tabcount, nodename, nodelink, relationalid) {
                             cswPublic.tabsAndProps.tearDown();
+                            addDialog.close();
                             if (nodeid || nodekey) {
                                 Csw.tryExec(cswPrivate.onAddNode, nodeid, nodekey, nodename, nodelink, relationalid);
                             }
                             Csw.tryExec(cswPrivate.onSaveImmediate);
-                            addDialog.close();
                         },
                         checkQuota: false //Case 29531 - quota has already been checked by layouts.addnode
                     });

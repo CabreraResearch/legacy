@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
-            public const string Name = "Name";
+            public const string ControlZoneName = "Control Zone Name";
             public const string MAQOffset = "MAQ Offset %";
             public const string FireClassSetName = "Fire Class Set Name";
             public const string Locations = "Locations";
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
+        public CswNbtNodePropText ControlZoneName { get { return ( _CswNbtNode.Properties[PropertyName.ControlZoneName] ); } }
         public CswNbtNodePropNumber MAQOffset { get { return ( _CswNbtNode.Properties[PropertyName.MAQOffset] ); } }
         public CswNbtNodePropRelationship FireClassSetName { get { return ( _CswNbtNode.Properties[PropertyName.FireClassSetName] ); } }
         public CswNbtNodePropGrid Locations { get { return ( _CswNbtNode.Properties[PropertyName.Locations] ); } }
