@@ -23,7 +23,7 @@
         },
         bodyCls: 'CswDesignMode',
     });
-    
+
     // This needs to be defined globally. It should only be defined once and then 
     //call new Sidebar to create instances of it
 
@@ -54,7 +54,7 @@
                 },
                 designNodeTypeProp: {
                     nodetypeid: ''
-                },  
+                },
                 Refresh: null,
                 isGenericClass: true,
                 ajax: {
@@ -81,18 +81,18 @@
                 dataStore: {},
                 control: {}
             };
-            
+
             var newProperties = {
                 div: {},
                 dataStore: {},
                 control: {}
             };
-            
+
             var nodeTypeSelect = {
                 table: {},
                 control: {}
             };
-            
+
             //#endregion Properties
 
             //#region Constructor
@@ -106,7 +106,7 @@
                 if (Csw.isNullOrEmpty(cswParent)) {
                     //Todo: throw exception
                 }
-                
+
                 //Hide the Tree
                 Csw.main.leftDiv.hide();
 
@@ -114,7 +114,7 @@
                 cswPrivate.newSidebar = new DesignSidebar({
                     renderTo: cswParent.getId(),
                     listeners: {
-                        beforeclose: function(panel) {
+                        beforeclose: function (panel) {
                             cswPublic.tearDown();
                         }
                     }
@@ -150,16 +150,16 @@
                 cswPrivate.makeButton(buttons.deleteBtn, deleteBtnCell);
                 cswPrivate.makeButton(buttons.newBtn, newBtnCell);
                 //#endregion Buttons
-                
+
                 //#region Load NodeType
-                
+
                 cswPublic.componentItem.br();
 
                 nodeTypeSelect.table = cswPublic.componentItem.table({
                     width: '100%',
                     cellalign: 'center'
                 }).hide();
-                
+
                 nodeTypeSelect.table.cell(1, 1).div({ text: '&nbsp;Load: ', cssclass: 'CswDesignMode_NTName' });
 
                 nodeTypeSelect.control = nodeTypeSelect.table.cell(1, 2).nodeTypeSelect({
@@ -169,7 +169,7 @@
                         cswPrivate.createTempNode(val);
                     }
                 });
-                
+
                 cswPrivate.buttons[buttons.loadBtn] = loadBtnCell.buttonExt({
                     enabledText: buttons.loadBtn,
                     disableOnClick: false,
@@ -179,7 +179,7 @@
                 });
 
                 cswPublic.componentItem.br();
-                
+
                 //#endregion Load NodeType
 
                 //#region Edit NodeType Form
@@ -226,7 +226,7 @@
                                 },
                                 ReloadTabOnSave: false,
                                 async: false,
-                                onInitFinish: function() {
+                                onInitFinish: function () {
                                     cswPrivate.newSidebar.toggleCollapse();
                                 }
                             });//cswPrivate.tabsAndProps
@@ -260,7 +260,7 @@
 
                 newProperties.div = cswPublic.componentItem.div({ align: 'center' });
                 cswPrivate.loadNewProperties('Edit');
-                
+
                 //#endregion Add Properties
             };
 
@@ -275,7 +275,7 @@
                 });
                 Csw.main.leftDiv.show();
             };
-            
+
             //#region Button Logic
 
             cswPrivate.makeButton = function (btnName, div) {
@@ -287,12 +287,12 @@
                     }
                 });
             };
-            
+
             var posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
             var posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
 
             cswPrivate.onButtonClick = function (buttonName) {
-                
+
                 switch (buttonName) {
                     case buttons.copyBtn:
 
@@ -327,7 +327,7 @@
                                 }
                             ]
                         });
-                        
+
                         cswPrivate.extWindowCopy.attachToMe().div({
                             text: 'Copying ' + cswPrivate.tabState.nodetypename
                         });
@@ -376,7 +376,7 @@
 
                         break;
                     case buttons.newBtn:
-                        
+
                         Csw.dialogs.addnode({
                             nodetypeid: cswPrivate.designNodeType.nodetypeid,
                             relatednodeid: cswPrivate.designNodeType.nodeid,
@@ -392,10 +392,10 @@
                     default:
                 }
             };
-            
+
             //#endregion Button Logic
 
-            cswPrivate.createTempNode = function(designNTNodeId) {
+            cswPrivate.createTempNode = function (designNTNodeId) {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Nodes/createTempNode',
                     data: designNTNodeId,
@@ -412,7 +412,7 @@
                     }
                 });
             };
-            
+
             //#region Existing Properties
 
             cswPrivate.loadExistingProperties = function (data) {
@@ -429,7 +429,7 @@
                     TabId: Csw.string(cswPrivate.tabState.tabid),
                     LayoutType: 'Edit'
                 };
-                
+
                 if (data) {
                     Csw.extend(ajaxdata, data);
                 }
@@ -509,19 +509,19 @@
                             cswPrivate.nodeLayout.refresh();
                         }
                     });
-                    
+
                 };
                 var existingPropertiesTable = existingProperties.div.table();
                 var menuOn = cswPrivate.nodeLayout.getActiveLayout() === 'Edit';
-                
-                cswPrivate.buttons[buttons.addExistingBtn] = existingPropertiesTable.cell(1,1).buttonExt({
+
+                cswPrivate.buttons[buttons.addExistingBtn] = existingPropertiesTable.cell(1, 1).buttonExt({
                     enabledText: buttons.addExistingBtn,
                     disableOnClick: false,
                     onClick: Csw.method(function () { onAddExistingClick(); })
                 });
                 cswPrivate.buttons[buttons.addExistingBtn].disable();
 
-                cswPrivate.buttons[buttons.addExistingBtn + '_menu'] = existingPropertiesTable.cell(1,2).menuButton({
+                cswPrivate.buttons[buttons.addExistingBtn + '_menu'] = existingPropertiesTable.cell(1, 2).menuButton({
                     selectedText: buttons.addExistingBtn,
                     menu: [{
                         text: buttons.addExistingBtn,
@@ -535,20 +535,20 @@
                     onClick: Csw.method(function () { onAddExistingClick(); })
                 });
                 cswPrivate.buttons[buttons.addExistingBtn + '_menu'].disable();
-                
+
                 if (menuOn) {
                     cswPrivate.buttons[buttons.addExistingBtn].hide();
                 } else {
                     cswPrivate.buttons[buttons.addExistingBtn + '_menu'].hide();
                 }
-                
+
                 existingProperties.div.br({ number: 2 });
             };
-            
+
             //#endregion Existing Properties
-            
+
             //#region New Properties
-            
+
             cswPrivate.loadNewProperties = function (layoutType) {
                 newProperties.dataStore = Ext.create('Ext.data.ArrayStore', {
                     fields: ['value', 'display'],
@@ -609,7 +609,7 @@
                 });
 
                 newProperties.div.br();
-                
+
                 var onAddNewClick = function (isIdentityTab) {
                     cswPrivate.ajax.designNodeType = Csw.ajaxWcf.post({
                         urlMethod: 'Design/getDesignNodeTypePropDefinition',
@@ -626,7 +626,7 @@
                                     relatednodetypeid: cswPrivate.designNodeTypeProp.nodetypeid,
                                     relatedobjectclassid: cswPrivate.designNodeType.objectclassid,
                                     title: 'Add New Property',
-                                    onAddNode: function(nodeid, nodekey, nodename, nodelink, relationalid) {
+                                    onAddNode: function (nodeid, nodekey, nodename, nodelink, relationalid) {
                                         var tabid = cswPrivate.nodeLayout.getActiveTabId();
                                         if (isIdentityTab) {
                                             tabid = cswPrivate.nodeLayout.getIdentityTabId();
@@ -641,31 +641,32 @@
                                                     nodetypepropid: relationalid,
                                                     removeexisting: true
                                                 }]
+                                            },
+                                            success: function () {
+                                                cswPrivate.nodeLayout.refresh();
+                                                Csw.ajaxWcf.post({
+                                                    urlMethod: 'Design/createNTViews'
+                                                });
                                             }
                                         });
-                                        
-                                        Csw.ajaxWcf.post({
-                                            urlMethod: 'Design/createNTViews'
-                                        });
-                                        
-                                        cswPrivate.nodeLayout.refresh();
+
                                     }
                                 });
                             }
-                            
+
                         }
                     });
                 };
-                
+
                 var newPropertiesTable = newProperties.div.table();
 
-                cswPrivate.buttons[buttons.addNewBtn] = newPropertiesTable.cell(1,1).buttonExt({
+                cswPrivate.buttons[buttons.addNewBtn] = newPropertiesTable.cell(1, 1).buttonExt({
                     enabledText: buttons.addNewBtn,
                     disableOnClick: false,
                     onClick: Csw.method(function () { onAddNewClick(); })
                 }).hide();
                 cswPrivate.buttons[buttons.addNewBtn].disable();
-                cswPrivate.buttons[buttons.addNewBtn + '_menu'] = newPropertiesTable.cell(1,2).menuButton({
+                cswPrivate.buttons[buttons.addNewBtn + '_menu'] = newPropertiesTable.cell(1, 2).menuButton({
                     selectedText: buttons.addNewBtn,
                     menu: [{
                         text: buttons.addNewBtn,
@@ -680,29 +681,29 @@
                 });
                 cswPrivate.buttons[buttons.addNewBtn + '_menu'].disable();
             };
-            
+
             //#endregion New Properties
-            
+
             //#region Public
-            
+
             cswPublic.tearDown = function () {
                 cswPrivate.onTearDown();
             };
 
-//            cswPublic.close = function () {
-//                cswParent.$.animate({ "left": "-=320px" }, "slow");
-//                cswParent.data('hidden', true);
-//            };
+            //            cswPublic.close = function () {
+            //                cswParent.$.animate({ "left": "-=320px" }, "slow");
+            //                cswParent.data('hidden', true);
+            //            };
 
-//            cswPublic.open = function () {
-//                cswParent.$.animate({ "left": "+=320px" }, "slow");
-//                cswParent.data('hidden', false);
-//            };
+            //            cswPublic.open = function () {
+            //                cswParent.$.animate({ "left": "+=320px" }, "slow");
+            //                cswParent.data('hidden', false);
+            //            };
 
-            cswPublic.setNodeLayout = function(nodeLayout) {
+            cswPublic.setNodeLayout = function (nodeLayout) {
                 cswPrivate.nodeLayout = nodeLayout;
             };
-            
+
             cswPublic.refreshExistingProperties = function (layoutMode, tabid) {
                 if (Csw.isNullOrEmpty(layoutMode)) {
                     layoutMode = 'Edit';
@@ -719,7 +720,7 @@
                     LayoutType: layoutMode
                 });
             };
-            
+
             cswPublic.refreshNewProperties = function (layoutMode) {
                 if (Csw.isNullOrEmpty(layoutMode)) {
                     layoutMode = 'Edit';
@@ -728,7 +729,7 @@
                 cswPrivate.loadNewProperties(layoutMode);
             };
 
-            cswPublic.toggleIdentityTabOption = function(on) {
+            cswPublic.toggleIdentityTabOption = function (on) {
                 if (cswPrivate.buttons[buttons.addNewBtn] && cswPrivate.buttons[buttons.addExistingBtn]) {
                     if (on) {
                         cswPrivate.buttons[buttons.addNewBtn].hide();
