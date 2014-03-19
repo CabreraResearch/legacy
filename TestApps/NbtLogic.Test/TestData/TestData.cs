@@ -176,6 +176,15 @@ namespace ChemSW.Nbt.Test
                 RevertNodeProps();
                 RevertNodeTypePropAttributes();
                 RevertNodeProps();
+                Release();
+            }
+        }
+
+        public void Release()
+        {
+            if( null != _CswNbtResources )
+            {
+                _CswNbtResources.release();
             }
         }
 
