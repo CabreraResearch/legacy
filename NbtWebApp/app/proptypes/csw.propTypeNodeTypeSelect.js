@@ -13,17 +13,10 @@
 
             cswPrivate.selectMode = nodeProperty.propData.values.selectmode; // Single, Multiple, Blank
 
-            var cols = [];
-            var data = nodeProperty.propData.values;
-            if (false === nodeProperty.isReadOnly() && nodeProperty.propData.values.options) {
-                cols = nodeProperty.propData.values.options.columns;
-                data = nodeProperty.propData.values.options.data;
-            }
-
             var cba = nodeProperty.propDiv.checkBoxArray({
                 name: nodeProperty.name + '_cba',
-                cols: cols,
-                data: data,
+                cols: nodeProperty.propData.values.options.columns,
+                data: nodeProperty.propData.values.options.data,
                 UseRadios: (cswPrivate.selectMode === 'Single'),
                 isRequired: nodeProperty.isRequired(),
                 ReadOnly: nodeProperty.isReadOnly(),
