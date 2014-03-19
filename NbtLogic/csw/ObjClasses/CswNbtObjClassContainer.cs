@@ -634,7 +634,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != CDTNT )
             {
                 CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null, true );
+                CswEnumNbtNodeEditMode PrevEditMode = _CswNbtResources.EditMode;
+                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 ActionDataObj["dispenseTransactionAddLayout"] = _TabsAndProps.getProps( CDT.Node, "", null, CswEnumNbtLayoutType.Add );
+                _CswNbtResources.EditMode = PrevEditMode;
             }
 
             return ActionDataObj;
