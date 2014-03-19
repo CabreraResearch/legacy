@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -16,6 +15,7 @@ namespace ChemSW.Nbt.MetaData
             { BalanceClass                      , BalanceClass                       },
             { BalanceConfigurationClass         , BalanceConfigurationClass          },
             { BatchOpClass                      , BatchOpClass                       },
+            { BiologicalClass                   , BiologicalClass                    },
             { ChemicalClass                     , ChemicalClass                      },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
@@ -58,6 +58,7 @@ namespace ChemSW.Nbt.MetaData
             { MailReportClass                   , MailReportClass                    },
             { MailReportGroupClass              , MailReportGroupClass               },
             { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
+            { ManufacturerClass                 , ManufacturerClass                  },
             { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
             { MaterialComponentClass            , MaterialComponentClass             },
             { MaterialSynonymClass              , MaterialSynonymClass               },
@@ -144,6 +145,7 @@ namespace ChemSW.Nbt.MetaData
         public const string BalanceClass = "BalanceClass";
         public const string BalanceConfigurationClass = "BalanceConfigurationClass";
         public const string BatchOpClass = "BatchOpClass";
+        public const string BiologicalClass = "BiologicalClass";
         public const string ChemicalClass = "ChemicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
@@ -185,6 +187,7 @@ namespace ChemSW.Nbt.MetaData
         public const string MailReportClass = "MailReportClass";
         public const string MailReportGroupClass = "MailReportGroupClass";
         public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";
+        public const string ManufacturerClass = "ManufacturerClass";
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";

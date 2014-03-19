@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.csw.Dev
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
                                                                    {
                                                                        { NBT, NBT },
+                                                                       { AE, AE },
                                                                        { BV, BV },
                                                                        { CF, CF },
                                                                        { CM, CM },
@@ -76,6 +77,8 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary> NBT (System Script) </summary>
         public const string NBT = "NBT (System Script)";
 
+        /// <summary> Adeesha </summary>
+        public const string AE = "Adeesha Ekanayake";
         /// <summary> Brendan </summary>
         public const string BV = "Brendan Vavra";
         /// <summary> Christopher </summary>

@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ViewNodesButton = "View Nodes";
         }
 
+        private bool _overrideNodeConversionCheck = false;
 
         //private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -94,9 +95,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _requiresSync = false;
 
-        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
+        protected override void beforePromoteNodeLogic()
         {
-            if( false == OverrideUniqueValidation &&
+            if( false == Node.OverrideValidation &&
                 null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
@@ -285,7 +286,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             if( null != RelationalNodeType )
             {
@@ -670,8 +671,11 @@ namespace ChemSW.Nbt.ObjClasses
 
                     ObjectClassProperty.ServerManaged = true;
                 }
-                else
+                else if( _overrideNodeConversionCheck )
                 {
+                    _requiresSync = true;
+                }
+                else {
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this NodeType", "Nodetype " + RelationalNodeType.NodeTypeName + " (" + RelationalNodeType.NodeTypeId + ") cannot be converted because it is not Generic" );
                 }
             }
@@ -728,7 +732,8 @@ namespace ChemSW.Nbt.ObjClasses
                     NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, PropNode );
                 } // if-else( null != PropNode )
 
-                PropNode.syncFromObjectClassProp();
+                //only update the layout when we're not overriding an existing nodetype
+                PropNode.syncFromObjectClassProp( false == _overrideNodeConversionCheck); 
 
             } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )
 
@@ -781,8 +786,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
 
-            CswNbtMetaDataObjectClass DesignPropOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-            CswNbtMetaDataObjectClassProp NtpNodeTypeOCP = DesignPropOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+            CswNbtMetaDataObjectClass DesignPropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+            CswNbtMetaDataObjectClassProp NtpNodeTypeOCP = DesignPropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
 
             CswNbtView PropsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship ocRel = PropsView.AddViewRelationship( this.ObjectClass, false );
@@ -895,6 +900,25 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
         } // RecalculateQuestionNumbers()
+
+        /// <summary>
+        /// STOP. IS THIS REALLY WHAT YOU WANT TO DO? 
+        /// Change the object class of the nodetype referenced by this DNT node. Make sure you update all the props manually
+        /// </summary>
+        /// <param name="NewOC">the object class you want to apply to this NT</param>
+        public void changeParentObjectClass( CswNbtMetaDataObjectClass NewOC )
+        {
+            _overrideNodeConversionCheck = true;
+
+            Node.Properties[PropertyName.ObjectClass].SetSubFieldValue( CswEnumNbtSubFieldName.Value, NewOC.ObjectClassId );
+            
+            Node.postChanges( true );
+
+            _overrideNodeConversionCheck = false;
+        }
+
+
+
 
     }//CswNbtObjClassDesignNodeType
 

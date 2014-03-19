@@ -1,5 +1,4 @@
 ﻿using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {

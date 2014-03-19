@@ -1,6 +1,8 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -31,6 +33,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            bool DefinitionExists = CswNbtImportDef.checkForDefinitionEntries( _CswNbtSchemaModTrnsctn, CswScheduleLogicNbtCAFImport.DefinitionName );
+            if( DefinitionExists )
+            {
             // CAF bindings definitions for Biologicals
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
             ImpMgr.CAFimportOrder( "Constituent", "materials", "constituents_view", "legacyid" );
@@ -41,6 +46,7 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "einecs", CswNbtObjClassChemical.PropertyName.EINECS, "" );
 
             ImpMgr.finalize();
+            }
         } // update()
 
     }

@@ -227,7 +227,6 @@ namespace ChemSW.Nbt.Actions
             CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItemId];
             if( null != NodeAsRequestItem )
             {
-                //TODO - if we're dispensing a specific container or EP, we don't care about the specific material
                 CswNbtNode TargetNode = _CswNbtResources.Nodes[NodeAsRequestItem.Target.RelatedNodeId];
                 if( null != TargetNode )
                 {
@@ -284,13 +283,16 @@ namespace ChemSW.Nbt.Actions
             CswCommaDelimitedString EPMaterialPks = new CswCommaDelimitedString();
             CswNbtMetaDataObjectClass ManufacturerEquivalentPartOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ManufacturerEquivalentPartClass );
             CswNbtMetaDataObjectClassProp EPOCP = ManufacturerEquivalentPartOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.EnterprisePart );
-            CswNbtMetaDataObjectClassProp MaterialOCP = ManufacturerEquivalentPartOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material );
+            CswNbtMetaDataObjectClassProp ManufacturerOCP = ManufacturerEquivalentPartOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer );
+            CswNbtMetaDataObjectClass ManufacturerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ManufacturerClass );
+            CswNbtMetaDataObjectClassProp MaterialOCP = ManufacturerOC.getObjectClassProp( CswNbtObjClassManufacturer.PropertyName.Material );
 
             CswNbtView EPMatsView = new CswNbtView( _CswNbtResources );
             EPMatsView.ViewName = "Materials under " + EPId;
             CswNbtViewRelationship MEPVR = EPMatsView.AddViewRelationship( ManufacturerEquivalentPartOC, false );
             EPMatsView.AddViewPropertyAndFilter( MEPVR, EPOCP, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: EPId.PrimaryKey.ToString() );
-            CswNbtViewRelationship MatVR = EPMatsView.AddViewRelationship( MEPVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, false );
+            CswNbtViewRelationship ManufacturerVR = EPMatsView.AddViewRelationship( MEPVR, CswEnumNbtViewPropOwnerType.First, ManufacturerOCP, false );
+            CswNbtViewRelationship MatVR = EPMatsView.AddViewRelationship( ManufacturerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, false );
 
             ICswNbtTree EPMatsTree = _CswNbtResources.Trees.getTreeFromView( EPMatsView, false, true, true );
             for( int i = 0; i < EPMatsTree.getChildNodeCount(); i++ )
@@ -298,8 +300,13 @@ namespace ChemSW.Nbt.Actions
                 EPMatsTree.goToNthChild( i ); //EP's MEPs
                 if( EPMatsTree.getChildNodeCount() > 0 )
                 {
-                    EPMatsTree.goToNthChild( 0 ); //MEP's Material
-                    EPMaterialPks.Add( EPMatsTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() );
+                    EPMatsTree.goToNthChild( 0 ); //MEP's Manufacturer
+                    if( EPMatsTree.getChildNodeCount() > 0 )
+                    {
+                        EPMatsTree.goToNthChild( 0 ); //Manufacturer's Material
+                        EPMaterialPks.Add( EPMatsTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() );
+                        EPMatsTree.goToParentNode();
+                    }
                     EPMatsTree.goToParentNode();
                 }
                 EPMatsTree.goToParentNode();

@@ -39,6 +39,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.BiologicalClass:
+                    ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.CofADocumentClass:
                     ReturnVal = new CswNbtObjClassCofADocument( CswNbtResources, Node );
                     break;
@@ -189,6 +193,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.LQNoClass:
                     ReturnVal = new CswNbtObjClassLQNo( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.ManufacturerClass:
+                    ReturnVal = new CswNbtObjClassManufacturer( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.ManufacturerEquivalentPartClass:

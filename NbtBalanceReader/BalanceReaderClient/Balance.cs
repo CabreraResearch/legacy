@@ -94,12 +94,16 @@ namespace BalanceReaderClient
         {
             if( _isEnabled )
             {
-                NbtAuth.SessionCompleteEvent SendBalanceToServer = delegate( NbtPublicClient Client, string StatusText )
+                NbtAuth.SessionCompleteEvent SendBalanceToServer = delegate( NbtPublicClient Client )
                     {
-                        if( StatusText == "Authenticated" )
+                        SerialBalance Response = Client.UpdateBalanceData( _balanceData );
+                        string Status = "NonExistentSession";
+                        if( null != Response )
                         {
-                            _balanceData.NodeId = Client.UpdateBalanceData( _balanceData ).NodeId;
+                            _balanceData.NodeId = Response.NodeId;
+                            Status = "Authenticated";
                         }
+                        return Status;
                     };
 
                 AuthenticationClient.PerformAction( SendBalanceToServer );

@@ -143,10 +143,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             beforePropertySetWriteNode();
-            if( false == OverrideUniqueValidation )
+            if( false == Node.OverrideValidation )
             {
                 _validateCompoundUniqueness();
             }

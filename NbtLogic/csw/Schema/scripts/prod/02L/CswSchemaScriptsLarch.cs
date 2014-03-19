@@ -12,7 +12,9 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>()
                 {
                     // new CswUpdateDDL_02L_CaseXXXXX()
-                    new CswUpdateDDL_02L_Case31907()
+                    new CswUpdateDDL_02L_Case31907(),
+                    new CswUpdateDDL_02L_Case52544(),
+                    new CswUpdateDDL_02L_Case52562()
                 };
         } // _DDLScripts()
 
@@ -23,7 +25,16 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateMetaData_02L_Case29446A(),
                     new CswUpdateMetaData_02L_Case31750(),
                     new CswUpdateMetaData_02L_Case31893A(),
-                    new CswUpdateMetaData_02L_Case31893B()
+                    new CswUpdateMetaData_02L_Case31893B(),
+                    new CswUpdateMetaData_02L_Case52281(),
+                    new CswUpdateMetaData_02L_Case52284(),
+                    new CswUpdateMetaData_02L_Case52285(),
+                    new CswUpdateMetaData_02L_Case51743A(),
+                    new CswUpdateMetaData_02L_Case52017(),
+                    new CswUpdateMetaData_02L_Case52017B(),
+                    new CswUpdateMetaData_02L_Case52280(),
+                    new CswUpdateMetaData_02L_Case52280B(),
+                    new CswUpdateMetaData_02L_Case52280C()
                 };
         } // _MetaDataScripts()
 
@@ -34,13 +45,24 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02L_Case29446B(),
                     new CswUpdateSchema_02L_Case31907(),
                     new CswUpdateSchema_02L_Case32003(),
-                    new CswUpdateSchema_02L_Case31909(),
+                    new CswUpdateSchema_02L_Case52761(),
                     new CswUpdateSchema_02L_Case31611(),
                     new CswUpdateSchema_02L_Case31893_Biologicals(),
                     new CswUpdateSchema_02L_Case31893_Supplies(),
                     new CswUpdateSchema_02L_Case31893_Constituents(),
                     new CswUpdateSchema_02L_Case31893_MaterialComps(),
-                    new CswUpdateSchema_02L_Case31893()
+                    new CswUpdateSchema_02L_Case31893(),
+                    new CswUpdateSchema_02L_Case52266(),
+                    new CswUpdateSchema_02L_Case52446(),
+                    new CswUpdateSchema_02L_Case51743B(),
+                    new CswUpdateSchema_02L_Case53015(), //fix for 52285, must run before it
+                    new CswUpdateSchema_02L_Case52285(),
+                    new CswUpdateSchema_02L_Case52280(),
+                    new CswUpdateSchema_02L_Case52281(),
+                    new CswUpdateSchema_02L_Case52281(),
+                    new CswUpdateSchema_02L_Case52786(),
+                    new CswUpdateSchema_02L_Case52562(),
+                    new CswUpdateSchema_02L_Case52788(),
                 };
         } // _SchemaScripts()
 

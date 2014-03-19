@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.Sched
             { Import                        , Import                         },
             { MolFingerprints               , MolFingerprints                },
             { NodeCounts                    , NodeCounts                     },
+            { NodeUpdateEvents              , NodeUpdateEvents               },
             { PurgeSessionData              , PurgeSessionData               },
             { Reconciliation                , Reconciliation                 },
             { TierII                        , TierII                         },
@@ -84,7 +85,7 @@ namespace ChemSW.Nbt.Sched
         public const string BatchOp = "BatchOp";
         public const string CAFImport = "CAFImport";
         public const string ContainerReconciliationActions = "ContainerReconciliationActions";
-        public const string ContainerRecords = "ContainerRecordss";
+        public const string ContainerRecords = "ContainerRecords";
         public const string DisableChemSwAdmin = "DisableChemSwAdmin";
         public const string ExpiredContainers = "ExpiredContainers";
         public const string ExtChemDataSync = "ExtChemDataSync";
@@ -94,6 +95,7 @@ namespace ChemSW.Nbt.Sched
         public const string Import = "Import";
         public const string MolFingerprints = "MolFingerprints";
         public const string NodeCounts = "NodeCounts";
+        public const string NodeUpdateEvents = "NodeUpdateEvents";
         public const string PurgeSessionData = "PurgeSessionData";
         public const string Reconciliation = "Reconciliation";
         public const string TierII = "TierII";
