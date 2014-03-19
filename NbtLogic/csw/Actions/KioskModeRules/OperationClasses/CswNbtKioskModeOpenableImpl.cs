@@ -1,6 +1,5 @@
 ﻿using System;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Actions.KioskModeRules.OperationClasses
@@ -20,30 +19,19 @@ namespace ChemSW.Nbt.Actions.KioskModeRules.OperationClasses
         }
 
 
-        private void _verifyOpenable()
-        {
-            CswNbtNode Node = _CswNbtResources.Nodes.GetNode( _OpenableObj.Material.RelatedNodeId );
-            if( CswEnumNbtObjectClass.ChemicalClass != Node.ObjClass.ObjectClass.ObjectClass )
-            {
-                throw new CswDniException( CswEnumErrorType.Error, "Openable entity is misconfigured - Material is not a Chemical", "Related Material was not of type ObjClassChemical" );
-            }
-        }
-
         /// <summary>
         /// Default implementation that checks if the Openable has an Expiration Date and that the chemical has an open expiration interval set
         /// </summary>
         public bool CanOpen()
         {
-            _verifyOpenable();
-            CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( _OpenableObj.Material.RelatedNodeId );
-            return ( DateTime.MinValue != _OpenableObj.ExpirationDate.DateTimeValue || ( false == String.IsNullOrEmpty( Chemical.OpenExpireInterval.CachedNodeName ) && false == Double.IsNaN( Chemical.OpenExpireInterval.Quantity ) ) );
+            CswNbtPropertySetMaterial Material = _CswNbtResources.Nodes.GetNode( _OpenableObj.Material.RelatedNodeId );
+            return ( DateTime.MinValue != _OpenableObj.ExpirationDate.DateTimeValue && ( false == String.IsNullOrEmpty( Material.OpenExpireInterval.CachedNodeName ) && false == Double.IsNaN( Material.OpenExpireInterval.Quantity ) ) );
         }
 
         public void OpenItem()
         {
-            _verifyOpenable();
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( _OpenableObj.Material.RelatedNodeId );
-            CswNbtObjClassChemical Chemical = Node;
+            CswNbtPropertySetMaterial Material = Node;
 
             if( false == CanOpen() )
             {
@@ -52,7 +40,7 @@ namespace ChemSW.Nbt.Actions.KioskModeRules.OperationClasses
                     "Container.ExpirationDate isn't set or Container.Material.OpenExpirationInterval is not set, cannot open container" );
             }
             _OpenableObj.OpenedDate.DateTimeValue = DateTime.Now;
-            _OpenableObj.ExpirationDate.DateTimeValue = ( _OpenableObj.ExpirationDate.DateTimeValue < Chemical.getDefaultOpenExpirationDate( DateTime.Now ) ? _OpenableObj.ExpirationDate.DateTimeValue : Chemical.getDefaultOpenExpirationDate( DateTime.Now ) );
+            _OpenableObj.ExpirationDate.DateTimeValue = ( _OpenableObj.ExpirationDate.DateTimeValue < Material.getDefaultOpenExpirationDate( DateTime.Now ) ? _OpenableObj.ExpirationDate.DateTimeValue : Material.getDefaultOpenExpirationDate( DateTime.Now ) );
             _OpenableObj.Open.setHidden( true, true );
         }
     }

@@ -1,6 +1,6 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 (function () {
-    Csw.nbt.register('batchEditWizard', function (cswParent, options) {
+    Csw.nbt.register('bulkEditWizard', function (cswParent, options) {
         'use strict';
 
         //#region Properties
@@ -134,9 +134,11 @@
                         var div = cswPrivate['divStep' + StepNo];
 
                         cswPrivate.viewSel = div.div().viewSelect({
-                            name: 'batchEditViewSelect',
-                            issearchable: true,
+                            name: 'bulkEditViewSelect',
                             includeRecent: false,
+                            includeReports: false,
+                            includeActions: false,
+                            includeSearches: false,
                             useCache: false,
                             onSelect: function () {
                                 cswPrivate.wizardStepSelectNodeType_init = false;
@@ -189,7 +191,7 @@
                         var div = cswPrivate['divStep' + StepNo];
 
                         Csw.ajaxWcf.get({
-                            urlMethod: 'BlobData/getBatchEditProperties',
+                            urlMethod: 'BlobData/getBulkEditProperties',
                             data: {
                                 NodeTypeId: Csw.string(cswPrivate.nodeTypeSel.val())
                             },
@@ -234,7 +236,7 @@
                     cswPrivate.downloadButton = tbl.cell(row, 1).a({
                         ID: 'downloadDataLink',
                         text: 'Download',
-                        href: "Services/BlobData/downloadBatchEditData?" +
+                        href: "Services/BlobData/downloadBulkEditData?" +
                             "ViewId=" + (cswPrivate.viewid || cswPrivate.viewSel.val().value) +
                             "&NodeTypeId=" + Csw.string(cswPrivate.nodeTypeSel.val()) +
                             "&PropIds=" + selectedProps,
@@ -262,7 +264,7 @@
                         disableOnClick: false,
                         onClick: function () {
                             Csw.dialogs.fileUpload({
-                                urlMethod: 'Services/BlobData/uploadBatchEditData',
+                                urlMethod: 'Services/BlobData/uploadBulkEditData',
                                 forceIframeTransport: true,
                                 dataType: 'iframe',
                                 onSuccess: function (response) {
@@ -288,7 +290,7 @@
 //            cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
 //            Csw.ajaxWcf.post({
-//                urlMethod: 'Nodes/finishBatchEdit',
+//                urlMethod: 'Nodes/finishBulkEdit',
 //                data: {
 //                    //Choices: cswPrivate.mergeData
 //                },
@@ -305,7 +307,7 @@
             cswPrivate.currentStepNo = cswPrivate.startingStep;
 
             cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
-                Title: 'Batch Edit',
+                Title: 'Bulk Edit',
                 StepCount: cswPrivate.stepCount,
                 Steps: wizardSteps,
                 StartingStep: cswPrivate.startingStep,

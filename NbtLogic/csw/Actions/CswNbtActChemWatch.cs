@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemWatchAuthServices;
@@ -22,8 +21,9 @@ namespace ChemSW.Nbt.Actions
     public class CswNbtActChemWatch
     {
         //Leaving these here for testing purposes -- this is David's account
-        // private const string _chemWatchUserName = "chemswt";
+        // private const string _chemWatchUserName = "Admin";
         // private const string _chemWatchPassword = "1107ms";
+        // private const string _chemWatchDomain = "chemswt";
 
         private static readonly CookieManagerBehavior _cookieBehavior = new CookieManagerBehavior(); //All ChemWatch service clients must share this
 
@@ -277,15 +277,18 @@ namespace ChemSW.Nbt.Actions
             bool ret = false;
             try
             {
-                string cwUsername = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchUsername );
-                string cwPassword = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchPassword );
+                string cwUsername = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.chemwatchusername.ToString() );
+                string cwPassword = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.chemwatchpassword.ToString() );
+                string cwDomain = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.chemwatchdomain.ToString() );
 
                 AuthenticateServiceClient cwAuthClient = new AuthenticateServiceClient();
                 cwAuthClient.Endpoint.Behaviors.Add( _cookieBehavior );
                 UserCredential cwUserCredential = new UserCredential()
                     {
                         UserName = cwUsername,
-                        Password = cwPassword
+                        Password = cwPassword,
+                        //TODO: Uncomment below when Alexei from ChemWatch provides us with new Authentication service
+                        //Domain = cwDomain
                     };
                 GeneralResponseOfAuthenticationResponse cwAuthResponse = cwAuthClient.Authenticate( cwUserCredential ); //providing invalid credentials will throw an exception
                 if( cwAuthResponse.ErrorCode == 0 )

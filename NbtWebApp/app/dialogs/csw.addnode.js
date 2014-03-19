@@ -57,6 +57,9 @@
                         },
                         checkQuota: false //Case 29531 - quota has already been checked by layouts.addnode
                     });
+                },
+                onClose: function() {
+                    Csw.ajax.abortAll();
                 }
             });
 

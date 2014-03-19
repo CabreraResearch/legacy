@@ -35,22 +35,22 @@ namespace ChemSW.Nbt.ObjClasses
         public void postChanges( CswNbtNode Node )
         {
             Node.OverrideValidation = OverrideUniqueValidation;
+            AllowAuditing = AllowAuditing && ( false == Node.IsTemp );//Only audit real nodes
             if( CswEnumNbtNodeModificationState.Modified == Node.ModificationState || ForceUpdate )
             {
-                if( null != Node.ObjClass && false == SkipEvents)
+                if( null != Node.ObjClass && false == SkipEvents )
                 {
                     Node.ObjClass.beforeWriteNode( IsCopy, Creating );
-                    Node.PendingEvents = true;
                 }
 
                 if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies )
                 {
-                    Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing && ( false == Node.IsTemp ), SkipEvents );
-                    string OldNodeName = Node.NodeName;
+                    Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
                     Node.syncNodeName();
-                    if( Node.NodeName != OldNodeName )
+                    if( null != Node.ObjClass && false == SkipEvents )
                     {
-                        Node.PendingEvents = true;
+                        CswNbtNodeUpdateEvents NodeUpdateEvents = new CswNbtNodeUpdateEvents( _CswNbtResources, Node );
+                        NodeUpdateEvents.triggerUpdateEvents();
                     }
                     Node.write( ForceUpdate );
                 }

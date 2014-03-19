@@ -112,6 +112,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        protected override void beforePromoteNodeLogic()
+        {
+            //CIS-52345 - on Container create, we need to look at if the Materials Obsolete state
+            bool MaterialIsObsolete = CswConvert.ToBoolean( MaterialObsolete.RecalculateReferenceValue() );
+            ToggleAllowRequest( false == MaterialIsObsolete ); //If the material is obsolete, we want to hide the "Request" button
+        }
+
         protected override void afterPromoteNodeLogic()
         {
             // originally case 27330, moved here by case 30647
@@ -214,7 +221,6 @@ namespace ChemSW.Nbt.ObjClasses
 
             Open.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
-                    CswNbtObjClassChemical Chemical = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                     if( false == CanOpen() )
                     {
                         //Do not show the Open/OpenedData props if the Container does not have an Expiration Date set or the Chemical does not have an Open Expiration Interval set
@@ -535,13 +541,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Allow )
             {
-                Requisitionable.Checked = CswEnumTristate.False;
-                Request.setHidden( true, true );
+                Requisitionable.Checked = CswEnumTristate.True;
+                Request.setHidden( false, true );
             }
             else
             {
-                Requisitionable.Checked = CswEnumTristate.True;
-                Request.setHidden( false, true );
+                Requisitionable.Checked = CswEnumTristate.False;
+                Request.setHidden( true, true );
             }
         }
 
@@ -628,7 +634,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != CDTNT )
             {
                 CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null, true );
+                CswEnumNbtNodeEditMode PrevEditMode = _CswNbtResources.EditMode;
+                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 ActionDataObj["dispenseTransactionAddLayout"] = _TabsAndProps.getProps( CDT.Node, "", null, CswEnumNbtLayoutType.Add );
+                _CswNbtResources.EditMode = PrevEditMode;
             }
 
             return ActionDataObj;

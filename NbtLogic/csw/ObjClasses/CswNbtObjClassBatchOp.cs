@@ -52,15 +52,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// For use by CswNbtBatchOps: add a log message without showing date and commenter
-        /// </summary>
-        public void appendMessageOnlyToLog( string Message )
-        {
-            Log.AddComment( Message, "", false, false );
-        }
-
-
-        /// <summary>
         /// For use by CswNbtBatchOps: mark an operation started
         /// </summary>
         public void start()

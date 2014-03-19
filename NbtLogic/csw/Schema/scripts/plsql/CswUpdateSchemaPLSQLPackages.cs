@@ -485,6 +485,14 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         and c.constid is not null
         and per.percentage is not null
     ),
+    allMats as (
+    select constid, istierii, materialid, percentage, decode(constid, null, materialid, constid) matid from 
+        (select null as constid, istierii, nodeid as materialid, 100 as percentage from chemicals where nodeid not in
+          (select constid from components)
+        union all 
+        select * from components) 
+        where istierii = 1
+    ),
     --ContainerDispenseTransaction Props
     DispensedDate as (
     select jnp.nodeid, jnp.field1_date as DispensedDate
@@ -492,6 +500,13 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
             inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
             inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
             where ocp.propname = 'Dispensed Date'
+    ),
+    DispenseType as (
+    select jnp.nodeid, jnp.field1 as DispenseType
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'Dispense Type'
     ),
     QuantityDispensed as (
     select jnp.nodeid, jnp.field1_numeric as QuantityDispensed, jnp.field1_fk as QuantityDispensedUnit
@@ -544,46 +559,51 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
           where ocp.propname = 'Storage Temperature'
     ),
     containers as (
-    select n.nodeid, decode(cm.constid, null, mat.materialid, cm.constid) materialid, ut.usetype, sp.pressure, st.temperature,
-    decode(cm.percentage, null, 100, cm.percentage) as percentage
-          from nodes n
-          left join material mat on n.nodeid = mat.nodeid
-          left join chemicals m on mat.materialid = m.nodeid
-          left join components cm on mat.materialid = cm.materialid
-          left join usetype ut on n.nodeid = ut.nodeid
-          left join pressure sp on n.nodeid = sp.nodeid
-          left join temperature st on n.nodeid = st.nodeid
-          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
-            inner join object_class oc on nt.objectclassid = oc.objectclassid
-            where oc.objectclass = 'ContainerClass'
-            and (m.istierii = 1 or cm.istierii = 1)
+    select n.nodeid, 
+    am.matid materialid,
+    am.percentage,
+    ut.usetype, sp.pressure, st.temperature
+        from nodes n
+        left join material mat on n.nodeid = mat.nodeid
+        left join allMats am on mat.materialid = am.materialid
+        left join usetype ut on n.nodeid = ut.nodeid
+        left join pressure sp on n.nodeid = sp.nodeid
+        left join temperature st on n.nodeid = st.nodeid
+        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+          inner join object_class oc on nt.objectclassid = oc.objectclassid
+          where oc.objectclass = 'ContainerClass'
     ),
     dispenses as (
     select 
-      --Use component's id if present - else, use materialid
-      c.materialid,
-      c.nodeid containerid,
-      dd.DispensedDate DispensedDate, trunc(dd.DispensedDate) dispenseday, qd.QuantityDispensed, qd.QuantityDispensedUnit,
-      --Brings QuantityDispensed values over to RemainingQuantity column for Receiving dispenses
-      decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity) RemainingQuantity,
-      --Picks the final quantity value for all dispense records for a given day and, 
-      --if it's for a constituent, recalculates the quantity based on the constituent's percentage
-      (first_value(decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity)) 
-        over(partition by containerid, trunc(dd.DispensedDate) order by dispenseddate desc)) * c.percentage / 100 as qty
-      ,c.percentage
-          from nodes n
-          left join DispensedDate dd on n.nodeid = dd.nodeid
-          left join QuantityDispensed qd on n.nodeid = qd.nodeid
-          left join RemainingQuantity rq on n.nodeid = rq.nodeid
-          left join SourceContainer sc on n.nodeid = sc.nodeid
-          left join containers c on sc.containerid = c.nodeid
-          inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        --Use component's id if present - else, use materialid (TODO - fix)
+        c.materialid,  c.nodeid containerid,  dt.DispenseType,
+        --Shift the day forward for Dispose records so that they are counted on the day they're disposed
+        decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate) DispensedDate, 
+        trunc(decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate)) dispenseday, 
+        qd.QuantityDispensed, 
+        qd.QuantityDispensedUnit,
+        --Brings QuantityDispensed values over to RemainingQuantity column for Receiving dispenses
+        decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity) RemainingQuantity,
+        --Picks the final quantity value for all dispense records for a given day and, 
+        --if it's for a constituent, recalculates the quantity based on the constituent's percentage
+        (first_value(decode(rq.RemainingQuantity, null, qd.QuantityDispensed, rq.RemainingQuantity)) 
+        over(partition by containerid, trunc(decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate)) 
+        order by decode(dt.DispenseType, 'Dispose', dd.DispensedDate+1, dd.DispensedDate) desc)) * c.percentage / 100 as qty
+        ,c.percentage
+            from nodes n
+            left join DispenseType dt on n.nodeid = dt.nodeid
+            left join DispensedDate dd on n.nodeid = dd.nodeid
+            left join QuantityDispensed qd on n.nodeid = qd.nodeid
+            left join RemainingQuantity rq on n.nodeid = rq.nodeid
+            left join SourceContainer sc on n.nodeid = sc.nodeid
+            left join containers c on sc.containerid = c.nodeid
+            inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
             inner join object_class oc on nt.objectclassid = oc.objectclassid
             where oc.objectclass = 'ContainerDispenseTransactionClass'
             and sc.containerid is not null
             and c.materialid is not null
     ),
-    cal as ( --TODO - if we build this as a view, we can dynamically inject the cacheThreshold timespan here
+    cal as (
     select start_date + level - 1 the_date, 0 qty 
         from dual 
         connect by level <= end_date - start_date + 1
@@ -592,7 +612,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     select 
         cdt.materialid, cdt.containerid, max(cdt.dispenseddate), cdt.dispenseday, cdt.qty, cdt.QuantityDispensedUnit, cal.the_date
         from dispenses cdt
-        join  cal  on (cal.the_date >= cdt.dispenseday AND cal.the_date <= sysdate)
+        join  cal  on (cal.the_date >= cdt.dispenseday AND cal.the_date <= end_date)
         group by cdt.materialid, cdt.containerid, cdt.dispenseday, cdt.qty, cdt.QuantityDispensedUnit, cal.the_date
     ),
     --select * from dispensesPerDay;
@@ -633,13 +653,16 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         left join LocContainer lc on n.nodeid = lc.nodeid
         left join LocScanDate lsd on n.nodeid = lsd.nodeid
         left join containers c on lc.containerid = c.nodeid
-        join cal on (cal.the_date >= trunc(lsd.scandate) AND cal.the_date <= sysdate)
+        join cal on (cal.the_date >= trunc(lsd.scandate) AND cal.the_date <= end_date)
         inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
           inner join object_class oc on nt.objectclassid = oc.objectclassid
           where oc.objectclass = 'ContainerLocationClass'
           and c.materialid is not null
           and c.nodeid is not null
           and ls.status = 'Moved, Dispensed, or Disposed/Undisposed'--This filters out scan and placeholder records
+    ),
+    locationscope as (
+      select locationid from table(TIER_II_DATA_MANAGER.GET_LOCATIONS_UNDER(locationid))
     ),
     containerlocations as (
     select unique materialid, containerid, the_date, usetype, pressure, temperature,
@@ -653,8 +676,23 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         dpd.quantitydispensedunit qtyunit, cl.locationid, cl.usetype, cl.pressure, cl.temperature
         from dispensesPerDay dpd 
         left join containerLocations cl on cl.materialid = dpd.materialid and cl.containerid = dpd.containerid and cl.the_date = dpd.the_date
+        where cl.locationid in (select locationid from locationscope)
     ),
     --select * from tier2info;
+    casno as (
+    select jnp.nodeid, jnp.field1 as casno
+            from jct_nodes_props jnp
+            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            where ocp.propname = 'CAS No'
+    ),
+    tier2infoByCASNo as (
+      select first_value(t2.materialid) over(partition by cn.casno order by t2.the_date) materialid, 
+      t2.containerid, t2.the_date, t2.curqty, t2.qtyunit, t2.locationid, t2.usetype, t2.pressure, t2.temperature
+      from tier2info t2 
+      left join casno cn on cn.nodeid = t2.materialid
+    ),
+    --Comment out this block of container props to run any anteceding subqueries
     uniqueusetypes as (
       select unique materialid, listagg(usetype, ',') within group (order by usetype) usetype
       from (select unique materialid, usetype from tier2info) 
@@ -677,15 +715,9 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       left join uniquetemperatures ut on uut.materialid = ut.materialid
     ),
     --select * from containerprops;
-    locationscope as (
-      --TODO: replace this collection with a call to a pipelined function that takes a locationid and returns it along with every child locationid
-      select locationid from table(TIER_II_DATA_MANAGER.GET_LOCATIONS_UNDER(locationid))
-    ),
-    --Somewhere around here is where we can split this query if we need to use a materialized view
     tier2qtyByUnit as (
     select materialid, the_date, sum(curqty) as qty, qtyunit, locationid
-        from tier2info
-        where locationid in (select * from locationscope)
+        from tier2infoByCASNo
         group by materialid, the_date, qtyunit, locationid
     ),
     specgrav as (
@@ -712,6 +744,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     select 
       t2.materialid, max(t2.qty) as maxqty, round(avg(t2.qty), 6) as avgqty
       from tier2qtyPerDate t2
+      where t2.qty > 0
       group by t2.materialid
     ),
     --select * from tier2quantities;
@@ -724,7 +757,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     ),
     daysonsite as (
     select materialid, count(*) as daysonsite 
-        from ( select unique materialid, the_date from tier2qtyPerLocation ) 
+        from ( select unique materialid, the_date from tier2qtyPerLocation where qty > 0 ) 
         group by materialid
     ),
     --select * from daysonsite;
@@ -734,13 +767,6 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
             inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
             inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
             where ocp.propname = 'Tradename'
-    ),
-    casno as (
-    select jnp.nodeid, jnp.field1 as casno
-            from jct_nodes_props jnp
-            inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-            where ocp.propname = 'CAS No'
     ),
     materialtype as (
     select jnp.nodeid, jnp.field1 as materialtype

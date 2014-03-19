@@ -209,6 +209,15 @@
   <wsdl:message name="Search_getACDMolImage_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q22="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q22:SampleFaultException" />
   </wsdl:message>
+  <wsdl:message name="Search_getACDVersion_InputMessage">
+    <wsdl:part name="parameters" element="tns:getACDVersion" />
+  </wsdl:message>
+  <wsdl:message name="Search_getACDVersion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getACDVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getACDVersion_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q23="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q23:SampleFaultException" />
+  </wsdl:message>
   <wsdl:portType name="Search">
     <wsdl:operation name="canConnect">
       <wsdl:input wsaw:Action="http://tempuri.org/Search/canConnect" message="tns:Search_canConnect_InputMessage" />
@@ -319,6 +328,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getACDMolImage" message="tns:Search_getACDMolImage_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/Search/getACDMolImageResponse" message="tns:Search_getACDMolImage_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/getACDMolImageSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getACDMolImage_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getACDVersion">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getACDVersion" message="tns:Search_getACDVersion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getACDVersionResponse" message="tns:Search_getACDVersion_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getACDVersionSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getACDVersion_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:service name="Search" />

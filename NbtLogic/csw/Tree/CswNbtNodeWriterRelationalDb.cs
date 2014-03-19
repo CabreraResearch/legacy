@@ -81,6 +81,38 @@ namespace ChemSW.Nbt
             }
         }//write()
 
+
+        //public void updateRelationsToThisNode( CswNbtNode Node )
+        //{
+        //    //throw new CswDniException( "CswNbtNodeWriterRelationalDb.updateRelationsToThisNode() is not implemented" );
+
+        //    //Steve? Heeeeeeeeeeeeeeeeeelp!!!!
+
+        //    //CswQueryCaddy RelatedsQueryCaddy = _CswNbtResources.makeCswQueryCaddy( "getRelationshipsToNode" );
+        //    //RelatedsQueryCaddy.S4Parameters.Add( "getnodeid", Node.NodeId );
+        //    //DataTable RelatedsTable = RelatedsQueryCaddy.Table;
+
+        //    //// Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a relationship to this node
+        //    //string PkString = string.Empty;
+        //    //foreach ( DataRow RelatedsRow in RelatedsTable.Rows )
+        //    //{
+        //    //    if ( PkString != string.Empty ) PkString += ",";
+        //    //    PkString += RelatedsRow[ "jctnodepropid" ].ToString();
+        //    //}
+        //    //if ( PkString != string.Empty )
+        //    //{
+        //    //    CswTableCaddy JctNodesPropsCaddy = _CswNbtResources.makeCswTableCaddy( "jct_nodes_props" );
+        //    //    JctNodesPropsCaddy.WhereClause = "where jctnodepropid in (" + PkString + ")";
+        //    //    DataTable JctNodesPropsTable = JctNodesPropsCaddy.Table;
+        //    //    foreach ( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
+        //    //    {
+        //    //        JctNodesPropsRow[ "pendingupdate" ] = "1";
+        //    //    }
+        //    //    JctNodesPropsCaddy.update( JctNodesPropsTable );
+        //    //}
+        //}
+
+
         public void delete( CswNbtNode Node )
         {
             // Don't sync for temp nodes
@@ -97,6 +129,11 @@ namespace ChemSW.Nbt
             }
 
         } //delete()
+
+        public void AuditInsert( CswNbtNode Node )
+        {
+            throw new NotImplementedException( "AuditInsert not implemented for CswNbtNodeWriterRelationalDb" );
+        }
 
     }//CswNbtNodeWriterRelationalDb
 

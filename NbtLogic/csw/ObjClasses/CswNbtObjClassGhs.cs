@@ -82,6 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
             Classifications.InitOptions = _initGhsClassificationOptions;
 
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
+            Pictograms.SetOnPropChange( OnPictorgramsChange );
 
             LabelCodesGrid.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
@@ -244,6 +245,20 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ClassificationsGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassificationsGrid] ); } }
         public CswNbtNodePropRelationship SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
         public CswNbtNodePropImageList Pictograms { get { return ( _CswNbtNode.Properties[PropertyName.Pictograms] ); } }
+        public void OnPictorgramsChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            // Save the pictorgrams in the same order they are presented on the client
+            CswDelimitedString CurrentPictograms = Pictograms.Value;
+            CswDelimitedString OrderedPictograms = new CswDelimitedString( CswNbtNodePropImageList.Delimiter );
+            foreach( KeyValuePair<string, string> keyValuePair in Pictograms.Options )
+            {
+                if( CurrentPictograms.Contains( keyValuePair.Key ) )
+                {
+                    OrderedPictograms.Add( keyValuePair.Key );
+                }
+            }
+            Pictograms.Value = OrderedPictograms;
+        }
 
         #endregion
 

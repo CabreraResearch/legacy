@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropImageList : CswNbtNodeProp
+    public class CswNbtNodePropImageList: CswNbtNodeProp
     {
         public static char Delimiter = '\n';
 
@@ -201,19 +201,22 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["allowmultiple"] = AllowMultiple;
             ParentObject["imageprefix"] = ImagePrefix;
 
-            if( IsEditModeEditable )
+                // To preserve order of the displaying/printing of pictorgrams,
+                // this must be an array.
+                JArray OptionsArr = new JArray();
+                ParentObject["options"] = OptionsArr;
+            foreach( string Key in Options.Keys )
             {
-                JObject OptionsObj = new JObject();
-                ParentObject["options"] = OptionsObj;
-                foreach( string Key in Options.Keys )
+                bool isSelected = Value.Contains( Key );
+                if( IsEditModeEditable || isSelected )
                 {
-                    OptionsObj[Key] = new JObject();
-                    OptionsObj[Key]["text"] = Options[Key];
-                    OptionsObj[Key]["value"] = Key;
-                    if( Value.Contains( Key ) )
-                    {
-                        OptionsObj[Key]["selected"] = true;
-                    }
+                    JObject Opt = new JObject();
+                    Opt["text"] = Options[Key];
+                    Opt["value"] = Key;
+                    Opt["selected"] = isSelected;
+                        
+                    OptionsArr.Add( Opt );
+
                 }
             }
         } // ToJSON()
@@ -231,6 +234,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswDelimitedString NewValue = new CswDelimitedString( Delimiter );
                 NewValue.FromString( JObject[_ValueSubField.ToXmlNodeName( true )].ToString() );
+
                 if( false == AllowMultiple )
                 {
                     string SingleValue = NewValue[0];

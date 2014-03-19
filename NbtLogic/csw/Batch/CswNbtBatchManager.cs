@@ -85,9 +85,9 @@ namespace ChemSW.Nbt.Batch
 
                 CswEnumNbtBatchOpName OpName = BatchNode.OpNameValue;
                 ICswNbtBatchOp op = null;
-                if( OpName == CswEnumNbtBatchOpName.BatchEdit )
+                if( OpName == CswEnumNbtBatchOpName.BulkEdit )
                 {
-                    op = new CswNbtBatchOpBatchEdit( CswNbtResources );
+                    op = new CswNbtBatchOpBulkEdit( CswNbtResources );
                 }
                 if( OpName == CswEnumNbtBatchOpName.FutureNodes )
                 {

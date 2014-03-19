@@ -181,6 +181,9 @@
                             currentNodeId: json.RequestId,
                             filterToPropId: json.RequestName,
                             title: 'Add new Favorite',
+                            editMode: Csw.enums.editMode.Add,
+                            width: 400,
+                            height: 200,
                             onEditNode: function (nodeid, nodekey, close) {
                                 cswPrivate.lastCreatedFavorite = nodeid;
                                 Csw.ajaxWcf.put({

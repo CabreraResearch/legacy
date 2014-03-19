@@ -227,26 +227,23 @@ namespace NbtPrintClient
 
             config.url = _formatUrl( tbURL.Text );
 
-            if( config.serviceMode == true )
+            try
             {
-                try
+                string path = Assembly.GetExecutingAssembly().Location;
+                FileInfo fileInfo = new FileInfo( path );
+                string FilePath = fileInfo.DirectoryName + "\\printersetup.config";
+                XmlSerializer writer = new XmlSerializer( typeof( NbtPrintClientConfig ) );
+                using( FileStream file = File.Open( FilePath, FileMode.Create  ))
                 {
-                    string path = Assembly.GetExecutingAssembly().Location;
-                    FileInfo fileInfo = new FileInfo( path );
-                    string FilePath = fileInfo.DirectoryName + "\\printersetup.config";
-                    XmlSerializer writer = new XmlSerializer( typeof( NbtPrintClientConfig ) );
-                    using( FileStream file = File.OpenWrite( FilePath ) )
-                    {
-                        writer.Serialize( file, config );
-                        file.Flush();
-                        file.Close();
-                    }
+                    writer.Serialize( file, config );
+                    file.Flush();
+                    file.Close();
+                }
 
-                }
-                catch( Exception e )
-                {
-                    MessageBox.Show( e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
-                }
+            }
+            catch( Exception e )
+            {
+                MessageBox.Show( e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
             }
         }
 

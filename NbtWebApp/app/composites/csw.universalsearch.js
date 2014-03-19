@@ -90,6 +90,7 @@
                 RelatedToNodeTypeId: '',
                 RelatedObjectClassPropName: '',
                 FilterToPermission: '',
+                FilterToView: '',
                 RelationshipNodeTypePropId: '',
                 Searchable: true
             };

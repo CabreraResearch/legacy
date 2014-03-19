@@ -214,7 +214,7 @@
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
     <Compile Include="WebSvc\Logic\Actions\ChemWatch\CswNbtWebServiceChemWatch.cs" />
-    <Compile Include="WebSvc\Logic\Actions\CswNbtWebServiceBatchEdit.cs" />
+    <Compile Include="WebSvc\Logic\Actions\CswNbtWebServiceBulkEdit.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborEdge.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborGraph.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborNode.cs" />

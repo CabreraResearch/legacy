@@ -98,7 +98,8 @@ namespace ChemSW.Nbt.Schema
                 PropName = "Physical State",
                 FieldType = CswEnumNbtFieldType.List,
                 AuditLevel = true,
-                ListOptions = "solid,liquid,gas,n/a"
+                ListOptions = "solid,liquid,gas,n/a",
+                IsRequired = true,
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( BiologicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -199,10 +200,12 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( BiologicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
-                PropName = "Biological Name",
+                PropName = "Tradename",
                 FieldType = CswEnumNbtFieldType.Text,
                 AuditLevel = true,
+                IsRequired = true,
             } );
+
 
         }//createBiologicalOC()
 
@@ -232,6 +235,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     string[] PropsToAdd = new string[]
                         {
+                            CswNbtObjClassBiological.PropertyName.TradeName,
                             CswNbtObjClassBiological.PropertyName.LegacyMaterialId,
                             CswNbtObjClassBiological.PropertyName.ApprovedForReceiving,
                             CswNbtObjClassBiological.PropertyName.C3ProductId,

@@ -36,6 +36,23 @@ namespace ChemSW.Nbt
             [DataMember]
             public bool LimitToRecent { get; set; }
 
+            /// <summary>
+            /// If <c>true</c>, include reports
+            /// </summary>
+            [DataMember]
+            public bool IncludeReports { get; set; }
+            
+            /// <summary>
+            /// If <c>true</c>, include saved searches
+            /// </summary>
+            [DataMember]
+            public bool IncludeSearches { get; set; }
+
+            /// <summary>
+            /// If <c>true</c>, include actions
+            /// </summary>
+            [DataMember]
+            public bool IncludeActions { get; set; }
         }
 
         /// <summary>

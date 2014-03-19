@@ -240,23 +240,23 @@ namespace NbtWebApp
         }
 
 
-        #region Batch Edit
+        #region Bulk Edit
 
         [OperationContract]
-        [WebInvoke( Method = "GET", UriTemplate = "getBatchEditProperties?NodeTypeId={NodeTypeId}" )]
-        [Description( "Get properties available for batch editing" )]
+        [WebInvoke( Method = "GET", UriTemplate = "getBulkEditProperties?NodeTypeId={NodeTypeId}" )]
+        [Description( "Get properties available for bulk editing" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceBatchEdit.BatchEditProperties getBatchEditProperties( string NodeTypeId )
+        public CswNbtWebServiceBulkEdit.BulkEditProperties getBulkEditProperties( string NodeTypeId )
         {
-            CswNbtWebServiceBatchEdit.BatchEditProperties Ret = new CswNbtWebServiceBatchEdit.BatchEditProperties();
+            CswNbtWebServiceBulkEdit.BulkEditProperties Ret = new CswNbtWebServiceBulkEdit.BulkEditProperties();
             
-            CswNbtWebServiceBatchEdit.BatchEditParams Params = new CswNbtWebServiceBatchEdit.BatchEditParams();
+            CswNbtWebServiceBulkEdit.BulkEditParams Params = new CswNbtWebServiceBulkEdit.BulkEditParams();
             Params.NodeTypeId = CswConvert.ToInt32( NodeTypeId );
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditProperties, CswNbtWebServiceBatchEdit.BatchEditParams>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBulkEdit.BulkEditProperties, CswNbtWebServiceBulkEdit.BulkEditParams>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceBatchEdit.getBatchEditProperties,
+                WebSvcMethodPtr: CswNbtWebServiceBulkEdit.getBulkEditProperties,
                 ParamObj: Params
                 );
             SvcDriver.run();
@@ -265,29 +265,29 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "GET", UriTemplate = "downloadBatchEditData?ViewId={ViewId}&NodeTypeId={NodeTypeId}&PropIds={PropIds}" )]
-        [Description( "Download Batch Edit Data" )]
+        [WebInvoke( Method = "GET", UriTemplate = "downloadBulkEditData?ViewId={ViewId}&NodeTypeId={NodeTypeId}&PropIds={PropIds}" )]
+        [Description( "Download Bulk Edit Data" )]
         [FaultContract( typeof( FaultException ) )]
-        public Stream downloadBatchEditData( string ViewId, string NodeTypeId, string PropIds )
+        public Stream downloadBulkEditData( string ViewId, string NodeTypeId, string PropIds )
         {
-            CswNbtWebServiceBatchEdit.BatchEditDownload Ret = new CswNbtWebServiceBatchEdit.BatchEditDownload();
+            CswNbtWebServiceBulkEdit.BulkEditDownload Ret = new CswNbtWebServiceBulkEdit.BulkEditDownload();
             
-            CswNbtWebServiceBatchEdit.BatchEditParams Params = new CswNbtWebServiceBatchEdit.BatchEditParams();
+            CswNbtWebServiceBulkEdit.BulkEditParams Params = new CswNbtWebServiceBulkEdit.BulkEditParams();
             Params.ViewId = ViewId;
             Params.NodeTypeId = CswConvert.ToInt32( NodeTypeId );
             CswCommaDelimitedString PropIdsCds = new CswCommaDelimitedString();
             PropIdsCds.FromString( PropIds );
             Params.PropIds = PropIdsCds.ToIntCollection();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditDownload, CswNbtWebServiceBatchEdit.BatchEditParams>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBulkEdit.BulkEditDownload, CswNbtWebServiceBulkEdit.BulkEditParams>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceBatchEdit.DownloadBatchEditData,
+                WebSvcMethodPtr: CswNbtWebServiceBulkEdit.DownloadBulkEditData,
                 ParamObj: Params
                 );
             SvcDriver.run();
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment;filename=\"batchedit.csv\";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment;filename=\"bulkedit.csv\";" );
             WebOperationContext.Current.OutgoingResponse.ContentType = "text/csv";
 
             MemoryStream mem = new MemoryStream();
@@ -300,20 +300,20 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        [Description( "Upload Batch Edit Data" )]
+        [Description( "Upload Bulk Edit Data" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceBatchEdit.BatchEditReturn uploadBatchEditData()
+        public CswNbtWebServiceBulkEdit.BulkEditReturn uploadBulkEditData()
         {
-            CswNbtWebServiceBatchEdit.BatchEditReturn ret = new CswNbtWebServiceBatchEdit.BatchEditReturn();
+            CswNbtWebServiceBulkEdit.BulkEditReturn ret = new CswNbtWebServiceBulkEdit.BulkEditReturn();
             if( _Context.Request.Files.Count > 0 )
             {
-                CswNbtWebServiceBatchEdit.BatchEditUpload parms = new CswNbtWebServiceBatchEdit.BatchEditUpload();
+                CswNbtWebServiceBulkEdit.BulkEditUpload parms = new CswNbtWebServiceBulkEdit.BulkEditUpload();
                 parms.PostedFile = _Context.Request.Files[0];
 
-                var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBatchEdit.BatchEditReturn, CswNbtWebServiceBatchEdit.BatchEditUpload>(
+                var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceBulkEdit.BulkEditReturn, CswNbtWebServiceBulkEdit.BulkEditUpload>(
                     CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                     ReturnObj: ret,
-                    WebSvcMethodPtr: CswNbtWebServiceBatchEdit.UploadBatchEditData,
+                    WebSvcMethodPtr: CswNbtWebServiceBulkEdit.UploadBulkEditData,
                     ParamObj: parms
                     );
 
@@ -323,7 +323,7 @@ namespace NbtWebApp
             return ret;
         }
 
-        #endregion Batch Edit
+        #endregion Bulk Edit
     }
 
     [DataContract]

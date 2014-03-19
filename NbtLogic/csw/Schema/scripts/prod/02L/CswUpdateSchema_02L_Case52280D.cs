@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02L_Case52280 : CswUpdateSchemaTo
+    public class CswUpdateSchema_02L_Case52280D : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -44,7 +44,8 @@ namespace ChemSW.Nbt.Schema
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
                     CswNbtMetaDataNodeTypeProp ObsoleteNTP = MaterialNT.getNodeTypeProp( CswNbtPropertySetMaterial.PropertyName.Obsolete );
-                    ObsoleteNTP.getDefaultValue( true ).AsLogical.Checked = CswEnumTristate.False;
+                    //ObsoleteNTP.getDefaultValue( true ).AsLogical.Checked = CswEnumTristate.False;
+                    ObsoleteNTP.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.DefaultValue].AsLogical.Checked = CswEnumTristate.False;
                     ObsoleteNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                     CswNbtMetaDataNodeTypeProp GridNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.ManufacturingSites );

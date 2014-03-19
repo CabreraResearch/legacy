@@ -11,6 +11,8 @@
         var render = function () {
             'use strict';
 
+            var firstSelectHappened = false;
+
             cswPrivate.location = nodeProperty.propDiv.location({
                 //name: nodeProperty.name, //data has no "name"?
                 locationobjectclassid: nodeProperty.propData.values.locationobjectclassid,
@@ -31,8 +33,12 @@
                 isRequired: nodeProperty.isRequired(),
                 onChange: function (nodeid) {
                     //Case 29390: No sync for Location
-                    nodeProperty.propData.values.nodeid = nodeid;
-                    nodeProperty.broadcastPropChange(nodeid);
+                    if (firstSelectHappened) { //CIS-52808: onChange fires once for the currently selected value when initializing the tree and we only want to broadcast USER changes
+                        nodeProperty.propData.values.nodeid = nodeid;
+                        nodeProperty.broadcastPropChange(nodeid);
+                    } else {
+                        firstSelectHappened = true;
+                    }
                 },
                 EditMode: nodeProperty.tabState.EditMode,
                 value: cswPrivate.nodeId

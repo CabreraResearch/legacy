@@ -147,32 +147,35 @@
 
         cswPrivate.getNodeTypeOptions = function () {
             cswPrivate.blankText = '[Select One]';
-            cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
-                cswPrivate.table.cell(1, cswPrivate.nodeTypeCellCol)
-                         .nodeTypeSelect({
-                             objectClassName: cswPrivate.objectClassName,
-                             objectClassId: cswPrivate.objectClassId,
-                             relationshipNodeTypePropId: cswPrivate.relationshipNodeTypePropId,
-                             onSelect: function () {
-                                 if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
-                                     cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
-                                     cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId, cswPrivate.nodeTypeAddAction);
-                                 }
-                             },
-                             onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
-                                 cswPrivate.nodeTypeAddAction = data.action;
-                                 if (Csw.number(nodeTypeCount) > 1) {
-                                     cswPrivate.selectedNodeType.show();
-                                     cswPrivate.addImage.hide();
-                                 } else {
-                                     cswPrivate.nodeTypeId = lastNodeTypeId;
-                                     cswPrivate.selectedNodeType.hide();
-                                     cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId, cswPrivate.nodeTypeAddAction);
-                                 }
-                             },
-                             blankOptionText: cswPrivate.blankText,
-                             filterToPermission: 'Create'
-                         }).hide();
+            if (null === cswPrivate.selectedNodeType) {
+                cswPrivate.selectedNodeType = cswPrivate.table.cell(1, cswPrivate.nodeTypeCellCol)
+                    .nodeTypeSelect({
+                        objectClassName: cswPrivate.objectClassName,
+                        objectClassId: cswPrivate.objectClassId,
+                        relationshipNodeTypePropId: cswPrivate.relationshipNodeTypePropId,
+                        onSelect: function() {
+                            if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
+                                cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
+                                cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId, cswPrivate.nodeTypeAddAction);
+                            }
+                        },
+                        onSuccess: function(data, nodeTypeCount, lastNodeTypeId) {
+                            cswPrivate.nodeTypeAddAction = data.action;
+                            if (Csw.number(nodeTypeCount) > 1) {
+                                cswPrivate.selectedNodeType.show();
+                                cswPrivate.addImage.hide();
+                            } else {
+                                cswPrivate.nodeTypeId = lastNodeTypeId;
+                                cswPrivate.selectedNodeType.hide();
+                                cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId, cswPrivate.nodeTypeAddAction);
+                            }
+                        },
+                        blankOptionText: cswPrivate.blankText,
+                        filterToPermission: 'Create'
+                    }).hide();
+            } else {
+                cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId, cswPrivate.nodeTypeAddAction);
+            }
         };
 
         //#endregion AJAX

@@ -42,7 +42,11 @@ namespace NbtWebApp.WebSvc.Logic.API
                         Return.NodeName = Node.NodeName;
                         Return.NodeType = Node.getNodeType().NodeTypeName;
                         Return.ObjectClass = Node.ObjClass.ObjectClass.ObjectClassName;
-                        Return.PropertySet = Node.getObjectClass().getPropertySet().Name;
+                        CswNbtMetaDataPropertySet propSet = Node.getObjectClass().getPropertySet();
+                        if( null != propSet )
+                        {
+                            Return.PropertySet = propSet.Name;
+                        }
                         Return.URI = "api/v1/" + Node.getNodeType().NodeTypeName + "/" + GenericRequest.NodeId.PrimaryKey; //TODO: this URI needs to have the "localhost/NbtDev" part
 
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );

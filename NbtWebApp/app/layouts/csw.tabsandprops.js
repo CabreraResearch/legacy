@@ -278,7 +278,7 @@
                     RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
                     ForceReadOnly: cswPrivate.forceReadOnly
                 },
-                success: function(data) {
+                success: function (data) {
                     cswPrivate.IdentityTabProps = data.properties;
                     var layoutOpts = {
                         name: cswPrivate.name + '_layout',
@@ -307,11 +307,14 @@
 
                     cswPrivate.identityButtonDiv = cswPrivate.identityForm.div();
                     cswPrivate.makeIdentityTabButtons(cswPrivate.identityButtonDiv);
-                    
+                    if (data.node.showeditbutton && cswPrivate.loadEditModeButton) {
+                        cswPrivate.loadEditModeButton.show();
+                    }
+
                     if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTabProps) &&
                         false === cswPrivate.tabState.Config &&
                         cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
-                        
+
                         var identityFormTbl = cswPrivate.identityForm.table({
                             name: cswPrivate.name + '_formtbl_' + cswPrivate.IdentityTabId,
                             width: '100%'
@@ -326,7 +329,7 @@
             });
         };
 
-        cswPrivate.makeIdentityTabButtons = function(div) {
+        cswPrivate.makeIdentityTabButtons = function (div) {
             if (cswPrivate.tabState.EditMode === Csw.enums.editMode.View &&
                 false === cswPrivate.forceReadOnly) {
                 // case 28234
@@ -338,7 +341,7 @@
                     path: 'Images/newicons/',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                     cssclass: 'CswHighlightedButton',
-                    onClick: function() {
+                    onClick: function () {
                         cswPrivate.tabState.EditMode = Csw.enums.editMode.Edit;
                         cswPrivate.tabState.propertyData = Csw.object();
                         cswParent.empty();
@@ -384,7 +387,7 @@
         cswPrivate.getTabs = function (tabParent) {
             'use strict';
             tabParent = tabParent || cswPrivate.outerTabDiv;
-            
+
             var openDesignMode = Csw.clientDb.getItem('openDesignMode');
             if (openDesignMode) {
                 Csw.clientDb.removeItem('openDesignMode');
@@ -507,7 +510,7 @@
                                             cswPrivate.onTearDown();
                                             cswPrivate.setLastSelectedTab(cswPrivate.tabState.tabNo, cswPrivate.tabState.tabid);
                                             cswPrivate.clearTabs();
-                                            cswPrivate.makeIdentityTab(function() {
+                                            cswPrivate.makeIdentityTab(function () {
                                                 makeTabs();
                                             });
                                         }
@@ -524,7 +527,7 @@
                         }
 
                         cswPrivate.clearTabs();
-                        cswPrivate.makeIdentityTab(function() {
+                        cswPrivate.makeIdentityTab(function () {
                             makeTabs();
                         });
                     } // success
@@ -572,8 +575,8 @@
             /// <summary>
             /// True if Multi Edit is enabled
             /// </summary>
-            return cswPrivate.Multi && ( cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || 
-                                         cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp );
+            return cswPrivate.Multi && (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit ||
+                                         cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp);
         };
 
         cswPrivate.setNode = function (node) {
@@ -644,7 +647,7 @@
             }
             return ret || 'newnode';
         };
-        
+
         cswPublic.getNodeKey = function () {
             /// <summary>
             /// Get the current NodeKey
@@ -900,7 +903,7 @@
                         false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                     cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                 }
-                
+
                 if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp &&
                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
@@ -908,7 +911,7 @@
                         name: cswPrivate.name + '_favBtn',
                         nodeid: cswPrivate.tabState.nodeid,
                         isFavorite: cswPrivate.tabState.isFavorite,
-                        onClick: function(isFavorite) {
+                        onClick: function (isFavorite) {
                             cswPrivate.tabState.isFavorite = isFavorite;
                         }
                     });
@@ -942,7 +945,7 @@
                 Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
                 Csw.tryExec(onSuccess);
             }
-            
+
             if (cswPrivate.tabState.Config) {
                 cswPrivate.openDesignMode();
             } else if (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
@@ -964,6 +967,9 @@
                         ForceReadOnly: cswPrivate.forceReadOnly
                     },
                     success: function (data) {
+                        if (data.node.showeditbutton && cswPrivate.loadEditModeButton) {
+                            cswPrivate.loadEditModeButton.show();
+                        }
                         if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
                             cswPrivate.onEmptyProps();
                         }
@@ -1093,13 +1099,6 @@
                     if (false === Csw.bool(propData.copyable)) {
                         cswPrivate.tabState.checkBoxes['check_' + propid].disable();
                     }
-                    if (false === Csw.bool(propData.readonly)) {
-                        cswPrivate.atLeastOne.Saveable = true;
-                        if (cswPrivate.loadEditModeButton) {
-                            cswPrivate.loadEditModeButton.show();
-                        }
-                    }
-
                 }
 
                 var propCell = cswPrivate.getPropertyCell(cellSet);
@@ -1266,7 +1265,7 @@
 
                     // Case 30885: Refresh the identity tab
                     cswPrivate.identityForm.empty();
-                    cswPrivate.makeIdentityTab(function() {
+                    cswPrivate.makeIdentityTab(function () {
                         cswPrivate.tabState.propertyData = propData;
                         cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
                     });

@@ -14,7 +14,8 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtNode _CswNbtNode;
 
         /// <summary>
-        /// Contains functions to perform on nodes where pendingevents is true
+        /// Contains functions to perform related to the given node being updated
+        /// Note - these functions do not change the node; rather, they notify other nodes that this node has updated
         /// </summary>
         public CswNbtNodeUpdateEvents( CswNbtResources CswNbtResources, CswNbtNode Node )
         {
@@ -23,14 +24,18 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Executes functions to perform on nodes where pendingevents is true
+        /// Executes functions to perform related to the given node being updated
+        /// Note - these functions do not change the node; rather, they notify other nodes that this node has updated
         /// </summary>
         public void triggerUpdateEvents()
         {
             Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) && CurrentProp.wasAnySubFieldModified())
+                if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) &&
+                    //If we run this function outside the scope of updating the node, we need to check every property
+                    ( _CswNbtNode.ModificationState == CswEnumNbtNodeModificationState.Modified && 
+                      CurrentProp.wasAnySubFieldModified()) )
                 {
                     _markExternalPropRefsDirty( CurrentProp );
                     _markExternalRelatedPropsDirty( CurrentProp );
@@ -41,8 +46,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _CswNbtResources.runMailReportEvents( _CswNbtNode.NodeTypeId, CswEnumNbtMailReportEventOption.Edit, _CswNbtNode, ModifiedProps );
             }
-            _CswNbtNode.PendingEvents = false;
-            _CswNbtNode.postOnlyChanges( true, true );
         }
 
         //mark any property references to this property on other nodes as pending update

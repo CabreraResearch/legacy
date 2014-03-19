@@ -87,7 +87,7 @@
         });
     });
     menuAction.add('multiedit', function (privateScope, menuItemName, menuItemJson, menuItem) { Csw.tryExec(privateScope.onMultiEdit); });
-    menuAction.add('batchedit', function (privateScope, menuItemName, menuItemJson, menuItem) { Csw.tryExec(privateScope.onBatchEdit); });
+    menuAction.add('bulkedit', function (privateScope, menuItemName, menuItemJson, menuItem) { Csw.tryExec(privateScope.onBulkEdit); });
     menuAction.add('SaveViewAs', function (privateScope, menuItemName, menuItemJson, menuItem) {
         $.CswDialog('AddViewDialog', {
             viewid: Csw.string(menuItemJson.viewid),

@@ -132,11 +132,11 @@ namespace ChemSW.Nbt.ObjClasses
             MatchCollection matchedParams = null;
             if( false == string.IsNullOrEmpty( WebService.Text ) )
             {
-                matchedParams = Regex.Matches( WebService.Text, @"\{(\w|[0-9])*\}" );
+                matchedParams = Regex.Matches( WebService.Text, @"\{([\s\w0-9])+\}" );
             }
             else if( false == string.IsNullOrEmpty( SQL.Text ) )
             {
-                matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
+                matchedParams = Regex.Matches( SQL.Text, @"\{([\s\w0-9])+\}" );
             }
             foreach( Match match in matchedParams )
             {

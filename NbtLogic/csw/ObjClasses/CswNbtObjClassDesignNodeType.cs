@@ -249,39 +249,43 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
             CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
 
-            // Set 'Name' default value = nodetypename
-            NameProp.getDefaultValue( true ).AsText.Text = NewNodeType.NodeTypeName;
-
-            // The following changes for new forms only
-            if( NewNodeType.VersionNo == 1 && false == InternalCreate )
+            // CIS-52810 - properties can be null if the nodetype is being copied instead of created
+            if( null != NameProp ) 
             {
-                // Set nametemplate = Name + Date
-                this.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( NameProp.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName );
+                // Set 'Name' default value = nodetypename
+                NameProp.getDefaultValue( true ).AsText.Text = NewNodeType.NodeTypeName;
 
-                // Set first tab to be "Details"
-                CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getNodeTypeTab( NewNodeType.NodeTypeName );
-                if( null != FirstTab )
+                // The following changes for new forms only
+                if( NewNodeType.VersionNo == 1 && false == InternalCreate )
                 {
-                    //FirstTab = NewNodeType.getSecondNodeTypeTab();
-                    FirstTab.DesignNode.TabName.Text = "Details";
-                    FirstTab.DesignNode.Order.Value = 10;
-                    FirstTab.DesignNode.IncludeInReport.Checked = CswEnumTristate.False;
-                    FirstTab.DesignNode.postChanges( false );
-                }
+                    // Set nametemplate = Name + Date
+                    this.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( NameProp.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName );
 
-                // case 20951 - Add an Action tab
-                CswNbtMetaDataNodeTypeTab ActionTab = NewNodeType.getNodeTypeTab( "Action" );
-                if( ActionTab == null )
-                {
-                    ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
-                }
+                    // Set first tab to be "Details"
+                    CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getNodeTypeTab( NewNodeType.NodeTypeName );
+                    if( null != FirstTab )
+                    {
+                        //FirstTab = NewNodeType.getSecondNodeTypeTab();
+                        FirstTab.DesignNode.TabName.Text = "Details";
+                        FirstTab.DesignNode.Order.Value = 10;
+                        FirstTab.DesignNode.IncludeInReport.Checked = CswEnumTristate.False;
+                        FirstTab.DesignNode.postChanges( false );
+                    }
 
-                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredProp, true, ActionTab.TabId, 1, 1 );
-                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, FinishedProp, true, ActionTab.TabId, 2, 1 );
-                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelledProp, true, ActionTab.TabId, 3, 1 );
-                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonProp, true, ActionTab.TabId, 4, 1 );
+                    // case 20951 - Add an Action tab
+                    CswNbtMetaDataNodeTypeTab ActionTab = NewNodeType.getNodeTypeTab( "Action" );
+                    if( ActionTab == null )
+                    {
+                        ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
+                    }
 
-            } // if( NewNodeType.VersionNo == 1 && !IsCopy )
+                    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredProp, true, ActionTab.TabId, 1, 1 );
+                    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, FinishedProp, true, ActionTab.TabId, 2, 1 );
+                    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelledProp, true, ActionTab.TabId, 3, 1 );
+                    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonProp, true, ActionTab.TabId, 4, 1 );
+
+                } // if( NewNodeType.VersionNo == 1 && !IsCopy )
+            } // if( null != NameProp )
         } // OnMakeNewInspectionDesignNodeType()
 
 
@@ -701,7 +705,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != RelationalNodeType )
                 {
                     PropNode = ( from Prop in RelationalNodeType.getNodeTypeProps()
-                                 where Prop.PropName == OCProp.PropName && Prop.FieldTypeId == OCProp.FieldTypeId
+                                 where (Prop.PropName == OCProp.PropName || Prop.getObjectClassPropName() == OCProp.PropName ) && Prop.FieldTypeId == OCProp.FieldTypeId
                                  select _CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", Prop.PropId ) )
                                ).FirstOrDefault();
                 }
@@ -869,7 +873,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         Prop.QuestionNo.Value = CurrentQuestionNo;
                         Prop.SubQuestionNo.Value = Int32.MinValue;
-                        Prop.postOnlyChanges( ForceUpdate: false, SkipEvents: true );
+                        Prop.postOnlyChanges( ForceUpdate: false );
                         PropQuestionNumbers[Prop.NodeId] = CurrentQuestionNo;
                         CurrentQuestionNo++;
                     }
@@ -893,7 +897,7 @@ namespace ChemSW.Nbt.ObjClasses
                             Int32 ParentPropQuestionNo = PropQuestionNumbers[Prop.DisplayConditionProperty.RelatedNodeId];
                             Prop.QuestionNo.Value = ParentPropQuestionNo;
                             Prop.SubQuestionNo.Value = SubQuestionNos[ParentPropQuestionNo];
-                            Prop.postOnlyChanges( ForceUpdate: false, SkipEvents: true );
+                            Prop.postOnlyChanges( ForceUpdate: false );
                             SubQuestionNos[ParentPropQuestionNo] += 1;
                         }
                     }

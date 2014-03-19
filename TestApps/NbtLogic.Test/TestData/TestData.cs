@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Test
 
         public TestData()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, false );
             _CswDbCfgInfoNbt = new CswDbCfgInfo( CswEnumSetupMode.TestProject );
             _CswNbtResources.InitCurrentUser = _InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;

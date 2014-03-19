@@ -112,7 +112,6 @@ namespace ChemSW.Nbt.ObjClasses
             _SessionId = CswConvert.ToString( row["sessionid"] );
             _PendingUpdate = CswConvert.ToBoolean( row["pendingupdate"] );
             _Searchable = CswConvert.ToBoolean( row["searchable"] );
-            PendingEvents = CswConvert.ToBoolean( row["pendingevents"] );
             if( row.Table.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
             {
                 _AuditLevel = row[_CswAuditMetaData.AuditLevelColName].ToString();
@@ -172,11 +171,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _IsTemp; }
         }
-
-        /// <summary>
-        /// When set to true, the NodeUpdateEvents Scheduled Rule will perform update events for this Node
-        /// </summary>
-        public bool PendingEvents { get; set; }
 
         /// <summary>
         /// Converts a temp node to a real one.  
@@ -421,14 +415,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// TODO - Case 31708: fix performance issues on writeNode event logic and remove this function
         /// </summary>
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postOnlyChanges( bool ForceUpdate, bool SkipEvents = false )
+        public void postOnlyChanges( bool ForceUpdate )
         {
-            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
+            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate( _CswNbtResources )
             {
                 OverrideUniqueValidation = true,
-                Creating = true,
                 ForceUpdate = ForceUpdate,
-                SkipEvents = SkipEvents
+                SkipEvents = true
             };
             NodePersistStrategy.postChanges( this );
         }//postChanges()

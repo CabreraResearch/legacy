@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
+using NbtWebApp.WebSvc.Logic.API.DataContracts;
 using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.Actions.Explorer
@@ -19,6 +20,12 @@ namespace NbtWebApp.Actions.Explorer
 
         [DataMember]
         public string FilterVal { get; set; }
+
+        [DataMember]
+        public string RelatingId;
+
+        [DataMember]
+        public int RelatingPropId;
     }
 
     [DataContract]
@@ -31,6 +38,18 @@ namespace NbtWebApp.Actions.Explorer
 
         [DataMember]
         public CswNbtArborGraph Data;
+    }
+
+    [DataContract]
+    public class CswNbtExplorerRelatingReturn: CswWebSvcReturn
+    {
+        public CswNbtExplorerRelatingReturn()
+        {
+            Data = new CswNbtResourceCollection();
+        }
+
+        [DataMember]
+        public CswNbtResourceCollection Data;
     }
 
     [DataContract]
@@ -77,12 +96,15 @@ namespace NbtWebApp.Actions.Explorer
         private static void _populate( CswNbtResources NbtResources, CswEnumNbtObjectClass ObjectClass, CswCommaDelimitedString Ret )
         {
             CswNbtMetaDataObjectClass ObjClass = NbtResources.MetaData.getObjectClass( ObjectClass );
-            foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+            if( null != ObjClass ) //Module permissions might cause this to be null
             {
-                Ret.Add( "NT_" + NodeType.NodeTypeId.ToString() );
-            }
+                foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                {
+                    Ret.Add( "NT_" + NodeType.NodeTypeId.ToString() );
+                }
 
-            Ret.Add("OC_" + ObjClass.ObjectClassId);
+                Ret.Add( "OC_" + ObjClass.ObjectClassId );
+            }
         }
     }
 

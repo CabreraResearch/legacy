@@ -15,14 +15,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Material Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetMaterial : CswNbtObjClass
+    public abstract class CswNbtPropertySetMaterial: CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName : CswNbtObjClass.PropertyName
+        public new class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string MaterialId = "Material Id";
             public const string TradeName = "Tradename";
@@ -33,6 +33,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Receive = "Receive";
             public const string C3ProductId = "C3ProductId";
             public const string IsConstituent = "Is Constituent";
+            public const string ExpirationInterval = "Expiration Interval";
+            public const string OpenExpireInterval = "Open Expire Interval";
             public const string ContainerExpirationLocked = "Container Expiration Locked";
             public const string Documents = "Documents";
             public const string Synonyms = "Synonyms";
@@ -149,8 +151,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public virtual void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
-        public virtual DateTime getDefaultExpirationDate( DateTime InitialDate ) { return DateTime.MinValue; }
-
         //public virtual void onUpdatePropertyValue() {}
 
         public abstract void onUpdatePropertyValue();
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ApprovedForReceiving.wasAnySubFieldModified() )
             {
-                Receive.setHidden( value: ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb: true );
+                Receive.setHidden( value : ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb : true );
             }
         }
 
@@ -190,8 +190,8 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
-            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
-            ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb: false );
+            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb : false );
+            ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb : false );
             _toggleButtonVisibility();
             _toggleConstituentProps();
             Obsolete.SetOnPropChange( OnObsoletePropChange );
@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtViewProperty viewProp1 = ParentRelationship.View.AddViewProperty( ParentRelationship, IsConstituentProp );
                 viewProp1.ShowInGrid = false;
-                ParentRelationship.View.AddViewPropertyFilter( viewProp1, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True );
+                ParentRelationship.View.AddViewPropertyFilter( viewProp1, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True );
             }
 
             ObsoleteProp = firstMaterialOc.getObjectClassProp( PropertyName.Obsolete );
@@ -248,7 +248,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtViewProperty viewProp2 = ParentRelationship.View.AddViewProperty( ParentRelationship, ObsoleteProp );
                 viewProp2.ShowInGrid = false;
-                ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode: CswEnumNbtFilterMode.Equals, Value: CswEnumTristate.False, ShowAtRuntime: true );
+                ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode : CswEnumNbtFilterMode.Equals, Value : CswEnumTristate.False, ShowAtRuntime : true );
             }
 
             onPropertySetAddDefaultViewFilters( ParentRelationship );
@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     PartNoFilterMode = CswEnumNbtFilterMode.Null;
                 }
-                Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo, FilterMode: PartNoFilterMode );
+                Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo, FilterMode : PartNoFilterMode );
             }
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
@@ -452,8 +452,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _toggleButtonVisibility()
         {
-            Receive.setHidden( value: false == _canReceive(), SaveToDb: false );
-            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb: false );
+            Receive.setHidden( value : false == _canReceive(), SaveToDb : false );
+            Request.setHidden( value : false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb : false );
         }
 
         private void _setCofAData( NbtButtonData ButtonData )
@@ -491,9 +491,62 @@ namespace ChemSW.Nbt.ObjClasses
                 ContainersTree.goToNthChild( i );
                 CswNbtObjClassContainer CurrentContainer = ContainersTree.getNodeForCurrentPosition();
                 CurrentContainer.ToggleAllowRequest( Allow );
+                CurrentContainer.postChanges( false );
             }
         }//_toggleAllowRequestForContainers()
 
+
+        /// <summary>
+        /// Calculates the expiration date from today based on the Material's Expiration Interval
+        /// </summary>
+        public DateTime getDefaultExpirationDate( DateTime InitialDate )
+        {
+            return _getExpirationDateByInterval( InitialDate, this.ExpirationInterval );
+        }
+
+        public DateTime getDefaultOpenExpirationDate( DateTime InitialDate )
+        {
+            return _getExpirationDateByInterval( InitialDate, this.OpenExpireInterval );
+        }
+
+        private DateTime _getExpirationDateByInterval( DateTime InitialDate, CswNbtNodePropQuantity ExpirationIntervalProp )
+        {
+            DateTime DefaultExpDate = DateTime.MinValue;
+
+            //No point trying to get default if both values are invalid
+            if( CswTools.IsPrimaryKey( ExpirationIntervalProp.UnitId ) && ExpirationIntervalProp.Quantity > 0 )
+            {
+                DefaultExpDate = InitialDate == DateTime.MinValue ? DateTime.Now : InitialDate;
+                switch( ExpirationIntervalProp.CachedUnitName.ToLower() )
+                {
+                    case "seconds":
+                        DefaultExpDate = DefaultExpDate.AddSeconds( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "minutes":
+                        DefaultExpDate = DefaultExpDate.AddMinutes( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "hours":
+                        DefaultExpDate = DefaultExpDate.AddHours( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "days":
+                        DefaultExpDate = DefaultExpDate.AddDays( ExpirationIntervalProp.Quantity );
+                        break;
+                    case "weeks":
+                        DefaultExpDate = DefaultExpDate.AddDays( ExpirationIntervalProp.Quantity * 7 );
+                        break;
+                    case "months":
+                        DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( ExpirationIntervalProp.Quantity ) );
+                        break;
+                    case "years":
+                        DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( ExpirationIntervalProp.Quantity ) );
+                        break;
+                    default:
+                        DefaultExpDate = DateTime.MinValue;
+                        break;
+                }
+            }
+            return DefaultExpDate;
+        }
         #endregion Custom Logic
 
         #region Property Set specific properties
@@ -507,7 +560,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
         public CswNbtNodePropLogical IsConstituent { get { return ( _CswNbtNode.Properties[PropertyName.IsConstituent] ); } }
-        public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid Synonyms { get { return ( _CswNbtNode.Properties[PropertyName.Synonyms] ); } }
         public CswNbtNodePropText LegacyMaterialId { get { return _CswNbtNode.Properties[PropertyName.LegacyMaterialId]; } }
@@ -532,6 +584,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
         public CswNbtNodePropLogical RequiresCleaningEvent { get { return ( _CswNbtNode.Properties[PropertyName.RequiresCleaningEvent] ); } }
+        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
+        public CswNbtNodePropQuantity OpenExpireInterval { get { return _CswNbtNode.Properties[PropertyName.OpenExpireInterval]; } }
+        public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
 
         #endregion
 
