@@ -83,7 +83,7 @@
         cswPrivate.handleStep = function (newStepNo) {
             cswPrivate.setState();
             if (false === Csw.isNullOrEmpty(cswPrivate.onStepChange[cswPrivate.currentStepNo])) {
-                cswPrivate.onStepChange[cswPrivate.currentStepNo](cswPrivate.currentStepNo);
+                cswPrivate.onStepChange[cswPrivate.currentStepNo](cswPrivate.currentStepNo, newStepNo);
             }
             cswPrivate.lastStepNo = cswPrivate.currentStepNo;
             cswPrivate.currentStepNo = newStepNo;
@@ -463,7 +463,13 @@
                         cswPrivate['step' + StepNo + 'Complete'] = true;
                     }
                 };
-            }())
+            }()),
+            onStepChange: function (currStepNo, newStepNo) {
+                // Case CIS-52627: If we clicked 'Previous' instead of 'Next'
+                if (newStepNo < currStepNo) {
+                    cswPrivate['step' + currStepNo + 'Complete'] = false;
+                }
+            }
         };
         //#endregion Step: Print Labels
 
