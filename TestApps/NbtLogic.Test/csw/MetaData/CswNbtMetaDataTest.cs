@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.Test.MetaData
             //    _SchemaModTrnsctn.MetaData.DeleteObjectClass( _fakeTestOC );
             //}
             //_TestData.Destroy();
+            _TestData.Release();
         }
 
         [Test]

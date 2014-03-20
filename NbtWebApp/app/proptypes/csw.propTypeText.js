@@ -50,7 +50,7 @@
                     type: Csw.enums.inputTypes.text,
                     value: cswPrivate.value,
                     size: cswPrivate.size,
-                    cssclass: 'textinput ' + regex_name,
+                    cssclass: 'textinput ' + regex_name + ' mousetrap',
                     onChange: function (val) {
                         cswPrivate.value = val;
                         nodeProperty.propData.values.text = val;

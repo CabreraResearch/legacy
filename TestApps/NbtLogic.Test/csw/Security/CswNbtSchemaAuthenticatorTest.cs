@@ -32,8 +32,8 @@ namespace ChemSW.Nbt.Test.Security
         [TearDown]
         public void MyTestCleanup()
         {
-            TestData.Destroy();
             TestData.CswNbtResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( "delete from login_data where loginid > " + _LoginDataHWM );
+            TestData.Destroy();
         }
 
         #endregion

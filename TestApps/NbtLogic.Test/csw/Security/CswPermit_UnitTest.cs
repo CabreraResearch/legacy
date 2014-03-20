@@ -136,7 +136,10 @@ namespace ChemSW.Nbt.Test.Security
             CswNbtResources NewResources = _testInit( RoleName, UserName, CswEnumTristate.True, CswEnumNbtNodeTypePermission.Edit, PermissionValue );
             Assert.NotNull( NewResources );
             //Assert.That( NewResources.Permit.canAnyTab );
-            return NewResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, _SprocketNt, NewResources.CurrentNbtUser );
+            bool Result =  NewResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, _SprocketNt, NewResources.CurrentNbtUser );
+
+            NewResources.release();
+            return Result;
         }
 
         

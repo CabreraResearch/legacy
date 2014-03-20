@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02L_Case32003(),
                     new CswUpdateSchema_02L_Case52761(),
                     new CswUpdateSchema_02L_Case31611(),
+                    new CswUpdateSchema_02L_Case53061(), // must run before all CAF scripts below
                     new CswUpdateSchema_02L_Case31893_Biologicals(),
                     new CswUpdateSchema_02L_Case31893_Supplies(),
                     new CswUpdateSchema_02L_Case31893_Constituents(),

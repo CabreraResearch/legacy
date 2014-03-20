@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.Test.PropTypes
         {
             TestData.DeleteTestNodes();
             TestData.RevertNodeTypePropAttributes();
+            TestData.Release();
         }
 
         #endregion

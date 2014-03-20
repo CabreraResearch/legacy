@@ -184,6 +184,7 @@
          * Completely tear down the current instance; terminate all outstanding AJAX GET requests; nuke the tabs; nuke the props; unbind all events.
         */
         cswPrivate.onTearDown = function () {
+            window.Mousetrap.unbind('enter');
             cswPrivate.onTearDownProps();
             cswPrivate.clearTabs();
             cswPrivate.tabState.checkBoxes = {};
@@ -1368,6 +1369,10 @@
         (function _postCtor() {
             cswPrivate.getTabs(cswPrivate.outerTabDiv);
             cswPrivate.refreshLinkDiv();
+            
+            if (cswPrivate.tabState.EditMode == Csw.enums.editMode.Add) {
+                window.Mousetrap.bind('enter', function () { Csw.publish('triggerSave_' + cswPublic.getNodeId()); });
+            }
         }());
 
         return cswPublic;
