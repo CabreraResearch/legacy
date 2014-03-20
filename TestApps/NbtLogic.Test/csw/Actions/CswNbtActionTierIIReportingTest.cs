@@ -31,8 +31,8 @@ namespace ChemSW.Nbt.Test.Actions
         [TearDown]
         public void MyTestCleanup()
         {
-            TestData.Destroy();
             TestData.CswNbtResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( "delete from tier2 where tier2id > " + _TierIIHWM );
+            TestData.Destroy();
         }
 
         #endregion
