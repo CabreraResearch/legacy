@@ -307,6 +307,7 @@
                     cswPrivate.identityForm.empty();
 
                     cswPrivate.identityButtonDiv = cswPrivate.identityForm.div();
+                    cswPrivate.identityButtonDiv.css({ 'padding-bottom': '5px' });
                     cswPrivate.makeIdentityTabButtons(cswPrivate.identityButtonDiv);
                     if (data.node.showeditbutton && cswPrivate.loadEditModeButton) {
                         cswPrivate.loadEditModeButton.show();
@@ -341,7 +342,7 @@
                     width: '100px',
                     path: 'Images/newicons/',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                    cssclass: 'CswHighlightedButton',
+                    //cssclass: 'CswHighlightedButton',
                     onClick: function () {
                         cswPrivate.tabState.EditMode = Csw.enums.editMode.Edit;
                         cswPrivate.tabState.propertyData = Csw.object();
