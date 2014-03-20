@@ -385,6 +385,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtSdNode NodeAction = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
                 NodeAction.addSingleNodeProp( Node, PropJson, null );
                 // Some property values are reset by business logic, which needs to be emulated here
+                // ...but can we do that in a way that doesn't call WriteNode logic?
+                Node.OverrideValidation = true;
                 Node.ObjClass.beforeWriteNode( IsCopy : false, Creating : false );
 
                 // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
