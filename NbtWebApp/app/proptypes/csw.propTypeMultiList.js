@@ -13,9 +13,9 @@
             cswPrivate.gestalt = nodeProperty.propData.gestalt;
             cswPrivate.options = nodeProperty.propData.values.options;
 
-            if (nodeProperty.isReadOnly()) {
-                nodeProperty.propDiv.append(cswPrivate.gestalt);
-            } else {
+//            if (nodeProperty.isReadOnly()) {
+//                nodeProperty.propDiv.append(cswPrivate.gestalt);
+//            } else {
                 var errorDiv = nodeProperty.propDiv.div();
 
                 var doValidation = function (val) {
@@ -83,7 +83,7 @@
                 } else {
                     errorDiv.hide();
                 }
-            }
+//            }
 
         };
 

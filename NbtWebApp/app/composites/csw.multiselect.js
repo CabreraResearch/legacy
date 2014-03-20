@@ -91,7 +91,7 @@
             if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
                 cswPrivate.morediv.hide();
                 multiSelectCtrl = makeMultiSelect(false, parentDiv, '240px', '360px');
-            } else {
+            } else if (cswPrivate.EditMode === Csw.enums.editMode.Edit) {
                 editBtnCell.buttonExt({
                     name: cswPrivate.name + '_toggle',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
