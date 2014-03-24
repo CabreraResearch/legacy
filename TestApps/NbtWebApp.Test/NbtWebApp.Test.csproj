@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Nodes\CswNbtWebServiceNodeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="REST API\v1\CswNbtTestREAD.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common\CswCommon\CswCommon.csproj">
@@ -82,6 +83,7 @@
       <Name>NbtLogic.Test</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
