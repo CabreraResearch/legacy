@@ -1,7 +1,5 @@
-﻿using System.Collections.Specialized;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Net;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -10,71 +8,9 @@ using ChemSW.Core;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.API;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
-using Newtonsoft.Json.Linq;
 
 namespace NbtWebApp.Services
 {
-    #region DataContracts
-
-    [DataContract]
-    public class CswNbtAPIGenericRequest
-    {
-        [DataMember( Name = "metadataname" )]
-        public string MetaDataName { get; set; }
-
-
-        public CswPrimaryKey NodeId = new CswPrimaryKey();
-        [DataMember( Name = "nodeid" )]
-        private int _nodeIdStr
-        {
-            get { return NodeId.PrimaryKey; }
-            set { NodeId = new CswPrimaryKey( "nodes", value ); }
-        }
-
-        public JObject PropData = new JObject();
-        [DataMember( Name = "propdata" )]
-        private string _propData
-        {
-            get { return PropData.ToString(); }
-            set { PropData = CswConvert.ToJObject( value ); }
-        }
-
-        //Not a data member
-        public NameValueCollection PropertyFilters = new NameValueCollection();
-
-        public CswNbtAPIGenericRequest( string MetaDataNameIn, string Id )
-        {
-            NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Id ) );
-            MetaDataName = MetaDataNameIn;
-        }
-    }
-
-    public class CswNbtApiSearchRequest
-    {
-        [DataMember( Name = "query" )]
-        public string Query { get; set; }
-
-        public CswEnumSqlLikeMode SearchType = CswEnumSqlLikeMode.Begins;
-
-        [DataMember( Name = "searchtype" )]
-        private string _searchType
-        {
-            get { return SearchType.ToString(); }
-            set { SearchType = (CswEnumSqlLikeMode) value; }
-        }
-
-        [DataMember( Name = "nodetype" )]
-        public string NodeType { get; set; }
-
-        public CswNbtApiSearchRequest( string query, string searchtype )
-        {
-            Query = query;
-            SearchType = (CswEnumSqlLikeMode) searchtype;
-        }
-    }
-
-    #endregion
-
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract( Namespace = "NbtWebApp" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
@@ -87,12 +23,12 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = CswNbtWebServiceREAD.VERB, UriTemplate = "/v1/{metadataname}/{id}", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get a single entity by id" )]
-        public CswNbtResourceWithProperties GetResource( string metadataname, string id )
+        public CswNbtResource GetResource( string metadataname, string id )
         {
             CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, id );
-            CswNbtResourceWithProperties Ret = new CswNbtResourceWithProperties();
+            CswNbtResource Ret = new CswNbtResource();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtResourceWithProperties, CswNbtAPIGenericRequest>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                     ReturnObj : Ret,
                     WebSvcMethodPtr : CswNbtWebServiceREAD.GetResource,
@@ -145,12 +81,12 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = CswNbtWebServiceCREATE.VERB, UriTemplate = "/v1/{metadataname}" )]
         [Description( "Create a new entity of the specified type" )]
-        public CswNbtResourceWithProperties Create( string metadataname )
+        public CswNbtResource Create( string metadataname )
         {
             CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, string.Empty );
-            CswNbtResourceWithProperties Ret = new CswNbtResourceWithProperties();
+            CswNbtResource Ret = new CswNbtResource();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtResourceWithProperties, CswNbtAPIGenericRequest>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                     ReturnObj : Ret,
                     WebSvcMethodPtr : CswNbtWebServiceCREATE.Create,
@@ -206,9 +142,9 @@ namespace NbtWebApp.Services
         public void DeleteResource( string metadataname, string id )
         {
             CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, id );
-            CswNbtResourceWithProperties Ret = new CswNbtResourceWithProperties();
+            CswNbtResource Ret = new CswNbtResource();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtResourceWithProperties, CswNbtAPIGenericRequest>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                     ReturnObj : Ret,
                     WebSvcMethodPtr : CswNbtWebServiceDELETE.Delete,
