@@ -168,7 +168,12 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Domain for accessing ChemWatch
         /// </summary>
-        chemwatchdomain
+        chemwatchdomain,
+
+        /// <summary>
+        /// Number of previously used passwords to disallow
+        /// </summary>
+        password_reuse_count,
     };
 
 }
