@@ -41,8 +41,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _CswNbtResources.runMailReportEvents( _CswNbtNode.NodeTypeId, CswEnumNbtMailReportEventOption.Edit, _CswNbtNode, ModifiedProps );
             }
-            _CswNbtNode.PendingEvents = false;
-            _CswNbtNode.postOnlyChanges( true, true );
         }
 
         //mark any property references to this property on other nodes as pending update
