@@ -112,10 +112,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforePromoteNodeLogic()
-        {
-        }
-
         protected override void afterPromoteNodeLogic()
         {
             // originally case 27330, moved here by case 30647
