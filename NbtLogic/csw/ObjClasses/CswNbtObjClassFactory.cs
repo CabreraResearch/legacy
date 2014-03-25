@@ -231,6 +231,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.MethodConditionClass:
+                    ReturnVal = new CswNbtObjClassMethodCondition( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.NonChemicalClass:
                     ReturnVal = new CswNbtObjClassNonChemical( CswNbtResources, Node );
                     break;
