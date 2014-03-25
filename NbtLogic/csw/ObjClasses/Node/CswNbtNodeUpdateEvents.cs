@@ -14,8 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtNode _CswNbtNode;
 
         /// <summary>
-        /// Contains functions to perform related to the given node being updated
-        /// Note - these functions do not change the node; rather, they notify other nodes that this node has updated
+        /// Contains functions to perform on nodes where pendingevents is true
         /// </summary>
         public CswNbtNodeUpdateEvents( CswNbtResources CswNbtResources, CswNbtNode Node )
         {
@@ -24,18 +23,14 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Executes functions to perform related to the given node being updated
-        /// Note - these functions do not change the node; rather, they notify other nodes that this node has updated
+        /// Executes functions to perform on nodes where pendingevents is true
         /// </summary>
         public void triggerUpdateEvents()
         {
             Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) &&
-                    //If we run this function outside the scope of updating the node, we need to check every property
-                    ( _CswNbtNode.ModificationState == CswEnumNbtNodeModificationState.Modified && 
-                      CurrentProp.wasAnySubFieldModified()) )
+                if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) && CurrentProp.wasAnySubFieldModified())
                 {
                     _markExternalPropRefsDirty( CurrentProp );
                     _markExternalRelatedPropsDirty( CurrentProp );

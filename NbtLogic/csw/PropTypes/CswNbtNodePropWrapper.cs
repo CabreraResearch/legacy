@@ -111,6 +111,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Get the Prior state of the Property's value using a specific subfield
         /// </summary>
         public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
+        //public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { SetPropRowValue( Column, value ); }
         public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
 
         public string PropName { get { return ( _CswNbtNodeProp.PropName ); } }
@@ -133,7 +134,11 @@ namespace ChemSW.Nbt.PropTypes
         public string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } } //set { _CswNbtNodePropData.Field4 = value; } }
         public string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } } //set { _CswNbtNodePropData.Field5 = value; } }
         public bool Required { get { return ( _CswNbtNodeProp.Required ); } }
-
+        /// <summary>
+        /// Determines whether to treat the property as required, temporarily
+        /// </summary>
+        //public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+        //public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.getDefaultValue() ); } }
         /// <summary>
         /// The default value of the property
         /// </summary>
@@ -153,6 +158,27 @@ namespace ChemSW.Nbt.PropTypes
         public void onNodePropRowFilled() { _CswNbtNodeProp.onNodePropRowFilled(); }
 
         public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
+
+        //// case 21809
+        //private string _HelpText = string.Empty;
+        //public string HelpText
+        //{
+        //    get
+        //    {
+        //        string ret = NodeTypeProp.HelpText;
+        //        if( _HelpText != string.Empty && NodeTypeProp.HelpText != string.Empty )
+        //        {
+        //            ret += " ";
+        //        }
+        //        if( _HelpText != string.Empty )
+        //        {
+        //            ret += _HelpText;
+        //        }
+        //        return ret;
+        //    }
+        //    set { _HelpText = value; }
+        //}
+
 
         public bool CanEdit
         {
