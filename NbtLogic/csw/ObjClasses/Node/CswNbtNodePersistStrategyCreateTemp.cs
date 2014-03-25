@@ -34,10 +34,9 @@ namespace ChemSW.Nbt.ObjClasses
         
         public void postChanges( CswNbtNode Node )
         {
-            Node.OverrideValidation = OverrideUniqueValidation;
             if( null != Node.ObjClass && false == SkipEvents )
             {
-                Node.ObjClass.beforeWriteNode( IsCopy, Creating );
+                Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
             }
 
             Node.SessionId = _CswNbtResources.Session.SessionId;

@@ -62,7 +62,6 @@ namespace ChemSW.Nbt
             NewNodeRow["nodename"] = Node.NodeName;
             NewNodeRow["nodetypeid"] = CswConvert.ToDbVal( Node.NodeTypeId );
             NewNodeRow["pendingupdate"] = CswConvert.ToDbVal( false );
-            NewNodeRow["pendingevents"] = CswConvert.ToDbVal( false );
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
@@ -109,13 +108,21 @@ namespace ChemSW.Nbt
             if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
                 ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
             {
+                //When CswNbtNode.NodeId is Int32.MinValue, we know that the node data was not 
+                //filled from an existing node and therefore needs to be written to 
+                //the db, after which it will have a node id
+                if( null == Node.NodeId )
+                {
+                    makeNewNodeEntry( Node );
+                }
+
                 //TODO - CIS-52562 - can we derive a propUpdater based on the type of NodeUpdater we're using?
 
                 //propcoll knows whether or not he's got new values to update (presumably)
                 Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
                 //set nodename with updated prop values
-                _synchNodeName( Node, Creating );
+                _synchNodeName( Node );
 
                 // save nodename and pendingupdate
                 if( Node.NodeId.TableName != "nodes" )
@@ -264,7 +271,7 @@ namespace ChemSW.Nbt
 
         }//delete()
 
-        private void _synchNodeName( CswNbtNode Node, bool Creating )
+        private void _synchNodeName( CswNbtNode Node )
         {
             string OldNodeName = Node.NodeName;
             string NewNodeName = string.Empty;
@@ -310,7 +317,7 @@ namespace ChemSW.Nbt
                 Node.NodeName = _makeDefaultNodeName( Node );
             }
 
-            if( Node.NodeName != OldNodeName && false == Creating )
+            if( Node.NodeName != OldNodeName )
             {
                 Node.PendingEvents = true;
             }

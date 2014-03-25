@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// ObjectClass-specific logic to execute before persisting a new real node (from temp or create)
         /// </summary>
-        protected virtual void beforePromoteNodeLogic() { }
+        protected virtual void beforePromoteNodeLogic( bool OverrideUniqueValidation = false ) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after persisting a new real node (from temp or create)
         /// </summary>
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// ObjectClass-specific logic to execute before updating a new or existing node
         /// </summary>
-        protected virtual void beforeWriteNodeLogic( bool Creating ) { }
+        protected virtual void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation ) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after updating a new or existing node
         /// </summary>
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void beforePromoteNode( bool OverrideUniqueValidation = false )
         {
-            beforePromoteNodeLogic();
+            beforePromoteNodeLogic( OverrideUniqueValidation: OverrideUniqueValidation );
         }
 
         public void afterPromoteNode()
@@ -152,21 +152,21 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region BeforeWriteNode
 
-        public void beforeWriteNode( bool IsCopy, bool Creating )
+        public void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            beforeWriteNodeLogic( Creating );
-            foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+            beforeWriteNodeLogic( Creating, OverrideUniqueValidation );
+            if( false == Creating )
             {
-                if( CurrentProp.wasAnySubFieldModified() )
+                foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
                 {
-                    _updateReferenceProps( CurrentProp );
-                    if( false == Creating )
+                    if( CurrentProp.wasAnySubFieldModified() )
                     {
+                        _updateReferenceProps( CurrentProp );
                         _CswNbtNode.PendingEvents = true;
                     }
                 }
             }
-            if( false == Node.OverrideValidation )
+            if( false == OverrideUniqueValidation )
             {
                 _validateCompoundUniqueProps( IsCopy );
             }
@@ -346,6 +346,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void triggerAfterPopulateProps()
         {
+            //We don't have a context for which Tab is going to render, but we can eliminate the base conditions for displaying the Save button here.
+            //if( null != this.Node && false == canSave( TabId : Int32.MinValue ) )
+            //{
+            //    Save.setHidden( value : true, SaveToDb : false );
+            //}
             afterPopulateProps();
         }
 

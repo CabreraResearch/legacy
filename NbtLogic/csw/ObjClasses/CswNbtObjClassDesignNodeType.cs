@@ -95,9 +95,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _requiresSync = false;
 
-        protected override void beforePromoteNodeLogic()
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
-            if( false == Node.OverrideValidation &&
+            if( false == OverrideUniqueValidation &&
                 null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             if( null != RelationalNodeType )
             {

@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
         }//Filled
 
-        public bool OverrideValidation = false;
+        public bool DisableSave = false;
 
         public bool New
         {
