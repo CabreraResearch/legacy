@@ -47,6 +47,7 @@ namespace ChemSW.Nbt
             }
         }//clear() 
 
+        //public void makeNewNodeEntry( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         public void makeNewNodeEntry( CswNbtNode Node )
         {
             // case 20970
@@ -114,10 +115,10 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node );
+                    //makeNewNodeEntry( Node, IsCopy, OverrideUniqueValidation );
                 }
 
-                //TODO - CIS-52562 - can we derive a propUpdater based on the type of NodeUpdater we're using?
-
+                //bz # 5878
                 //propcoll knows whether or not he's got new values to update (presumably)
                 Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
@@ -143,12 +144,11 @@ namespace ChemSW.Nbt
                 NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
                 NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
                 NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
-                NodesTable.Rows[0]["pendingevents"] = CswConvert.ToDbVal( Node.PendingEvents );
 
                 // case 29311 - Sync with relational data
                 if( Node.getNodeType().DoRelationalSync )
                 {
-                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave );
+                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy, AllowAuditing );
                 }
 
                 if( null != Node.RelationalId )
