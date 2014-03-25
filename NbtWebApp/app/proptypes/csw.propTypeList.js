@@ -10,8 +10,6 @@
         var render = function () {
             'use strict';
             var cswPrivate = Csw.object();
-            var comboBoxDefaultWidth = 150;
-            var emptyText = "Type here to search";
 
             cswPrivate.text = nodeProperty.propData.values.text;
             cswPrivate.value = nodeProperty.propData.values.value;
@@ -33,7 +31,7 @@
                     nodeProperty.propData.values.value = object.val;
 
                     if (cswPrivate.select) {
-                        cswPrivate.select.setValue(cswPrivate.value);
+                        cswPrivate.select.combobox.setValue(cswPrivate.value);
                     }
                     if (span) {
                         span.remove();
@@ -41,202 +39,40 @@
                     }
                 }
             });//nodeProperty.onPropChangeBroadcast()
-
-            var setComboBoxSize = function (optionsArray) {
-                //Set the width of the combobox to match the longest string returned
-                if (optionsArray.length > 0) {
-                    var longestOption = optionsArray.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
-                    var newWidth = (longestOption.Text.length * 7) + 15;
-                    if (newWidth > comboBoxDefaultWidth) {
-                        cswPrivate.select.setWidth(newWidth);
-                    }
-                }
-            };//setComboBoxSize()
-
-            var onValidation = function (isValid) {
-                if (isValid) {
-                    cswPrivate.select.setFieldStyle("background:none #66ff66;");
-                } else {
-                    cswPrivate.select.setFieldStyle("background:none #ff6666;");
-                }
-            };//setComboBoxValidityColor()
-
-            var initialValue = function () {
-                if ((Csw.isNullOrEmpty(cswPrivate.text) || Csw.isNullOrEmpty(cswPrivate.value)) && nodeProperty.propData.values.search) {
-                    return emptyText;
-                } else {
-                    if (Csw.isNullOrEmpty(cswPrivate.text)) {
-                        return cswPrivate.value;
-                    } else {
-                        return cswPrivate.text;
-                    }
-                }
-            };
-
-            var checkValidity = function (value) {
-                if (cswPrivate.isRequired) {
-                    if (Csw.isNullOrEmpty(value) || value === emptyText) {
-                        cswPrivate.checkBox.val(false);
-                    } else {
-                        cswPrivate.checkBox.val(true);
-                    }
-                    var valid = cswPrivate.checkBox.$.valid();
-                    onValidation(valid);
-                }
-            };
-
+            
             if (nodeProperty.isReadOnly()) {
                 var span = cswPrivate.selectCell.span({ text: cswPrivate.text });
             } else {
-                // Create the Store
-                cswPrivate.listOptionsStore = new Ext.data.Store({
-                    fields: ['Value', 'Text'],
-                    autoLoad: false,
-                    sorters: [{ property: 'Text', direction: 'ASC' }]
-                });
-
-                // Create the Ext JS ComboBox
-                cswPrivate.select = Ext.create('Ext.form.field.ComboBox', {
+                cswPrivate.select = cswPrivate.selectCell.div().comboBoxExt({
                     name: nodeProperty.name,
-                    renderTo: cswPrivate.selectCell.div().getId(),
                     displayField: 'Text',
                     valueField: 'Value',
-                    store: cswPrivate.listOptionsStore,
                     queryMode: 'local',
                     queryDelay: 2000,
-                    value: initialValue(),
-                    listConfig: {
-                        width: 'auto'
-                    },
-                    //forceSelection: true,
+                    options: cswPrivate.options,
+                    selectedValue: cswPrivate.text,
+                    search: nodeProperty.propData.values.search,
+                    searchUrl: 'Search/searchListOptions',
                     listeners: {
-                        select: function (combo, records) {
+                        select: function(combo, records) {
                             var text = records[0].get('Text');
                             var val = records[0].get('Value');
-
-                            checkValidity(val);
-
                             nodeProperty.broadcastPropChange({ text: text, val: val });
                         },
-                        change: function (combo, newvalue) {
-                            if (null != newvalue) {
-                                if (cswPrivate.isRequired) {
-                                    // Is the newvalue an option in the list?
-                                    var inlist = false;
-                                    if (cswPrivate.options) {
-                                        cswPrivate.options.forEach(function (option) {
-                                            if (option.Text === newvalue) {
-                                                inlist = true;
-                                            }
-                                        });
-                                    }
-                                    cswPrivate.checkBox.val(false);
-                                    if (false === Csw.isNullOrEmpty(newvalue)) {
-                                        if (inlist) {
-                                            cswPrivate.checkBox.val(true);
-                                        }
-                                    }
-                                    var valid = cswPrivate.checkBox.$.valid();
-                                    if (valid) {
-                                        nodeProperty.broadcastPropChange({ text: newvalue, val: newvalue });
-                                    }
-                                    onValidation(valid);
-                                }//if(cswPrivate.isRequired)
-                            }//if(null != newvalue)
+                        change: function(combo, newvalue) {
+                            nodeProperty.broadcastPropChange({ text: newvalue, val: newvalue });
+                        },
+                        storebeforeload: function() {
+                            var obj = {};
+                            obj.NodeTypePropId = cswPrivate.propid;
+                            obj.SearchTerm = cswPrivate.select.combobox.getValue();
+                            return obj;
                         }
-                    },//listeners
-                    tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
-
+                    },
+                    isRequired: cswPrivate.isRequired
+                        
                 });
-
-                // Combobox validation
-                // Note: This is a bit of a hack (ok a full on hack); because there isn't a way to connect
-                // Ext validation with JQuery, we will add a checkbox to the ComboBox, set it's state based on
-                // validity of the ComboBox value and validate the checkbox instead.
-                if (cswPrivate.isRequired) {
-                    
-                    var returnObj = Csw.validator(
-                        cswPrivate.validateCell.div(),
-                        cswPrivate.select,
-                        {
-                            wasModified: cswPrivate.wasModified,
-                            onValidation: onValidation,
-                            className: 'validateComboBox_' + cswPrivate.propid,
-                            isExtJsControl: true,
-                            emptyText: 'Type here to search',
-                            hiddenInputName: 'validationCtrl_' + cswPrivate.propid
-                        }
-                    );
-                    cswPrivate.checkBox = returnObj.input;
-
-                }//if (cswPrivate.isRequired)
-
-                // To search or not to search?
-                // If the server returns search === true, then the number of options exceeded
-                // the relationshipoptionlimit configuration variable. When the number of
-                // options exceeds this variable, the user is forced to search the options.
-                if (nodeProperty.propData.values.search === false) {
-                    cswPrivate.listOptionsStore.loadData(cswPrivate.options);
-                    setComboBoxSize(cswPrivate.options);
-                } else {
-                    // Create a proxy to call the searchListOptions web service method
-                    cswPrivate.proxy = new Ext.data.proxy.Ajax({
-                        noCache: false,
-                        pageParam: undefined,
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json; charset=utf-8'
-                        },
-                        startParam: undefined,
-                        limitParam: undefined,
-                        actionMethods: {
-                            read: 'POST'
-                        },
-                        url: 'Services/Search/searchListOptions', //MUST INCLUDE "Services/" or it doesn't work
-                        reader: {
-                            type: 'json',
-                            root: 'Data.Options',
-                            getResponseData: function (response) {
-                                // This function allows us to intercept the data before the reader
-                                // reads it so that we can convert it into an array of objects the 
-                                // store will accept.
-                                var json = Ext.decode(response.responseText);
-
-                                //Set the width of the combobox to match the longest string returned
-                                if (json.Data.Options.length > 0) {
-                                    setComboBoxSize(json.Data.Options);
-                                }
-
-                                return this.readRecords(json);
-                            }
-                        }
-                    });
-                    // Set the store's proxy to the one created above
-                    cswPrivate.listOptionsStore.setProxy(cswPrivate.proxy);
-
-                    // Add the appropriate listeners for the remotely populated combobox
-                    cswPrivate.listOptionsStore.on({
-                        beforeload: function (store, operation) {
-
-                            // Clear the store before filling it with new data
-                            cswPrivate.listOptionsStore.loadData([], false);
-
-                            //Set the parameter object to be sent
-                            var CswNbtSearchRequest = {};
-                            CswNbtSearchRequest.NodeTypePropId = cswPrivate.propid;
-                            CswNbtSearchRequest.SearchTerm = cswPrivate.select.getValue();
-
-                            operation.params = Csw.serialize(CswNbtSearchRequest);
-                        }
-                    });
-
-                    // Set the properties on the combobox that are needed for querying remotely
-                    cswPrivate.select.queryMode = 'remote';
-                    cswPrivate.select.queryParam = false;
-                    cswPrivate.select.minChars = 1;
-                    cswPrivate.select.triggerAction = 'query';
-
-                }
+                
             }//if (nodeProperty.isReadOnly())
 
         };//render()
