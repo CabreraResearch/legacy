@@ -114,9 +114,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void beforePromoteNodeLogic()
         {
-            //CIS-52345 - on Container create, we need to look at if the Materials Obsolete state
-            bool MaterialIsObsolete = CswConvert.ToBoolean( MaterialObsolete.RecalculateReferenceValue() );
-            ToggleAllowRequest( false == MaterialIsObsolete ); //If the material is obsolete, we want to hide the "Request" button
         }
 
         protected override void afterPromoteNodeLogic()

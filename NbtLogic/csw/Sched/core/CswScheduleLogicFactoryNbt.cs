@@ -4,7 +4,7 @@ using ChemSW.MtSched.Rules;
 
 namespace ChemSW.Nbt.Sched
 {
-    public class CswScheduleLogicFactoryNbt: CswScheduleLogicFactoryBase
+    public class CswScheduleLogicFactoryNbt : CswScheduleLogicFactoryBase
     {
 
         protected override List<ICswScheduleLogic> _getRulesFromImplmentationPlatform()
@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtNodeCounts() );
             ReturnVal.Add( new CswScheduleLogicNbtValidateAccessIds() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerRecords() );
+            ReturnVal.Add( new CswScheduleLogicNbtSetMaterialObsolete() );
 
             return ( ReturnVal );
 

@@ -311,7 +311,7 @@
             /// Collapses all nodes in the tree.
             /// </summary>
             /// <returns type="Csw.composites.tree">This tree</returns>
-            var toolbar = cswPublic.tree.getDockedItems()[0];
+            var toolbar = cswPublic.tree.getDockedItems()[1];
             var button = toolbar.items.items[0];
 
             if (cswPrivate.useToggles) {
@@ -333,7 +333,7 @@
             /// Expand all nodes in the tree.
             /// </summary>
             /// <returns type="Csw.composites.tree">This tree</returns>
-            var toolbar = cswPublic.tree.getDockedItems()[0];
+            var toolbar = cswPublic.tree.getDockedItems()[1];
             var button = toolbar.items.items[0];
 
             if (cswPrivate.useToggles) {
@@ -353,7 +353,7 @@
         cswPrivate.allExpanded = false;
 
         cswPublic.toggleExpanded = function () {
-            var toolbar = cswPublic.tree.getDockedItems()[0];
+            var toolbar = cswPublic.tree.getDockedItems()[1];
             toolbar.disable();
             if (cswPrivate.allExpanded === false) {
                 cswPublic.expandAll();

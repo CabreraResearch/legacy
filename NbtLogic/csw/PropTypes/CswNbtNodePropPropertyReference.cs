@@ -117,16 +117,41 @@ namespace ChemSW.Nbt.PropTypes
 
             if( RelationshipId > 0 && RelatedPropId > 0 )
             {
-                CswNbtMetaDataNodeTypeProp RelationshipdNtp = _getRelationshipProp();
-                if( null != RelationshipdNtp )
+                CswNbtMetaDataNodeTypeProp RelationshipNTP = _getRelationshipProp();
+                if( null != RelationshipNTP )
                 {
-                    CswPrimaryKey RelatedNodeId = _Node.Properties[RelationshipdNtp].AsRelationship.RelatedNodeId;
+                    CswPrimaryKey RelatedNodeId = _Node.Properties[RelationshipNTP].AsRelationship.RelatedNodeId;
                     CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodeId];
                     if( null != RelatedNode )
                     {
                         CswNbtMetaDataNodeTypeProp ToReferenceNtp = null;
 
-                        if( RelatedPropType == CswEnumNbtViewPropIdType.NodeTypePropId )
+                        // CIS-52280 - This is a bit of a kludge.
+                        // If the relationship is by property set (e.g. Container's Material), 
+                        // but the property reference is defined by object class, then the valuepropid will be wrong.
+                        // We have to look it up by object class property name instead.
+                        // See CIS-50822 for a more permanent fix.
+                        if( RelationshipNTP.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                        {
+                            if( RelatedPropType == CswEnumNbtViewPropIdType.NodeTypePropId )
+                            {
+                                CswNbtMetaDataNodeTypeProp origRefProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
+                                if( null != origRefProp.getObjectClassProp() )
+                                {
+                                    ToReferenceNtp = RelatedNode.getNodeType().getNodeTypePropByObjectClassProp( origRefProp.getObjectClassProp().PropName );
+                                }
+                                else
+                                {
+                                    ToReferenceNtp = RelatedNode.getNodeType().getNodeTypeProp( origRefProp.PropName );
+                                }
+                            }
+                            else if( RelatedPropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
+                            {
+                                CswNbtMetaDataObjectClassProp origRefProp = _CswNbtResources.MetaData.getObjectClassProp( RelatedPropId );
+                                ToReferenceNtp = RelatedNode.getNodeType().getNodeTypePropByObjectClassProp( origRefProp.PropName );
+                            }
+                        }
+                        else if( RelatedPropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                         {
                             ToReferenceNtp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
                         }
@@ -134,6 +159,7 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             ToReferenceNtp = RelatedNode.getNodeType().getNodeTypePropByObjectClassProp( RelatedPropId );
                         }
+
                         if( null != ToReferenceNtp )
                         {
                             Value = RelatedNode.Properties[ToReferenceNtp].Gestalt;

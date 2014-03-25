@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ObjClasses;
 
@@ -26,13 +27,15 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
+            if( CswNbtImportDef.checkForDefinitionEntries( _CswNbtSchemaModTrnsctn, "CAF" ) )
+            {
+                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-            ImpMgr.removeImportBinding( "CAF", "controlzonename", "Control Zone", "Name", "Text" );
-            ImpMgr.importBinding( "controlzonename", CswNbtObjClassControlZone.PropertyName.ControlZoneName, "", "CAF", "Control Zone" );
+                ImpMgr.removeImportBinding( "CAF", "controlzonename", "Control Zone", "Name", "Text" );
+                ImpMgr.importBinding( "controlzonename", CswNbtObjClassControlZone.PropertyName.ControlZoneName, "", "CAF", "Control Zone" );
 
-            ImpMgr.finalize();
-
+                ImpMgr.finalize();
+            }
         } // update()
 
     }

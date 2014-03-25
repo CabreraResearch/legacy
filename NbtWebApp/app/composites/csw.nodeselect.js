@@ -147,7 +147,7 @@
 
         cswPrivate.getNodeTypeOptions = function () {
             cswPrivate.blankText = '[Select One]';
-            if (null === cswPrivate.selectedNodeType) {
+            if (null === cswPrivate.selectedNodeType || undefined === cswPrivate.selectedNodeType) {
                 cswPrivate.selectedNodeType = cswPrivate.table.cell(1, cswPrivate.nodeTypeCellCol)
                     .nodeTypeSelect({
                         objectClassName: cswPrivate.objectClassName,

@@ -384,7 +384,7 @@ namespace ChemSW.Nbt
                     Query += @"                    and t.searchdeferpropid is null";
                 }
                 Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";
-                // Cas CIS-52280
+                // CIS-52280
                 Query += @"                    and ( oprops.obsolete is null or oprops.obsolete = '0' or oprops.obsolete = 'N')";
                 Query += _ExtraWhereClause;
                 // Case 31351: Exclude specific nodes
@@ -440,7 +440,8 @@ namespace ChemSW.Nbt
                                   ON op.objectclasspropid = p.objectclasspropid 
                                 join jct_nodes_props j 
                                   ON j.nodetypepropid = p.nodetypepropid 
-                         WHERE  op.propname IN ( 'Obsolete', 'Material Obsolete' )";
+                         WHERE  op.propname IN ( '" + CswNbtPropertySetMaterial.PropertyName.Obsolete + @"', 
+                                                 '" + CswNbtObjClassContainer.PropertyName.MaterialObsolete + "' )";
 
             return SQL;
         }

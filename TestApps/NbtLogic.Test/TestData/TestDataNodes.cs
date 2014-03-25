@@ -262,7 +262,7 @@ namespace ChemSW.Nbt.Test
         {
             CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), delegate( CswNbtNode NewNode )
                {
-                   CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, "Name" );
+                   CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, CswNbtObjClassControlZone.PropertyName.ControlZoneName );
                    NewNode.Properties[NameNTP].AsText.Text = Name;
                    CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
                    foreach( CswNbtObjClassFireClassExemptAmountSet DefaultFireClassSet in FCEASOC.getNodes( false, false ) )
@@ -274,7 +274,6 @@ namespace ChemSW.Nbt.Test
                            break;
                        }
                    }
-                   //ControlZoneNode.postChanges( true );
                } );
             _finalize();
 
