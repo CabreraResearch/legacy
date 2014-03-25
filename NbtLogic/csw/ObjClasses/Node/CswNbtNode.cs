@@ -433,9 +433,9 @@ namespace ChemSW.Nbt.ObjClasses
             NodePersistStrategy.postChanges( this );
         }//postChanges()
 
-        public void write( bool ForceUpdate )
+        public void requestWrite( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
         {
-            _CswNbtNodeWriter.write( this, ForceUpdate );
+            _CswNbtNodeWriter.write( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
         }
 
         public void setModificationState( String ModState )
@@ -667,11 +667,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion Methods
-
-        public void syncNodeName()
-        {
-            _CswNbtNodeWriter.syncNodeName( this );
-        }
 
         public void setSequenceValues()
         {
