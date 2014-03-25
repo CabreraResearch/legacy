@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
@@ -28,19 +29,20 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
 
-            if( null == MethodOC )
-            {
-                MethodOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodClass, "doc.png", true );
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MethodOC.ObjectClassId );
-            } //if MethodMDOC == null
+            //if( null == MethodOC )
+            //{
+            //    MethodOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodClass, "doc.png", true );
+            //    _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MethodOC.ObjectClassId );
+            //} //if MethodMDOC == null
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            CswNbtMetaDataObjectClassProp ObsoleteOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassMethod.PropertyName.Obsolete,
                 FieldType = CswEnumNbtFieldType.Logical,
-                ServerManaged = false
+                IsRequired = true
             } );
 
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObsoleteOCP, CswEnumTristate.False );
 
         } // update()
 
