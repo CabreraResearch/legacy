@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
             Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )//We lost scope of wasAnySubfieldModified, so we need to check them all
+                if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) && CurrentProp.wasAnySubFieldModified())
                 {
                     _markExternalPropRefsDirty( CurrentProp );
                     _markExternalRelatedPropsDirty( CurrentProp );
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtResources.runMailReportEvents( _CswNbtNode.NodeTypeId, CswEnumNbtMailReportEventOption.Edit, _CswNbtNode, ModifiedProps );
             }
             _CswNbtNode.PendingEvents = false;
-            _CswNbtNode.postOnlyChanges( true );
+            _CswNbtNode.postOnlyChanges( true, true );
         }
 
         //mark any property references to this property on other nodes as pending update
