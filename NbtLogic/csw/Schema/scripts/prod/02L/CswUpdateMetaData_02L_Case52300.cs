@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "CIS-52300: Add obsolete property to method OC"; }
+            get { return "MLM2: CIS-52300: Add obsolete property to method OC"; }
         }
 
         public override void update()
@@ -32,13 +32,14 @@ namespace ChemSW.Nbt.Schema
             {
                 MethodOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodClass, "doc.png", true );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MethodOC.ObjectClassId );
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-                {
-                    PropName = CswNbtObjClassMethod.PropertyName.Obsolete,
-                    FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = false
-                } );
             } //if MethodMDOC == null
+
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassMethod.PropertyName.Obsolete,
+                FieldType = CswEnumNbtFieldType.Logical,
+                ServerManaged = false
+            } );
 
 
         } // update()

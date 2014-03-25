@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string MethodNo = "Method No";
             public const string MethodDescription = "Method Description";
-            public const string Obsolete = "True if the method has been replaced";
+            public const string Obsolete = "Method is Obsolete";
         }
 
         public CswNbtObjClassMethod( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
