@@ -666,11 +666,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNodeWriter.syncNodeName( this );
         }
 
-        public void updateRelationsToThisNode()
-        {
-            _CswNbtNodeWriter.updateRelationsToThisNode( this );
-        }
-
         public void setSequenceValues()
         {
             _CswNbtNodeWriter.setSequenceValues( this );
