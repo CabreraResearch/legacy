@@ -47,7 +47,6 @@ namespace ChemSW.Nbt
             }
         }//clear() 
 
-        //public void makeNewNodeEntry( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         public void makeNewNodeEntry( CswNbtNode Node )
         {
             // case 20970
@@ -110,7 +109,6 @@ namespace ChemSW.Nbt
             if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
                 ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
             {
-                    //makeNewNodeEntry( Node, IsCopy, OverrideUniqueValidation );
                 // save nodename and pendingupdate
                 if( Node.NodeId.TableName != "nodes" )
                     throw new CswDniException( CswEnumErrorType.Error, "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
@@ -130,11 +128,12 @@ namespace ChemSW.Nbt
                 NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
                 NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
                 NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+                NodesTable.Rows[0]["pendingevents"] = CswConvert.ToDbVal( Node.PendingEvents );
 
                 // case 29311 - Sync with relational data
                 if( Node.getNodeType().DoRelationalSync )
                 {
-                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy, AllowAuditing );
+                    _CswNbtNodeWriterRelationalDb.write( Node, ForceSave );
                 }
 
                 if( null != Node.RelationalId )
