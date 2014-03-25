@@ -3,7 +3,7 @@
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Keeps the schema up-to-date
+    /// List of schema scripts for the labeled milestone
     /// </summary>
     public class CswSchemaScriptsMagnolia : ICswSchemaScripts
     {
@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>
                 {
+                // new CswUpdateDDL_02M_CISXXXXX(),
                 };
         } // _DDLScripts()
 
@@ -18,6 +19,7 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>
                 {
+                // new CswUpdateMetaData_02M_CISXXXXX(),
                 };
         } // _MetaDataScripts()
 
@@ -25,7 +27,8 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>
                 {
-                    new CswUpdateSchema_02M_Case52354(),
+                // new CswUpdateSchema_02M_CISXXXXX(),
+                   new CswUpdateSchema_02M_Case52354(),
                 };
         } // _SchemaScripts()
 
