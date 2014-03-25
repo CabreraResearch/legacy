@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.Sched
             { Import                        , Import                         },
             { MolFingerprints               , MolFingerprints                },
             { NodeCounts                    , NodeCounts                     },
-            { NodeUpdateEvents              , NodeUpdateEvents               },
             { PurgeSessionData              , PurgeSessionData               },
             { SetMaterialObsolete           , SetMaterialObsolete            },
             { Reconciliation                , Reconciliation                 },
@@ -96,7 +95,6 @@ namespace ChemSW.Nbt.Sched
         public const string Import = "Import";
         public const string MolFingerprints = "MolFingerprints";
         public const string NodeCounts = "NodeCounts";
-        public const string NodeUpdateEvents = "NodeUpdateEvents";
         public const string PurgeSessionData = "PurgeSessionData";
         public const string Reconciliation = "Reconciliation";
         public const string TierII = "TierII";
