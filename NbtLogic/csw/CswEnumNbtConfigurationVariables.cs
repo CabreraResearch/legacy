@@ -16,6 +16,11 @@ namespace ChemSW.Nbt
         brand_pageicon,
 
         /// <summary>
+        /// If an operation affects this number of nodes, run as a batch operation instead
+        /// </summary>
+        batchthreshold,
+
+        /// <summary>
         /// Title to display on every page
         /// </summary>
         brand_pagetitle,
