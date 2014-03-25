@@ -33,5 +33,5 @@ namespace ChemSW.Nbt.Schema
                 };
         } // _SchemaScripts()
 
-    }//class CswSchemaScriptsLarch
+    }//class CswSchemaScriptsMagnolia
 }//namespace ChemSW.Nbt.Schema
