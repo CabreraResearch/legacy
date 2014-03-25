@@ -206,6 +206,31 @@ namespace ChemSW.Nbt
             }
         }
 
+        public void updateRelationsToThisNode( CswNbtNode Node )
+        {
+            if( Node.NodeId.TableName != "nodes" )
+                throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
+
+            string SQL = @"update jct_nodes_props 
+                              set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"' 
+                            where jctnodepropid in (select j.jctnodepropid
+                                                      from jct_nodes_props j
+                                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid
+                                                      join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                     where (f.fieldtype = 'Relationship' or f.fieldtype = 'Location' or f.fieldtype = 'Quantity')
+                                                       and j.field1_fk = " + Node.NodeId.PrimaryKey.ToString() + ")";
+
+            // We're not doing this in a CswTableUpdate because it might be a large operation, 
+            // and we don't care about auditing for this change.
+            _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
+
+            //// case 29311 - Sync with relational data
+            //if( Node.getNodeType().DoRelationalSync )
+            //{
+            //    _CswNbtNodeWriterRelationalDb.updateRelationsToThisNode( Node );
+            //}
+        }
+
         public void delete( CswNbtNode Node )
         {
             //Case 31416 - Delete any blob_data associated with this nodes properties
@@ -317,11 +342,14 @@ namespace ChemSW.Nbt
                 Node.NodeName = _makeDefaultNodeName( Node );
             }
 
+            // When a node's name changes, we need to update any relationships (and locations) referencing that node
             if( Node.NodeName != OldNodeName )
             {
-                Node.PendingEvents = true;
+                updateRelationsToThisNode( Node );
             }
+
         }//_synchNodeName()
+
 
         /// <summary>
         /// Create audit records as if the node is being inserted, for use with temp nodes

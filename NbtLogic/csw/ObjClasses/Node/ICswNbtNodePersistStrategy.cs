@@ -11,6 +11,7 @@
         bool SkipEvents { get; set; }
         bool AllowAuditing { get; set; }
         bool Creating { get; set; }
+        bool OverrideMailReportEvents { get; set; }
 
         void postChanges( CswNbtNode Node );
     }
