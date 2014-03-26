@@ -712,51 +712,19 @@ namespace ChemSW.Nbt.ImportExport
 
             if( false == string.IsNullOrEmpty( LegacyId ) )
             {
-                CswNbtView View = new CswNbtView( _CswNbtResources );
-                View.ViewName = "MatchingLegacyId_View";
-
-                CswNbtViewRelationship ParentRelationship = null;
-                ICswNbtMetaDataProp MetaDataProp = null;
-
-                switch( NodeTypeProp.FKType )
+                //CIS-53123 - use this instead of treeloader for performance
+                String Sql = @"select n.nodeid
+                                from nodes n 
+                                join nodetype_props p on (lower(p.propname) = '" + CswNbtObjClass.PropertyName.LegacyId.ToLower() + @"') 
+                                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid)
+                                where jnp.Field1 = '" + LegacyId + "'";
+                CswArbitrarySelect LegacyNodeIdSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
+                DataTable LegacyNodeIdTable = LegacyNodeIdSelect.getTable();
+                if( LegacyNodeIdTable.Rows.Count > 0 )
                 {
-                    case "PropertySetId":
-                        CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( NodeTypeProp.FKValue );
-                        MetaDataProp =
-                            PropertySet.getObjectClasses()
-                                       .FirstOrDefault()
-                                       .getNodeTypes()
-                                       .FirstOrDefault()
-                                       .getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                        ParentRelationship = View.AddViewRelationship( PropertySet, false );
-                        break;
-                    case "ObjectClassId":
-                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeProp.FKValue );
-                        MetaDataProp = ObjectClass.getNodeTypes().FirstOrDefault().getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                        ParentRelationship = View.AddViewRelationship( ObjectClass, false );
-                        break;
-                    case "NodeTypeId":
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeProp.FKValue );
-                        MetaDataProp = NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                        ParentRelationship = View.AddViewRelationship( NodeType, false );
-                        break;
-                }
-
-                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                              MetaDataProp: MetaDataProp,
-                                              Conjunction: CswEnumNbtFilterConjunction.And,
-                                              SubFieldName: CswEnumNbtSubFieldName.Text,
-                                              FilterMode: CswEnumNbtFilterMode.Equals,
-                                              Value: LegacyId );
-
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-                if( Tree.getChildNodeCount() > 0 )
-                {
-                    // Get the Node
-                    Tree.goToNthChild( 0 );
-
+                    int LegacyNodeId = CswConvert.ToInt32( LegacyNodeIdTable.Rows[0]["nodeid"] );
                     // Set the relationship property to the nodeid of the found node
-                    Node.Properties[NodeTypeProp].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, Tree.getNodeIdForCurrentPosition().PrimaryKey );
+                    Node.Properties[NodeTypeProp].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, LegacyNodeId );
 
                     // Refresh
                     if( FieldType == CswEnumNbtFieldType.Relationship )
@@ -774,11 +742,8 @@ namespace ChemSW.Nbt.ImportExport
                     Node.Properties[NodeTypeProp].SyncGestalt();
 
                     Ret = true;
-
-                }//if (Tree.getChildNodeCount() > 0)
-
-            }//if( false == string.IsNullOrEmpty( LegacyId ) )
-
+                }
+            }
             return Ret;
         }
 
