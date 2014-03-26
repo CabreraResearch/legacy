@@ -533,8 +533,9 @@ namespace ChemSW.Nbt.ImportExport
                     _getLobData( Binding, ImportRow, out PropertyData, out BlobData );
                 }
 
+                CswEnumNbtFieldType DestPropertyFieldType = Binding.DestProperty.getFieldTypeValue();
                 // Special case for TimeInterval, specifically for IMCS imports
-                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
+                if( DestPropertyFieldType == CswEnumNbtFieldType.TimeInterval )
                 {
                     XElement input = XElement.Parse( "<rateintervalvalue>" + PropertyData.ToLower() + "</rateintervalvalue>" );
                     XmlDocument xmlDoc = new XmlDocument();
@@ -546,7 +547,8 @@ namespace ChemSW.Nbt.ImportExport
                     ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
-                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.File && Binding.DestSubFieldName != CswEnumNbtSubFieldName.Href.ToString() ) || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Image )
+                else if( ( DestPropertyFieldType == CswEnumNbtFieldType.File && Binding.DestSubFieldName != CswEnumNbtSubFieldName.Href.ToString() )
+                    || DestPropertyFieldType == CswEnumNbtFieldType.Image )
                 {
                     CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     int BlobDataId = sdBlobData.GetBlobDataId( Node.Properties[Binding.DestProperty].JctNodePropId );
@@ -582,7 +584,7 @@ namespace ChemSW.Nbt.ImportExport
                     blobDataTblUpdate.update( blobDataTbl );
                 }
                 // NodeTypeSelect
-                else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
+                else if( DestPropertyFieldType == CswEnumNbtFieldType.NodeTypeSelect )
                 {
                     CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( PropertyData.ToString() );
                     if( nt != null )
@@ -594,11 +596,11 @@ namespace ChemSW.Nbt.ImportExport
                         OnMessage( "Skipped invalid nodetype: " + PropertyData );
                     }
                 }
-                // Quantity or Relationship
-                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Column.ToString() == CswEnumNbtPropColumn.Field1_FK.ToString() )
-                            || ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Name.ToString().ToLower() == "name" )
-                            || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship
-                            || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
+                // Quantity, Relationship, or Location
+                else if( ( DestPropertyFieldType == CswEnumNbtFieldType.Quantity && 
+                             ( Binding.DestSubfield.Column.ToString() == CswEnumNbtPropColumn.Field1_FK.ToString() || Binding.DestSubfield.Name.ToString().ToLower() == "name" ) )
+                            || DestPropertyFieldType == CswEnumNbtFieldType.Relationship
+                            || DestPropertyFieldType == CswEnumNbtFieldType.Location )
                 {
                     CswCommaDelimitedString inClause = new CswCommaDelimitedString();
 
@@ -633,8 +635,7 @@ namespace ChemSW.Nbt.ImportExport
                         // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
                         MatchedOnLegacyId = _relationshipSearchViaLegacyId( Node,
                                                                            ImportRow[Binding.SourceColumnName].ToString(),
-                                                                           Binding.DestProperty.getFieldTypeValue(),
-                                                                           Binding.DestNodeTypeName,
+                                                                           DestPropertyFieldType,
                                                                            Binding.DestProperty );
                     }
                     if( false == MatchedOnLegacyId )
@@ -671,7 +672,6 @@ namespace ChemSW.Nbt.ImportExport
                         _relationshipSearchViaLegacyId( Node,
                                                         ImportRow[RowRelationship.SourceRelColumnName].ToString(),
                                                         RowRelationship.Relationship.getFieldTypeValue(),
-                                                        RowRelationship.NodeTypeName,
                                                         RowRelationship.Relationship );
                     }
                 }
@@ -680,10 +680,6 @@ namespace ChemSW.Nbt.ImportExport
                     // In this case, we are matching on NodeId
                     if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
                     {
-                        //Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                        //    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
-                        //    ImportRow[TargetOrder.PkColName]
-                        //    );
                         Node.Properties[RowRelationship.Relationship].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, ImportRow[TargetOrder.PkColName] );
 
                         if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
@@ -693,6 +689,10 @@ namespace ChemSW.Nbt.ImportExport
                         if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Location )
                         {
                             Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
+                        }
+                        if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                        {
+                            Node.Properties[RowRelationship.Relationship].AsQuantity.RefreshNodeName();
                         }
 
                         Node.Properties[RowRelationship.Relationship].SyncGestalt();
@@ -706,8 +706,7 @@ namespace ChemSW.Nbt.ImportExport
 
 
         // This should actually set the value if there is one and return true if it was set and false if not
-        //private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes )
-        private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswEnumNbtFieldType FieldType, string DestNodeTypeName, CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswEnumNbtFieldType FieldType, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             bool Ret = false;
 
@@ -767,6 +766,10 @@ namespace ChemSW.Nbt.ImportExport
                     if( FieldType == CswEnumNbtFieldType.Location )
                     {
                         Node.Properties[NodeTypeProp].AsLocation.RefreshNodeName();
+                    }
+                    if( FieldType == CswEnumNbtFieldType.Quantity )
+                    {
+                        Node.Properties[NodeTypeProp].AsQuantity.RefreshNodeName();
                     }
                     Node.Properties[NodeTypeProp].SyncGestalt();
 
