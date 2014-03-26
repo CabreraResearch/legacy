@@ -180,7 +180,8 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassTestingUserLabAssignment.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassTestingLabMethodAssignment.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassTestingLabUserAssignment.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMethodCondition.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassManufacturer.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassBiological.cs" />
@@ -771,6 +772,7 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case31076.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52309.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52308.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateMetaData_02L_Case52302.cs" />
     <Compile Include="csw\Schema\scripts\prod\02L\CswUpdateSchema_02L_Case52774.cs" />

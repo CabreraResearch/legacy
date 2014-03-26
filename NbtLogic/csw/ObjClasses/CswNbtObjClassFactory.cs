@@ -315,8 +315,12 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassTask( CswNbtResources, Node );
                     break;
 
-                case CswEnumNbtObjectClass.TestingUserLabAssignmentClass:
-                    ReturnVal = new CswNbtObjClassTestingUserLabAssignment( CswNbtResources, Node );
+                case CswEnumNbtObjectClass.TestingLabUserAssignmentClass:
+                    ReturnVal = new CswNbtObjClassTestingLabUserAssignment( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.TestingLabMethodAssignmentClass:
+                    ReturnVal = new CswNbtObjClassTestingLabMethodAssignment( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.UnitOfMeasureClass:
