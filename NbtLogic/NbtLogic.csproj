@@ -964,6 +964,7 @@
     <None Include="csw\Schema\scripts\past\02L\CswUpdateSchema_02L_Case31783A.cs" />
     <None Include="csw\Schema\scripts\past\02L\CswUpdateSchema_02L_Case31783B.cs" />
     <None Include="csw\Schema\scripts\past\02L\CswUpdateSchema_02L_Case31783C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52316.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS53115.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswSchemaScriptsMagnolia.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateDDL_02M_CISXXXXX.cs" />
