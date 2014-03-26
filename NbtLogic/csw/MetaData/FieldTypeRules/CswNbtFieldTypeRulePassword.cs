@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Nbt.ObjClasses;
@@ -15,6 +14,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             public static CswEnumNbtSubFieldName Password = CswEnumNbtSubFieldName.Password;
             public static CswEnumNbtSubFieldName ChangedDate = CswEnumNbtSubFieldName.ChangedDate;
+            public static CswEnumNbtSubFieldName PreviouslyUsedPasswords = CswEnumNbtSubFieldName.PreviouslyUsedPasswords;
         }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
@@ -33,10 +33,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             ChangedDateSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, SubFieldName.ChangedDate );
             SubFields.add( ChangedDateSubField );
+
+            PreviouslyUsedPasswords = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.PreviouslyUsedPasswords );
+            SubFields.add( PreviouslyUsedPasswords );
+
         }//ctor
 
         public CswNbtSubField EncryptedPasswordSubField;
         public CswNbtSubField ChangedDateSubField;
+        public CswNbtSubField PreviouslyUsedPasswords;
 
         public CswNbtSubFieldColl SubFields
         {

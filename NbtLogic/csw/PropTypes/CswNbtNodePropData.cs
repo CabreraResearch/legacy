@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
             bool ret = false;
             if( null != SubField )
             {
-                SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
+                ret = SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
             }
             return ret;
         }
