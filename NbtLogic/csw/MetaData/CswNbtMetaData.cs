@@ -1313,6 +1313,10 @@ namespace ChemSW.Nbt.MetaData
                     NewNtpNode.PropName.Text = NtpModel.PropName;
                     NewNtpNode.ReadOnly.Checked = CswConvert.ToTristate( NtpModel.ReadOnly );
                     NewNtpNode.UseNumbering.Checked = CswConvert.ToTristate( NtpModel.UseNumbering );
+                    if( false == String.IsNullOrEmpty( NtpModel.ListOptions ) )
+                    {
+                        NewNtpNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = NtpModel.ListOptions;
+                    }
                 } );
 
             // Multi
