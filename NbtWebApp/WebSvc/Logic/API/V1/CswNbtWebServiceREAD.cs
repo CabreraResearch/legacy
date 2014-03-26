@@ -29,7 +29,7 @@ namespace NbtWebApp.WebSvc.Logic.API
             return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, GenericRequest, Return );
         }
 
-        public void GetResource( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public void GetResource( CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             if( hasPermission( GenericRequest, Return ) )
             {
@@ -99,7 +99,7 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void GetResource( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public static void GetResource( ICswResources CswResources, CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceREAD GET = new CswNbtWebServiceREAD( (CswNbtResources) CswResources );
             GET.GetResource( Return, GenericRequest );

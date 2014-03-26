@@ -266,6 +266,9 @@ namespace ChemSW.Nbt.WebServices
                         [DataMember]
                         public bool hidden = false;
 
+                        [DataMember]
+                        public string id = string.Empty;
+
                     }
                 }
 

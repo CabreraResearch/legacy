@@ -26,17 +26,19 @@ namespace ChemSW.Nbt.PropTypes
         {
             _EncryptedPasswordSubField = ( (CswNbtFieldTypeRulePassword) _FieldTypeRule ).EncryptedPasswordSubField;
             _ChangedDateSubField = ( (CswNbtFieldTypeRulePassword) _FieldTypeRule ).ChangedDateSubField;
+            _PreviouslyUsedPasswords = ( (CswNbtFieldTypeRulePassword) _FieldTypeRule ).PreviouslyUsedPasswords;
 
             _CswEncryption = new CswEncryption( CswNbtResources.MD5Seed );
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _EncryptedPasswordSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => EncryptedPassword, x => EncryptedPassword = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _ChangedDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ChangedDate, x => ChangedDate = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _PreviouslyUsedPasswords, new Tuple<Func<dynamic>, Action<dynamic>>( () => PreviouslyUsedPasswords, x => PreviouslyUsedPasswords = CswConvert.ToString( x ) )  );
         }
 
         private CswNbtSubField _EncryptedPasswordSubField;
         private CswNbtSubField _ChangedDateSubField;
-
+        private CswNbtSubField _PreviouslyUsedPasswords;
         override public bool Empty
         {
             get
@@ -74,6 +76,13 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     SyncGestalt();
                     ChangedDate = DateTime.Now;
+                    CswCommaDelimitedString PasswordList = PreviouslyUsedPasswords;
+                    PasswordList.Add( value );
+                    while( PasswordList.Count > CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.password_reuse_count.ToString() ) ) )
+                    {
+                        PasswordList.Unshift();
+                    }
+                    PreviouslyUsedPasswords = PasswordList;
                 }
             }
         }
@@ -96,6 +105,21 @@ namespace ChemSW.Nbt.PropTypes
                     SetPropRowValue( _ChangedDateSubField, value );
                 else
                     SetPropRowValue( _ChangedDateSubField, DBNull.Value );
+            }
+        }
+
+        /// <summary>
+        /// Store previously entered passwords here
+        /// </summary>
+        private CswCommaDelimitedString PreviouslyUsedPasswords
+        {
+            get
+            {
+                return new CswCommaDelimitedString( GetPropRowValue( _PreviouslyUsedPasswords ) );
+            }
+            set
+            {
+                SetPropRowValue( _PreviouslyUsedPasswords, value.ToString( false ) );
             }
         }
 
@@ -138,6 +162,12 @@ namespace ChemSW.Nbt.PropTypes
                 }
 
             }
+
+            //ensure that the password hasn't been used recently
+            if( PreviouslyUsedPasswords.IndexOf( _CswEncryption.getMd5Hash(Ret) ) > -1 )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "You may not reuse the same password so soon.", "The supplied password appears in your " + _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.password_reuse_count.ToString() ) + " most recently used passwords.");
+            }
             return Ret;
         }
 
@@ -147,7 +177,6 @@ namespace ChemSW.Nbt.PropTypes
             {
                 string NewPassword = _validatePassword( value );
                 EncryptedPassword = _CswEncryption.getMd5Hash( NewPassword );
-                ChangedDate = DateTime.Now;
             }
         }
 
