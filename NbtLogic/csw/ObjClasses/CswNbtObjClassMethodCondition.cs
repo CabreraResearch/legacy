@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Units = "Units";
         }
 
-        public CswNbtObjClassMethodCondition( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassMethodCondition( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -26,18 +26,18 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMethodCondition( CswNbtNode Node )
         {
             CswNbtObjClassMethodCondition ret = null;
-            if( null !=Node && _Validate(Node, CswEnumNbtObjectClass.MethodConditionClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.MethodConditionClass ) )
             {
-                ret = (CswNbtObjClassMethodCondition)Node.ObjClass;
+                ret = (CswNbtObjClassMethodCondition) Node.ObjClass;
             }
             return ret;
         }
 
         #region Inherited Events
-        
-        protected override void  afterPopulateProps()
+
+        protected override void afterPopulateProps()
         {
-           base.afterPopulateProps();
+            base.afterPopulateProps();
         }
 
         #endregion
