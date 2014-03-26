@@ -42,10 +42,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        #region ObjectClass-Specific Properties
-
-        #endregion
-
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Method

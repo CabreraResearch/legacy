@@ -26,38 +26,31 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodConditionClass);
-
-            if( null == MethodConditionOC)
-            {
-                MethodConditionOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodConditionClass, "check.png", true );
+            CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodConditionClass, "check.png", true );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MethodConditionOC.ObjectClassId );
                 _CswNbtSchemaModTrnsctn.commitTransaction();
-            } //if MethodMDOC == null
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Method,
                 FieldType = CswEnumNbtFieldType.Relationship,
-                ServerManaged = false,
-                IsUnique = true
+                IsCompoundUnique = true
             } );
+
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Name,
                 FieldType = CswEnumNbtFieldType.List,
-                ServerManaged = false,
-                IsCompoundUnique = true
+                IsCompoundUnique = true,
+                ListOptions = "Temperature,Salinity"
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Units,
                 FieldType = CswEnumNbtFieldType.List,
-                ServerManaged = false
+                ListOptions = "degrees,molar"
             } );
-
-            _CswNbtSchemaModTrnsctn.commitTransaction();
 
         } // update()
 
