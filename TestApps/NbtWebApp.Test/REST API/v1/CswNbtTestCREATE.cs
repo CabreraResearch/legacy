@@ -43,7 +43,7 @@ namespace NbtWebApp.Test.REST_API
             }
 
             CswNbtAPIGenericRequest Request = new CswNbtAPIGenericRequest( "User", string.Empty );
-            CswNbtResourceWithProperties CreatedResource = new CswNbtResourceWithProperties();
+            CswNbtResource CreatedResource = new CswNbtResource();
 
             CswNbtWebServiceCREATE.Create( TestData.CswNbtResources, CreatedResource, Request );
 

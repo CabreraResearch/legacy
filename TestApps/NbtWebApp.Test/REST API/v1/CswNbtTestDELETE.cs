@@ -3,7 +3,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Test;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 using NUnit.Framework;
@@ -68,7 +67,7 @@ namespace NbtWebApp.Test.REST_API
             CswNbtObjClassUser TestUser = _createTestUser( "TestDeleteUser1", "Administrator", 15, "en" );
             CswNbtAPIGenericRequest Request = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() );
 
-            CswNbtResourceWithProperties EditedResource = new CswNbtResourceWithProperties();
+            CswNbtResource EditedResource = new CswNbtResource();
             string error = string.Empty;
             try
             {

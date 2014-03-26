@@ -72,7 +72,7 @@ namespace NbtWebApp.Test.REST_API
 
             CswNbtObjClassUser testUser = _createTestUser( TestUsername, RoleName, TestPageSize, TestLanguage );
 
-            CswNbtResourceWithProperties Resource = new CswNbtResourceWithProperties();
+            CswNbtResource Resource = new CswNbtResource();
             CswNbtAPIGenericRequest Request = new CswNbtAPIGenericRequest( "User", testUser.NodeId.PrimaryKey.ToString() );
 
             string error = string.Empty;
