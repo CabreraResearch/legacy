@@ -26,20 +26,20 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass TestingLabUserAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingUserLabAssignmentClass, "check.png", true );
+            CswNbtMetaDataObjectClass TestingLabUserAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabUserAssignmentClass, "check.png", true );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, TestingLabUserAssignmentOC.ObjectClassId );
 
             _CswNbtSchemaModTrnsctn.commitTransaction();
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabUserAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
-                PropName = CswNbtObjClassTestingUserLabAssignment.PropertyName.User,
+                PropName = CswNbtObjClassTestingLabUserAssignment.PropertyName.User,
                 FieldType = CswEnumNbtFieldType.Relationship,
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabUserAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
-                PropName = CswNbtObjClassTestingUserLabAssignment.PropertyName.TestingLab,
+                PropName = CswNbtObjClassTestingLabUserAssignment.PropertyName.TestingLab,
                 FieldType = CswEnumNbtFieldType.Relationship,
             } );
 
