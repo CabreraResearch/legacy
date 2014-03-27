@@ -91,9 +91,6 @@ namespace ChemSW.Nbt.Sched
                         CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
                         foreach( DataRow QueueRow in QueueTable.Rows )
                         {
-                            //TODO - iterate the QueueTableRows ahead of time and get the pks we need 
-                            //(if the importorder/tablename/pkcolumn name changes, break)
-                            //then query the ItemTable with all the pks at once and iterate them
                             string CurrentTblNamePkCol = CswConvert.ToString( QueueRow["pkcolumnname"] );
                             if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
                             {
@@ -101,7 +98,7 @@ namespace ChemSW.Nbt.Sched
                             }
                             if( QueueRow["importorder"].ToString() != ImportOrder )
                             {
-                                break;
+                                break;//We've changed NodeTypes - we'll pick them up next time around
                             }
                             ImportQueuePKs.Add( QueueRow[QueuePkName].ToString() );
                             ItemPKs.Add( QueueRow["itempk"].ToString() );
