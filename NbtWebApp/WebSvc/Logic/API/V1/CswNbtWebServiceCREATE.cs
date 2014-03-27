@@ -28,7 +28,7 @@ namespace NbtWebApp.WebSvc.Logic.API
             return base.hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.Create, GenericRequest, Return );
         }
 
-        public void Create( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public void Create( CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             if( hasPermission( GenericRequest, Return ) )
             {
@@ -60,7 +60,7 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void Create( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public static void Create( ICswResources CswResources, CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceCREATE POST = new CswNbtWebServiceCREATE( (CswNbtResources) CswResources );
             POST.Create( Return, GenericRequest );

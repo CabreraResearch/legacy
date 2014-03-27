@@ -85,6 +85,7 @@ namespace ChemSW.Nbt.MetaData
             { SDSDocumentClass                  , SDSDocumentClass                   },
             { SizeClass                         , SizeClass                          },
             { TaskClass                         , TaskClass                          },
+            { TestingLabClass                   , TestingLabClass                    },
             { TestingLabUserAssignmentClass     , TestingLabUserAssignmentClass      },
             { TestingLabMethodAssignmentClass   , TestingLabMethodAssignmentClass    },
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
@@ -218,6 +219,7 @@ namespace ChemSW.Nbt.MetaData
         public const string GHSSignalWordClass = "GHSSignalWord";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
+        public const string TestingLabClass = "TestingLabClass";
         public const string TestingLabUserAssignmentClass = "TestingLabUserAssignmentClass";
         public const string TestingLabMethodAssignmentClass = "TestingLabMethodAssignmentClass";
         public const string UnitOfMeasureClass = "UnitOfMeasureClass";

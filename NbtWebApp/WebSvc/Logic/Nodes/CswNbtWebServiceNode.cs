@@ -157,7 +157,8 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     value = SizeNode.InitialQuantity.CachedUnitName,
                                     readOnly = false == string.IsNullOrEmpty( SizeNode.InitialQuantity.CachedUnitName ),
-                                    hidden = false
+                                    hidden = false,
+                                    id = SizeNode.InitialQuantity.UnitId.ToString()
                                 },
                                 catalogNo = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
