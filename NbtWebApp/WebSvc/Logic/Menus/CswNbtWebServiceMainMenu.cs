@@ -186,9 +186,6 @@ namespace ChemSW.Nbt.WebServices
                         _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, Node.getNodeType() ) &&
                         Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
                         )
-                    {
-                        string BadPropertyName = string.Empty;
-                        if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
                         {
                             MoreObj["Copy"] = new JObject();
                             MoreObj["Copy"]["copytype"] = _getActionType( Node.getNodeType() );
@@ -197,7 +194,6 @@ namespace ChemSW.Nbt.WebServices
                             MoreObj["Copy"]["nodename"] = Node.NodeName;
                             MoreObj["Copy"]["nodetypeid"] = Node.NodeTypeId.ToString();
                         }
-                    }
 
                     // DELETE
                     if( _MenuItems.Contains( "Delete" ) &&

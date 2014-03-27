@@ -444,16 +444,28 @@ namespace ChemSW.Nbt.PropTypes
                     if( NodeTree.getChildNodeCount() > 0 )
                     {
                         NodeTree.goToNthChild( 0 );
-                        if( !IsCopy || Required )
+
+                        if( Required )
                         {
-                            CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
-                            string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
-                            EsotericMessage += "of property '" + NodeTypeProp.PropName + "' ";
-                            EsotericMessage += "for nodeid (" + NodeId.ToString() + ") ";
-                            EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
-                            EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
-                            string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
-                            throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                            if( IsCopy && NodeTypeProp.getFieldType().FieldType == CswEnumNbtFieldType.Text )
+                            {
+                                //in the event that a node is copied, which has props which 
+                                //are both unique and required, the prop in question is 
+                                //made unique. 
+                                //CIS-53150 Can't copy roles
+                                ((CswNbtNodePropText) this).makeUnique();
+                            }
+                            else
+                            {
+                                CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
+                                string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
+                                EsotericMessage += "of property '" + NodeTypeProp.PropName + "' ";
+                                EsotericMessage += "for nodeid (" + NodeId.ToString() + ") ";
+                                EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
+                                EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
+                                string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
+                                throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                            }
                         }
                         else
                         {
