@@ -27,6 +27,10 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass TestingLabUserAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabUserAssignmentClass, "check.png", true );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass TestingLabOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.TestingLabClass);
+
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, TestingLabUserAssignmentOC.ObjectClassId );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, TestingLabUserAssignmentOC.ObjectClassId );
 
             _CswNbtSchemaModTrnsctn.commitTransaction();
@@ -35,12 +39,18 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassTestingLabUserAssignment.PropertyName.User,
                 FieldType = CswEnumNbtFieldType.Relationship,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = UserOC.ObjectClassId
+
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabUserAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassTestingLabUserAssignment.PropertyName.TestingLab,
                 FieldType = CswEnumNbtFieldType.Relationship,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = TestingLabOC.ObjectClassId
+
             } );
 
         } // update()
