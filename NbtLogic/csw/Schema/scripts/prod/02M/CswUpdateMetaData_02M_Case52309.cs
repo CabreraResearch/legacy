@@ -31,12 +31,16 @@ namespace ChemSW.Nbt.Schema
 
 
             CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass);
+            CswNbtMetaDataObjectClass TestingLabOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.TestingLabClass);
+
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabMethodAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassTestingLabMethodAssignment.PropertyName.TestingLab,
                 FieldType = CswEnumNbtFieldType.Relationship,
-                IsCompoundUnique = true
+                IsCompoundUnique = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = TestingLabOC.ObjectClassId
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabMethodAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -45,7 +49,7 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswEnumNbtFieldType.Relationship,
                 IsFk = true,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = TestingLabMethodAssignmentOC.ObjectClassId,
+                FkValue = MethodOC.ObjectClassId,
                 IsCompoundUnique = true
             } );
 
