@@ -29,6 +29,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass TestingLabMethodAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabMethodAssignmentClass, "check.png", true );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, TestingLabMethodAssignmentOC.ObjectClassId );
 
+
+            CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass);
+
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabMethodAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassTestingLabMethodAssignment.PropertyName.TestingLab,
@@ -40,6 +43,9 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassTestingLabMethodAssignment.PropertyName.Method,
                 FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = TestingLabMethodAssignmentOC.ObjectClassId,
                 IsCompoundUnique = true
             } );
 

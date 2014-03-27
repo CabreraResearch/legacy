@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Method]; }
         }
 
-        public CswNbtNodePropRelationship Cost
+        public CswNbtNodePropText Cost
         {
             get { return _CswNbtNode.Properties[PropertyName.Cost]; }
         }
