@@ -298,6 +298,10 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.SDSDocumentClass:
                     ReturnVal = new CswNbtObjClassSDSDocument( CswNbtResources, Node );
                     break;
+
+                case CswEnumNbtObjectClass.TestingLabClass:
+                    ReturnVal = new CswNbtObjClassTestingLab( CswNbtResources, Node );
+                    break;
                     
                 case CswEnumNbtObjectClass.GeneratorClass:
                     ReturnVal = new CswNbtObjClassGenerator( CswNbtResources, Node );

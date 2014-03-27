@@ -33,7 +33,8 @@
                 isRequired: nodeProperty.isRequired(),
                 onChange: function (nodeid) {
                     //Case 29390: No sync for Location
-                    if (firstSelectHappened) { //CIS-52808: onChange fires once for the currently selected value when initializing the tree and we only want to broadcast USER changes
+                    if (firstSelectHappened || nodeProperty.tabState.EditMode === "Add") { 
+                        //CIS-52808: onChange fires once for the currently selected value when initializing the tree and we only want to broadcast USER changes
                         nodeProperty.propData.values.nodeid = nodeid;
                         nodeProperty.broadcastPropChange(nodeid);
                     } else {
