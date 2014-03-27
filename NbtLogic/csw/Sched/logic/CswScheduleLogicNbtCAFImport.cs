@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -80,33 +81,49 @@ namespace ChemSW.Nbt.Sched
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false );
-
-                    CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
-                    foreach( DataRow QueueRow in QueueTable.Rows )
+                    if( QueueTable.Rows.Count > 0 )
                     {
-                        string CurrentTblNamePkCol = CswConvert.ToString( QueueRow["pkcolumnname"] );
-                        if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
+                        Collection<String> ImportQueuePKs = new Collection<string>();
+                        CswCommaDelimitedString ItemPKs = new CswCommaDelimitedString();
+                        string ImportOrder = QueueTable.Rows[0]["importorder"].ToString();
+                        DataRow QueueRowDef = QueueTable.Rows[0];
+
+                        CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
+                        foreach( DataRow QueueRow in QueueTable.Rows )
                         {
-                            throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"] );
+                            //TODO - iterate the QueueTableRows ahead of time and get the pks we need 
+                            //(if the importorder/tablename/pkcolumn name changes, break)
+                            //then query the ItemTable with all the pks at once and iterate them
+                            string CurrentTblNamePkCol = CswConvert.ToString( QueueRow["pkcolumnname"] );
+                            if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
+                            {
+                                throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"] );
+                            }
+                            if( QueueRow["importorder"].ToString() != ImportOrder )
+                            {
+                                break;
+                            }
+                            ImportQueuePKs.Add( QueueRow[QueuePkName].ToString() );
+                            ItemPKs.Add( QueueRow["itempk"].ToString() );
                         }
 
-                        string ItemSql = string.Empty;
-                        ItemSql = "select * from " + QueueRow["sourcename"] + "@" + CAFDbLink +
-                                  " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
+                        string ItemSql = "select * from " + QueueRowDef["sourcename"] + "@" + CAFDbLink +
+                                         " where " + QueueRowDef["pkcolumnname"] + " in(" + ItemPKs + ")";
 
                         CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
                         DataTable ItemTable = ItemSelect.getTable();
-                        foreach( DataRow ItemRow in ItemTable.Rows )
+                        for( int i = 0; i < ItemTable.Rows.Count; i++ )
                         {
-                            string NodetypeName = QueueRow["nodetypename"].ToString();
-                            bool Overwrite = QueueRow["state"].ToString().Equals( "U" );
+                            DataRow ItemRow = ItemTable.Rows[i];
+                            string NodetypeName = QueueRowDef["nodetypename"].ToString();
+                            bool Overwrite = QueueRowDef["state"].ToString().Equals( "U" );
 
                             string Error = Importer.ImportRow( ItemRow, DefinitionName, NodetypeName, Overwrite );
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success - delete the record
                                 _CswNbtResources.execArbitraryPlatformNeutralSql( "delete from " + QueueTableName + "@" + CAFDbLink +
-                                                                                  " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
+                                                                                  " where " + QueuePkName + " = " + ImportQueuePKs[i] );
                             }
                             else
                             {
@@ -120,12 +137,12 @@ namespace ChemSW.Nbt.Sched
                                 _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
                                                                                   "   set state = '" + State.E + "', " +
                                                                                   "       errorlog = '" + SafeError + "' " +
-                                                                                  " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
+                                                                                  " where " + QueuePkName + " = " + ImportQueuePKs[i] );
                             }
                         }
-                    }//foreach( DataRow QueueRow in QueueTable.Rows )
 
-                    Importer.Finish();
+                        Importer.Finish();
+                    }
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
