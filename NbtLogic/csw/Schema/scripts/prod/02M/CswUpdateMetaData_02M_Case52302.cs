@@ -31,11 +31,16 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass UoMOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
 
+            CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass);
+
+
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Method,
                 FieldType = CswEnumNbtFieldType.Relationship,
-                IsCompoundUnique = true
+                IsCompoundUnique = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = MethodOC.ObjectClassId
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
