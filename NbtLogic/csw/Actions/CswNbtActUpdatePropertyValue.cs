@@ -56,6 +56,10 @@ namespace ChemSW.Nbt.Actions
                             CswNbtNodePropPropertyReference PropertyReferenceProp = PropWrapper.AsPropertyReference;
                             PropertyReferenceProp.RecalculateReferenceValue();
                             break;
+                        case CswEnumNbtFieldType.Quantity:
+                            CswNbtNodePropQuantity QuantityProp = PropWrapper.AsQuantity;
+                            QuantityProp.RefreshNodeName();
+                            break;
                         case CswEnumNbtFieldType.Relationship:
                             CswNbtNodePropRelationship RelationshipProp = PropWrapper.AsRelationship;
                             RelationshipProp.RefreshNodeName();
