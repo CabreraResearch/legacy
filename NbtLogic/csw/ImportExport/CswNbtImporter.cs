@@ -713,12 +713,36 @@ namespace ChemSW.Nbt.ImportExport
             if( false == string.IsNullOrEmpty( LegacyId ) )
             {
                 //CIS-53123 - use this instead of treeloader for performance
+                String MetaDataClause = "";
+                switch( NodeTypeProp.FKType )
+                {
+                    case "PropertySetId":
+                        CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( NodeTypeProp.FKValue );
+                        MetaDataClause = @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                            join object_class o on t.objectclassid = o.objectclassid
+                                            join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
+                                            join property_set ps on (jpo.propertysetid = ps.propertysetid) 
+                                            where (ps.propertysetid = " + PropertySet.PropertySetId + ") ";
+                        break;
+                    case "ObjectClassId":
+                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeProp.FKValue );
+                        MetaDataClause = @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                            join object_class o on t.objectclassid = o.objectclassid
+                                            where (o.objectclassid = " + ObjectClass.ObjectClassId + ") ";
+                        break;
+                    case "NodeTypeId":
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeProp.FKValue );
+                        MetaDataClause = @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                            where (t.firstversionid = " + NodeType.NodeTypeId + ") ";
+                        break;
+                }
                 String Sql = @"select n.nodeid
                                 from nodes n 
                                 join nodetype_props p on (lower(p.propname) = '" + CswNbtObjClass.PropertyName.LegacyId.ToLower() + @"') 
                                 join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid)
-                                where jnp.Field1 = '" + LegacyId + "'";
-                CswArbitrarySelect LegacyNodeIdSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
+                                " + MetaDataClause + @"
+                                and jnp.Field1 = '" + LegacyId + "'";
+                CswArbitrarySelect LegacyNodeIdSelect = _CswNbtResources.makeCswArbitrarySelect( "LegacyIdRel_select", Sql );
                 DataTable LegacyNodeIdTable = LegacyNodeIdSelect.getTable();
                 if( LegacyNodeIdTable.Rows.Count > 0 )
                 {
