@@ -133,12 +133,12 @@
                                         name: 'unitsOfMeasureSelect',
                                         text: sizeValues.uom.value
                                     });
-                                    cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
+                                    //cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                 } else {
                                     cswPublic.rows[rowid].unitsCtrl = cswCell.select({
                                         name: 'unitsOfMeasureSelect',
                                         values: cswPrivate.unitsOfMeasure,
-                                            selected: '',
+                                        selected: '',
                                         onChange: function (value) {
                                             cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
                                             cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);

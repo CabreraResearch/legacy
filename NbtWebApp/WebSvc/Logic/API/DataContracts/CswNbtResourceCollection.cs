@@ -21,5 +21,15 @@ namespace NbtWebApp.WebSvc.Logic.API.DataContracts
                     PropertySet = PropertySet
                 });
         }
+
+        public int Count()
+        {
+            return _Entities.Count;
+        }
+
+        public Collection<CswNbtResource> getEntities()
+        {
+            return _Entities;
+        }
     }
 }

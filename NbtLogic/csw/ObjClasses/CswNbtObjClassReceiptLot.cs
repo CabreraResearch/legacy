@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             ViewCofA.State = PropertyName.ViewCofA;
             ViewCofA.MenuOptions = PropertyName.ViewCofA + ",View All";

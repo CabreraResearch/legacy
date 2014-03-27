@@ -25,7 +25,7 @@ namespace NbtWebApp.WebSvc.Logic.API
             return base.hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.Delete, GenericRequest, Return );
         }
 
-        public void Delete( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public void Delete( CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             if( hasPermission( GenericRequest, Return ) )
             {
@@ -54,7 +54,7 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void Delete( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public static void Delete( ICswResources CswResources, CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceDELETE POST = new CswNbtWebServiceDELETE( (CswNbtResources) CswResources );
             POST.Delete( Return, GenericRequest );
