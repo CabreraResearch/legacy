@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
-        public CswNbtNodePropList Units
+        public CswNbtNodePropRelationship Units
         {
             get { return _CswNbtNode.Properties[PropertyName.Units]; }
         }
