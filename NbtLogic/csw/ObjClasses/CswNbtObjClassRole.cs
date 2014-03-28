@@ -1,13 +1,14 @@
+using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.LandingPage;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using System;
-using System.Collections.Generic;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -245,6 +246,36 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Node.setReadOnly( true, false );
             }
         }//afterPopulateProps()
+
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
+        {
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : IsNodeTemp, OnAfterMakeNode : delegate( CswNbtNode NewNode )
+            {
+                //copy each property from the old node
+                    NewNode.copyPropertyValues( Node );
+
+
+                //get the landing page items from the original role's welcome page and loop through them, copying each to new page
+                //NOTE: if we ever implement non-welcome page role specific LPIs, this will need to be updated
+                    CswNbtLandingPage LandingPageBuilder = new CswNbtLandingPage( _CswNbtResources );
+                    
+                    LandingPageData NewNodeLandingPageData = LandingPageBuilder.getWelcomePageItems( this.NodeId );
+                    foreach(LandingPageData.LandingPageItem Item in NewNodeLandingPageData.LandingPageItems)
+                    {
+                        LandingPageBuilder.copyLandingPageItem( NewNode.NodeId.ToString(), Item );
+                    }
+
+                //copy the views to the new role
+                    _CswNbtResources.ViewSelect.copyViewsByRoleId( NodeId, NewNode.NodeId );
+
+                //if the thing that requested this copy had a callback, fire it
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
+            }, IsCopy : true );
+            return CopiedNode;
+        }
 
         #endregion Inherited Events
 

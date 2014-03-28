@@ -14,14 +14,19 @@ namespace ChemSW.Nbt.LandingPage
             _setCommonItemDataForUI( LandingPageRow );
         }
 
-        public override void setItemDataForDB( LandingPageData.Request Request )
+        public override void setDBValuesFromRequest( LandingPageData.Request Request )
         {
-            _setCommonItemDataForDB( Request );
+            _setCommonDbValuesFromRequest( Request );
             _ItemRow["buttonicon"] = String.Empty;
             if( String.IsNullOrEmpty( Request.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "You must enter text to display", "No text entered for new Text LandingPage Item" );
             }
+        }
+
+        public override void setDBValuesFromExistingLandingPageItem( string RoleId, LandingPageData.LandingPageItem Item )
+        {
+            _setCommonDBValuesFromExistingLandingPageItem( RoleId, Item );
         }
     }
 }
