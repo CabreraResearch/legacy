@@ -67,15 +67,12 @@ namespace ChemSW.Nbt.csw.ImportExport
                     PropName = GetUniquePropName( NodeType, PropName ); //keep appending numbers until we have a unique prop name
 
                     CswEnumNbtFieldType propFT = GetFieldTypeFromCAFPropTypeCode( row["propertytype"].ToString() );
-
-                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName ) );
-                    newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Required].AsLogical.Checked = CswConvert.ToTristate( row["required"] );
-                    newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.ReadOnly].AsLogical.Checked = CswConvert.ToTristate( row["readonly"] );
-                    if( newProp.DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Options ) )
-                    {
-                        newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = CswConvert.ToString( row["listopts"] );
-                    }
-                    newProp.DesignNode.postChanges( false );
+                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName )
+                        {
+                            IsRequired = CswConvert.ToBoolean( row["required"] ),
+                            ReadOnly = CswConvert.ToBoolean( row["readonly"] ),
+                            ListOptions = CswConvert.ToString( row["listopts"] )
+                        } );
                     newProp.removeFromAllLayouts();
 
                     string cafColPropName = "prop" + row["propertyid"];
