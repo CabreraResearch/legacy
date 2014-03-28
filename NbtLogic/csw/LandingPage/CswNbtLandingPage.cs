@@ -81,6 +81,16 @@ namespace ChemSW.Nbt.LandingPage
         }
 
         /// <summary>
+        /// Add a LandingPage Item using an existing Item as a template
+        /// </summary>
+        /// <param name="ItemToCopy">LandingPage Item</param>
+        public void copyLandingPageItem( string RoleId, LandingPageData.LandingPageItem ItemToCopy )
+        {
+            _LandingPageTable.copyLandingPageItem( RoleId, ItemToCopy );
+        }
+
+
+        /// <summary>
         /// Moves a LandingPage Item to the specified cell (or next available cell)
         /// </summary>
         /// <param name="LandingPageId">Unique identifier of the LandingPage Item to move</param>

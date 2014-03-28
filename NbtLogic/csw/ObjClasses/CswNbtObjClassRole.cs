@@ -1,13 +1,14 @@
+using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.LandingPage;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using System;
-using System.Collections.Generic;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -245,6 +246,31 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Node.setReadOnly( true, false );
             }
         }//afterPopulateProps()
+
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
+        {
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : IsNodeTemp, OnAfterMakeNode : delegate( CswNbtNode NewNode )
+            {
+                //copy each property from the old node
+                NewNode.copyPropertyValues( Node );
+
+                
+                CswNbtLandingPage LandingPageBuilder = new CswNbtLandingPage( _CswNbtResources );
+
+                //get the landing page items from the original role's welcome page and loop through them, copying each to new page
+                LandingPageData NewNodeLandingPageData = LandingPageBuilder.getWelcomePageItems( this.NodeId );
+                foreach(LandingPageData.LandingPageItem Item in NewNodeLandingPageData.LandingPageItems)
+                {
+                    LandingPageBuilder.copyLandingPageItem( NewNode.NodeId.ToString(), Item );
+                }
+
+                if( null != OnCopy )
+                {
+                    OnCopy( NewNode );
+                }
+            }, IsCopy : true );
+            return CopiedNode;
+        }
 
         #endregion Inherited Events
 
