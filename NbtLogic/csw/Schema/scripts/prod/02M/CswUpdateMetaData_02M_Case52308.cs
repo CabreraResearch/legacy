@@ -31,9 +31,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass TestingLabOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.TestingLabClass);
 
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, TestingLabUserAssignmentOC.ObjectClassId );
-            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, TestingLabUserAssignmentOC.ObjectClassId );
-
-            _CswNbtSchemaModTrnsctn.commitTransaction();
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabUserAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
