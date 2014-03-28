@@ -645,7 +645,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
 
                 }
-                else
+                else if ( false == String.IsNullOrEmpty( PropertyData ) )
                 {
                     Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, PropertyData );
                 }
