@@ -163,6 +163,7 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleDirectStructureSearch.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleC3Products.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleC3ACD.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleArielSync.cs" />

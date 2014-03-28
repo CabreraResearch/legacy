@@ -98,6 +98,10 @@ namespace ChemSW.Nbt
         /// </summary>
         public const string Dev = "Dev";
         /// <summary>
+        /// ACCL Direct Structure Search
+        /// </summary>
+        public const string DirectStructureSearch = "Direct Structure Search";
+        /// <summary>
         /// Dangerous Substances Directive
         /// </summary>
         public const string DSD = "DSD";
