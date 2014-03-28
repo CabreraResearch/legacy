@@ -252,22 +252,27 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : IsNodeTemp, OnAfterMakeNode : delegate( CswNbtNode NewNode )
             {
                 //copy each property from the old node
-                NewNode.copyPropertyValues( Node );
+                    NewNode.copyPropertyValues( Node );
 
-                
-                CswNbtLandingPage LandingPageBuilder = new CswNbtLandingPage( _CswNbtResources );
 
                 //get the landing page items from the original role's welcome page and loop through them, copying each to new page
-                LandingPageData NewNodeLandingPageData = LandingPageBuilder.getWelcomePageItems( this.NodeId );
-                foreach(LandingPageData.LandingPageItem Item in NewNodeLandingPageData.LandingPageItems)
-                {
-                    LandingPageBuilder.copyLandingPageItem( NewNode.NodeId.ToString(), Item );
-                }
+                //NOTE: if we ever implement non-welcome page role specific LPIs, this will need to be updated
+                    CswNbtLandingPage LandingPageBuilder = new CswNbtLandingPage( _CswNbtResources );
+                    
+                    LandingPageData NewNodeLandingPageData = LandingPageBuilder.getWelcomePageItems( this.NodeId );
+                    foreach(LandingPageData.LandingPageItem Item in NewNodeLandingPageData.LandingPageItems)
+                    {
+                        LandingPageBuilder.copyLandingPageItem( NewNode.NodeId.ToString(), Item );
+                    }
 
-                if( null != OnCopy )
-                {
-                    OnCopy( NewNode );
-                }
+                //copy the views to the new role
+                    _CswNbtResources.ViewSelect.copyViewsByRoleId( NodeId, NewNode.NodeId );
+
+                //if the thing that requested this copy had a callback, fire it
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
             }, IsCopy : true );
             return CopiedNode;
         }
