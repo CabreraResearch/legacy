@@ -29,12 +29,6 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
 
-            //if( null == MethodOC )
-            //{
-            //    MethodOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodClass, "doc.png", true );
-            //    _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MethodOC.ObjectClassId );
-            //} //if MethodMDOC == null
-
             CswNbtMetaDataObjectClassProp ObsoleteOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassMethod.PropertyName.Obsolete,
