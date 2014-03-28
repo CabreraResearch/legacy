@@ -171,10 +171,12 @@
                             obj.NodeTypePropId = cswPrivate.propid;
                             obj.SearchTerm = cswPrivate.select.combobox.getValue();
                             return obj;
-                            }
+                        }
                     },
                     isRequired: cswPrivate.isRequired
                 });
+
+                cswPrivate.selectDiv.css({ width:  cswPrivate.selectDiv.$.width() + 15});
 
             }; // makeLocationCombo()
 
@@ -184,19 +186,19 @@
             (function _post() {
                 cswPrivate.ready.then(function () {
                     if (false === cswPrivate.ReadOnly) {
-                            cswPrivate.makeLocationCombo();
+                        cswPrivate.makeLocationCombo();
 
-                        //cswPrivate.previewCell.css({ width: '24px' });
-                        //cswParent.$.hover(function (event) {
-                        //    Csw.nodeHoverIn(event, {
-                        //        nodeid: cswPrivate.value,
-                        //        nodename: cswPrivate.selectedName,
-                        //        parentDiv: cswPrivate.previewCell,
-                        //        useAbsolutePosition: false,
-                        //        rightpad: 0
-                        //    });
-                        //},
-                        //function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
+                        cswPrivate.previewCell.css({ width: '24px' });
+                        cswParent.$.hover(function (event) {
+                            Csw.nodeHoverIn(event, {
+                                nodeid: cswPrivate.value,
+                                nodename: cswPrivate.selectedName,
+                                parentDiv: cswPrivate.previewCell,
+                                useAbsolutePosition: false,
+                                rightpad: 0
+                            });
+                        },
+                        function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
                     }
                 });
             }());

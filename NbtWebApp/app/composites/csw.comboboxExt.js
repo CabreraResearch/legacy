@@ -64,8 +64,7 @@
         }());
 
         //#endregion Pre-ctor
-
-
+        
         //#region Define Class Members
 
         cswPrivate.makeStore = function () {
@@ -198,6 +197,7 @@
                 var newWidth = (longestOption[cswPrivate.displayField].length * 7) + 15;
                 if (newWidth > cswPrivate.width) {
                     cswPublic.combobox.setWidth(newWidth);
+                    cswPrivate.width = newWidth;
                 }
             }
         };//setComboBoxSize()
@@ -259,6 +259,14 @@
         //#endregion Validation
 
         //#endregion Define Class Members
+        
+        //#region Getters
+        
+        cswPublic.getWidth = function() {
+            return cswPrivate.width;
+        }
+        
+        //#endregion Getters
 
         //#region Post-ctor
 
