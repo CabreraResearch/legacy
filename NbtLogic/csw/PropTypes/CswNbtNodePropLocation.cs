@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -293,6 +295,8 @@ namespace ChemSW.Nbt.PropTypes
                 View.SaveToCache( false );
                 ParentObject["viewid"] = View.SessionViewId.ToString();
 
+                Collection<CswNbtSdLocations.Location> LocationsNodes = GetLocationsList( _CswNbtResources, View.SessionViewId.ToString() );
+
                 CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
                 JArray LocationNTArray = new JArray();
@@ -451,6 +455,62 @@ namespace ChemSW.Nbt.PropTypes
             }
             return true;
         }
+
+        private static List<CswPrimaryKey> _LocationNodeIds = null;
+        public static Collection<CswNbtSdLocations.Location> GetLocationsList( CswNbtResources _CswNbtResources, string ViewId )
+        {
+            Collection<CswNbtSdLocations.Location> Ret = new Collection<CswNbtSdLocations.Location>();
+            CswNbtView View = null;
+            CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( ViewId );
+            if( SessionViewId.isSet() )
+            {
+                View = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
+            }
+            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false ); //todo set pernodelimit value; DO WE NEED TO REQUIRE VIEW PERMISSIONS?
+            _LocationNodeIds = new List<CswPrimaryKey>();
+            if( tree.getChildNodeCount() > 0 )
+            {
+                _iterateTree( tree );
+            }
+
+            if( _LocationNodeIds.Count > 0 )
+            {
+                foreach( CswPrimaryKey LocationId in _LocationNodeIds )
+                {
+                    CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes[LocationId];
+                    if( LocNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.LocationClass )
+                    {
+                        CswNbtSdLocations.Location LocationObj = new CswNbtSdLocations.Location();
+                        if( null != LocNode.Location.ReferencedNodeId )
+                        {
+                            LocationObj.Name = LocNode.Location.CachedPath + " > ";
+                        }
+                        LocationObj.Name += LocNode.Name.Text;
+                        LocationObj.LocationId = LocNode.NodeId.ToString();
+                        Ret.Add( LocationObj );
+                    }
+                }
+            }//if( _LocationNodeIds.Count > 0 )
+
+            return Ret;
+        }//GetLocationsList()
+
+        private static void _iterateTree( ICswNbtTree Tree )
+        {
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
+            {
+                Tree.goToNthChild( c );
+                if( Tree.getNodeIncludedForCurrentPosition() )
+                {
+                    _LocationNodeIds.Add( Tree.getNodeIdForCurrentPosition() );
+                }
+                if( Tree.getChildNodeCount() > 0 )
+                {
+                    _iterateTree( Tree );
+                }
+                Tree.goToParentNode();
+            }
+        }//_iterateTree()
 
     }//CswNbtNodePropLocation
 }//namespace ChemSW.Nbt.PropTypes

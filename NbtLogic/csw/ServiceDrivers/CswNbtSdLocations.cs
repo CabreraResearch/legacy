@@ -158,6 +158,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Locations.Add( Location );
                 }
 
+                //IEnumerable < Location > OrderedLocations = Locations.OrderBy( location => location.Name );
+                //Locations = OrderedLocations.ToList();
+
             }
             return Locations;
         }

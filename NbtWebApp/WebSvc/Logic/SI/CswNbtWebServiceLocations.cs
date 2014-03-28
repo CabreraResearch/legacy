@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using ChemSW.Exceptions;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
 
@@ -14,10 +14,10 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceLocations( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
-            {
-                throw new CswDniException( CswEnumErrorType.Error, "Cannot use this web service without the required modules.", "Attempted to load an SI dependent service" );
-            }
+            //if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
+            //{
+            //throw new CswDniException( CswEnumErrorType.Error, "Cannot use this web service without the required modules.", "Attempted to load an SI dependent service" );
+            //}
         }
 
         #endregion ctor
@@ -49,6 +49,12 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtWebServiceLocations Ws = new CswNbtWebServiceLocations( (CswNbtResources) CswResources );
                 Return.Data = Ws.getLocationsList();
             }
+        }
+
+        public static void getLocationsList2( ICswResources CswResources, CswNbtLocationReturn Return, string Request )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            Return.Data = CswNbtNodePropLocation.GetLocationsList( CswNbtResources, Request );
         }
 
         #endregion Public
