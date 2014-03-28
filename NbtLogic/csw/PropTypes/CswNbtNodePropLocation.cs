@@ -295,8 +295,6 @@ namespace ChemSW.Nbt.PropTypes
                 View.SaveToCache( false );
                 ParentObject["viewid"] = View.SessionViewId.ToString();
 
-                Collection<CswNbtSdLocations.Location> LocationsNodes = GetLocationsList( _CswNbtResources, View.SessionViewId.ToString() );
-
                 CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
                 JArray LocationNTArray = new JArray();
@@ -305,6 +303,17 @@ namespace ChemSW.Nbt.PropTypes
                     LocationNTArray.Add( LocationNT.NodeTypeId );
                 }
                 ParentObject["locationnodetypeids"] = LocationNTArray;
+
+                JArray Options = new JArray();
+                foreach( CswNbtSdLocations.Location location in GetLocationsList( _CswNbtResources, View.SessionViewId.ToString() ) )
+                {
+                    JObject Opt = new JObject();
+                    Opt["LocationId"] = location.LocationId;
+                    Opt["Name"] = location.Name;
+                    Options.Add( Opt );
+                }
+                ParentObject["options"] = Options;
+
             }
         }
 

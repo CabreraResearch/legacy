@@ -24,7 +24,7 @@
                 change: null, //function(combo, records){ }
                 storebeforeload: null //function(store, operation) {}
             },
-            tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
+            tpl: '',
             isRequired: false
         };
         var cswPublic = {};
@@ -35,6 +35,11 @@
         (function _pre() {
             if (options) {
                 Csw.extend(cswPrivate, options);
+            }
+
+            // set the combobox display
+            if (Csw.isNullOrEmpty(cswPrivate.tpl)) {
+                cswPrivate.tpl = new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{' + cswPrivate.displayField + '}' + '</li></tpl>');
             }
 
             // To search or not to search?
@@ -114,7 +119,7 @@
                                 var inlist = false;
                                 if (cswPrivate.options) {
                                     cswPrivate.options.forEach(function(option) {
-                                        if (option.Text === newvalue) {
+                                        if (option[cswPrivate.valueField] === newvalue) {
                                             inlist = true;
                                         }
                                     });
@@ -188,9 +193,9 @@
             /// <param name="optionsArray"></param>
             if (optionsArray.length > 0) {
                 var longestOption = optionsArray.sort(function (a, b) {
-                    return b.Text.length - a.Text.length;
+                    return b[cswPrivate.displayField].length - a[cswPrivate.displayField].length;
                 })[0];
-                var newWidth = (longestOption.Text.length * 7) + 15;
+                var newWidth = (longestOption[cswPrivate.displayField].length * 7) + 15;
                 if (newWidth > cswPrivate.width) {
                     cswPublic.combobox.setWidth(newWidth);
                 }

@@ -67,7 +67,7 @@ namespace NbtWebApp
         [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Generate a list of Locations" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceLocations.CswNbtLocationReturn list( string ViewId )
+        public CswNbtWebServiceLocations.CswNbtLocationReturn list2( string ViewId )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtWebServiceLocations.CswNbtLocationReturn Ret = new CswNbtWebServiceLocations.CswNbtLocationReturn();
