@@ -50,52 +50,73 @@ namespace ChemSW.Nbt.LandingPage
             }
         } // _setCommonItemDataForUI()
 
-        public abstract void setItemDataForDB( LandingPageData.Request Request );
-
-        protected virtual void _setCommonItemDataForDB( LandingPageData.Request Request )
+        public abstract void setDBValuesFromRequest( LandingPageData.Request Request );
+        protected virtual void _setCommonDbValuesFromRequest( LandingPageData.Request Request )
         {
-            Int32 RoleId = Int32.MinValue;
-            if( Request.RoleId == string.Empty || false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            _setCommonItemDataForDBImpl( Request.RoleId, Request.ActionId, Request.Type, Request.NewColumn, Request.NewRow, Request.Text, Request.ButtonIcon );
+        }
+
+
+        public abstract void setDBValuesFromExistingLandingPageItem( string RoleId, LandingPageData.LandingPageItem Item );
+        protected virtual void _setCommonDBValuesFromExistingLandingPageItem( string RoleId, LandingPageData.LandingPageItem Item )
+        {
+            //when we receive the string, it has the full path already calculated, but we just want the icon name
+            string buttonIcon = Item.ButtonIcon;
+            if( Item.ButtonIcon.LastIndexOf( '/' ) > -1 )
             {
-                Request.RoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
+                buttonIcon = Item.ButtonIcon.Substring( Item.ButtonIcon.LastIndexOf( '/' ) );
             }
-            CswPrimaryKey RolePk = CswConvert.ToPrimaryKey( Request.RoleId );
+            _setCommonItemDataForDBImpl( RoleId, Item.ActionId, Item.LinkType, CswConvert.ToInt32( Item.DisplayCol ), CswConvert.ToInt32( Item.DisplayRow ), Item.Text, buttonIcon );
+        }
+
+        private void _setCommonItemDataForDBImpl( string RoleId, string ActionId, string LinkType, Int32 NewColumn, Int32 NewRow, string Text, string ButtonIcon )
+        {
+            int NumericRoleId = Int32.MinValue;
+
+            if( RoleId == string.Empty || false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                RoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
+            }
+            CswPrimaryKey RolePk = CswConvert.ToPrimaryKey( RoleId );
             if( null != RolePk )
             {
-                RoleId = RolePk.PrimaryKey;
+                NumericRoleId = RolePk.PrimaryKey;
             }
-            if( Request.ButtonIcon == "blank.gif" )
+            if( ButtonIcon == "blank.gif" )
             {
-                Request.ButtonIcon = string.Empty;
+                ButtonIcon = string.Empty;
             }
-            if( Int32.MinValue != RoleId )
+
+
+            if( Int32.MinValue != NumericRoleId )
             {
-                _ItemRow["for_roleid"] = RoleId;
+                _ItemRow["for_roleid"] = NumericRoleId;
             }
-            if( false == String.IsNullOrEmpty( Request.ActionId ) )
+            if( false == String.IsNullOrEmpty( ActionId ) )
             {
-                _ItemRow["for_actionid"] = Request.ActionId;
+                _ItemRow["for_actionid"] = ActionId;
             }
-            _ItemRow["componenttype"] = Request.Type;
-            if( Request.NewColumn <= 0 )
+            _ItemRow["componenttype"] = LinkType;
+            if( NewColumn <= 0 )
             {
                 _ItemRow["display_col"] = "1";
             }
             else
             {
-                _ItemRow["display_col"] = Request.NewColumn;
+                _ItemRow["display_col"] = NewColumn;
             }
-            if( Request.NewRow <= 0 )
+            if( NewRow <= 0 )
             {
-                _ItemRow["display_row"] = _getNextAvailableRowForItem( RoleId, Request.ActionId );
+                _ItemRow["display_row"] = _getNextAvailableRowForItem( NumericRoleId, ActionId );
             }
             else
             {
-                _ItemRow["display_row"] = Request.NewRow;
+                _ItemRow["display_row"] = NewRow;
             }
-            _ItemRow["displaytext"] = Request.Text;
-            _ItemRow["buttonicon"] = Request.ButtonIcon;
+            _ItemRow["displaytext"] = Text;
+            _ItemRow["buttonicon"] = ButtonIcon;
         }
+
 
         private Int32 _getNextAvailableRowForItem( Int32 RoleId, string ActionId )
         {

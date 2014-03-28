@@ -69,10 +69,17 @@ namespace ChemSW.Nbt.LandingPage
         }
 
         public void addLandingPageItem( LandingPageData.Request Request )
-        {            
+        {
             CswNbtLandingPageItem Item = CswNbtLandingPageItemFactory.makeLandingPageItem( _CswNbtResources, Request.Type );
-            Item.setItemDataForDB( Request );
+            Item.setDBValuesFromRequest( Request );
             Item.saveToDB();
+        }
+
+        public void copyLandingPageItem( string RoleId, LandingPageData.LandingPageItem ItemToCopy )
+        {
+            CswNbtLandingPageItem NewItem = CswNbtLandingPageItemFactory.makeLandingPageItem( _CswNbtResources, ItemToCopy.LinkType );
+            NewItem.setDBValuesFromExistingLandingPageItem( RoleId, ItemToCopy );
+            NewItem.saveToDB();
         }
 
         public void moveLandingPageItem( LandingPageData.Request Request )
@@ -98,7 +105,7 @@ namespace ChemSW.Nbt.LandingPage
             if( Request.LandingPageId != Int32.MinValue )
             {
                 CswNbtLandingPageItem Item = CswNbtLandingPageItemFactory.makeLandingPageItem( _CswNbtResources, Request.Type );
-                Item.setItemDataForDB( Request );
+                Item.setDBValuesFromRequest( Request );
 
                 CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "MoveLandingPageItem", "landingpage" );
                 DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );

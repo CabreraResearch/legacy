@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.LandingPage
             }
         }
 
-        public override void setItemDataForDB( LandingPageData.Request Request )
+        public override void setDBValuesFromRequest( LandingPageData.Request Request )
         {
             Int32 ObjectClassPropId = CswConvert.ToInt32( Request.PkValue );
             if( ObjectClassPropId != Int32.MinValue )
@@ -49,7 +49,15 @@ namespace ChemSW.Nbt.LandingPage
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "You must select a valid button type", "No button selected for new Button LandingPage Item" );
             }
-            _setCommonItemDataForDB( Request );
+            _setCommonDbValuesFromRequest( Request );
+        }
+
+
+        public override void setDBValuesFromExistingLandingPageItem( string RoleId, LandingPageData.LandingPageItem Item )
+        {
+            //really circituous route of getting the OCP, but we are not exposing the OCP any more direct way
+            _ItemRow["to_objectclasspropid"] = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( Item.NodeTypePropId.Split( '_' )[1] ) ).ObjectClassPropId;
+            _setCommonDBValuesFromExistingLandingPageItem( RoleId, Item );
         }
     }
 }
