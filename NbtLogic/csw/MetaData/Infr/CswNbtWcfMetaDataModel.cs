@@ -246,8 +246,8 @@ namespace ChemSW.Nbt.MetaData
             //public Int32 ValueFieldId = Int32.MinValue;
             //[DataMember]
             //public Int32 NumberPrecision = Int32.MinValue;
-            //[DataMember]
-            //public string ListOptions = string.Empty;
+            [DataMember]
+            public string ListOptions = string.Empty;
             //[DataMember]
             //public string ViewXml = string.Empty;
             //[DataMember]
