@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeProp molNTP = node.getNodeType().getMolProperty();
                 if( null != molNTP )
                 {
-                    molData = node.Properties[molNTP].AsMol.Mol;
+                    molData = node.Properties[molNTP].AsMol.getMol();
                 }
             }
 

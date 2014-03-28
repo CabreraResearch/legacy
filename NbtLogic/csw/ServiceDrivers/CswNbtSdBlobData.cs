@@ -1,5 +1,4 @@
-﻿using ChemSW.Nbt.MetaData.FieldTypeRules;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
@@ -9,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -201,7 +201,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNodePropMol molProp = Node.Properties[MetaDataProp];
                 if( null != molProp )
                 {
-                    molProp.Mol = FormattedMolString;
+                    molProp.setMol( FormattedMolString );
+
                     //Save the mol image to blob_data
                     byte[] molImage = CswStructureSearch.GetImage( FormattedMolString );
 
