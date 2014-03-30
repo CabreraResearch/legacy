@@ -19,13 +19,11 @@
             path: '',
             nodeKey: '',
             nodelink: '',
-            Multi: false,
             ReadOnly: false,
             isRequired: false,
             onChange: null,
             overrideSelectedLocation: true,
             useDefaultLocation: true,
-            EditMode: Csw.enums.editMode.Edit,
             value: '',
             options: []
         };
@@ -62,28 +60,13 @@
 
                     if (cswPrivate.ReadOnly) {
                         //TODO: I think we are using readonly for 2 different things now so the link will never show
-                        // case 31737 - don't show link if readonly
+                        // Case 31737: Don't show link if readonly
                         cswPrivate.pathCell.text(cswPrivate.path);
                     } else {
-                        var nodeLink = cswPrivate.pathCell.nodeLink({
+                        cswPrivate.pathCell.nodeLink({
                             text: cswPrivate.nodelink,
                             linkText: cswPrivate.path
                         });
-
-                        //if (cswPrivate.isRequired) {
-                        //    cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, nodeLink, {
-                        //        className: 'locationValidator_' + window.Ext.id(),
-                        //        errorMsg: 'Location is required.',
-                        //        onValidation: function (isValid) {
-                        //            if (isValid) {
-                        //                cswPrivate.validateCell.hide();
-                        //            } else {
-                        //                cswPrivate.validateCell.show();
-                        //            }
-                        //        }
-                        //    });
-                        //    cswPrivate.locationValidator.input.checked(false === Csw.isNullOrEmpty(cswPrivate.nodeid));
-                        //}
                     }
 
                     cswPrivate.selectDiv = cswPrivate.selectCell.div({
@@ -176,7 +159,7 @@
                     isRequired: cswPrivate.isRequired
                 });
 
-                cswPrivate.selectDiv.css({ width:  cswPrivate.selectDiv.$.width() + 15});
+                cswPrivate.selectDiv.css({ width: cswPrivate.selectDiv.$.width() + 15 });
 
             }; // makeLocationCombo()
 
