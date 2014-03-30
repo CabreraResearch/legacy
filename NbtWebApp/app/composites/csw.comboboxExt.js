@@ -106,7 +106,7 @@
                 listeners: {
                     select: function (combo, records) {
                         if (cswPrivate.isRequired) {
-                            var val = records[0].get('Value');
+                            var val = records[0].get(cswPrivate.valueField);
                             checkValidity(val);
                         }
                         Csw.tryExec(cswPrivate.listeners.select, combo, records);
