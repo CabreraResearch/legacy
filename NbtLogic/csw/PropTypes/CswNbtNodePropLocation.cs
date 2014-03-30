@@ -466,16 +466,24 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         private static List<CswPrimaryKey> _LocationNodeIds = null;
-        public static Collection<CswNbtSdLocations.Location> GetLocationsList( CswNbtResources _CswNbtResources, string ViewId )
+        public static Collection<CswNbtSdLocations.Location> GetLocationsList( CswNbtResources _CswNbtResources, string ViewId, string SelectedNodeId = "" )
         {
             Collection<CswNbtSdLocations.Location> Ret = new Collection<CswNbtSdLocations.Location>();
-            CswNbtView View = null;
+            CswNbtView LocationView = null;
+
+            if( string.IsNullOrEmpty( ViewId ) )
+            {
+                LocationView = LocationPropertyView( _CswNbtResources, null );
+                LocationView.SaveToCache( false );
+                ViewId = LocationView.SessionViewId.ToString();
+            }
+
             CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( ViewId );
             if( SessionViewId.isSet() )
             {
-                View = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
+                LocationView = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
             }
-            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false ); //todo set pernodelimit value; DO WE NEED TO REQUIRE VIEW PERMISSIONS?
+            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( LocationView, false, false, false ); //todo set pernodelimit value; DO WE NEED TO REQUIRE VIEW PERMISSIONS?
             _LocationNodeIds = new List<CswPrimaryKey>();
             if( tree.getChildNodeCount() > 0 )
             {
