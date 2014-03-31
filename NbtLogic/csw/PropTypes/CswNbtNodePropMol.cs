@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 DataRow newMolDataRow = molDataTbl.NewRow();
                 newMolDataRow["jctnodepropid"] = JctNodePropId;
-                newMolDataRow["orginalmol"] = Encoding.UTF8.GetBytes( MolString );
+                newMolDataRow["originalmol"] = Encoding.UTF8.GetBytes( MolString );
                 newMolDataRow["contenttype"] = ".mol";
                 newMolDataRow["nodeid"] = this.NodeId.PrimaryKey;
                 molDataTbl.Rows.Add( newMolDataRow );
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.PropTypes
             else
             {
                 DataRow existingMolDataRow = molDataTbl.Rows[0];
-                existingMolDataRow["orginalmol"] = Encoding.UTF8.GetBytes( MolString );
+                existingMolDataRow["originalmol"] = Encoding.UTF8.GetBytes( MolString );
             }
             molDataUpdate.update( molDataTbl );
 
@@ -79,9 +79,9 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswTableSelect molDataUpdate = _CswNbtResources.makeCswTableSelect( "NodePropMol.setMol", "mol_data" );
                 DataTable molDataTbl = molDataUpdate.getTable( "where jctnodepropid = " + JctNodePropId );
-                if( molDataTbl.Rows.Count > 0 && null != molDataTbl.Rows[0]["orginalmol"] )
+                if( molDataTbl.Rows.Count > 0 && null != molDataTbl.Rows[0]["originalmol"] )
                 {
-                    ret = Encoding.UTF8.GetString( molDataTbl.Rows[0]["orginalmol"] as byte[] );
+                    ret = Encoding.UTF8.GetString( molDataTbl.Rows[0]["originalmol"] as byte[] );
                 }
             }
             return ret;
@@ -140,10 +140,10 @@ namespace ChemSW.Nbt.PropTypes
         /// Formats a mol file in the format of: 3 lines with optional text, atom/bond count line, atoms table, bonds table, "M  END"
         /// </summary>
         /// <returns></returns>
-        public static string FormatMolFile( string OrginalMolFile )
+        public static string FormatMolFile( string OriginalMolFile )
         {
             //strip out any "$$$$"
-            OrginalMolFile = OrginalMolFile.Replace( "$$$$", "" );
+            OriginalMolFile = OriginalMolFile.Replace( "$$$$", "" );
 
             List<string> fixedLines = new List<string>()
                 {
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.PropTypes
                     ""  //for atom/bond count line
                 };
 
-            string[] lines = OrginalMolFile.Split( new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None );
+            string[] lines = OriginalMolFile.Split( new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None );
 
             int commentsAdded = 0;
             bool firstAtomTblLine = true;

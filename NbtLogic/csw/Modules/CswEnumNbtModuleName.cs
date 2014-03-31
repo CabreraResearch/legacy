@@ -27,6 +27,7 @@ namespace ChemSW.Nbt
             {CISPro                   , CISPro},
             {Containers               , Containers},
             {Dev                      , Dev},
+            {DirectStructureSearch    , DirectStructureSearch },
             {DSD                      , DSD},
             {FireCode                 , FireCode},
             {FireDbSync               , FireDbSync},
