@@ -186,6 +186,9 @@ namespace ChemSW.Nbt.WebServices
                         _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, Node.getNodeType() ) &&
                         Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
                         )
+                    {
+                        string BadPropertyName = string.Empty;
+                        if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
                         {
                             MoreObj["Copy"] = new JObject();
                             MoreObj["Copy"]["copytype"] = _getActionType( Node.getNodeType() );
@@ -194,6 +197,7 @@ namespace ChemSW.Nbt.WebServices
                             MoreObj["Copy"]["nodename"] = Node.NodeName;
                             MoreObj["Copy"]["nodetypeid"] = Node.NodeTypeId.ToString();
                         }
+                    }
 
                     // DELETE
                     if( _MenuItems.Contains( "Delete" ) &&
@@ -428,10 +432,10 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // We always want to exclude the current user 
-                Return.Data.ExcludeNodeIds.Add( CswConvert.ToString( CswNbtResources.CurrentNbtUser.UserId.PrimaryKey ) );
+                Return.Data.ExcludeNodeIds.Add( CswNbtResources.CurrentNbtUser.UserId.ToString() );
                 // and exclude any users of chemsw_admin_role
                 CswNbtObjClassUser ChemSWAdminUser = CswNbtResources.Nodes.makeUserNodeFromUsername( "chemsw_admin" );
-                Return.Data.ExcludeNodeIds.Add( CswConvert.ToString( ChemSWAdminUser.UserId.PrimaryKey ) );
+                Return.Data.ExcludeNodeIds.Add( ChemSWAdminUser.UserId.ToString() );
                 //todo: make this encompass _all_ users of chemsw_admin_role
             }
             else

@@ -735,11 +735,13 @@ namespace ChemSW.Nbt
         {
             string ViewXmlAsString = ViewString;
             //Prefixing the Type to the ViewXml is not required, for backwards compatibility
-            string[] SplitStr = ViewString.Split( delimiter );
-            if( SplitStr.Length > 1 )
+            int indexOfXmlString = ViewString.IndexOf( delimiter ) + 1;
+
+            if( indexOfXmlString != 1 ) //string.IndexOf returns 0 if not found
             {
-                ViewXmlAsString = SplitStr[1];
+                ViewXmlAsString = ViewString.Substring( indexOfXmlString );
             }
+
             XmlDocument ViewXmlDoc = new XmlDocument();
             ViewXmlDoc.LoadXml( ViewXmlAsString );
             return _load( ViewXmlDoc );
