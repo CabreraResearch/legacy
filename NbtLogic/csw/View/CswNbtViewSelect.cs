@@ -490,6 +490,34 @@ namespace ChemSW.Nbt
             viewsUpdate.update( node_views );
         }
 
+        /// <summary>
+        /// Copy views from one role to another
+        /// </summary>
+        /// <param name="OriginalRoleId">role from which to copy views</param>
+        /// <param name="NewRoleId">role to receive the new views</param>
+        public void copyViewsByRoleId( CswPrimaryKey OriginalRoleId, CswPrimaryKey NewRoleId )
+        {
+            CswTableUpdate viewsUpdate = _CswNbtResources.makeCswTableUpdate( "getRoleViews_select", "node_views" );
+            DataTable originalViews = viewsUpdate.getTable( "where roleid = " + OriginalRoleId.PrimaryKey.ToString() );
+            DataTable newViews = viewsUpdate.getEmptyTable();
+            
+            foreach( DataRow OldView in originalViews.Rows )
+            {
+                DataRow NewView = newViews.NewRow();
+                foreach( DataColumn Column in originalViews.Columns )
+                {
+                    if( Column.ColumnName != "nodeviewid" && Column.ColumnName != "roleid" )
+                    {
+                        NewView[Column.ColumnName] = OldView[Column.ColumnName];
+                    }
+                }
+                NewView["roleid"] = NewRoleId.PrimaryKey;
+                newViews.Rows.Add( NewView );
+            }
+
+            viewsUpdate.update( newViews );
+        }
+
         public void deleteViewsByUserId( CswPrimaryKey UserNodeId )
         {
             CswTableUpdate viewsUpdate = _CswNbtResources.makeCswTableUpdate( "getUserViews_select", "node_views" );

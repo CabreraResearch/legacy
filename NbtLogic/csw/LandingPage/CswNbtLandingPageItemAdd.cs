@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.LandingPage
             }
         }
 
-        public override void setItemDataForDB( LandingPageData.Request Request )
+        public override void setDBValuesFromRequest( LandingPageData.Request Request )
         {
             Int32 NodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
             if( NodeTypeId != Int32.MinValue )
@@ -61,8 +61,20 @@ namespace ChemSW.Nbt.LandingPage
             {
                 throw new CswDniException(CswEnumErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item");
             }
-            _setCommonItemDataForDB( Request );
+            _setCommonDbValuesFromRequest( Request );
         }
+
+        public override void setDBValuesFromExistingLandingPageItem( string RoleId, LandingPageData.LandingPageItem Item )
+        {
+            _ItemRow["to_nodetypeid"] = Item.NodeTypeId;
+            if( false == string.IsNullOrEmpty( Item.ActionId ) )
+            {
+                _ItemRow["to_actionid"] = Item.ActionId;
+            }
+            _setCommonDBValuesFromExistingLandingPageItem( RoleId, Item );
+        }
+
+
 
         private String _getAddAction( Int32 NodeTypeId )
         {
