@@ -309,7 +309,7 @@ namespace ChemSW.Nbt.ImportExport
             string LegacyId = string.Empty;
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
-                if( Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId )
+                if( Binding.DestPropName == "Legacy Id" )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                     allEmpty = false;
@@ -321,22 +321,14 @@ namespace ChemSW.Nbt.ImportExport
                 bool foundMatch = false;
                 if( false == string.IsNullOrEmpty( LegacyId ) ) //Check for matching nodes using a view on legacy id
                 {
-                    CswNbtView LegacyIdView = new CswNbtView( _CswNbtResources );
-                    LegacyIdView.ViewName = "Check Legacy Id";
-                    CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
-
-                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                    LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
-                                                           Value: LegacyId,
-                                                      SubFieldName: CswEnumNbtSubFieldName.Text, CaseSensitive: false );
-
-                    ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
-                    if( LegacyIdTree.getChildNodeCount() > 0 )
+                    CswTableSelect LegacyNodeSelect = _CswNbtResources.makeCswTableSelect( "LegacyNodeSelect", "nodes" );
+                    DataTable LegacyNodesTable = LegacyNodeSelect.getTable( "where nodetypeid = " + Order.NodeType.NodeTypeId + " and legacyid = " + LegacyId );
+                    if( LegacyNodesTable.Rows.Count > 0 )
                     {
-                        LegacyIdTree.goToNthChild( 0 );
-                        Node = LegacyIdTree.getNodeForCurrentPosition();
                         if( Overwrite )
                         {
+                            CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( LegacyNodesTable.Rows[0]["nodeid"] ) );
+                            Node = _CswNbtResources.Nodes[NodeId];
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                             Node.postChanges( false, false, true );
                         }
@@ -408,16 +400,17 @@ namespace ChemSW.Nbt.ImportExport
                                 Node = UniqueTree.getNodeForCurrentPosition();
                                 if( Overwrite )
                                 {
+                                    Node.LegacyId = LegacyId;
                                     _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                                     Node.postChanges( false );
                                 }
                                 else
                                 {
                                     //we still want to set legacy id on nodes matched by unique properties
-                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId ) )
+                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy Id" ) )
                                     {
                                         //there should always be exactly one iteration of this loop
-                                        Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );
+                                        Node.LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                                     }
                                 }
                             }
@@ -432,6 +425,7 @@ namespace ChemSW.Nbt.ImportExport
                     //need to get around blank conversion factors for UOM nodes not yet filled in here
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
+                            NewNode.LegacyId = LegacyId;
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, NewNode );
 
                             // Specific logic for Roles (see Case 31043)
@@ -736,12 +730,9 @@ namespace ChemSW.Nbt.ImportExport
                                             where (t.firstversionid = " + NodeType.NodeTypeId + ") ";
                         break;
                 }
-                String Sql = @"select n.nodeid
-                                from nodes n 
-                                join nodetype_props p on (lower(p.propname) = '" + CswNbtObjClass.PropertyName.LegacyId.ToLower() + @"') 
-                                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid)
+                String Sql = @"select n.nodeid from nodes n 
                                 " + MetaDataClause + @"
-                                and jnp.Field1 = '" + LegacyId + "'";
+                                and n.legacyid = '" + LegacyId + "'";
                 CswArbitrarySelect LegacyNodeIdSelect = _CswNbtResources.makeCswArbitrarySelect( "LegacyIdRel_select", Sql );
                 DataTable LegacyNodeIdTable = LegacyNodeIdSelect.getTable();
                 if( LegacyNodeIdTable.Rows.Count > 0 )
