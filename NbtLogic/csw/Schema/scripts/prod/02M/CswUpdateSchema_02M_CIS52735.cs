@@ -54,6 +54,7 @@ namespace ChemSW.Nbt.Schema
                 DataRow newMolDataTblRow = molDataTbl.NewRow();
                 newMolDataTblRow["jctnodepropid"] = jctnodepropid;
                 newMolDataTblRow["orginalmol"] = Encoding.UTF8.GetBytes( molString );
+                newMolDataTblRow["nodeid"] = molPropRow["nodeid"];
                 molDataTbl.Rows.Add( newMolDataTblRow );
 
                 molPropRow["clobdata"] = string.Empty;

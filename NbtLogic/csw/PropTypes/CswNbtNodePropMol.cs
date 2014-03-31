@@ -50,6 +50,7 @@ namespace ChemSW.Nbt.PropTypes
                 newMolDataRow["jctnodepropid"] = JctNodePropId;
                 newMolDataRow["orginalmol"] = Encoding.UTF8.GetBytes( MolString );
                 newMolDataRow["contenttype"] = ".mol";
+                newMolDataRow["nodeid"] = this.NodeId.PrimaryKey;
                 molDataTbl.Rows.Add( newMolDataRow );
             }
             else

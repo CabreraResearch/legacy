@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.AcclDirect;
 using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -95,6 +96,11 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswStructureSearchManager StructureSearchManager;
 
+        /// <summary>
+        /// Provides and interface into ACCL Direct database methods
+        /// </summary>
+        public CswACCLDirect AcclDirect;
+
         private Collection<CswWebSvcReturnBase.ErrorMessage> _Messages = new Collection<CswWebSvcReturnBase.ErrorMessage>();
         public Collection<CswWebSvcReturnBase.ErrorMessage> Messages
         {
@@ -125,8 +131,9 @@ namespace ChemSW.Nbt
             SessionDataMgr = new CswNbtSessionDataMgr( this );
             Permit = new CswNbtPermit( this );
             SearchManager = new CswNbtSearchManager( this );
-
-            StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
+            
+            //CIS-52735 - support the legacy Structure Search until we can gracefully transition new customers to the Direct Structure Search
+            StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "originalmol", "mol_data" );
             StructureSearchManager.AddAdditionalWhere = delegate()
                 {
                     CswNbtMetaDataObjectClass ChemicalOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
@@ -140,6 +147,21 @@ namespace ChemSW.Nbt
 
                     return whereClause;
                 };
+
+            AcclDirect = new CswACCLDirect(this, "mol_data", "ctab", "nodeid", delegate()
+                {
+                    CswNbtMetaDataObjectClass ChemicalOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                    CswNbtMetaDataObjectClassProp StructureOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Structure );
+                    CswCommaDelimitedString StructureNTPIds = new CswCommaDelimitedString();
+                    foreach( CswNbtMetaDataNodeTypeProp StructureNTP in StructureOCP.getNodeTypeProps() )
+                    {
+                        StructureNTPIds.Add( StructureNTP.PropId.ToString() );
+                    }
+                    string whereClause = " nodetypepropid in (" + StructureNTPIds.ToString() + ")";
+
+                    return whereClause;
+                });
+
 
             _CswResources.OnConfigVarChangeHandler = _onConfigVblChange;
         }

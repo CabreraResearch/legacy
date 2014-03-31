@@ -203,12 +203,16 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     molProp.setMol( FormattedMolString );
 
-                    //Save the mol image to blob_data
-                    byte[] molImage = CswStructureSearch.GetImage( FormattedMolString );
+                    //If DirectStructureSearch is enabled, use the new code to generate an image. Otherwise, use the legacy code.
+                    byte[] molImage =
+                    ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) ?
+                    _CswNbtResources.AcclDirect.GetImage( FormattedMolString ) :
+                        CswStructureSearch.GetImage( FormattedMolString ) );
 
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
+                    //Save the mol image to blob_data
                     SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node : Node );
 
                     //case 28364 - calculate fingerprint and save it

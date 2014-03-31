@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( molTblName, "isdirectcompatible", "whether the original mol is readable by ACCL direct functions", false );
                 _CswNbtSchemaModTrnsctn.addStringColumn( molTblName, "contentttype", "the type of file in originalmol (.mol or .cdx)", true, 250 );
                 _CswNbtSchemaModTrnsctn.addForeignKeyColumn( molTblName, "jctnodepropid", "foreign key to jct_nodes_props", true, "jct_nodes_props", "jctnodepropid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( molTblName, "nodeid", "foreign key to nodes", true, "nodes", "nodeid" );
             }
         }
     }
