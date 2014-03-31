@@ -433,6 +433,13 @@ namespace ChemSW.Nbt.ImportExport
                             {
                                 _setRolePermissions( NewNode, CswEnumTristate.True == NewNode.Properties[CswNbtObjClassRole.PropertyName.Administrator].AsLogical.Checked ? "CISPro_Admin" : "CISPro_General" );
                             }
+                            else if( Order.NodeTypeName == "Container" )// More Specific Logic (see CIS-52852)
+                            {
+                                CswNbtObjClassContainer Container = NewNode;
+                                double Qty = Container.Quantity.Quantity;
+                                Container.Quantity.Quantity = 0;
+                                Container.DispenseIn( CswEnumNbtContainerDispenseType.Receive, Qty, Container.Quantity.UnitId );
+                            }
 
                         }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
                 }
