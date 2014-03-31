@@ -530,6 +530,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public void ClearBlob()
         {
+            //Clear Blobs from Blob_data
             CswTableUpdate blobDataTU = _CswNbtResources.makeCswTableUpdate( "clearBlob", "blob_data" );
             DataTable blobDataTbl = blobDataTU.getTable( "where jctnodepropid = " + JctNodePropId );
 
@@ -544,6 +545,16 @@ namespace ChemSW.Nbt.PropTypes
                 Row.Delete();
             }
             blobDataTU.update( blobDataTbl );
+
+            //Clear blobs from mol_data
+            CswTableUpdate molDataTU = _CswNbtResources.makeCswTableUpdate( "clearBlobMol", "mol_data" );
+            DataTable molDataTbl = molDataTU.getTable( "where jctnodepropid = " + JctNodePropId );
+
+            foreach( DataRow Row in molDataTbl.Rows )
+            {
+                Row.Delete();
+            }
+            molDataTU.update( molDataTbl );
         }
 
 
