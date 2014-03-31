@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.PropTypes
             _MolSubField = ( (CswNbtFieldTypeRuleMol) _FieldTypeRule ).MolSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            //_SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Mol, x => Mol = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getMol(), x => setMol( CswConvert.ToString( x ) ) ) );
         }
 
         private readonly CswNbtSubField _MolSubField;
@@ -48,16 +48,18 @@ namespace ChemSW.Nbt.PropTypes
             {
                 DataRow newMolDataRow = molDataTbl.NewRow();
                 newMolDataRow["jctnodepropid"] = JctNodePropId;
-                newMolDataRow["orginalmoldata"] = Encoding.UTF8.GetBytes( MolString );
+                newMolDataRow["orginalmol"] = Encoding.UTF8.GetBytes( MolString );
+                newMolDataRow["contenttype"] = ".mol";
                 molDataTbl.Rows.Add( newMolDataRow );
             }
             else
             {
                 DataRow existingMolDataRow = molDataTbl.Rows[0];
-                existingMolDataRow["orginalmoldata"] = Encoding.UTF8.GetBytes( MolString );
+                existingMolDataRow["orginalmol"] = Encoding.UTF8.GetBytes( MolString );
             }
             molDataUpdate.update( molDataTbl );
 
+            //Update jct_nodes_props to specify whether there's mol content (this part is for making views filterable on this property)
             if( string.Empty != MolString )
             {
                 SetPropRowValue( _MolSubField, "1" ); //This means the property has a value
@@ -76,9 +78,9 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswTableSelect molDataUpdate = _CswNbtResources.makeCswTableSelect( "NodePropMol.setMol", "mol_data" );
                 DataTable molDataTbl = molDataUpdate.getTable( "where jctnodepropid = " + JctNodePropId );
-                if( molDataTbl.Rows.Count > 0 && null != molDataTbl.Rows[0]["originalmoldata"])
+                if( molDataTbl.Rows.Count > 0 && null != molDataTbl.Rows[0]["orginalmol"] )
                 {
-                    ret = Encoding.UTF8.GetString( molDataTbl.Rows[0]["originalmoldata"] as byte[] );
+                    ret = Encoding.UTF8.GetString( molDataTbl.Rows[0]["orginalmol"] as byte[] );
                 }
             }
             return ret;
@@ -90,19 +92,6 @@ namespace ChemSW.Nbt.PropTypes
             get { return null != GetPropRowValue( _MolSubField ); }
             //No setter - setMol() sets this property.
         }
-
-        //public string Mol
-        //{
-        //    get
-        //    {
-        //        return GetPropRowValue( _MolSubField );
-        //    }
-        //    set
-        //    {
-        //        SetPropRowValue( _MolSubField, value );
-        //        Gestalt = value;
-        //    }
-        //}
 
         public override string ValueForNameTemplate
         {
