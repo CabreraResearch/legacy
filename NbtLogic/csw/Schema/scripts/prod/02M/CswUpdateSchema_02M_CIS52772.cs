@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
 
                     CswNbtMetaDataNodeTypeTab identityTab = ContainerNT.getIdentityTab();
 
-                    CswNbtMetaDataNodeTypeProp BarcodeNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode);
+                    CswNbtMetaDataNodeTypeProp BarcodeNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode );
                     BarcodeNTP.removeFromAllLayouts();
                     BarcodeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, identityTab.TabId, 1, 1 );
 
@@ -50,11 +50,9 @@ namespace ChemSW.Nbt.Schema
                     MaterialNTP.removeFromAllLayouts();
                     MaterialNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, identityTab.TabId, 2, 1 );
 
-                    CswNbtMetaDataNodeTypeProp QuantityNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity);
+                    CswNbtMetaDataNodeTypeProp QuantityNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
                     QuantityNTP.removeFromAllLayouts();
                     QuantityNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, identityTab.TabId, 3, 1 );
-
-
 
                     CswNbtMetaDataNodeTypeProp OwnerNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
                     OwnerNTP.removeFromAllLayouts();
