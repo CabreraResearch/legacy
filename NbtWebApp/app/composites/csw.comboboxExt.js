@@ -25,7 +25,12 @@
                 storebeforeload: null //function(store, operation) {}
             },
             tpl: '',
-            isRequired: false
+            isRequired: false,
+            proxyMethod: 'GET',
+            reader: {
+                root: 'Data'
+            },
+            checkBox: {}
         };
         var cswPublic = {};
 
@@ -94,7 +99,7 @@
             var comboBoxOpts = {
                 name: cswPrivate.name,
                 store: cswPrivate.makeStore(),
-                renderTo: cswParent.getId(),
+                renderTo: cswPrivate.comboBoxCell.div().getId(),
                 displayField: cswPrivate.displayField,
                 valueField: cswPrivate.valueField,
                 queryMode: cswPrivate.queryMode,
@@ -165,19 +170,19 @@
                 startParam: undefined,
                 limitParam: undefined,
                 actionMethods: {
-                    read: 'POST'
+                    read: cswPrivate.proxyMethod
                 },
                 url: 'Services/' + cswPrivate.searchUrl,
                 reader: {
                     type: 'json',
-                    root: 'Data.Options', //todo: make this generic
+                    root: cswPrivate.reader.root,
                     getResponseData: function (response) {
                         // This function allows us to intercept the data before the reader
                         // reads it so that we can convert it into an array of objects the 
                         // store will accept.
                         var json = Ext.decode(response.responseText);
-                        if (json.Data.Options.length > 0) {
-                            cswPrivate.setComboBoxSize(json.Data.Options);
+                        if (json[cswPrivate.reader.root].length > 0) {
+                            cswPrivate.setComboBoxSize(json[cswPrivate.reader.root]);
                         }
                         return this.readRecords(json);
                     }
@@ -223,7 +228,7 @@
             /// </summary>
             /// <param name="isValid"></param>
             var returnObj = Csw.validator(
-                cswParent.div(),
+                cswPrivate.validateCell.div(),
                 cswPublic.combobox,
                 {
                     wasModified: false,
@@ -287,8 +292,8 @@
                         if (cswPrivate.listeners.storebeforeload) {
                             obj = cswPrivate.listeners.storebeforeload();
                         }
-                        
-                        operation.params = Csw.serialize(obj);
+
+                        operation.params = obj;
                     }
                 });
             }

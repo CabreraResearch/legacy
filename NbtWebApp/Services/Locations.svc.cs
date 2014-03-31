@@ -21,7 +21,7 @@ namespace NbtWebApp
 
         /// <summary>
         /// 
-       /// </summary>
+        /// </summary>
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Assign specified inventory group to specified locations" )]
@@ -51,7 +51,7 @@ namespace NbtWebApp
             CswNbtWebServiceLocations.CswNbtLocationReturn Ret = new CswNbtWebServiceLocations.CswNbtLocationReturn();
             CswWebSvcSessionAuthenticateData.Authentication.Request AuthRequest = new CswWebSvcSessionAuthenticateData.Authentication.Request();
             AuthRequest.RequiredModules.Add( CswEnumNbtModuleName.SI );
-            
+
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.CswNbtLocationReturn, bool>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
@@ -77,6 +77,25 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceLocations.getLocationsList2,
                 ParamObj: ViewId
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Perform a universal search filtered to only Locations" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceLocations.CswNbtLocationReturn searchLocations( string query )
+        {
+            CswNbtWebServiceLocations.CswNbtLocationReturn Ret = new CswNbtWebServiceLocations.CswNbtLocationReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.CswNbtLocationReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceLocations.searchLocations,
+                ParamObj: query
                 );
 
             SvcDriver.run();

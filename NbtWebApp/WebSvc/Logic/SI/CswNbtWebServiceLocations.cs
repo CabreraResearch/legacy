@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.WebServices
         #endregion ctor
 
         [DataContract]
-        public class CswNbtLocationReturn: CswWebSvcReturn
+        public class CswNbtLocationReturn : CswWebSvcReturn
         {
             public CswNbtLocationReturn()
             {
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
 
         public Collection<CswNbtSdLocations.Location> getLocationsList()
         {
-            CswNbtSdLocations Sd = new CswNbtSdLocations(_CswNbtResources);
+            CswNbtSdLocations Sd = new CswNbtSdLocations( _CswNbtResources );
             return Sd.getLocationList();
         }
 
@@ -53,8 +53,15 @@ namespace ChemSW.Nbt.WebServices
 
         public static void getLocationsList2( ICswResources CswResources, CswNbtLocationReturn Return, string Request )
         {
+            //TODO: Return selected node
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             Return.Data = CswNbtNodePropLocation.GetLocationsList( CswNbtResources, Request );
+        }
+
+        public static void searchLocations( ICswResources CswResources, CswNbtLocationReturn Return, string Query )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            Return.Data = CswNbtNodePropLocation.searchLocations( CswNbtResources, Query, false );
         }
 
         #endregion Public

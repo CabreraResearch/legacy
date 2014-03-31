@@ -33,7 +33,8 @@
                 },
                 EditMode: nodeProperty.tabState.EditMode,
                 value: cswPrivate.nodeId,
-                options: nodeProperty.propData.values.options
+                options: nodeProperty.propData.values.options,
+                search: nodeProperty.propData.values.search
             });
         };
 

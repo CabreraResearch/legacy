@@ -25,7 +25,8 @@
             overrideSelectedLocation: true,
             useDefaultLocation: true,
             value: '',
-            options: []
+            options: [],
+            search: false
         };
 
         var cswPublic = {};
@@ -134,7 +135,7 @@
                     queryDelay: 2000,
                     options: cswPrivate.options,
                     selectedValue: cswPrivate.path,
-                    search: false,
+                    search: cswPrivate.search,
                     searchUrl: 'Locations/searchLocations',
                     listeners: {
                         select: function (combo, records) {
@@ -151,12 +152,13 @@
                         },
                         storebeforeload: function () {
                             var obj = {};
-                            obj.NodeTypePropId = cswPrivate.propid;
-                            obj.SearchTerm = cswPrivate.select.combobox.getValue();
+                            obj.query = cswPublic.comboBox.combobox.getValue();
                             return obj;
                         }
                     },
-                    isRequired: cswPrivate.isRequired
+                    isRequired: cswPrivate.isRequired,
+                    proxyMethod: 'GET',
+                    reader: {root: 'Data'}
                 });
 
                 cswPrivate.selectDiv.css({ width: cswPrivate.selectDiv.$.width() + 15 });
