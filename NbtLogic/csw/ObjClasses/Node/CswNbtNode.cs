@@ -112,6 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             _SessionId = CswConvert.ToString( row["sessionid"] );
             _PendingUpdate = CswConvert.ToBoolean( row["pendingupdate"] );
             _Searchable = CswConvert.ToBoolean( row["searchable"] );
+            _LegacyId = CswConvert.ToString( row["legacyid"] );
             if( row.Table.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
             {
                 _AuditLevel = row[_CswAuditMetaData.AuditLevelColName].ToString();
@@ -207,6 +208,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// If IsTemp, the SessionId associated with the Node
         /// </summary>
         public string SessionId { get { return _SessionId; } set { _SessionId = value; } }
+
+        private string _LegacyId = string.Empty;
+        /// <summary>
+        /// The LegacyId of the node (imported from a legacy system)
+        /// </summary>
+        public string LegacyId { get { return _LegacyId; } set { _LegacyId = value; } }
 
         private bool _ReadOnly = false;
         private bool _ReadOnlyTemporary = false;

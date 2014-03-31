@@ -990,15 +990,6 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.Button,
                     Extended = CswNbtNodePropButton.ButtonMode.button
                 } );
-
-                // Case 30813
-                createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
-                {
-                    PropName = CswNbtObjClass.PropertyName.LegacyId,
-                    FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true
-                } );
-
             }
             return NewObjectClass;
         }

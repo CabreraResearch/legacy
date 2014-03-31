@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.csw.Schema
                     {
                         throw new CswDniException( CswEnumErrorType.Error, "Tried to autogenerate legacyid binding, but did not supply a PK column name.", "" );
                     }
-                    importBinding( PkColumnName, CswNbtObjClass.PropertyName.LegacyId, "" );
+                    importBinding( PkColumnName, "Legacy Id", "" );
                 }
             }
             else
