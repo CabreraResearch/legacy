@@ -58,6 +58,7 @@ namespace ChemSW.Nbt.Schema
                 molDataTbl.Rows.Add( newMolDataTblRow );
 
                 molPropRow["clobdata"] = string.Empty;
+                molPropRow["field1"] = "1";
             }
 
             molDataUpdate.update( molDataTbl );

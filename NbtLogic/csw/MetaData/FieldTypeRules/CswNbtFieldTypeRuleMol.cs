@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Nbt.ObjClasses;
@@ -25,7 +24,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            MolSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, SubFieldName.Mol );
+            MolSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Mol );
             // BZ 8638
             //MolSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull |
             //                          CswEnumNbtFilterMode.Null;
@@ -49,7 +48,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
         {
-            return ( string.Empty );
+            return _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, CswNbtViewPropertyFilterIn, ParameterCollection, FilterNumber );
         }//makeWhereClause()
 
 
