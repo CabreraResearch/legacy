@@ -51,12 +51,23 @@ namespace ChemSW.Nbt.PropTypes
                 newMolDataRow["originalmol"] = Encoding.UTF8.GetBytes( MolString );
                 newMolDataRow["contenttype"] = ".mol";
                 newMolDataRow["nodeid"] = this.NodeId.PrimaryKey;
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
+                {
+                    newMolDataRow["ctab"] = _CswNbtResources.AcclDirect.GetCTab( MolString );
+                    newMolDataRow["isdirectcompatible"] = CswConvert.ToDbVal( _CswNbtResources.AcclDirect.IsMolValid( MolString ) );
+                }
+
                 molDataTbl.Rows.Add( newMolDataRow );
             }
             else
             {
                 DataRow existingMolDataRow = molDataTbl.Rows[0];
                 existingMolDataRow["originalmol"] = Encoding.UTF8.GetBytes( MolString );
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
+                {
+                    existingMolDataRow["ctab"] = _CswNbtResources.AcclDirect.GetCTab( MolString );
+                    existingMolDataRow["isdirectcompatible"] = CswConvert.ToDbVal( _CswNbtResources.AcclDirect.IsMolValid( MolString ) );
+                }
             }
             molDataUpdate.update( molDataTbl );
 
