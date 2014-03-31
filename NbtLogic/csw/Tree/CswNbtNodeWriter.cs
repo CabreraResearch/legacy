@@ -95,13 +95,6 @@ namespace ChemSW.Nbt
             }
             CswTableUpdateNodes.update( NewNodeTable );
 
-            //setDefaultPropertyValues( Node );
-
-            // case 22591 - make empty rows for every property
-            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
-            {
-                PropWrapper.makePropRow();
-            }
         }//makeNewNodeEntry()
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
