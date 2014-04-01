@@ -194,8 +194,6 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public Collection<Location> searchLocations( string Query, string ViewId )
         {
-            throw new CswDniException( CswEnumErrorType.Error, "colleen made this", "colleen made this" );
-
             Collection<Location> Ret = new Collection<Location>();
 
             CswNbtView LocationView = _getLocationsView( ViewId, Query );
