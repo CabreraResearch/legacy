@@ -237,6 +237,9 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetPermission.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
+    <Compile Include="csw\PropTypes\wcf\CswNbtWcfPropertyVerbose.cs" />
+    <Compile Include="csw\PropTypes\wcf\CswNbtWcfPropCollection.cs" />
+    <Compile Include="csw\PropTypes\wcf\CswNbtWcfProperty.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMetaDataList.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPermissionGroup.cs" />
     <Compile Include="csw\PropTypes\ICswNbtNodePropNodeReference.cs" />

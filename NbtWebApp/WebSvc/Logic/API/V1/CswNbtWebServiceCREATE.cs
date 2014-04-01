@@ -44,8 +44,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                     Return.URI = "api/v1/" + NodeType.NodeTypeName + "/" + NewNode.NodeId.PrimaryKey; //TODO: this URI is incomplete
 
                     CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    //TODO: see CswNbtWebServiceGET for the problems with the line below
-                    Return.PropertyData = CswConvert.ToJObject( SdTabsAndProps.getProps( NewNode, string.Empty, null, CswEnumNbtLayoutType.Add )["properties"] );
+                    Return.PropertyData = ConvertPropertyData( CswConvert.ToJObject( SdTabsAndProps.getProps( NewNode, string.Empty, null, CswEnumNbtLayoutType.Add )["properties"] ) );
 
                     Return.Status = HttpStatusCode.Created;
                 }

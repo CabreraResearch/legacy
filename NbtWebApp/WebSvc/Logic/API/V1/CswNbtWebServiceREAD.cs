@@ -52,9 +52,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         CswNbtMetaDataNodeType NodeType = Node.getNodeType();
                         //TODO: better way to get property data - we're forcing it to be by tab...we should get ALL properties, regardless of what tab they're on
-                        //TODO: getProps() returns an object like "{Node: { ... }, properties: { ... } }" and all we want is properties...getProps() should just return properties
-                        //TODO: PropertyData is returned as a string and the user is forced to JSON.parse it...this should be an object
-                        Return.PropertyData = CswConvert.ToJObject( SdTabsAndProps.getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), null, CswEnumNbtLayoutType.Edit )["properties"] );
+                        Return.PropertyData = ConvertPropertyData( CswConvert.ToJObject( SdTabsAndProps.getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), null, CswEnumNbtLayoutType.Edit )["properties"] ) );
                     }
                     else
                     {
