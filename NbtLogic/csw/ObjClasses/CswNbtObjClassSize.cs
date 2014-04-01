@@ -44,9 +44,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
-            _setUnits();//Case 30571 - set available quantity units on the add layout
             if( CswEnumTristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
@@ -55,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            _setUnits();//Case 29579 - set available quantity units on the edit layout
+            InitialQuantity.SetOnBeforeRender( Prop => _setUnits() );
         }//afterPopulateProps()
 
         #endregion
@@ -77,23 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom logic
 
-        private bool _isMaterialID( CswPrimaryKey nodeid )
-        {
-            bool isMaterialID = false;
-            CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            if( null != node )
-            {
-                CswNbtMetaDataPropertySet NodePS = node.getObjectClass().getPropertySet();
-                if( null != NodePS )
-                {
-                    CswNbtMetaDataPropertySet MaterialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
-                    isMaterialID = ( MaterialPS.PropertySetId == NodePS.PropertySetId );
-                }
-            }
-
-            return isMaterialID;
-        }
-
+        //set available quantity units when rendering the property on the add/edit layout
         private void _setUnits()
         {
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );

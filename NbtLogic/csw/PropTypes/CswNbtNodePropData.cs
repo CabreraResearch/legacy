@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
             bool ret = false;
             if( null != SubField )
             {
-                SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
+                ret = SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
             }
             return ret;
         }
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
                 dbval = CswConvert.ToDbVal( value );
             }
 
-            if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
+            if( _PropRow == null && dbval != DBNull.Value )
             {
                 makePropRow();
                 ret = true;

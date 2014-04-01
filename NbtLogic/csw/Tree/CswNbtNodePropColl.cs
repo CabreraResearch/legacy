@@ -176,7 +176,7 @@ namespace ChemSW.Nbt
             // Do the Update
             if( null != _CswNbtNode )
             {
-                _PropsUpdate.update( PropsTable, AllowAuditing );
+                _PropsUpdate.update( PropsTable, ( AllowAuditing && false == _CswNbtNode.IsTemp ) );
 
                 if( CswTools.IsPrimaryKey( _CswNbtNode.RelationalId ) && "nodes" != _CswNbtNode.RelationalId.TableName.ToLower() )
                 {

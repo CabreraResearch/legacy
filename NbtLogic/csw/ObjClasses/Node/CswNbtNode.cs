@@ -112,6 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             _SessionId = CswConvert.ToString( row["sessionid"] );
             _PendingUpdate = CswConvert.ToBoolean( row["pendingupdate"] );
             _Searchable = CswConvert.ToBoolean( row["searchable"] );
+            _LegacyId = CswConvert.ToString( row["legacyid"] );
             if( row.Table.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
             {
                 _AuditLevel = row[_CswAuditMetaData.AuditLevelColName].ToString();
@@ -208,6 +209,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public string SessionId { get { return _SessionId; } set { _SessionId = value; } }
 
+        private string _LegacyId = string.Empty;
+        /// <summary>
+        /// The LegacyId of the node (imported from a legacy system)
+        /// </summary>
+        public string LegacyId { get { return _LegacyId; } set { _LegacyId = value; } }
+
         private bool _ReadOnly = false;
         private bool _ReadOnlyTemporary = false;
         /// <summary>
@@ -248,7 +255,7 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
         }//Filled
 
-        public bool OverrideValidation = false;
+        public bool DisableSave = false;
 
         public bool New
         {
@@ -415,20 +422,22 @@ namespace ChemSW.Nbt.ObjClasses
         /// TODO - Case 31708: fix performance issues on writeNode event logic and remove this function
         /// </summary>
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postOnlyChanges( bool ForceUpdate )
+        public void postOnlyChanges( bool ForceUpdate, bool SkipEvents = false )
         {
-            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate( _CswNbtResources )
+            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate
             {
                 OverrideUniqueValidation = true,
+                OverrideMailReportEvents = true,
+                Creating = true,
                 ForceUpdate = ForceUpdate,
-                SkipEvents = true
+                SkipEvents = SkipEvents
             };
             NodePersistStrategy.postChanges( this );
         }//postChanges()
 
-        public void write( bool ForceUpdate )
+        public void requestWrite( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
         {
-            _CswNbtNodeWriter.write( this, ForceUpdate );
+            _CswNbtNodeWriter.write( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
         }
 
         public void setModificationState( String ModState )
@@ -661,11 +670,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Methods
 
-        public void syncNodeName()
+        public void updateRelationsToThisNode()
         {
-            _CswNbtNodeWriter.syncNodeName( this );
+            _CswNbtNodeWriter.updateRelationsToThisNode( this );
         }
-
         public void setSequenceValues()
         {
             _CswNbtNodeWriter.setSequenceValues( this );

@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) &&
                 Location.wasAnySubFieldModified() &&

@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             _setDefaultValues();
         }//beforeWriteNode()

@@ -112,17 +112,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforePromoteNodeLogic()
-        {
-        }
-
         protected override void afterPromoteNodeLogic()
         {
             // originally case 27330, moved here by case 30647
             Size.setReadOnly( value: true, SaveToDb: true );
         }
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";

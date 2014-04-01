@@ -85,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// TODO - Case 31708: fix performance issues on writeNode event logic and remove this function
         /// </summary>
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postOnlyChanges( bool ForceUpdate )
+        public void postOnlyChanges( bool ForceUpdate, bool SkipEvents = false )
         {
-            _CswNbtNode.postOnlyChanges( ForceUpdate );
+            _CswNbtNode.postOnlyChanges( ForceUpdate, SkipEvents );
         }//postChanges()
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// ObjectClass-specific logic to execute before persisting a new real node (from temp or create)
         /// </summary>
-        protected virtual void beforePromoteNodeLogic() { }
+        protected virtual void beforePromoteNodeLogic( bool OverrideUniqueValidation = false ) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after persisting a new real node (from temp or create)
         /// </summary>
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// ObjectClass-specific logic to execute before updating a new or existing node
         /// </summary>
-        protected virtual void beforeWriteNodeLogic( bool Creating ) { }
+        protected virtual void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation ) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after updating a new or existing node
         /// </summary>
@@ -140,9 +140,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Base Node Event Logic
 
-        public void beforePromoteNode()
+        public void beforePromoteNode( bool OverrideUniqueValidation = false )
         {
-            beforePromoteNodeLogic();
+            beforePromoteNodeLogic( OverrideUniqueValidation: OverrideUniqueValidation );
         }
 
         public void afterPromoteNode()
@@ -152,24 +152,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region BeforeWriteNode
 
-        public void beforeWriteNode( bool IsCopy, bool Creating )
+        public void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            beforeWriteNodeLogic( Creating );
-            foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+            beforeWriteNodeLogic( Creating, OverrideUniqueValidation );
+            if( false == Creating )
             {
-                if( CurrentProp.wasAnySubFieldModified() )
+                foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
                 {
-                    _updateReferenceProps( CurrentProp );
+                    if( CurrentProp.wasAnySubFieldModified() )
+                    {
+                        _updateExternalRelatedProps( CurrentProp );
+                    }
                 }
             }
-            if( false == Node.OverrideValidation )
+            if( false == OverrideUniqueValidation )
             {
                 _validateCompoundUniqueProps( IsCopy );
             }
         } // beforeWriteNode()
 
-        //Updates related composite and propertyreference props
-        private void _updateReferenceProps( CswNbtNodePropWrapper CurrentProp )
+        //Updates related composite, propertyreference, relationship, and location
+        private void _updateExternalRelatedProps( CswNbtNodePropWrapper CurrentProp )
         {
             // When a property changes, we need to:
             // 1. recalculate composite property values which include changed properties on this node
@@ -195,6 +198,49 @@ namespace ChemSW.Nbt.ObjClasses
                         PropRefProp.RecalculateReferenceValue();
                     }
                 }
+            }
+
+            // 3. mark any property references to this property on other nodes as pending update
+            if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
+            {
+                //BZ 10239 - Fetch the cached value field name.
+                CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswEnumNbtFieldType.PropertyReference );
+                CswEnumNbtPropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
+
+                string SQL = @"update jct_nodes_props 
+                            set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"',
+                                " + PropRefColumn.ToString() + @" = ''
+                        where jctnodepropid in (select j.jctnodepropid
+                                                    from jct_nodes_props j
+                                                    join nodes n on n.nodeid = j.nodeid
+                                                    join nodetype_props p on p.nodetypepropid = j.nodetypepropid
+                                                    join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                    left outer join jct_nodes_props jntp on (jntp.nodetypepropid = p.fkvalue
+                                                                                        and jntp.nodeid = n.nodeid
+                                                                                        and jntp.field1_fk = " + CurrentProp.NodeId.PrimaryKey.ToString() + @")
+                                                    left outer join (select jx.jctnodepropid, ox.objectclasspropid, jx.nodeid
+                                                                        from jct_nodes_props jx
+                                                                        join nodetype_props px on jx.nodetypepropid = px.nodetypepropid
+                                                                        join object_class_props ox on px.objectclasspropid = ox.objectclasspropid
+                                                                    where jx.field1_fk = " + CurrentProp.NodeId.PrimaryKey.ToString() + @") jocp 
+                                                                                        on (jocp.objectclasspropid = p.fkvalue 
+                                                                                        and jocp.nodeid = n.nodeid)
+                                                    where f.fieldtype = 'PropertyReference'
+                                                    and ((lower(p.fktype) = 'nodetypepropid' and jntp.jctnodepropid is not null)
+                                                        or (lower(p.fktype) = 'objectclasspropid' and jocp.jctnodepropid is not null))
+                                                    and ((lower(p.valueproptype) = 'nodetypepropid' and p.valuepropid = " + CurrentProp.NodeTypePropId.ToString() + @") 
+                                                        or (lower(p.valueproptype) = 'objectclasspropid' and p.valuepropid = " + CurrentProp.ObjectClassPropId + @")))";
+
+                // We're not doing this in a CswTableUpdate because it might be a large operation, 
+                // and we don't care about auditing for this change.
+                _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
+            }
+
+            // 4. For locations, if this node's location changed, we need to update the pathname on the children
+            if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Location &&
+                CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
+            {
+                _CswNbtNode.updateRelationsToThisNode();
             }
         }
 
@@ -271,10 +317,30 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region AfterWriteNode
 
-        public void afterWriteNode()
+        public void afterWriteNode( bool OverrideMailReportEvents )
         {
             afterWriteNodeLogic();
+            if( false == OverrideMailReportEvents )
+            {
+                _runMailReportEvents();
+            }
         }//afterWriteNode()
+
+        private void _runMailReportEvents()
+        {
+            Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
+            foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+            {
+                if( CurrentProp.wasAnySubFieldModified( IncludePendingUpdate: false ) )
+                {
+                    ModifiedProps.Add( CurrentProp );
+                }
+            }
+            if( ModifiedProps.Count > 0 )
+            {
+                _CswNbtResources.runMailReportEvents( this.NodeType, CswEnumNbtMailReportEventOption.Edit, _CswNbtNode, ModifiedProps );
+            }
+        }
 
         #endregion AfterWriteNode
 
@@ -342,6 +408,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void triggerAfterPopulateProps()
         {
+            //We don't have a context for which Tab is going to render, but we can eliminate the base conditions for displaying the Save button here.
+            //if( null != this.Node && false == canSave( TabId : Int32.MinValue ) )
+            //{
+            //    Save.setHidden( value : true, SaveToDb : false );
+            //}
             afterPopulateProps();
         }
 
@@ -529,7 +600,6 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract class PropertyName
         {
             public const string Save = "Save";
-            public const string LegacyId = "Legacy Id";
         }
 
         public virtual CswNbtNodePropButton Save
@@ -538,15 +608,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtNodePropButton Ret = Node.Properties[PropertyName.Save];
 
-                return Ret;
-            }
-        }
-
-        public virtual CswNbtNodePropNumber LegacyId
-        {
-            get
-            {
-                CswNbtNodePropNumber Ret = Node.Properties[PropertyName.LegacyId];
                 return Ret;
             }
         }

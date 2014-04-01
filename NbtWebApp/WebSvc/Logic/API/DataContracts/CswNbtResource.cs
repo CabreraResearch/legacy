@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace NbtWebApp.WebSvc.Logic.API.DataContracts
 {
@@ -34,5 +36,28 @@ namespace NbtWebApp.WebSvc.Logic.API.DataContracts
 
         [DataMember( Name = "propertyset" )]
         public string PropertySet { get; set; }
+
+        
+        //public JObject PropertyData
+        //{
+        //    get { return CswConvert.ToJObject( _propertyDataStr ); }
+        //    set { _propertyDataStr = value.ToString(); }
+        //}
+        
+        //[DataMember( Name = "propdata", EmitDefaultValue = false )]
+        //private string _propertyDataStr { get; set; }
+
+        //[OnSerializing]
+        //internal void _onSerializing( StreamingContext ctx )
+        //{
+        //    if( false == PropertyData.HasValues )
+        //    {
+        //        //If there are no values supplied for PropertyData, we don't want to serialize it
+        //        _propertyDataStr = null;
+        //    }
+        //}
+
+        [DataMember( Name = "propdata", EmitDefaultValue = false )]
+        public CswNbtWcfPropCollection PropertyData { get; set; }
     }
 }

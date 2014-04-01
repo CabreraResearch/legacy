@@ -29,7 +29,7 @@ namespace NbtWebApp.WebSvc.Logic.API
             return hasPermission( _CswNbtResources, CswEnumNbtNodeTypePermission.View, GenericRequest, Return );
         }
 
-        public void GetResource( CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public void GetResource( CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             if( hasPermission( GenericRequest, Return ) )
             {
@@ -52,9 +52,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         CswNbtMetaDataNodeType NodeType = Node.getNodeType();
                         //TODO: better way to get property data - we're forcing it to be by tab...we should get ALL properties, regardless of what tab they're on
-                        //TODO: getProps() returns an object like "{Node: { ... }, properties: { ... } }" and all we want is properties...getProps() should just return properties
-                        //TODO: PropertyData is returned as a string and the user is forced to JSON.parse it...this should be an object
-                        Return.PropertyData = CswConvert.ToJObject( SdTabsAndProps.getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), null, CswEnumNbtLayoutType.Edit )["properties"] );
+                        Return.PropertyData = ConvertPropertyData( CswConvert.ToJObject( SdTabsAndProps.getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), null, CswEnumNbtLayoutType.Edit )["properties"] ) );
                     }
                     else
                     {
@@ -99,7 +97,7 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         #region Static
 
-        public static void GetResource( ICswResources CswResources, CswNbtResourceWithProperties Return, CswNbtAPIGenericRequest GenericRequest )
+        public static void GetResource( ICswResources CswResources, CswNbtResource Return, CswNbtAPIGenericRequest GenericRequest )
         {
             CswNbtWebServiceREAD GET = new CswNbtWebServiceREAD( (CswNbtResources) CswResources );
             GET.GetResource( Return, GenericRequest );

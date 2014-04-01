@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforePromoteNodeLogic()
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             // Make sure propname is unique for this nodetype
             if( false == CswTools.IsPrimaryKey( NodeTypeValue.RelatedNodeId ) )
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                                            "Property must be attached to a nodetype",
                                            "Attempted to save a new property without a nodetype" );
             }
-            if( false == Node.OverrideValidation &&
+            if( false == OverrideUniqueValidation &&
                 null != RelationalNodeType && null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterPromoteNode()
 
-        protected override void beforeWriteNodeLogic( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating, bool OverrideUniqueValidation )
         {
             // If display condition is set, required must be false
             if( false == DisplayConditionProperty.Empty )
@@ -562,12 +562,30 @@ namespace ChemSW.Nbt.ObjClasses
                             else if( FKTypeWrapper.Text == CswEnumNbtViewPropIdType.ObjectClassPropId.ToString() )
                             {
                                 CswNbtMetaDataObjectClassProp SelectedOCP = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( RelationshipWrapper.Value ) );
-                                CswNbtMetaDataObjectClass SelectedTarget = _CswNbtResources.MetaData.getObjectClass( SelectedOCP.FKValue );
-                                foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedTarget.getObjectClassProps() )
+                                // Since the relationship is an OCP, having a NodeTypeId as a target would be illegal here
+                                IEnumerable<CswNbtMetaDataObjectClassProp> PropOptions = new Collection<CswNbtMetaDataObjectClassProp>();
+                                if( SelectedOCP.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                                {
+                                    CswNbtMetaDataObjectClass SelectedTarget = _CswNbtResources.MetaData.getObjectClass( SelectedOCP.FKValue );
+                                    if( null != SelectedTarget )
+                                    {
+                                        PropOptions = SelectedTarget.getObjectClassProps();
+                                    }
+                                }
+                                else if( SelectedOCP.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                                {
+                                    CswNbtMetaDataPropertySet SelectedTargetPS = _CswNbtResources.MetaData.getPropertySet( SelectedOCP.FKValue );
+                                    if( null != SelectedTargetPS )
+                                    {
+                                        PropOptions = SelectedTargetPS.getPropertySetProps();
+                                    }
+                                }
+
+                                foreach( CswNbtMetaDataObjectClassProp OtherOCP in PropOptions )
                                 {
                                     ret.Options.Add( new CswNbtNodeTypePropListOption( OtherOCP.PropName + PropRefValue_OCP_Suffix, OtherOCP.PropId.ToString() ) );
                                 }
-                            }
+                            } // else if( FKTypeWrapper.Text == CswEnumNbtViewPropIdType.ObjectClassPropId.ToString() )
                         } // if( false == FKTypeWrapper.Empty && false == RelationshipWrapper.Empty )
                         return ret;
                     };
@@ -587,7 +605,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             // We have to embed whether this is an object class or nodetype in the Text of the list value, 
                             // or else the Value won't sync with nodetype_props correctly (see PropRefValue_OCP_Suffix below)
-                           
+
                             // Find matches by NodeTypePropId:
                             CswNbtMetaDataNodeType RelationshipPropNT = _CswNbtResources.MetaData.getNodeType( getNodeTypeName( CswEnumNbtFieldType.Relationship ) );
                             CswNbtMetaDataNodeTypeProp RelationshipPropNodeTypeValueNTP = RelationshipPropNT.getNodeTypePropByObjectClassProp( PropertyName.NodeTypeValue );
@@ -595,8 +613,8 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtView MatchingRelView = new CswNbtView( _CswNbtResources );
                             MatchingRelView.ViewName = "Find Matching Relationship Options";
                             CswNbtViewRelationship rel1 = MatchingRelView.AddViewRelationship( RelationshipPropNT, false );
-                            MatchingRelView.AddViewProperty( rel1,RelationshipPropNodeTypeValueNTP );
-                            MatchingRelView.AddViewProperty( rel1, RelationshipPropPropNameNTP);
+                            MatchingRelView.AddViewProperty( rel1, RelationshipPropNodeTypeValueNTP );
+                            MatchingRelView.AddViewProperty( rel1, RelationshipPropPropNameNTP );
                             // nodetypeid matches
                             MatchingRelView.AddViewPropertyAndFilter( rel1,
                                                                       RelationshipPropNT.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target ),
@@ -935,7 +953,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Synchronize attributes from object class prop
         /// </summary>
-        public void syncFromObjectClassProp(bool updateLayout=true)
+        public void syncFromObjectClassProp( bool updateLayout = true )
         {
             Int32 PropId = RelationalId.PrimaryKey;
             CswTableUpdate PropsUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeTypeProp_afterCreateNode_PropsUpdate", "nodetype_props" );
@@ -1032,11 +1050,7 @@ namespace ChemSW.Nbt.ObjClasses
                             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
                             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
                         }
-                        else if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.LegacyId ) ) //case 31583 - LegacyId hidden by default
-                        {
-                            _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( RelationalNodeTypeProp );
-                        }
-                        else 
+                        else
                         {
                             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
                             if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&

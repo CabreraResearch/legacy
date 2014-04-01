@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        protected override void beforePromoteNodeLogic()
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             if( Int32.MinValue == Order.Value )
             {

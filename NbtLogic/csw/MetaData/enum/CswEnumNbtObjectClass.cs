@@ -63,6 +63,7 @@ namespace ChemSW.Nbt.MetaData
             { MaterialComponentClass            , MaterialComponentClass             },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
+            { MethodConditionClass              , MethodConditionClass               },
             { NonChemicalClass                  , NonChemicalClass                   },
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
@@ -84,6 +85,9 @@ namespace ChemSW.Nbt.MetaData
             { SDSDocumentClass                  , SDSDocumentClass                   },
             { SizeClass                         , SizeClass                          },
             { TaskClass                         , TaskClass                          },
+            { TestingLabClass                   , TestingLabClass                    },
+            { TestingLabUserAssignmentClass     , TestingLabUserAssignmentClass      },
+            { TestingLabMethodAssignmentClass   , TestingLabMethodAssignmentClass    },
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
@@ -192,6 +196,7 @@ namespace ChemSW.Nbt.MetaData
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
         public const string MethodClass = "MethodClass";
+        public const string MethodConditionClass = "MethodConditionClass";
         public const string NonChemicalClass = "NonChemicalClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
@@ -214,6 +219,9 @@ namespace ChemSW.Nbt.MetaData
         public const string GHSSignalWordClass = "GHSSignalWord";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
+        public const string TestingLabClass = "TestingLabClass";
+        public const string TestingLabUserAssignmentClass = "TestingLabUserAssignmentClass";
+        public const string TestingLabMethodAssignmentClass = "TestingLabMethodAssignmentClass";
         public const string UnitOfMeasureClass = "UnitOfMeasureClass";
         public const string UserClass = "UserClass";
         public const string VendorClass = "VendorClass";

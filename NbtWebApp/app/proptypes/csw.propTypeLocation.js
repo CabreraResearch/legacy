@@ -27,6 +27,7 @@
                 ReadOnly: nodeProperty.isReadOnly(),
                 isRequired: nodeProperty.isRequired(),
                 onChange: function (nodeid) {
+
                         nodeProperty.propData.values.nodeid = nodeid;
                         nodeProperty.broadcastPropChange(nodeid);
                 },

@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.LandingPage
             return TabView;
         }
 
-        public override void setItemDataForDB( LandingPageData.Request Request )
+        public override void setDBValuesFromRequest( LandingPageData.Request Request )
         {
             Int32 TabId = CswConvert.ToInt32( Request.PkValue );
             Int32 NodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
@@ -68,7 +68,14 @@ namespace ChemSW.Nbt.LandingPage
             {
                 throw new CswDniException(CswEnumErrorType.Warning, "You must select a tab", "No tab selected for new Tab LandingPage Item");
             }
-            _setCommonItemDataForDB( Request );
+            _setCommonDbValuesFromRequest( Request );
+        }
+
+        public override void setDBValuesFromExistingLandingPageItem( string RoleId, LandingPageData.LandingPageItem Item )
+        {
+            _ItemRow["to_tabid"] = Item.TabId;
+            _ItemRow["to_nodetypeid"] = Item.NodeTypeId;
+            _setCommonDBValuesFromExistingLandingPageItem( RoleId, Item );
         }
     }
 }
