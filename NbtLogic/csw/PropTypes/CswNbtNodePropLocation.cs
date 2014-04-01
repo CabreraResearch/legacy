@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -227,7 +225,7 @@ namespace ChemSW.Nbt.PropTypes
             CachedBarcode = string.Empty;
         }
 
-        public static readonly string PathDelimiter = " > ";
+        public const string PathDelimiter = " > ";
         private string _generateLocationPath( CswNbtObjClassLocation NodeAsLocation )
         {
             string ret;
@@ -241,7 +239,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, IEnumerable<CswPrimaryKey> InventoryGroupIds = null )
+        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, CswEnumNbtFilterResultMode ResultMode = null, string NameFilter = "" )
         {
             CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
@@ -260,14 +258,16 @@ namespace ChemSW.Nbt.PropTypes
                                                           NodeIdToFilterOut: NodeId,
                                                           RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode || IsRequestItemNode ) ),
                                                           InventoryGroupIds: InventoryGroupIds,
-                                                          DisableLowestLevel: IsLocationNode );
+                                                          DisableLowestLevel: IsLocationNode,
+                                                          ResultMode: ResultMode,
+                                                          NameFilter: NameFilter );
             return Ret;
         }
 
         private CswNbtView _View = null;
         public CswNbtView View
         {
-            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId, null ) ); } // get
+            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId, ResultMode: CswEnumNbtFilterResultMode.Hide ) ); } // get
             set { _View = value; }
         } // View
 
@@ -275,7 +275,6 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return Gestalt; }
         }
-
 
         public override void ToJSON( JObject ParentObject )
         {
@@ -296,29 +295,31 @@ namespace ChemSW.Nbt.PropTypes
             }
             if( IsEditModeEditable )
             {
+                //Case 30335 - This is required for Allow Inventory to work properly
+                View.SaveToCache( false );
+                ParentObject["viewid"] = View.SessionViewId.ToString();
+
+                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+                ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
+                JArray LocationNTArray = new JArray();
+                foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
+                {
+                    LocationNTArray.Add( LocationNT.NodeTypeId );
+                }
+                ParentObject["locationnodetypeids"] = LocationNTArray;
+
                 // If the # of locations in the system is > than the relationshipoptionlimit, then do a search
-                int LocationNodeCnt = _getNumberOfLocationNodes();
+                int LocationNodeCnt = getNumberOfLocationNodes( _CswNbtResources );
                 if( LocationNodeCnt <= _SearchThreshold )
                 {
-                    //Case 30335 - This is required for Allow Inventory to work properly
-                    View.SaveToCache( false );
-                    ParentObject["viewid"] = View.SessionViewId.ToString();
-
-                    CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-                    ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
-                    JArray LocationNTArray = new JArray();
-                    foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
-                    {
-                        LocationNTArray.Add( LocationNT.NodeTypeId );
-                    }
-                    ParentObject["locationnodetypeids"] = LocationNTArray;
-
+                    CswNbtSdLocations Sd = new CswNbtSdLocations( _CswNbtResources );
                     JArray Options = new JArray();
-                    foreach( CswNbtSdLocations.Location location in GetLocationsList( _CswNbtResources, View.SessionViewId.ToString() ) )
+                    foreach( CswNbtSdLocations.Location location in Sd.GetLocationsList( View.SessionViewId.ToString() ) )
                     {
                         JObject Opt = new JObject();
                         Opt["LocationId"] = location.LocationId;
                         Opt["Name"] = location.Name;
+                        Opt["Path"] = location.Path;
                         Options.Add( Opt );
                     }
                     ParentObject["options"] = Options;
@@ -330,8 +331,6 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }
         }
-
-        // ReadXml()
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -479,118 +478,8 @@ namespace ChemSW.Nbt.PropTypes
             return true;
         }
 
-        /// <summary>
-        /// Perform a universal search filtered to only Locations
-        /// </summary>
-        /// <param name="query"></param>
-        public static Collection<CswNbtSdLocations.Location> searchLocations( CswNbtResources CswNbtResources, string query, bool RequireAllowInventory )
+        public static int getNumberOfLocationNodes( CswNbtResources _CswNbtResources )
         {
-            Collection<CswNbtSdLocations.Location> Ret = new Collection<CswNbtSdLocations.Location>();
-
-            CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            string SearchTerm = query;
-            CswEnumSqlLikeMode SearchType = CswEnumSqlLikeMode.Contains;
-
-            CswNbtSearch Search = new CswNbtSearch( CswNbtResources )
-            {
-                SearchTerm = SearchTerm,
-                SearchType = SearchType
-            };
-            Search.addFilter( LocationOC, false );
-
-            if( RequireAllowInventory )
-            {
-                //Add a filter?
-            }
-
-            // Perform the search
-            ICswNbtTree ResultsTree = Search.Results();
-            // If we have results...
-            int childCount = ResultsTree.getChildNodeCount();
-            for( int i = 0; i < childCount; i++ )
-            {
-                ResultsTree.goToNthChild( i );
-                //CswNbtNode node = ResultsTree.getNodeForCurrentPosition();
-                CswPrimaryKey nodeid = ResultsTree.getNodeIdForCurrentPosition();
-                string nodename = ResultsTree.getNodeNameForCurrentPosition();
-                CswNbtSdLocations.Location location = new CswNbtSdLocations.Location();
-                location.Name = nodename;
-                location.LocationId = nodeid.ToString();
-                Ret.Add( location );
-
-                ResultsTree.goToParentNode();
-            }
-
-            return Ret;
-        }//searchLocations()
-
-        private static List<CswPrimaryKey> _LocationNodeIds = null;
-        public static Collection<CswNbtSdLocations.Location> GetLocationsList( CswNbtResources _CswNbtResources, string ViewId, string SelectedNodeId = "" )
-        {
-            Collection<CswNbtSdLocations.Location> Ret = new Collection<CswNbtSdLocations.Location>();
-            CswNbtView LocationView = null;
-
-            if( string.IsNullOrEmpty( ViewId ) )
-            {
-                LocationView = LocationPropertyView( _CswNbtResources, null );
-                LocationView.SaveToCache( false );
-                ViewId = LocationView.SessionViewId.ToString();
-            }
-
-            CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( ViewId );
-            if( SessionViewId.isSet() )
-            {
-                LocationView = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
-            }
-            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( LocationView, false, false, false ); //todo set pernodelimit value; DO WE NEED TO REQUIRE VIEW PERMISSIONS?
-            _LocationNodeIds = new List<CswPrimaryKey>();
-            if( tree.getChildNodeCount() > 0 )
-            {
-                _iterateTree( tree );
-            }
-
-            if( _LocationNodeIds.Count > 0 )
-            {
-                foreach( CswPrimaryKey LocationId in _LocationNodeIds )
-                {
-                    CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes[LocationId];
-                    if( LocNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.LocationClass )
-                    {
-                        CswNbtSdLocations.Location LocationObj = new CswNbtSdLocations.Location();
-                        if( null != LocNode.Location.ReferencedNodeId )
-                        {
-                            LocationObj.Name = LocNode.Location.CachedPath + " > ";
-                        }
-                        LocationObj.Name += LocNode.Name.Text;
-                        LocationObj.LocationId = LocNode.NodeId.ToString();
-                        Ret.Add( LocationObj );
-                    }
-                }
-            }//if( _LocationNodeIds.Count > 0 )
-
-            return Ret;
-        }//GetLocationsList()
-
-        private static void _iterateTree( ICswNbtTree Tree )
-        {
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
-            {
-                Tree.goToNthChild( c );
-                if( Tree.getNodeIncludedForCurrentPosition() )
-                {
-                    _LocationNodeIds.Add( Tree.getNodeIdForCurrentPosition() );
-                }
-                if( Tree.getChildNodeCount() > 0 )
-                {
-                    _iterateTree( Tree );
-                }
-                Tree.goToParentNode();
-            }
-        }//_iterateTree()
-
-        private int _getNumberOfLocationNodes()
-        {
-            // TODO: Module check?
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             return LocationOC.NodeCount;
         }//_getNumberOfLocationNodes()
