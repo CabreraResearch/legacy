@@ -163,6 +163,7 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleDirectStructureSearch.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleC3Products.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleC3ACD.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleArielSync.cs" />
@@ -776,6 +777,7 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52751.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52735D.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CIS52312.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52772.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_Case52302.cs" />
@@ -979,10 +981,13 @@
     <None Include="csw\Schema\scripts\past\02L\CswUpdateSchema_02L_Case31783A.cs" />
     <None Include="csw\Schema\scripts\past\02L\CswUpdateSchema_02L_Case31783B.cs" />
     <None Include="csw\Schema\scripts\past\02L\CswUpdateSchema_02L_Case31783C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52735.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CIS53175.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateDDL_02M_CIS53175.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS53123.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52670.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateDDL_02M_CIS52735.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CIS52735.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52307.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CIS52307.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52316.cs" />
@@ -1131,7 +1136,7 @@
     <Compile Include="csw\Sched\helpers\CafTranslator.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtCAFImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtTierII.cs" />
-    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolData.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerLocation.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerReconciliationActions.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetGeneratorTarget.cs" />
