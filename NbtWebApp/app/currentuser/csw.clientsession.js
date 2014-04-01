@@ -97,7 +97,6 @@
     });
 
     Csw.clientSession.register('enableDebug', function () {
-        cswPrivate.logglyLevel = 'info';
         cswPrivate.debug = true;
     });
 
