@@ -15,8 +15,6 @@
             valueField: 'Value',
             queryMode: 'local',
             queryDelay: 2000,
-            search: false, // whether to use the proxy to search,
-            searchurl: '',
             options: [],
             selectedValue: '',
             listeners: {
@@ -26,11 +24,10 @@
             },
             tpl: '',
             isRequired: false,
-            proxyMethod: 'GET',
-            reader: {
-                root: 'Data'
-            },
-            checkBox: {}
+            search: false, // whether to use the proxy to search,
+            searchurl: '',
+            searchProxyMethod: 'POST',
+            searchProxyReaderRoot: 'Data'
         };
         var cswPublic = {};
 
@@ -170,20 +167,38 @@
                 startParam: undefined,
                 limitParam: undefined,
                 actionMethods: {
-                    read: cswPrivate.proxyMethod
+                    read: cswPrivate.searchProxyMethod
                 },
                 url: 'Services/' + cswPrivate.searchUrl,
                 reader: {
                     type: 'json',
-                    root: cswPrivate.reader.root,
-                    getResponseData: function (response) {
+                    root: cswPrivate.searchProxyReaderRoot,
+                    getResponseData: function(response) {
                         // This function allows us to intercept the data before the reader
                         // reads it so that we can convert it into an array of objects the 
                         // store will accept.
                         var json = Ext.decode(response.responseText);
-                        if (json[cswPrivate.reader.root].length > 0) {
-                            cswPrivate.setComboBoxSize(json[cswPrivate.reader.root]);
+
+                        if (json["Status"]["Success"] === true) {
+                            if (json[cswPrivate.searchProxyReaderRoot].length > 0) {
+                                cswPrivate.setComboBoxSize(json[cswPrivate.searchProxyReaderRoot]);
+                            }
+                            
+                        } else {
+                            if (json["Status"]["Errors"].length > 0) {
+                                var errors = json["Status"]["Errors"];
+                                errors.forEach(function (error) {
+                                    var errorobj = {
+                                        'type': error.Type,
+                                        'message': error.Message,
+                                        'detail': error.Detail,
+                                        'display': true
+                                    };
+                                    Csw.error.showError(errorobj);
+                                });
+                            }
                         }
+                        
                         return this.readRecords(json);
                     }
                 }
@@ -192,18 +207,24 @@
 
         cswPrivate.setComboBoxSize = function (optionsArray) {
             /// <summary>
-            /// Set the width of the combobox to match the longest string returned
+            /// Set the width of the combobox
             /// </summary>
             /// <param name="optionsArray"></param>
+            var newWidth = cswPrivate.width;
             if (optionsArray.length > 0) {
-                var longestOption = optionsArray.sort(function (a, b) {
+                var longestOption = optionsArray.sort(function(a, b) {
                     return b[cswPrivate.displayField].length - a[cswPrivate.displayField].length;
                 })[0];
-                var newWidth = (longestOption[cswPrivate.displayField].length * 7) + 15;
-                if (newWidth > cswPrivate.width) {
-                    cswPublic.combobox.setWidth(newWidth);
-                    cswPrivate.width = newWidth;
+                newWidth = (longestOption[cswPrivate.displayField].length * 7) + 20;
+            } else {
+                if (false === Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
+                    newWidth = (cswPrivate.selectedValue.length * 7) + 20;
                 }
+            }
+            
+            if (newWidth > cswPrivate.width) {
+                cswPublic.combobox.setWidth(newWidth);
+                cswPrivate.width = newWidth;
             }
         };//setComboBoxSize()
         

@@ -22,16 +22,14 @@
                 viewid: nodeProperty.propData.values.viewid,
                 selectedName: nodeProperty.propData.values.name,
                 path: nodeProperty.propData.values.path,
-                nodeKey: '', //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
+                nodeKey: '',
                 selectednodelink: nodeProperty.propData.values.selectednodelink,
-                Multi: nodeProperty.isMulti(),
                 ReadOnly: nodeProperty.isReadOnly(),
                 isRequired: nodeProperty.isRequired(),
                 onChange: function (nodeid) {
                         nodeProperty.propData.values.nodeid = nodeid;
                         nodeProperty.broadcastPropChange(nodeid);
                 },
-                EditMode: nodeProperty.tabState.EditMode,
                 value: cswPrivate.nodeId,
                 options: nodeProperty.propData.values.options,
                 search: nodeProperty.propData.values.search

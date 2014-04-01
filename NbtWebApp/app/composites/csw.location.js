@@ -82,16 +82,28 @@
 
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.ready = Csw.promises.all();
-                if (false === cswPrivate.ReadOnly && cswPrivate.options.length === 0) {
+                if (false === cswPrivate.ReadOnly && cswPrivate.options.length === 0 && false === cswPrivate.search) {
                     cswPrivate.ready.push(Csw.ajaxWcf.get({
-                        urlMethod: 'Locations/list2',
-                        data: {
-                            ViewId: Csw.string(cswPrivate.viewid)
-                        },
+                        urlMethod: 'Locations/getLocationsList',
+                        data: cswPrivate.viewid,
                         success: function (data) {
                             cswPrivate.options = data;
-                            //todo: set the selected option
-                            //cswPrivate.viewid = data.viewid;
+                            if (cswPrivate.options.length > 0) {
+                                if (cswPrivate.useDefaultLocation) {
+                                    cswPrivate.options.forEach(function(option) {
+                                        if (option["Selected"] === true) {
+                                            cswPrivate.nodeid = option.LocationId;
+                                            cswPrivate.path = option.Path;
+                                        }
+                                    });
+                                } else {
+                                    // What should we set this to?
+                                }
+
+                            } else {
+                                cswPrivate.search = true;
+                            }
+
                             //if (cswPrivate.useDefaultLocation) {
                             //    if (cswPrivate.nodeid !== data.nodeid) {
                             //        Csw.tryExec(cswPrivate.onChange, data.nodeid, data.path);
@@ -129,7 +141,7 @@
 
                 cswPublic.comboBox = cswPrivate.selectDiv.comboBoxExt({
                     name: cswPrivate.name + '_comboExt',
-                    displayField: 'Name',
+                    displayField: 'Path',
                     valueField: 'LocationId',
                     queryMode: 'local',
                     queryDelay: 2000,
@@ -139,7 +151,7 @@
                     searchUrl: 'Locations/searchLocations',
                     listeners: {
                         select: function (combo, records) {
-                            var locpath = records[0].get('Name');
+                            var locpath = records[0].get('Path');
                             var nodeid = records[0].get('LocationId');
 
                             Csw.tryExec(cswPrivate.onChange, nodeid);
@@ -152,13 +164,14 @@
                         },
                         storebeforeload: function () {
                             var obj = {};
-                            obj.query = cswPublic.comboBox.combobox.getValue();
-                            return obj;
+                            obj.Query = cswPublic.comboBox.combobox.getValue();
+                            obj.ViewId = cswPrivate.viewid;
+                            return Csw.serialize(obj);
                         }
                     },
                     isRequired: cswPrivate.isRequired,
-                    proxyMethod: 'GET',
-                    reader: {root: 'Data'}
+                    searchProxyMethod: 'POST',
+                    searchProxyReaderRoot: 'Data'
                 });
 
                 cswPrivate.selectDiv.css({ width: cswPrivate.selectDiv.$.width() + 15 });
