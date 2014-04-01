@@ -179,6 +179,8 @@ namespace ChemSW.Nbt
         /// Number of previously used passwords to disallow
         /// </summary>
         password_reuse_count,
+
+        mobileview_resultlim
     };
 
 }
