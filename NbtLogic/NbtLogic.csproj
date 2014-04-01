@@ -1118,7 +1118,7 @@
     <Compile Include="csw\Sched\helpers\CafTranslator.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtCAFImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtTierII.cs" />
-    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolData.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerLocation.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerReconciliationActions.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetGeneratorTarget.cs" />

@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -24,7 +25,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Move mol clob data to mol_data table"; }
+            get { return "Move mol clob data to mol_data table; Rename Fingerprints Sched Rule to 'MolData'"; }
         }
 
         public override string AppendToScriptName()
@@ -34,6 +35,15 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            //Rename sched rule
+            CswTableUpdate schedRulesTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "RenameFingerprintRule", "scheduledrules" );
+            DataTable schedRules = schedRulesTU.getTable( "where rulename = 'MolFingerprints'" );
+            if( schedRules.Rows.Count > 0 )
+            {
+                schedRules.Rows[0]["rulename"] = CswEnumNbtScheduleRuleNames.MolData.ToString();
+            }
+            schedRulesTU.update( schedRules );
+
             //Get all Mol NTP ids
             CswCommaDelimitedString molNTPs = new CswCommaDelimitedString();
             foreach( CswNbtMetaDataNodeTypeProp molNTP in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProps( CswEnumNbtFieldType.MOL ) )
@@ -54,6 +64,7 @@ namespace ChemSW.Nbt.Schema
                 DataRow newMolDataTblRow = molDataTbl.NewRow();
                 newMolDataTblRow["jctnodepropid"] = jctnodepropid;
                 newMolDataTblRow["originalmol"] = Encoding.UTF8.GetBytes( molString );
+                newMolDataTblRow["contenttype"] = ".mol";
                 newMolDataTblRow["nodeid"] = molPropRow["nodeid"];
                 molDataTbl.Rows.Add( newMolDataTblRow );
 
