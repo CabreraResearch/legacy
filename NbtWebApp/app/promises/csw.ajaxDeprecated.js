@@ -49,12 +49,10 @@
                 result.timer.timestap = endTime.toLocaleTimeString() + '.' + etms;
                 result.timer.client = (endTime - o.startTime);
                 result.timer.url = url;
-                Csw.clientSession.setLogglyInput(result.LogglyInput, result.LogLevel, result.server);
                 Csw.debug.perf(result.timer);
 
             }
             delete result.server;
-            delete result.LogglyInput;
             delete result.LogLevel;
             delete result.AuthenticationStatus;
             delete result.AuthenticationStatusText;
