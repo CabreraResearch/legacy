@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
                 dbval = CswConvert.ToDbVal( value );
             }
 
-            if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
+            if( _PropRow == null && dbval != DBNull.Value )
             {
                 makePropRow();
                 ret = true;

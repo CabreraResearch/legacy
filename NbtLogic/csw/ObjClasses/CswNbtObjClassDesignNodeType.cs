@@ -539,10 +539,6 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
                 }
-                else if( PropCopy.PropName.Text.Equals( CswNbtObjClass.PropertyName.LegacyId ) )
-                {
-                    _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( PropCopy.RelationalNodeTypeProp );
-                }
                 else
                 {
                     foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
