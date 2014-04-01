@@ -238,6 +238,9 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetPermission.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
+    <Compile Include="csw\PropTypes\wcf\CswNbtWcfPropertyVerbose.cs" />
+    <Compile Include="csw\PropTypes\wcf\CswNbtWcfPropCollection.cs" />
+    <Compile Include="csw\PropTypes\wcf\CswNbtWcfProperty.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMetaDataList.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPermissionGroup.cs" />
     <Compile Include="csw\PropTypes\ICswNbtNodePropNodeReference.cs" />
@@ -773,7 +776,9 @@
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case31076.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateMetaData_02J_Case31164.cs" />
     <None Include="csw\Schema\scripts\past\02J\CswUpdateSchema_02J_Case27149.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52751.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52735D.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CIS52312.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52772.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_Case52302.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_Case52309.cs" />
