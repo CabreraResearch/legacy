@@ -1058,9 +1058,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string LogLevelField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string LogglyInputField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ServerField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
@@ -1095,19 +1092,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.LogLevelField, value) != true)) {
                     this.LogLevelField = value;
                     this.RaisePropertyChanged("LogLevel");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string LogglyInput {
-            get {
-                return this.LogglyInputField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.LogglyInputField, value) != true)) {
-                    this.LogglyInputField = value;
-                    this.RaisePropertyChanged("LogglyInput");
                 }
             }
         }

@@ -39,7 +39,6 @@ module.exports.test = [
 
 module.exports.vendorMin = [
     '../../../tools/thirdparty/Scripts/modernizr-2.6.2.js',
-    '../../../tools/thirdparty/vendor/loggly-0.1.0.min.js',
     '../../../tools/thirdparty/Scripts/es5-shim.min.js',
     '../../../tools/thirdparty/vendor/es5-sham.min.js',
     '../../../tools/thirdparty/vendor/es6-shim.min.js',
@@ -68,7 +67,6 @@ module.exports.vendorMin = [
 
 module.exports.vendor = [
     'Scripts/modernizr-2.6.2.js',
-    'vendor/loggly-0.1.0.js',
     'Scripts/es5-shim.js',
     'vendor/es5-sham.min.js',
     'vendor/es6-shim.js',
