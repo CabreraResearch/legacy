@@ -16,8 +16,6 @@
         expiretime: '',
         expiredInterval: '',
         isAuthenticated: false,
-        logglyInput: '75c30bba-4b60-496c-a348-7eb413c01037',
-        logglyLevel: 'error',
         server: 'localhost',
         debug: false
     };
@@ -99,7 +97,6 @@
     });
 
     Csw.clientSession.register('enableDebug', function () {
-        cswPrivate.logglyLevel = 'info';
         cswPrivate.debug = true;
     });
 
@@ -108,39 +105,6 @@
             cswPrivate.debug = true;
         }
         return cswPrivate.debug;
-    });
-
-    Csw.clientSession.register('setLogglyInput', function (logglyInput, logglyLevel, server) {
-        if (false === Csw.isNullOrEmpty(logglyInput) && logglyInput.length == 36) {
-            cswPrivate.logglyInput = logglyInput;
-        }
-        if (false === Csw.isNullOrEmpty(logglyLevel) && Csw.contains(Csw.debug.logLevels(), logglyLevel)) {
-            cswPrivate.logglyLevel = logglyLevel;
-        }
-        if (false === Csw.isNullOrEmpty(server)) {
-            cswPrivate.server = server;
-        }
-    });
-
-    Csw.clientSession.register('getLogglyInput', function () {
-        var ret = '75c30bba-4b60-496c-a348-7eb413c01037';
-        if (false === Csw.isNullOrEmpty(cswPrivate.logglyInput) &&
-            cswPrivate.logglyInput.length == 36) {
-            ret = cswPrivate.logglyInput;
-        }
-        return ret;
-    });
-
-    Csw.clientSession.register('getLogglyLevel', function () {
-        var ret = 'error';
-        if (Csw.bool(cswPrivate.debug)) {
-            ret = 'info';
-        }
-        else if (false === Csw.isNullOrEmpty(cswPrivate.logglyLevel) &&
-            Csw.contains(Csw.debug.logLevels(), cswPrivate.logglyLevel)) {
-            ret = cswPrivate.logglyLevel;
-        }
-        return ret;
     });
 
     Csw.clientSession.register('finishLogout', function () {

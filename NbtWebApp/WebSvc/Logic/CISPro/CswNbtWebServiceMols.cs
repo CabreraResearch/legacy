@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -67,13 +69,18 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeProp molNTP = node.getNodeType().getMolProperty();
                 if( null != molNTP )
                 {
-                    molData = node.Properties[molNTP].AsMol.Mol;
+                    molData = node.Properties[molNTP].AsMol.getMol();
                 }
             }
 
             if( false == String.IsNullOrEmpty( molData ) )
             {
-                byte[] bytes = CswStructureSearch.GetImage( molData );
+                //If the Direct Structure Search module is enabled, use the AcclDirect methods to generate an image. Otherwise, use the legacy code.
+                byte[] bytes =
+                    ( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) ?
+                    NbtResources.AcclDirect.GetImage( molData ) :
+                    CswStructureSearch.GetImage( molData ) );
+
                 base64String = Convert.ToBase64String( bytes );
             }
 
@@ -88,7 +95,25 @@ namespace ChemSW.Nbt.WebServices
             string molData = StructureSearchData.molString;
             bool exact = StructureSearchData.exact;
 
-            Dictionary<int, string> results = NbtResources.StructureSearchManager.RunSearch( molData, exact );
+            Collection<CswPrimaryKey> results = new Collection<CswPrimaryKey>();
+
+            //If the DirectStructureSearch module is enabled, use AcclDirect to run a search. Otherwise use the legacy code
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
+            {
+                DataTable resultsTbl = NbtResources.AcclDirect.RunStructureSearch( molData, exact );
+                foreach( DataRow row in resultsTbl.Rows )
+                {
+                    results.Add( new CswPrimaryKey( "nodes", CswConvert.ToInt32( row["nodeid"] ) ) );
+                }
+            }
+            else
+            {
+                Dictionary<int, string> resultsDict = NbtResources.StructureSearchManager.RunSearch( molData, exact );
+                foreach( int nodeidPk in resultsDict.Keys )
+                {
+                    results.Add( new CswPrimaryKey( "nodes", nodeidPk ) );
+                }
+            }
             CswNbtView searchView = new CswNbtView( NbtResources );
             searchView.SetViewMode( CswEnumNbtViewRenderingMode.Table );
             searchView.Category = "Recent";
@@ -101,10 +126,9 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewRelationship parent = searchView.AddViewRelationship( materialOC, false );
                 searchView.AddViewProperty( parent, molCOP );
 
-                foreach( int nodeId in results.Keys )
+                foreach( CswPrimaryKey nodeId in results )
                 {
-                    CswPrimaryKey pk = new CswPrimaryKey( "nodes", nodeId );
-                    parent.NodeIdsToFilterIn.Add( pk );
+                    parent.NodeIdsToFilterIn.Add( nodeId );
                 }
             }
 

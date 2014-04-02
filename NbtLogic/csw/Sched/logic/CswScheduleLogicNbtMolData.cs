@@ -8,16 +8,17 @@ using ChemSW.MtSched.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.Sched
 {
-    public class CswScheduleLogicNbtMolFingerprints : ICswScheduleLogic
+    public class CswScheduleLogicNbtMolData: ICswScheduleLogic
     {
         #region Properties
 
         public string RuleName
         {
-            get { return ( CswEnumNbtScheduleRuleNames.MolFingerprints ); }
+            get { return ( CswEnumNbtScheduleRuleNames.MolData ); }
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
@@ -41,12 +42,19 @@ namespace ChemSW.Nbt.Sched
 
         #region State
 
-        private CswCommaDelimitedString _NonFingerprintedMols = new CswCommaDelimitedString();
+        private CswCommaDelimitedString _nodesToUpdate = new CswCommaDelimitedString();
 
         private void _setLoad( ICswResources CswResources )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            _NonFingerprintedMols = _getNonFingerPrintedMols( NbtResources );
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
+            {
+                _nodesToUpdate = _getMolsWithNoCTab( NbtResources );
+            }
+            else
+            {
+                _nodesToUpdate = _getNonFingerPrintedMols( NbtResources );
+            }
         }
 
         #endregion State
@@ -56,11 +64,11 @@ namespace ChemSW.Nbt.Sched
         //Determine the number of non-fingerprinted Mols that need to be fingerprinted and return that value
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            if( _NonFingerprintedMols.Count == 0 )
+            if( _nodesToUpdate.Count == 0 )
             {
                 _setLoad( CswResources );
             }
-            return _NonFingerprintedMols.Count;
+            return _nodesToUpdate.Count;
         }
 
         public void threadCallBack( ICswResources CswResources )
@@ -76,23 +84,21 @@ namespace ChemSW.Nbt.Sched
                 {
                     int nodesPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     int molsProcessed = 0;
-                    while( molsProcessed < nodesPerIteration && _NonFingerprintedMols.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
+                    while( molsProcessed < nodesPerIteration && _nodesToUpdate.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                     {
-                        int NodeId = CswConvert.ToInt32( _NonFingerprintedMols[0] );
+                        int NodeId = CswConvert.ToInt32( _nodesToUpdate[0] );
                         CswPrimaryKey NodePK = new CswPrimaryKey( "nodes", NodeId );
-                        CswNbtNode node = CswNbtResources.Nodes.GetNode( NodePK );
 
-                        bool hasntBeenInserted = true;
-                        foreach( CswNbtNodePropWrapper prop in node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.MOL] )
+                        if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
                         {
-                            if( hasntBeenInserted )
-                            {
-                                string errorMsg;
-                                CswNbtResources.StructureSearchManager.InsertFingerprintRecord( NodeId, prop.AsMol.Mol, out errorMsg );
-                                hasntBeenInserted = false;
-                            }
+                            _generateCTab( CswNbtResources, NodePK );
                         }
-                        _NonFingerprintedMols.RemoveAt( 0 );
+                        else
+                        {
+                            _generateFingerprint( CswNbtResources, NodePK );
+                        }
+
+                        _nodesToUpdate.RemoveAt( 0 );
                         molsProcessed++;
                     }
 
@@ -110,6 +116,53 @@ namespace ChemSW.Nbt.Sched
             }//if we're not shutting down
 
         }//threadCallBack()
+
+        private void _generateCTab( CswNbtResources CswNbtResources, CswPrimaryKey NodePK )
+        {
+            CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( CswNbtResources );
+
+            CswNbtNode node = CswNbtResources.Nodes.GetNode( NodePK );
+            foreach( CswNbtNodePropWrapper molProp in node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.MOL] )
+            {
+                CswNbtNodePropMol AsMol = molProp.AsMol;
+                string href;
+                string error;
+                string formatted;
+                sdBlobData.saveMol( AsMol.getMol(), new CswPropIdAttr( node, AsMol.NodeTypeProp ).ToString(), out href, out formatted, out error );
+            }
+        }
+
+        private void _generateFingerprint( CswNbtResources CswNbtResources, CswPrimaryKey NodePK )
+        {
+            CswNbtNode node = CswNbtResources.Nodes.GetNode( NodePK );
+
+            bool hasntBeenInserted = true;
+            foreach( CswNbtNodePropWrapper prop in node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.MOL] )
+            {
+                if( hasntBeenInserted )
+                {
+                    string errorMsg;
+                    CswNbtResources.StructureSearchManager.InsertFingerprintRecord( NodePK.PrimaryKey, prop.AsMol.getMol(), out errorMsg );
+                    hasntBeenInserted = false;
+                }
+            }
+        }
+
+        private CswCommaDelimitedString _getMolsWithNoCTab( CswNbtResources NbtResources )
+        {
+            CswCommaDelimitedString nonCTabedMols = new CswCommaDelimitedString();
+
+            string sql = @"select nodeid from mol_data where ctab is null";
+            CswArbitrarySelect arbSelect = NbtResources.makeCswArbitrarySelect( "getNonCTabedMols", sql );
+            DataTable nodesToUpdate = arbSelect.getTable();
+
+            foreach( DataRow row in nodesToUpdate.Rows )
+            {
+                nonCTabedMols.Add( row["nodeid"].ToString() );
+            }
+
+            return nonCTabedMols;
+        }
 
         private CswCommaDelimitedString _getNonFingerPrintedMols( CswNbtResources CswNbtResources )
         {
