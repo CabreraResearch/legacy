@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Schema;
 using NUnit.Framework;
 
@@ -74,7 +75,8 @@ namespace ChemSW.Nbt.Test.MetaData
             CswNbtMetaDataObjectClassProp fakeTestNumOCP = _SchemaModTrnsctn.createObjectClassProp( _fakeTestOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
                 {
                     PropName = "Num",
-                    FieldType = CswEnumNbtFieldType.Number
+                    FieldType = CswEnumNbtFieldType.Number,
+                    NumberMinValue = 10
                 } );
             Assert.IsNotNull( fakeTestNumOCP, "fakeTestNumOCP was null" );
 
@@ -82,6 +84,10 @@ namespace ChemSW.Nbt.Test.MetaData
             _SchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
             Assert.IsNotNull( fakeTestNT.getNodeTypeProp( "Num" ), "fakeTestNT.getNodeTypeProp( Num ) was null" );
             Assert.IsNotNull( fakeTestNT.getNodeTypeProp( "Num" ).DesignNode, "fakeTestNT.DesignNode.getNodeTypeProp( Num ).DesignNode was null" );
+            
+            // ensure both design node and nodetype_prop row are synchronized
+            Assert.AreEqual( CswConvert.ToInt32( fakeTestNT.getNodeTypeProp( "Num" )._DataRow[CswEnumNbtNodeTypePropAttributes.numberminvalue] ), 10 );
+            Assert.AreEqual( CswConvert.ToInt32( fakeTestNT.getNodeTypeProp( "Num" ).DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.MinimumValue].AsNumber.Value ), 10 );
 
         } // testMetaData()
 
