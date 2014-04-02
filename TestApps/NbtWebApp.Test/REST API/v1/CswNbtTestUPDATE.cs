@@ -54,7 +54,7 @@ namespace NbtWebApp.Test.REST_API
 
             return TestUser;
         }
-
+        
         /// <summary>
         /// Creates a test user using the APIs CREATE and then fetches it then verifies the node can be fetched using CswNbtResources
         /// </summary>
@@ -92,6 +92,7 @@ namespace NbtWebApp.Test.REST_API
             //
             //CswNbtObjClassUser EditedUser = TestData.CswNbtResources.Nodes.GetNode( TestUser.NodeId );
             //Assert.AreEqual(EditedUser.UsernameProperty.Text, NewUsername, "Test username did not have the same username as the one supplied for the API EDIT request");
+           
         }
     }
 }
