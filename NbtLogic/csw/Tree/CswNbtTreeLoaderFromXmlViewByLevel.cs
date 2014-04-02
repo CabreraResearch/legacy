@@ -575,7 +575,9 @@ namespace ChemSW.Nbt
                             //if( FilterSubField.RelationalTable == string.Empty )
                             //{
                                 string FilterClause = string.Empty;// @"select z.nodeid, '1' as included from nodes z where ";
-                                if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
+                                if( Filter.FilterMode == CswEnumNbtFilterMode.Null || 
+                                    Filter.FilterMode == CswEnumNbtFilterMode.NotEquals || 
+                                    Filter.FilterMode == CswEnumNbtFilterMode.NotContains )
                                 {
                                     FilterClause += @"select z.nodeid, '1' as included 
                                                         from nodes z ";
@@ -657,7 +659,9 @@ namespace ChemSW.Nbt
                                 }
 
                                 FilterClause += @" and " + FilterValue + @"";
-                                if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
+                                if( Filter.FilterMode == CswEnumNbtFilterMode.Null ||
+                                    Filter.FilterMode == CswEnumNbtFilterMode.NotEquals ||
+                                    Filter.FilterMode == CswEnumNbtFilterMode.NotContains )
                                 {
                                     FilterClause += "))";
                                 }

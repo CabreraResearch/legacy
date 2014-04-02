@@ -130,11 +130,6 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.getObjectClassButtons( ObjectClassId );
         }
 
-        public JObject getLocationView( string NodeId )
-        {
-            return _TabsPropsSd.getLocationView( NodeId );
-        }
-
     } // class CswNbtWebServiceTabsAndProps
 
 } // namespace ChemSW.Nbt.WebServices
