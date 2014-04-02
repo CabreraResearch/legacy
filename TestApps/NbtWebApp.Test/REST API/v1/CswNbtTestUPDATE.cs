@@ -61,42 +61,38 @@ namespace NbtWebApp.Test.REST_API
         [Test]
         public void TestUpdate()
         {
-            /* commented out until MB updates 
-             * 
-             * 
-            CswNbtObjClassUser TestUser = _createTestUser( "Username1", "Administrator", 15, "en" );
-            CswNbtAPIGenericRequest Request = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() );
-            CswNbtResource FetchedResource = new CswNbtResource();
-            CswNbtWebServiceREAD.GetResource( TestData.CswNbtResources, FetchedResource, Request );
-
-            CswNbtMetaDataNodeType UserNT = TestData.CswNbtResources.MetaData.getNodeType( "User" );
-            CswNbtMetaDataNodeTypeProp UserNameProp = UserNT.getNodeTypeProp("Username" );
-
-            JObject PropData = FetchedResource.PropertyData;
-            const string NewUsername = "Username2";
-            PropData["prop_nodes_" + TestUser.NodeId.PrimaryKey + "_" + UserNameProp.PropId]["values"]["text"] = NewUsername; //When CIS-53085 is completed we can change this terrible line of code
-
-            CswNbtAPIGenericRequest EditRequest = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() )
-                {
-                    PropData = PropData
-                };
-            CswNbtResource EditedResource = new CswNbtResource();
-
-            string error = string.Empty;
-            try
-            {
-            CswNbtWebServiceUPDATE.Edit( TestData.CswNbtResources, EditedResource, EditRequest );
-            }
-            catch( Exception ex )
-            {
-                error = ex.Message;
-            }
-            Assert.IsEmpty( error, "Edit failed with the following exception: " + error );
-
-            CswNbtObjClassUser EditedUser = TestData.CswNbtResources.Nodes.GetNode( TestUser.NodeId );
-            Assert.AreEqual(EditedUser.UsernameProperty.Text, NewUsername, "Test username did not have the same username as the one supplied for the API EDIT request");
-             * 
-             */
+            //CswNbtObjClassUser TestUser = _createTestUser( "Username1", "Administrator", 15, "en" );
+            //CswNbtAPIGenericRequest Request = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() );
+            //CswNbtResource FetchedResource = new CswNbtResource();
+            //CswNbtWebServiceREAD.GetResource( TestData.CswNbtResources, FetchedResource, Request );
+            //
+            //CswNbtMetaDataNodeType UserNT = TestData.CswNbtResources.MetaData.getNodeType( "User" );
+            //CswNbtMetaDataNodeTypeProp UserNameProp = UserNT.getNodeTypeProp("Username" );
+            //
+            //JObject PropData = FetchedResource.PropertyData;
+            //const string NewUsername = "Username2";
+            //PropData["prop_nodes_" + TestUser.NodeId.PrimaryKey + "_" + UserNameProp.PropId]["values"]["text"] = NewUsername; //When CIS-53085 is completed we can change this terrible line of code
+            //
+            //CswNbtAPIGenericRequest EditRequest = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() )
+            //    {
+            //        PropData = PropData
+            //    };
+            //CswNbtResource EditedResource = new CswNbtResource();
+            //
+            //string error = string.Empty;
+            //try
+            //{
+            //CswNbtWebServiceUPDATE.Edit( TestData.CswNbtResources, EditedResource, EditRequest );
+            //}
+            //catch( Exception ex )
+            //{
+            //    error = ex.Message;
+            //}
+            //Assert.IsEmpty( error, "Edit failed with the following exception: " + error );
+            //
+            //CswNbtObjClassUser EditedUser = TestData.CswNbtResources.Nodes.GetNode( TestUser.NodeId );
+            //Assert.AreEqual(EditedUser.UsernameProperty.Text, NewUsername, "Test username did not have the same username as the one supplied for the API EDIT request");
+           
         }
     }
 }

@@ -8,6 +8,7 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ServiceDrivers
@@ -15,11 +16,12 @@ namespace ChemSW.Nbt.ServiceDrivers
     public class CswNbtSdLocations
     {
         private CswNbtResources _CswNbtResources;
-
-
+        private Collection<Location> _LocationCollection = new Collection<Location>();
+        private Int32 _SearchThreshold;
         public CswNbtSdLocations( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
+            _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
         }
 
         public CswNbtViewRelationship getLocationRelationship( string LocationSql, CswNbtView LocationsView, CswPrimaryKey StartLocationId )
@@ -107,9 +109,15 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             [DataMember]
             public string LocationId { get; set; }
+
+            [DataMember]
+            public string Path { get; set; }
+
+            [DataMember]
+            public bool Selected { get; set; }
         }
 
-        public Collection<Location> getLocationList()
+        public Collection<Location> getLocationListMobile()
         {
             Collection<Location> Locations = new Collection<Location>();
 
@@ -158,13 +166,133 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Locations.Add( Location );
                 }
 
+                //IEnumerable < Location > OrderedLocations = Locations.OrderBy( location => location.Name );
+                //Locations = OrderedLocations.ToList();
+
             }
             return Locations;
+        }//getLocationListMobile()
+
+        public Collection<Location> GetLocationsList( string ViewId, string SelectedNodeId = "" )
+        {
+            // Only return options if the total number of locations is < the relationshipoptionlimit configuration variable
+            if( CswNbtNodePropLocation.getNumberOfLocationNodes( _CswNbtResources ) < _SearchThreshold )
+            {
+                CswPrimaryKey SelectedLocationId = String.IsNullOrEmpty( SelectedNodeId ) ? _CswNbtResources.CurrentNbtUser.DefaultLocationId : CswConvert.ToPrimaryKey( SelectedNodeId );
+
+                CswNbtView LocationView = _getLocationsView( ViewId );
+                ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( LocationView, false, false, false );
+
+                if( tree.getChildNodeCount() > 0 )
+                {
+                    _iterateTree( tree, SelectedLocationId );
+                }
+            }
+
+            return _LocationCollection;
+        }//GetLocationsList()
+
+        public Collection<Location> searchLocations( string Query, string ViewId )
+        {
+            Collection<Location> Ret = new Collection<Location>();
+
+            CswNbtView LocationView = _getLocationsView( ViewId, Query );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationView, false, false, false );
+
+            int count = Tree.getChildNodeCount();
+            // Only return options if the total number of locations is < the relationshipoptionlimit configuration variable
+            if( count < _SearchThreshold )
+            {
+                if( Tree.getChildNodeCount() > 0 )
+                {
+                    _iterateTree( Tree, null );
+                }
+
+                foreach( Location LocationObj in _LocationCollection )
+                {
+                    Location location = new Location();
+                    location.Name = LocationObj.Name;
+                    location.LocationId = LocationObj.LocationId;
+                    location.Path = LocationObj.Path;
+                    Ret.Add( location );
+                }
+            }
+
+            return Ret;
+        }//searchLocations()
+
+        private CswNbtView _getLocationsView( string ViewId, string NameFilter = "" )
+        {
+            CswNbtView Ret = new CswNbtView();
+
+            if( string.IsNullOrEmpty( ViewId ) )
+            {
+                Ret = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null, ResultMode: CswEnumNbtFilterResultMode.Hide, NameFilter: NameFilter );
+                Ret.SaveToCache( false );
+                ViewId = Ret.SessionViewId.ToString();
+            }
+
+            CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( ViewId );
+            if( SessionViewId.isSet() )
+            {
+                Ret = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
+                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClassProp LocationNameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
+                if( false == string.IsNullOrEmpty( NameFilter ) )
+                {
+                    CswNbtViewRoot.forEachProperty forEachPropDelegate = delegate( CswNbtViewProperty ViewProp )
+                        {
+                            if( ViewProp.ObjectClassPropId == LocationNameOCP.PropId )
+                            {
+                                Ret.AddViewPropertyFilter( ViewProp,
+                                                          Conjunction: CswEnumNbtFilterConjunction.And,
+                                                          FilterMode: CswEnumNbtFilterMode.Contains,
+                                                          Value: NameFilter );
+
+                            }
+                        };
+                    Ret.Root.eachRelationship( null, forEachPropDelegate );
+                }
+            }
+
+            return Ret;
         }
 
+        private void _iterateTree( ICswNbtTree Tree, CswPrimaryKey SelectedNodeId )
+        {
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClassProp LocationNameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
+            CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
 
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
+            {
+                Tree.goToNthChild( c );
 
+                Location LocationObj = new Location();
 
+                CswNbtTreeNodeProp nameTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == LocationNameOCP.PropName );
+                CswNbtTreeNodeProp locationTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == LocationLocationOCP.PropName );
+
+                if( locationTreeProp.Field1_Fk > 0 )
+                {
+                    LocationObj.Path = locationTreeProp.Gestalt + CswNbtNodePropLocation.PathDelimiter + nameTreeProp.Field1;
+                }
+                else
+                {
+                    LocationObj.Path = nameTreeProp.Field1;
+                }
+                LocationObj.Name = nameTreeProp.Field1;
+                LocationObj.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
+                LocationObj.Selected = ( Tree.getNodeIdForCurrentPosition() == SelectedNodeId );
+                _LocationCollection.Add( LocationObj );
+
+                if( Tree.getChildNodeCount() > 0 )
+                {
+                    _iterateTree( Tree, SelectedNodeId );
+                }
+                Tree.goToParentNode();
+            }
+        }//_iterateTree()
 
     } // public class CswNbtSdLocations
 

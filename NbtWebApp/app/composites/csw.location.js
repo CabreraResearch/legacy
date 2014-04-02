@@ -15,18 +15,18 @@
             relatedmatch: false,
             nodeid: '',
             viewid: '',
-            selectedName: '',
+            nodename: '',
             path: '',
             nodeKey: '',
-            selectednodelink: '',
-            Multi: false,
+            nodelink: '',
             ReadOnly: false,
             isRequired: false,
             onChange: null,
             overrideSelectedLocation: true,
             useDefaultLocation: true,
-            EditMode: Csw.enums.editMode.Edit,
-            value: ''
+            value: '',
+            options: [],
+            search: false
         };
 
         var cswPublic = {};
@@ -60,28 +60,14 @@
                     cswPrivate.validateCell = cswPublic.table.cell(1, 5);
 
                     if (cswPrivate.ReadOnly) {
-                        // case 31737 - don't show link if readonly
-                        cswPrivate.pathCell.text(cswPrivate.selectedName);
+                        //TODO: I think we are using readonly for 2 different things now so the link will never show
+                        // Case 31737: Don't show link if readonly
+                        cswPrivate.pathCell.text(cswPrivate.path);
                     } else {
-                        var nodeLink = cswPrivate.pathCell.nodeLink({
-                            text: cswPrivate.selectednodelink,
+                        cswPrivate.pathCell.nodeLink({
+                            text: cswPrivate.nodelink,
                             linkText: cswPrivate.path
                         });
-
-                        if (cswPrivate.isRequired) {
-                            cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, nodeLink, {
-                                className: 'locationValidator_' + window.Ext.id(),
-                                errorMsg: 'Location is required.',
-                                onValidation: function (isValid) {
-                                    if (isValid) {
-                                        cswPrivate.validateCell.hide();
-                                    } else {
-                                        cswPrivate.validateCell.show();
-                                    }
-                                }
-                            });
-                            cswPrivate.locationValidator.input.checked(false === Csw.isNullOrEmpty(cswPrivate.nodeid));
-                        }
                     }
 
                     cswPrivate.selectDiv = cswPrivate.selectCell.div({
@@ -96,24 +82,38 @@
 
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.ready = Csw.promises.all();
-                if (false === cswPrivate.ReadOnly && Csw.isNullOrEmpty(cswPrivate.viewid)) {
-                    cswPrivate.ready.push(Csw.ajax.deprecatedWsNbt({
-                        urlMethod: 'getLocationView',
-                        data: {
-                            NodeId: Csw.string(cswPrivate.nodeid)
-                        },
+                if (false === cswPrivate.ReadOnly && cswPrivate.options.length === 0 && false === cswPrivate.search) {
+                    cswPrivate.ready.push(Csw.ajaxWcf.get({
+                        urlMethod: 'Locations/getLocationsList',
+                        data: cswPrivate.viewid,
                         success: function (data) {
-                            cswPrivate.viewid = data.viewid;
-                            if (cswPrivate.useDefaultLocation) {
-                                if (cswPrivate.nodeid !== data.nodeid) {
-                                    Csw.tryExec(cswPrivate.onChange, data.nodeid, data.path);
+                            cswPrivate.options = data;
+                            if (cswPrivate.options.length > 0) {
+                                if (cswPrivate.useDefaultLocation) {
+                                    cswPrivate.options.forEach(function(option) {
+                                        if (option["Selected"] === true) {
+                                            cswPrivate.nodeid = option.LocationId;
+                                            cswPrivate.path = option.Path;
+                                        }
+                                    });
+                                } else {
+                                    // What should we set this to?
                                 }
-                                cswPrivate.nodeid = data.nodeid;
-                                cswPrivate.path = data.path;
+
                             } else {
-                                //Case 30243 - If we're not using DefaultLocation, use root every time instead (yuck)
-                                Csw.clientDb.setItem('CswTree_Top_LastSelectedPath', Csw.enums.nodeTree_DefaultSelect.root.name);
+                                cswPrivate.search = true;
                             }
+
+                            //if (cswPrivate.useDefaultLocation) {
+                            //    if (cswPrivate.nodeid !== data.nodeid) {
+                            //        Csw.tryExec(cswPrivate.onChange, data.nodeid, data.path);
+                            //    }
+                            //    cswPrivate.nodeid = data.nodeid;
+                            //    cswPrivate.path = data.path;
+                            //} else {
+                            //    //Case 30243 - If we're not using DefaultLocation, use root every time instead (yuck)
+                            //    Csw.clientDb.setItem('CswTree_Top_LastSelectedPath', Csw.enums.nodeTree_DefaultSelect.root.name);
+                            //}
                             render();
                         }
                     }));
@@ -134,78 +134,48 @@
                 return cswPrivate.selectedName;
             };
 
-            cswPrivate.onTreeSelect = function (optSelect) {
-                optSelect = optSelect || { nodeid: '', nodename: '', iconurl: '' };
-                if (optSelect.nodeid === 'root' || optSelect.nodeid === undefined) {
-                    optSelect.nodeid = ''; // case 21046   
-                }
-                cswPublic.comboBox.topContent(optSelect.nodename, optSelect.nodeid);
-                if (cswPublic.comboBox.val() !== optSelect.nodeid) {
-                    cswPublic.comboBox.val(optSelect.nodeid);
-                }
-                Csw.tryExec(cswPrivate.onChange, optSelect.nodeid, optSelect.nodename);
-                cswPrivate.value = optSelect.nodeid;
-                cswPrivate.name = optSelect.nodename;
-                Csw.defer(function () { cswPublic.comboBox.close(); }, 100);
-            };
-
             cswPrivate.makeLocationCombo = function () {
                 cswPrivate.pathCell.hide();
                 cswPrivate.editCell.hide();
                 cswPrivate.selectCell.show();
 
-                cswPublic.comboBox = cswPrivate.selectDiv.comboBox({
-                    name: cswPrivate.name + '_combo',
-                    topContent: cswPrivate.selectedName,
-                    selectContent: '',
-                    width: '290px',
-                    onClick: (function () {
-                        var first = true;
-                        return function () {
-                            if (first && cswPublic.locationTree.nodeTree) {// only do this once && wait for the tree to be loaded
-                                cswPublic.locationTree.nodeTree.expandAll();
-                                first = false;
-                            }
-                            if (cswPrivate.isRequired) {
-                                cswPrivate.locationValidator.input.$.valid();
-                            }
-                            cswPublic.comboBox.open(); // ensure we're open on click
-                            return false; // but only close when onTreeSelect fires, below
-                        };
-                    })()
+                cswPublic.comboBox = cswPrivate.selectDiv.comboBoxExt({
+                    name: cswPrivate.name + '_comboExt',
+                    displayField: 'Path',
+                    valueField: 'LocationId',
+                    queryMode: 'local',
+                    queryDelay: 2000,
+                    options: cswPrivate.options,
+                    selectedValue: cswPrivate.path,
+                    search: cswPrivate.search,
+                    searchUrl: 'Locations/searchLocations',
+                    listeners: {
+                        select: function (combo, records) {
+                            var locpath = records[0].get('Path');
+                            var nodeid = records[0].get('LocationId');
+
+                            Csw.tryExec(cswPrivate.onChange, nodeid);
+                            cswPrivate.value = nodeid;
+                            cswPrivate.nodeid = nodeid;
+                            cswPrivate.path = locpath;
+                        },
+                        change: function (combo, newvalue) {
+                            Csw.tryExec(cswPrivate.onChange, newvalue);
+                        },
+                        storebeforeload: function () {
+                            var obj = {};
+                            obj.Query = cswPublic.comboBox.combobox.getValue();
+                            obj.ViewId = cswPrivate.viewid;
+                            return Csw.serialize(obj);
+                        }
+                    },
+                    isRequired: cswPrivate.isRequired,
+                    searchProxyMethod: 'POST',
+                    searchProxyReaderRoot: 'Data'
                 });
 
-                cswPublic.locationTree = Csw.nbt.nodeTreeExt(cswPublic.comboBox.pickList, {
-                    name: cswPrivate.name,
-                    onBeforeSelectNode: function (treeNode) {
-                        var ret = true;
-                        if (cswPrivate.isRequired) {
-                            if (!treeNode.raw || Csw.isNullOrEmpty(treeNode.raw.nodeid)) {
-                                ret = false;
-                            } else {
-                                cswPrivate.locationValidator.input.val(true);
-                            }
-                            cswPrivate.locationValidator.input.$.valid();
-                        }
-                        return ret;
-                    },
-                    onSelectNode: function (node) {
-                        Csw.tryExec(cswPrivate.onTreeSelect, node);
-                    },
-                    showToggleLink: false,
-                    useScrollbars: false,
-                    rootVisible: true,
-                    requireViewPermissions: false,
-                    forceSelected: cswPrivate.overrideSelectedLocation,
-                    useHover: (cswPrivate.EditMode !== Csw.enums.editMode.Add), // case 28849
-                    state: {
-                        viewId: cswPrivate.viewid,
-                        nodeId: cswPrivate.nodeid,
-                        nodeKey: cswPrivate.nodeKey,
-                        includeInQuickLaunch: false,
-                        defaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
-                    }
-                });
+                cswPrivate.selectDiv.css({ width: cswPrivate.selectDiv.$.width() + 15 });
+
             }; // makeLocationCombo()
 
             //#endregion cswPrivate/cswPublic methods and props
@@ -214,18 +184,7 @@
             (function _post() {
                 cswPrivate.ready.then(function () {
                     if (false === cswPrivate.ReadOnly) {
-//                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                            cswPrivate.makeLocationCombo();
-//                        } else {
-//                            cswPrivate.editCell.icon({
-//                                name: cswPrivate.name + '_toggle',
-//                                iconType: Csw.enums.iconType.pencil,
-//                                hovertext: 'Edit',
-//                                size: 16,
-//                                isButton: true,
-//                                onClick: cswPrivate.makeLocationCombo
-//                            }); // imageButton
-//                        }
+                        cswPrivate.makeLocationCombo();
 
                         cswPrivate.previewCell.css({ width: '24px' });
                         cswParent.$.hover(function (event) {

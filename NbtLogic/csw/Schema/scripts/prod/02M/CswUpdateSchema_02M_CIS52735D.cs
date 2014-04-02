@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Add indexes to mol_data"; }
+            get { return "Install Direct for user; Add indexes to mol_data"; }
         }
 
         public override string AppendToScriptName()
@@ -31,6 +31,12 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            //this installs Direct for the user, it it safe to run over and over again
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( 
+                    @"begin
+                        execute c$direct90.mdlauxop.setup;
+                      end;" );
+
             if( false == _doesTblIdxExist( "mol_data_molidx" ) )
             {
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( @"create index mol_data_molidx

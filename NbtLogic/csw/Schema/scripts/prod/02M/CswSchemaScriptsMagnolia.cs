@@ -42,12 +42,13 @@ namespace ChemSW.Nbt.Schema
                    new CswUpdateSchema_02M_CIS53115(),
                    new CswUpdateSchema_02M_CIS52316(),
                    new CswUpdateSchema_02M_CIS52307(),
+                   new CswUpdateSchema_02M_CIS53189(), // must be before 52670
                    new CswUpdateSchema_02M_CIS52670(),
                    new CswUpdateSchema_02M_CIS53123(),
                    new CswUpdateSchema_02M_CIS52772(),
                    new CswUpdateSchema_02M_CIS52751(),
-                   new CswUpdateSchema_02M_CIS52735(),
-                   new CswUpdateSchema_02M_CIS52735D()
+                   new CswUpdateSchema_02M_CIS52735()
+                   //new CswUpdateSchema_02M_CIS52735D()
                 };
         } // _SchemaScripts()
 

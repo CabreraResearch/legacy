@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                         {
                             if( null != After )
                             {
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( IgnorePermissions || _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                 {
-                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp : true );
+                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp: true );
                 }
                 else
                 {
@@ -375,7 +375,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
-                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true );
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
             }
 
             if( Node != null )
@@ -930,7 +930,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                     }
-                    CopyToNode.postChanges( ForceUpdate : false );
+                    CopyToNode.postChanges( ForceUpdate: false );
                 } // foreach( string NodeIdStr in CopyNodeIds )
             }
         }
@@ -1040,32 +1040,6 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
 
             return Buttons;
-        }
-
-        /// <summary>
-        /// Returns the viewid needed to build the full location tree, no nodes attached
-        /// </summary>
-        /// <param name="SelectedNodeId">Location tree's selected NodeId - if null, uses the User's default location</param>
-        /// <returns></returns>
-        public JObject getLocationView( string SelectedNodeId )
-        {
-            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null );
-            LocationView.SaveToCache( false );
-            JObject LocationViewId = new JObject();
-            LocationViewId["viewid"] = LocationView.SessionViewId.ToString();
-            CswPrimaryKey LocationId = String.IsNullOrEmpty( SelectedNodeId )
-                                           ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
-                                           : CswConvert.ToPrimaryKey( SelectedNodeId );
-            if( null != LocationId )
-            {
-                LocationViewId["nodeid"] = LocationId.ToString();
-                CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes[LocationId];
-                if( LocNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.LocationClass )
-                {
-                    LocationViewId["path"] = LocNode.Location.CachedPath + " > " + LocNode.Name.Text;
-                }
-            }
-            return LocationViewId;
         }
 
     } // class CswNbtSdTabsAndProps
