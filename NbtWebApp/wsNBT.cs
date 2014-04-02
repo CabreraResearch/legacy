@@ -2452,31 +2452,31 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getObjectClassButtons()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getLocationView( string NodeId )
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.getLocationView( NodeId );
-                }
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
-                ReturnVal["success"] = false;
-            }
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-            return ReturnVal.ToString();
-        } // getLocationView()
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getLocationView( string NodeId )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
+        //        if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+        //            ReturnVal = ws.getLocationView( NodeId );
+        //        }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
+        //        ReturnVal["success"] = false;
+        //    }
+        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+        //    return ReturnVal.ToString();
+        //} // getLocationView()
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]

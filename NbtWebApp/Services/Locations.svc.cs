@@ -21,7 +21,7 @@ namespace NbtWebApp
 
         /// <summary>
         /// 
-       /// </summary>
+        /// </summary>
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Assign specified inventory group to specified locations" )]
@@ -43,7 +43,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
-        [Description( "Generate a list of Locations" )]
+        [Description( "Generate a list of Locations for the SI Mobile application" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceLocations.CswNbtLocationReturn list( bool IsMobile = true )
         {
@@ -51,16 +51,56 @@ namespace NbtWebApp
             CswNbtWebServiceLocations.CswNbtLocationReturn Ret = new CswNbtWebServiceLocations.CswNbtLocationReturn();
             CswWebSvcSessionAuthenticateData.Authentication.Request AuthRequest = new CswWebSvcSessionAuthenticateData.Authentication.Request();
             AuthRequest.RequiredModules.Add( CswEnumNbtModuleName.SI );
-            
+
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.CswNbtLocationReturn, bool>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceLocations.getLocationsList,
+                WebSvcMethodPtr: CswNbtWebServiceLocations.getLocationsListMobile,
                 ParamObj: IsMobile
                 );
 
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Generate a list of Locations for the NBT web application" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceLocations.CswNbtLocationReturn getLocationsList( string ViewId )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtWebServiceLocations.CswNbtLocationReturn Ret = new CswNbtWebServiceLocations.CswNbtLocationReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.CswNbtLocationReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceLocations.getLocationsList,
+                ParamObj: ViewId
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Perform a search of Locations" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceLocations.CswNbtLocationReturn searchLocations( CswNbtWebServiceLocations.CswNbtLocationRequest.CswNbtLocationSearch Request )
+        {
+            CswNbtWebServiceLocations.CswNbtLocationReturn Ret = new CswNbtWebServiceLocations.CswNbtLocationReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.CswNbtLocationReturn, CswNbtWebServiceLocations.CswNbtLocationRequest.CswNbtLocationSearch>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceLocations.searchLocations,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
     }//Locations
 }
