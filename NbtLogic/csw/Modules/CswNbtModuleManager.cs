@@ -88,6 +88,27 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// method to obtain a module's name from its id
+        /// </summary>
+        /// <param name="moduleID">module's id</param>
+        /// <returns>module's name</returns>
+        public string GetModuleName( int moduleID )
+        {
+            string moduleName = "";
+            
+            CswTableSelect ModulesTable = _CswNbtResources.makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where moduleid='" + moduleID.ToString() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
+            {
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                moduleName =  ModuleRow["name"].ToString() ;
+            }
+
+            return moduleName;
+        }
+
+        /// <summary>
         /// Collection of all enabled modules
         /// </summary>
         public Collection<CswEnumNbtModuleName> ModulesEnabled()

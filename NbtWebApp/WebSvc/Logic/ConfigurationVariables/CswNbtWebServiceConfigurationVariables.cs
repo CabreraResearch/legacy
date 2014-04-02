@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.WebServices
 
         public static void Initialize( ICswResources CswResources, CswNbtConfigurationVariablesPageReturn Return, object Request )
         {
-            var NbtResources = (CswNbtResources) CswResources;
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
             Return.Data.ConfigurationVariables = _getConfigVars( NbtResources );
         }
 
@@ -33,13 +33,14 @@ namespace ChemSW.Nbt.WebServices
         ///     returns a collection of config vars, to be displayed on the config var page. Only config vars the currently logged in user can see are included
         /// </summary>
         /// <param name="NbtResources">Instance of NbtResources</param>
-        /// <returns>collection of config vars</returns>
-        private static Collection<CswNbtDataContractConfigurationVariable> _getConfigVars( CswNbtResources NbtResources )
+        /// <returns>dictionary of config vars, arranged by module</returns>
+        private static CswNbtDataContractConfigurationVars _getConfigVars( CswNbtResources NbtResources )
         {
-            //for now, just add all the config vars in a blob
-            //once that works, add them by module
-            var ret = new Collection<CswNbtDataContractConfigurationVariable>();
-            var enabledModuleIDs = new HashSet<int>();
+            Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>> configVarsByModule = new Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>>();
+            HashSet<int> enabledModuleIDs = new HashSet<int>();
+            //system vars are grouped manually in order to add them
+            //to the end of the collection
+            Collection<CswNbtDataContractConfigurationVariable> systemConfigVars = new Collection<CswNbtDataContractConfigurationVariable>();
 
             //a set of seen modules will help check which modules
             //can be seen
@@ -64,24 +65,47 @@ namespace ChemSW.Nbt.WebServices
                 //check if the config var should be added based on module
                 if( _includeConfigVar( NbtResources, enabledModuleIDs, currentRow[COL_MODULEID], currentRow[COL_ISSYSTEM] ) )
                 {
-                    var thisConfigVarDataContract = new CswNbtDataContractConfigurationVariable
+                    CswNbtDataContractConfigurationVariable thisConfigVarDataContract = new CswNbtDataContractConfigurationVariable
                         {
-                            VariableName = currentRow[COL_VARIABLENAME].ToString(),
-                            VariableValue = currentRow[COL_VARIABLEVALUE].ToString(),
-                            IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ),
-                            Constraint = currentRow[COL_CONSTRAINT].ToString(),
-                            DataType = currentRow[COL_DATATYPE].ToString(),
-                            Description = currentRow[COL_DESCRIPTION].ToString()
+                            VariableName = currentRow[COL_VARIABLENAME].ToString(), VariableValue = currentRow[COL_VARIABLEVALUE].ToString(), IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ), Constraint = currentRow[COL_CONSTRAINT].ToString(), DataType = currentRow[COL_DATATYPE].ToString(), Description = currentRow[COL_DESCRIPTION].ToString()
                         };
-                    ret.Add( thisConfigVarDataContract );
+                    //if this configVar is a system id, group as system settings
+                    //if this configVar has a moduleID, find the module name.
+                    //if this configVar is a common module, add it under a blank module name
+                    if( CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ))
+                    {
+                        systemConfigVars.Add( thisConfigVarDataContract );
+                    }
+
+                    else
+                    {
+                        string thisConfigVarModuleName = NbtResources.Modules.GetModuleName( CswConvert.ToInt32( currentRow[COL_MODULEID] ) );
+                        //add the config var module to the collection
+                        //if the module doesn't exist in the collection, create it
+                        if( false == configVarsByModule.ContainsKey( thisConfigVarModuleName ) )
+                        {
+                            configVarsByModule[thisConfigVarModuleName] = new Collection<CswNbtDataContractConfigurationVariable>();
+                        }
+
+                        configVarsByModule[thisConfigVarModuleName].Add( thisConfigVarDataContract );
+                    }
                 }
             }
 
+            //only add the system config vars if the current
+            //user is chemsw_admin
+            if( NbtResources.CurrentUser.Username == CswAuthenticator.ChemSWAdminUsername )
+            {
+                configVarsByModule.Add( "System", systemConfigVars );
+            }
+
+            CswNbtDataContractConfigurationVars ret = new CswNbtDataContractConfigurationVars();
+            ret.ConfigVarsByModule = configVarsByModule;
             return ret;
         }
 
         /// <summary>
-        ///     checks whether or not whether a given config var should be included in the list of config vars in the config vars page, based on whether the module it is associated to is enabled, and on whether or not the user is chemswAdmin
+        ///     checks whether or not whether a given config var should be included in the list of config vars in the config vars page, based on whether the module it is associated to is enabled
         /// </summary>
         /// <param name="nbtResources">CswNbtResources object</param>
         /// <param name="enabledModuleIds">HashSet containing ids of modules that are enabled</param>
@@ -104,16 +128,6 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            //if this config var is a system config var
-            //and the user is not chemsw_admin
-            //hide it
-            Boolean isSystem = CswConvert.ToBoolean( configVarIsSystem );
-
-            if( isSystem && nbtResources.CurrentUser.Username != CswAuthenticator.ChemSWAdminUsername )
-            {
-                ret = false;
-            }
-
             return ret;
         }
 
@@ -123,7 +137,13 @@ namespace ChemSW.Nbt.WebServices
     [DataContract]
     public class CswNbtDataContractConfigurationVariablesPage
     {
-        [DataMember] public Collection<CswNbtDataContractConfigurationVariable> ConfigurationVariables = new Collection<CswNbtDataContractConfigurationVariable>();
+        [DataMember] public CswNbtDataContractConfigurationVars ConfigurationVariables = new CswNbtDataContractConfigurationVars();
+    }
+
+    [DataContract]
+    public class CswNbtDataContractConfigurationVars
+    {
+        [DataMember] public Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>>();
     }
 
     [DataContract]
