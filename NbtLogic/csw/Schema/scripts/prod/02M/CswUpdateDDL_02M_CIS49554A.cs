@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Add moduleid, datatype, and minvar column to configvariables table"; }
+            get { return "Add moduleid, datatype, and constraint column to configvariables table"; }
         }
 
         public override string AppendToScriptName()
@@ -31,8 +31,8 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.addNumberColumn( "configuration_variables", "moduleid", "id of the module this config var is related to. Leave blank if common or system config var", false, "", false, "", false);
-            _CswNbtSchemaModTrnsctn.addStringColumn( "configuration_variables", "datatype", "type of the data contained. values can be INT, BOOL or STRING", true, 20);
-            _CswNbtSchemaModTrnsctn.addNumberColumn( "configuration_variables", "minvalue", "Minimum value of the config var, provided the datatype is INT", false, "", false, "", false);
+            _CswNbtSchemaModTrnsctn.addStringColumn( "configuration_variables", "datatype", "type of the data contained. values can be INT, BOOL, LIST or STRING", true, 20);
+            _CswNbtSchemaModTrnsctn.addStringColumn( "configuration_variables", "constraint", "Constraints on the config value, which are applied depending on the datatype",true, 20);
         }
     }
 }
