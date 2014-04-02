@@ -107,6 +107,9 @@
     <Compile Include="Services\BlobData.svc.cs">
       <DependentUpon>BlobData.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\ConfigurationVariables.svc.cs">
+      <DependentUpon>ConfigurationVariables.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
@@ -244,6 +247,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceMols.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\ConfigurationVariables\CswNbtWebServiceConfigurationVariables.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataRequests.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataReturn.cs" />
     <Compile Include="WebSvc\Logic\Import\CswNbtImportWcf.cs" />
@@ -821,6 +825,7 @@
     <Content Include="Scripts\q.min.js" />
     <Content Include="Services\ChemWatch.svc" />
     <Content Include="Services\API.svc" />
+    <Content Include="Services\ConfigurationVariables.svc" />
     <Content Include="Services\Explorer.svc" />
     <Content Include="Services\Import.svc" />
     <Content Include="Services\Properties.svc" />

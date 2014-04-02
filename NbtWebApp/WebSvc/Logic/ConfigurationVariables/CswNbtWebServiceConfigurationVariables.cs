@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-        /// returns a collection of config vars, to be displayed on the config var page. Only config vars the currently logged in user can see are included
+        ///     returns a collection of config vars, to be displayed on the config var page. Only config vars the currently logged in user can see are included
         /// </summary>
         /// <param name="NbtResources">Instance of NbtResources</param>
         /// <returns>collection of config vars</returns>
@@ -46,34 +46,34 @@ namespace ChemSW.Nbt.WebServices
             foreach( CswEnumNbtModuleName moduleName in CswEnumNbtModuleName.All )
             {
                 if( CswEnumNbtModuleName.Unknown != moduleName &&
-                    false == NbtResources.Modules.IsModuleEnabled( moduleName ) )
+                    NbtResources.Modules.IsModuleEnabled( moduleName ) )
                 {
                     int thisModuleID = NbtResources.Modules.GetModuleId( moduleName );
                     enabledModuleIDs.Add( thisModuleID );
                 }
+            }
 
-                CswTableSelect CVTableSelect = NbtResources.makeCswTableSelect( "config_var_nu", "configuration_variables" );
-                DataTable CVDataTable = CVTableSelect.getTable();
+            CswTableSelect CVTableSelect = NbtResources.makeCswTableSelect( "config_var_nu", "configuration_variables" );
+            DataTable CVDataTable = CVTableSelect.getTable();
 
-                //go through each config var
-                //if it is associated with a module, select only those 
-                //which are attached to modules in use
-                foreach( DataRow currentRow in CVDataTable.Rows )
+            //go through each config var
+            //if it is associated with a module, select only those 
+            //which are attached to modules in use
+            foreach( DataRow currentRow in CVDataTable.Rows )
+            {
+                //check if the config var should be added based on module
+                if( _includeConfigVar( NbtResources, enabledModuleIDs, currentRow[COL_MODULEID], currentRow[COL_ISSYSTEM] ) )
                 {
-                    //check if the config var should be added based on module
-                    if( _includeConfigVar( NbtResources, enabledModuleIDs, currentRow[COL_MODULEID], currentRow[COL_ISSYSTEM] ) )
-                    {
-                        var thisConfigVarDataContract = new CswNbtDataContractConfigurationVariable
-                            {
-                                VariableName = currentRow[COL_VARIABLENAME].ToString(),
-                                VariableValue = currentRow[COL_VARIABLEVALUE].ToString(),
-                                IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ),
-                                Constraint = currentRow[COL_CONSTRAINT].ToString(),
-                                DataType = currentRow[COL_DATATYPE].ToString(),
-                                Description = currentRow[COL_DESCRIPTION].ToString()
-                            };
-                        ret.Add( thisConfigVarDataContract );
-                    }
+                    var thisConfigVarDataContract = new CswNbtDataContractConfigurationVariable
+                        {
+                            VariableName = currentRow[COL_VARIABLENAME].ToString(),
+                            VariableValue = currentRow[COL_VARIABLEVALUE].ToString(),
+                            IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ),
+                            Constraint = currentRow[COL_CONSTRAINT].ToString(),
+                            DataType = currentRow[COL_DATATYPE].ToString(),
+                            Description = currentRow[COL_DESCRIPTION].ToString()
+                        };
+                    ret.Add( thisConfigVarDataContract );
                 }
             }
 
@@ -140,6 +140,7 @@ namespace ChemSW.Nbt.WebServices
         [DataMember( Name = "dataType" )] public string DataType = string.Empty;
 
         /// <summary>
+        ///     a description of the configuration variable
         /// </summary>
         [DataMember( Name = "description" )] public string Description = string.Empty;
 
@@ -148,7 +149,14 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [DataMember( Name = "isSystem" )] public Boolean IsSystem = false;
 
+        /// <summary>
+        ///     the name of the config var
+        /// </summary>
         [DataMember( Name = "variableName" )] public string VariableName = string.Empty;
+
+        /// <summary>
+        ///     the current value to which this config var is set
+        /// </summary>
         [DataMember( Name = "variableValue" )] public string VariableValue = string.Empty;
     }
 }
