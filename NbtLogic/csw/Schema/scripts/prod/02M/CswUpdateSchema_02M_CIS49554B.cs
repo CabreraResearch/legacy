@@ -78,6 +78,7 @@ namespace ChemSW.Nbt.Schema
             rowsToUpdate.Add( CswEnumConfigurationVariableNames.C3_Password.ToString().ToLower(), Tuple.Create(MODULEID_C3, STRINGTYPE, "") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.sql_report_resultlimit.ToString(), Tuple.Create<string, string, string>(null, INTTYPE, "0") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.miss_outdated_inspections.ToString(), Tuple.Create(MODULEID_SI, BOOLTYPE, "") );
+            rowsToUpdate.Add( CswEnumNbtConfigurationVariables.lock_inspection_answer.ToString(), Tuple.Create(MODULEID_SI, BOOLTYPE, "") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.chemwatchusername.ToString(), Tuple.Create(MODULEID_CHEMWATCH, STRINGTYPE, "") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.chemwatchpassword.ToString(), Tuple.Create(MODULEID_CHEMWATCH, STRINGTYPE, "") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.arielmodules.ToString(), Tuple.Create<string, string, string>(null, STRINGTYPE, "") );
