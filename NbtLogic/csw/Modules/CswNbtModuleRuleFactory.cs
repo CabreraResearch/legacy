@@ -18,6 +18,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleDev( CswNbtResources );
             }
+            else if( CswEnumNbtModuleName.DirectStructureSearch == ModuleName )
+            {
+                ret = new CswNbtModuleRuleDirectStructureSearch( CswNbtResources );
+            }
             else if( CswEnumNbtModuleName.IMCS == ModuleName )
             {
                 ret = new CswNbtModuleRuleIMCS( CswNbtResources );

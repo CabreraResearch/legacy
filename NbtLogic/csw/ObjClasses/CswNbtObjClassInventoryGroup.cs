@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Description = "Description";
             public const string Locations = "Locations";
             public const string Permissions = "Permissions";
+            public const string LimitRequestDeliveryLocation = "Limit Request Delivery Location";
         }
 
         public CswEnumNbtObjectClass PermissionClass { get { return CswEnumNbtObjectClass.InventoryGroupPermissionClass; } }
@@ -49,11 +50,6 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
         }  
 
-        protected override void afterPopulateProps()
-        {
-            AutomaticCertificateApproval.setHidden( Central.Checked != CswEnumTristate.True, false );
-        }
-
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
@@ -64,12 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     JObject ActionOptioinsJObj = new JObject();
                     ActionOptioinsJObj["ivgnodeid"] = NodeId.ToString();
-
                     ButtonData.Data["ActionOptions"] = ActionOptioinsJObj;
-                    //ButtonData.Data["ivgnodeid"] = NodeId.ToString();
-                    //ButtonData.Data["viewmode"] = containerFamilyView.ViewMode.ToString();
-                    //ButtonData.Data["type"] = "view";
-
                 }//if clicked button is manage locations
             }
             return true;
@@ -86,6 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
         public CswNbtNodePropGrid Locations { get { return ( _CswNbtNode.Properties[PropertyName.Locations] ); } }
         public CswNbtNodePropGrid Permissions { get { return ( _CswNbtNode.Properties[PropertyName.Permissions] ); } }
+        public CswNbtNodePropLogical LimitRequestDeliveryLocation { get { return ( _CswNbtNode.Properties[PropertyName.LimitRequestDeliveryLocation] ); } }
 
         #endregion
 

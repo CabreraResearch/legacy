@@ -798,7 +798,7 @@ namespace ChemSW.Nbt.MetaData
                         thisNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                         if( Attr.Column == CswEnumNbtPropertyAttributeColumn.Isfk )
                         {
-                            thisNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
+                            thisNTP.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
                             thisNTP.getDefaultValue( true ).AsLogical.Checked = CswEnumTristate.True;
                             thisNTP.removeFromAllLayouts();
                         }
@@ -1836,13 +1836,13 @@ namespace ChemSW.Nbt.MetaData
 
         //}// CopyNodeType()
 
-        public void CopyNodeTypePropFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, DataRow NodeTypePropRow ) //, CswNbtMetaDataNodeTypeProp NodeTypeProp)
+        public void CopyNodeTypePropFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             //if( CswConvert.ToInt32( NodeTypePropRow["fieldtypeid"] ) != ObjectClassProp.FieldTypeId )
             //    throw new CswDniException( CswEnumErrorType.Error, "Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match" );
 
             //Case 31160 - this will copy OraViewColName from the OCP to the NTP, this is desired behavior
-            ObjectClassProp.CopyPropToNewPropRow( NodeTypePropRow );
+            ObjectClassProp.CopyPropToNewPropRow( NodeTypeProp );
 
             // Handle the object class prop's viewxml
             if( ObjectClassProp.ViewXml != string.Empty )
@@ -1851,13 +1851,13 @@ namespace ChemSW.Nbt.MetaData
                 DataTable NodeViewsTable = NodeViewsUpdate.getEmptyTable();
 
                 DataRow NewViewRow = NodeViewsTable.NewRow();
-                NewViewRow["viewname"] = NodeTypePropRow["propname"].ToString();
+                NewViewRow["viewname"] = NodeTypeProp.PropName;
                 NewViewRow["viewxml"] = ObjectClassProp.ViewXml;
                 NewViewRow["visibility"] = CswEnumNbtViewVisibility.Property.ToString();
                 NodeViewsTable.Rows.Add( NewViewRow );
                 NodeViewsUpdate.update( NodeViewsTable );
 
-                NodeTypePropRow["nodeviewid"] = NewViewRow["nodeviewid"];
+                NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewViewRow["nodeviewid"] ) );
             }
         }
 

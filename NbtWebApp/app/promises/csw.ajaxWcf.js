@@ -27,8 +27,7 @@
             Logging: {
                 LogLevel: 'None',
                 CustomerId: 'nbt_master',
-                Server: 'localhost',
-                LogglyInput: '75c30bba-4b60-496c-a348-7eb413c01037'
+                Server: 'localhost'
             },
             Status: {
                 Success: true,
@@ -80,7 +79,6 @@
                 response.Performance.TimeStamp = endTime.toLocaleTimeString() + '.' + etms;
                 response.Performance.Client = (endTime - o.startTime);
 
-                Csw.clientSession.setLogglyInput(response.Logging.LogglyInput, response.Logging.LogLevel, response.Logging.Server);
                 Csw.debug.perf(response.Performance);
 
             }

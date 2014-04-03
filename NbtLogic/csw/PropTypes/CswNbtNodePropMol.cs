@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -10,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropMol : CswNbtNodeProp
+    public class CswNbtNodePropMol: CswNbtNodeProp
     {
         public static readonly string MolImgFileName = "mol.jpeg";
         public static readonly string MolImgFileContentType = "image/jpeg";
@@ -26,31 +28,81 @@ namespace ChemSW.Nbt.PropTypes
             _MolSubField = ( (CswNbtFieldTypeRuleMol) _FieldTypeRule ).MolSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Mol, x => Mol = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getMol(), x => setMol( CswConvert.ToString( x ) ) ) );
         }
 
-        private CswNbtSubField _MolSubField;
+        private readonly CswNbtSubField _MolSubField;
 
         override public bool Empty
         {
-            get
-            {
-                return ( 0 == Gestalt.Length );
-            }
+            get { return MolHasContent; }
         }
 
 
-        public string Mol
+        public void setMol( string MolString )
         {
-            get
+            CswTableUpdate molDataUpdate = _CswNbtResources.makeCswTableUpdate( "NodePropMol.setMol", "mol_data" );
+            DataTable molDataTbl = molDataUpdate.getTable( "where jctnodepropid = " + JctNodePropId );
+
+            if( molDataTbl.Rows.Count == 0 )
             {
-                return GetPropRowValue( _MolSubField );
+                DataRow newMolDataRow = molDataTbl.NewRow();
+                newMolDataRow["jctnodepropid"] = JctNodePropId;
+                newMolDataRow["originalmol"] = Encoding.UTF8.GetBytes( MolString );
+                newMolDataRow["contenttype"] = ".mol";
+                newMolDataRow["nodeid"] = this.NodeId.PrimaryKey;
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
+                {
+                    newMolDataRow["ctab"] = _CswNbtResources.AcclDirect.GetCTab( MolString );
+                    newMolDataRow["isdirectcompatible"] = CswConvert.ToDbVal( _CswNbtResources.AcclDirect.IsMolValid( MolString ) );
+                }
+
+                molDataTbl.Rows.Add( newMolDataRow );
             }
-            set
+            else
             {
-                SetPropRowValue( _MolSubField, value );
-                Gestalt = value;
+                DataRow existingMolDataRow = molDataTbl.Rows[0];
+                existingMolDataRow["originalmol"] = Encoding.UTF8.GetBytes( MolString );
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
+                {
+                    existingMolDataRow["ctab"] = _CswNbtResources.AcclDirect.GetCTab( MolString );
+                    existingMolDataRow["isdirectcompatible"] = CswConvert.ToDbVal( _CswNbtResources.AcclDirect.IsMolValid( MolString ) );
+                }
             }
+            molDataUpdate.update( molDataTbl );
+
+            //Update jct_nodes_props to specify whether there's mol content (this part is for making views filterable on this property)
+            if( string.Empty != MolString )
+            {
+                SetPropRowValue( _MolSubField, "1" ); //This means the property has a value
+            }
+            else
+            {
+                SetPropRowValue( _MolSubField, string.Empty ); //This means the property doesnt have a value
+            }
+
+        }
+
+        public string getMol()
+        {
+            string ret = string.Empty;
+            if( MolHasContent )
+            {
+                CswTableSelect molDataUpdate = _CswNbtResources.makeCswTableSelect( "NodePropMol.setMol", "mol_data" );
+                DataTable molDataTbl = molDataUpdate.getTable( "where jctnodepropid = " + JctNodePropId );
+                if( molDataTbl.Rows.Count > 0 && null != molDataTbl.Rows[0]["originalmol"] )
+                {
+                    ret = Encoding.UTF8.GetString( molDataTbl.Rows[0]["originalmol"] as byte[] );
+                }
+            }
+            return ret;
+        }
+
+        public bool MolHasContent
+        {
+            //For NodePropMol the mol subfield just represents if there is a row in Mol_Data.
+            get { return null != GetPropRowValue( _MolSubField ); }
+            //No setter - setMol() sets this property.
         }
 
         public override string ValueForNameTemplate
@@ -64,14 +116,14 @@ namespace ChemSW.Nbt.PropTypes
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null )
             {
-                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, UseNodeTypeAsPlaceholder: true );
+                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, UseNodeTypeAsPlaceholder : true );
             }
             return ret;
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
+            ParentObject[_MolSubField.ToXmlNodeName( true )] = getMol();
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
             ParentObject["href"] = getLink( JctNodePropId, NodeId );
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
@@ -79,30 +131,30 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Mol = CswTools.XmlRealAttributeName( PropRow[_MolSubField.ToXmlNodeName()].ToString() );
+            setMol( CswTools.XmlRealAttributeName( PropRow[_MolSubField.ToXmlNodeName()].ToString() ) );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             if( null != JObject[_MolSubField.ToXmlNodeName( true )] )
             {
-                Mol = JObject[_MolSubField.ToXmlNodeName( true )].ToString();
+                setMol( JObject[_MolSubField.ToXmlNodeName( true )].ToString() );
             }
         }
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Mol );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, getMol() );
         }
 
         /// <summary>
         /// Formats a mol file in the format of: 3 lines with optional text, atom/bond count line, atoms table, bonds table, "M  END"
         /// </summary>
         /// <returns></returns>
-        public static string FormatMolFile( string OrginalMolFile )
+        public static string FormatMolFile( string OriginalMolFile )
         {
             //strip out any "$$$$"
-            OrginalMolFile = OrginalMolFile.Replace( "$$$$", "" );
+            OriginalMolFile = OriginalMolFile.Replace( "$$$$", "" );
 
             List<string> fixedLines = new List<string>()
                 {
@@ -112,7 +164,7 @@ namespace ChemSW.Nbt.PropTypes
                     ""  //for atom/bond count line
                 };
 
-            string[] lines = OrginalMolFile.Split( new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None );
+            string[] lines = OriginalMolFile.Split( new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None );
 
             int commentsAdded = 0;
             bool firstAtomTblLine = true;

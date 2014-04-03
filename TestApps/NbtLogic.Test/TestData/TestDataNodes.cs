@@ -39,8 +39,8 @@ namespace ChemSW.Nbt.Test
         {
             CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), delegate( CswNbtNode NewNode )
             {
-                CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, CswNbtObjClassControlZone.PropertyName.ControlZoneName );
-                NewNode.Properties[NameNTP].AsText.Text = "TempNode";
+                CswNbtObjClassControlZone ControlZone = NewNode;
+                ControlZone.ControlZoneName.Text = "TempNode";
             }, true );
             _finalize();
 
@@ -153,6 +153,7 @@ namespace ChemSW.Nbt.Test
                     {
                         ContainerNode.Missing.Checked = CswEnumTristate.True;
                     }
+                    //ContainerNode.MaterialObsolete..CachedValue = "";
                 } );
             _finalize();
 
@@ -262,8 +263,8 @@ namespace ChemSW.Nbt.Test
         {
             CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), delegate( CswNbtNode NewNode )
                {
-                   CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, CswNbtObjClassControlZone.PropertyName.ControlZoneName );
-                   NewNode.Properties[NameNTP].AsText.Text = Name;
+                CswNbtObjClassControlZone ControlZone = NewNode;
+                ControlZone.ControlZoneName.Text = Name;
                    CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
                    foreach( CswNbtObjClassFireClassExemptAmountSet DefaultFireClassSet in FCEASOC.getNodes( false, false ) )
                    {

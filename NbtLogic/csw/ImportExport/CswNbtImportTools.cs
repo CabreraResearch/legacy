@@ -43,9 +43,14 @@ namespace ChemSW.Nbt.csw.ImportExport
             CswNbtMetaDataObjectClass ReceiptLotOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
             List<string> ReceiptLotNts = ReceiptLotOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
 
+            // User Class
+            CswNbtMetaDataObjectClass UserOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            List<string> UserNts = UserOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
+
             CreateCafProps( NbtResources, ChemicalNts, "properties_values", "propertiesvaluesid", SetupMode );
             CreateCafProps( NbtResources, ContainerNts, "properties_values_cont", "contpropsvaluesid", SetupMode );
             CreateCafProps( NbtResources, ReceiptLotNts, "properties_values_lot", "lotpropsvaluesid", SetupMode );
+            CreateCafProps( NbtResources, UserNts, "properties_values_user", "userpropsvaluesid", SetupMode );
         }
 
         public static void CreateCafProps( CswNbtResources NbtResources, List<string> NodeTypes, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
@@ -246,7 +251,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                             from properties@caflink p
                                    join " + propValsTblName + @"@caflink pv on p.propertyid = pv.propertyid
                              where p.propertyid not in (select legacypropid from import_def_bindings idb
-                                         join properties@caflink p on p.propertyid = idb.legacypropid)
+                                         join properties@caflink p on p.propertyid = idb.legacypropid) and p.deleted = 0
                             order by propertyid";
 
             return sql;

@@ -74,7 +74,7 @@ end;
 /
 
 begin
-  -- Call the procedure
+  -- Call the procedure (Chemical Properties)
   pivotpropertiesvalues(viewname => 'chemicals_props_view',
                         propstblname => 'properties_values',
                         proptblpkcol => 'propertiesvaluesid',
@@ -83,7 +83,7 @@ begin
 end;
 /
 begin
-  -- Call the procedure
+  -- Call the procedure (Receipt Lot Properties)
   pivotpropertiesvalues(viewname => 'receiptlots_props_view',
                         propstblname => 'properties_values_lot',
                         proptblpkcol => 'lotpropsvaluesid',
@@ -92,7 +92,7 @@ begin
 end;
 /
 begin
-  -- Call the procedure
+  -- Call the procedure (Container Properties)
   pivotpropertiesvalues(viewname => 'containers_props_view',
                         propstblname => 'properties_values_cont',
                         proptblpkcol => 'contpropsvaluesid',
@@ -100,7 +100,15 @@ begin
 						fromtbl => 'containers');
 end;
 /	
-
+begin
+  -- Call the procedure (User Properties)
+  pivotpropertiesvalues(viewname => 'user_props_view',
+                        propstblname => 'properties_values_user',
+                        proptblpkcol => 'userpropsvaluesid',
+                        joincol => 'userid',
+						fromtbl => 'users');
+end;
+/	
 
 -- Create views ( these are in order of creation)
 
@@ -245,7 +253,38 @@ select w.businessunitid,
   
 --Users
 create or replace view users_view as
-(select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users where issystemuser != 1);
+select u.AUDITFLAG,
+       u.DEFAULTCATEGORYID,
+       u.DEFAULTLANGUAGE,
+       u.DEFAULTLOCATIONID,
+       u.DEFAULTPRINTERID,
+       u.DELETED,
+       u.DISABLED,
+       u.EMAIL,
+       u.EMPLOYEEID,
+       u.FAILEDLOGINCOUNT,
+       u.HIDEHINTS,
+       u.HOMEINVENTORYGROUPID,
+       u.ISSYSTEMUSER,
+       u.LOCKED,
+       u.MYSTARTURL,
+       u.NAMEFIRST,
+       u.NAMELAST,
+       u.NAVROWS,
+       u.NODEVIEWID,
+       u.PASSWORD,
+       u.PASSWORD_DATE,
+       u.PHONE,
+       u.ROLEID,
+       u.SUPERVISORID,
+       u.TITLE,
+       u.USERNAME,
+       u.WELCOMEREDIRECT,
+       u.WORKUNITID,
+	   upv.*
+  from users u
+  join user_props_view upv on u.userid = upv.userid
+ where u.issystemuser != 1;
 
 ---Packdetail
 create or replace view packdetail_view as

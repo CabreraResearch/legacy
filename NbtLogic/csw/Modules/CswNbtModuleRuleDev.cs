@@ -22,7 +22,6 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "Info" );
             }
-            _CswNbtResources.SetupVbls.writeSetting( CswEnumSetupVariableNames.LogOutputToLoggly, "true" );
             _CswNbtResources.SetupVbls.writeSetting( CswEnumSetupVariableNames.ShowFullExceptions, "true" );
 
             CswNbtMetaDataNodeType FieldTypeNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev FieldType Test" );
@@ -155,7 +154,6 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "None" );
             }
-            _CswNbtResources.SetupVbls.writeSetting( CswEnumSetupVariableNames.LogOutputToLoggly, "false" );
             _CswNbtResources.SetupVbls.writeSetting( CswEnumSetupVariableNames.ShowFullExceptions, "false" );
 #endif
         }

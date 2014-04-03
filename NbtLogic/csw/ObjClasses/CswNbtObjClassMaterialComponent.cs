@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -55,8 +56,8 @@ namespace ChemSW.Nbt.ObjClasses
                     "Material Components must be added from a Chemical.",
                     "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
             }
-            Percentage.Value = HighPercentageValue.Value;
-        }//beforeWriteNode()
+            _setPercentage();
+        }
 
         protected override void afterWriteNodeLogic()
         {
@@ -64,12 +65,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _recalculateRegListMembership();
             }
-        }//afterWriteNode()
+        }
 
         protected override void afterDeleteNodeLogic()
         {
             _recalculateRegListMembership();
-        }//afterDeleteNode()        
+        }
 
         protected override void afterPopulateProps()
         {
@@ -77,7 +78,7 @@ namespace ChemSW.Nbt.ObjClasses
             LowPercentageValue.SetOnPropChange( _onLowPercentageValuePropChange );
             TargetPercentageValue.SetOnPropChange( _onTargetPercentageValuePropChange );
             HighPercentageValue.SetOnPropChange( _onHighPercentageValuePropChange );
-        }//afterPopulateProps()
+        }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
@@ -92,30 +93,41 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber LowPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.LowPercentageValue] ); } }
         private void _onLowPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            if( LowPercentageValue.Value > TargetPercentageValue.Value )
+            if( CswTools.IsDouble( TargetPercentageValue.Value ) && LowPercentageValue.Value > TargetPercentageValue.Value )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, PropertyName.LowPercentageValue + " cannot be higher than " + PropertyName.TargetPercentageValue, "" );
             }
+            if( CswTools.IsDouble( HighPercentageValue.Value ) && LowPercentageValue.Value > HighPercentageValue.Value )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.LowPercentageValue + " cannot be higher than " + PropertyName.HighPercentageValue, "" );
+            }
+            _setPercentage();
         }
         public CswNbtNodePropNumber TargetPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.TargetPercentageValue] ); } }
         private void _onTargetPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            if( TargetPercentageValue.Value > HighPercentageValue.Value )
+            if( CswTools.IsDouble( HighPercentageValue.Value ) && TargetPercentageValue.Value > HighPercentageValue.Value )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, PropertyName.TargetPercentageValue + " cannot be higher than " + PropertyName.HighPercentageValue, "" );
             }
-            if( TargetPercentageValue.Value < LowPercentageValue.Value )
+            if( CswTools.IsDouble( LowPercentageValue.Value ) && TargetPercentageValue.Value < LowPercentageValue.Value )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, PropertyName.TargetPercentageValue + " cannot be lower than " + PropertyName.LowPercentageValue, "" );
             }
+            _setPercentage();
         }
         public CswNbtNodePropNumber HighPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.HighPercentageValue] ); } }
         private void _onHighPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            if( HighPercentageValue.Value < TargetPercentageValue.Value )
+            if( CswTools.IsDouble( LowPercentageValue.Value ) && HighPercentageValue.Value < LowPercentageValue.Value )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.HighPercentageValue + " cannot be lower than " + PropertyName.LowPercentageValue, "" );
+            }
+            if( CswTools.IsDouble( TargetPercentageValue.Value ) && HighPercentageValue.Value < TargetPercentageValue.Value )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, PropertyName.HighPercentageValue + " cannot be lower than " + PropertyName.TargetPercentageValue, "" );
             }
+            _setPercentage();
         }
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
         private void OnMixturePropChange( CswNbtNodeProp Prop, bool Creating )
@@ -153,6 +165,15 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassChemical mixtureNode = _CswNbtResources.Nodes.GetNode( Mixture.RelatedNodeId );
                 mixtureNode.RefreshRegulatoryListMembers();
             }
+        }
+
+        private void _setPercentage()
+        {
+            double Percent = 0;
+            Percent = CswTools.IsDouble( LowPercentageValue.Value ) ? LowPercentageValue.Value : Percent;
+            Percent = CswTools.IsDouble( TargetPercentageValue.Value ) ? TargetPercentageValue.Value : Percent;
+            Percent = CswTools.IsDouble( HighPercentageValue.Value ) ? HighPercentageValue.Value : Percent;
+            Percentage.Value = Percent;
         }
 
         #endregion
