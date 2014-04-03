@@ -47,8 +47,9 @@ namespace ChemSW.Nbt.Schema
                    new CswUpdateSchema_02M_CIS53123(),
                    new CswUpdateSchema_02M_CIS52772(),
                    new CswUpdateSchema_02M_CIS52751(),
-                   new CswUpdateSchema_02M_CIS52735()
+                   new CswUpdateSchema_02M_CIS52735(),
                    //new CswUpdateSchema_02M_CIS52735D()
+                   new CswUpdateSchema_02M_CIS52799(),
                 };
         } // _SchemaScripts()
 
