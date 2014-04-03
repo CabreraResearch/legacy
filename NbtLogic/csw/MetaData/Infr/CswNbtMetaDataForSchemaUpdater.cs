@@ -1,5 +1,8 @@
-﻿using ChemSW.Core;
+﻿using System.Linq;
+using ChemSW.Core;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Schema;
 using System;
 using System.Collections.ObjectModel;
@@ -150,7 +153,7 @@ namespace ChemSW.Nbt.MetaData
 
                             if( DoSync )
                             {
-                                CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNTP._DataRow );
+                                CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNTP );
                                 CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNTP );
                             }
 
@@ -336,16 +339,16 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Update the attributes of an Object Class Prop, and cascade changes to existing NodeTypeProps
         /// </summary>
-        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswEnumNbtObjectClassPropAttributes Attribute, object Value )
+        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswEnumNbtObjectClassPropAttributes AttributeColumnName, object Value )
         {
-            if( Attribute != CswResources.UnknownEnum )
+            if( AttributeColumnName != CswResources.UnknownEnum )
             {
-                string AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
+                string AttributeColumnNameString = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( AttributeColumnName );
                 object DBValue = CswConvert.ToDbVal( Value );
-                if( ObjectClassProp._DataRow[AttributeName] != DBValue )
+                if( ObjectClassProp._DataRow[AttributeColumnNameString] != DBValue )
                 {
-                    ObjectClassProp._DataRow[AttributeName] = DBValue;
-                    if( Attribute == CswEnumNbtObjectClassPropAttributes.setvalonadd )
+                    ObjectClassProp._DataRow[AttributeColumnNameString] = DBValue;
+                    if( AttributeColumnName == CswEnumNbtObjectClassPropAttributes.setvalonadd )
                     {
                         ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes.display_col_add )] = DBNull.Value;
                         ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes.display_row_add )] = DBNull.Value;
@@ -354,13 +357,13 @@ namespace ChemSW.Nbt.MetaData
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                     {
-                        CswEnumNbtNodeTypePropAttributes NodeTypeAttribute = AttributeName;
-
-                        if( NodeTypeAttribute != CswResources.UnknownEnum )
+                        CswNbtFieldTypeAttribute attr = NodeTypeProp.getFieldTypeRule().getAttributes().FirstOrDefault( a => a.Column == AttributeColumnName );
+                        if( null != attr )
                         {
-                            NodeTypeProp._DataRow[AttributeName] = DBValue;
+                            CswNbtNodePropWrapper attrProp = NodeTypeProp.DesignNode.AttributeProperty[attr.Name];
+                            attrProp.SetSubFieldValue( attrProp.NodeTypeProp.getFieldTypeRule().SubFields.Default, DBValue );
                         }
-                        else if( Attribute == CswEnumNbtObjectClassPropAttributes.setvalonadd )
+                        if( AttributeColumnName == CswEnumNbtObjectClassPropAttributes.setvalonadd )
                         {
                             if( CswConvert.ToBoolean( Value ) )
                             {
