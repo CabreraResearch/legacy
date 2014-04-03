@@ -43,7 +43,7 @@
 
             // set the combobox display
             if (Csw.isNullOrEmpty(cswPrivate.tpl)) {
-                cswPrivate.tpl = new Ext.XTemplate('<tpl for="."><li style="height:22px;" class="x-combo-list-item {disabledItemCls}" role="option">' + '{' + cswPrivate.displayField + '}' + '</li></tpl>');
+                cswPrivate.tpl = new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item {disabledItemCls}" role="option">' + '{' + cswPrivate.displayField + '}' + '</li></tpl>');
             }
 
             // To search or not to search?
@@ -90,9 +90,9 @@
 
             if (false === cswPrivate.search && (cswPrivate.options && cswPrivate.options.length > 1)) {
                 cswPrivate.options.forEach(function (option) {
-                    //if (option["Disabled"] === true) {
-                    //    option["disabledItemCls"] = "x-combo-grayed-out-item";
-                    //}
+                    if (option["Disabled"] === true) {
+                        option["disabledItemCls"] = "x-combo-grayed-out-item";
+                    }
                 });
                 cswPrivate.store.loadData(cswPrivate.options);
             }
@@ -120,7 +120,7 @@
                 },
                 listeners: {
                     beforeselect: function (combo, record, index, eOpts) {
-                        Csw.tryExec(cswPrivate.listeners.beforeselect, combo, record);
+                        return Csw.tryExec(cswPrivate.listeners.beforeselect, combo, record);
                     },
                     select: function (combo, records) {
                         if (cswPrivate.isRequired) {
