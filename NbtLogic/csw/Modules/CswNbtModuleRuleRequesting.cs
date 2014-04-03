@@ -32,6 +32,14 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.ShowProp( NodeTypeId, CswNbtObjClassInventoryGroup.PropertyName.LimitRequestDeliveryLocation );
             }
 
+            //Show the following Location properties...
+            //   Request Delivery Location
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            foreach( int NodeTypeId in LocationOC.getNodeTypeIds().Keys )
+            {
+                _CswNbtResources.Modules.ShowProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.RequestDeliveryLocation );
+            }
+
             //Show the following Material properties...
             //   Request Button
             CswNbtMetaDataPropertySet MaterialSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
@@ -79,6 +87,14 @@ namespace ChemSW.Nbt
             foreach( int NodeTypeId in InventoryGroupOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassInventoryGroup.PropertyName.LimitRequestDeliveryLocation );
+            }
+
+            //Hide the following Location properties...
+            //   Request Delivery Location
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            foreach( int NodeTypeId in LocationOC.getNodeTypeIds().Keys )
+            {
+                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.RequestDeliveryLocation );
             }
 
             //Hide the following Material properties...

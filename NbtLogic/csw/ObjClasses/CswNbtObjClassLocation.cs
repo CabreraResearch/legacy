@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Containers = "Containers";
             public const string InventoryLevels = "Inventory Levels";
             public const string Responsible = "Responsible";
+            public const string RequestDeliveryLocation = "Request Delivery Location";
         }
 
         public CswNbtObjClassLocation( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
@@ -122,6 +123,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid Containers { get { return ( _CswNbtNode.Properties[PropertyName.Containers] ); } }
         public CswNbtNodePropGrid InventoryLevels { get { return ( _CswNbtNode.Properties[PropertyName.InventoryLevels] ); } }
         public CswNbtNodePropRelationship Responsible { get { return ( _CswNbtNode.Properties[PropertyName.Responsible] ); } }
+        public CswNbtNodePropLogical RequestDeliveryLocation { get { return ( _CswNbtNode.Properties[PropertyName.RequestDeliveryLocation] ); } }
 
         #endregion Object class specific properties
 
