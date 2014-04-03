@@ -95,6 +95,9 @@
                                             cswPrivate.nodeid = option.LocationId;
                                             cswPrivate.path = option.Path;
                                         }
+                                        if (option["Disabled"] === true) {
+                                            option["disabledItemCls"] = "x-combo-grayed-out-item";
+                                        }
                                     });
                                 } else {
                                     // What should we set this to?
@@ -103,17 +106,6 @@
                             } else {
                                 cswPrivate.search = true;
                             }
-
-                            //if (cswPrivate.useDefaultLocation) {
-                            //    if (cswPrivate.nodeid !== data.nodeid) {
-                            //        Csw.tryExec(cswPrivate.onChange, data.nodeid, data.path);
-                            //    }
-                            //    cswPrivate.nodeid = data.nodeid;
-                            //    cswPrivate.path = data.path;
-                            //} else {
-                            //    //Case 30243 - If we're not using DefaultLocation, use root every time instead (yuck)
-                            //    Csw.clientDb.setItem('CswTree_Top_LastSelectedPath', Csw.enums.nodeTree_DefaultSelect.root.name);
-                            //}
                             render();
                         }
                     }));
@@ -150,6 +142,9 @@
                     search: cswPrivate.search,
                     searchUrl: 'Locations/searchLocations',
                     listeners: {
+                        beforeselect: function (combo, record) {
+                            return false === record.disabled;
+                        },
                         select: function (combo, records) {
                             var locpath = records[0].get('Path');
                             var nodeid = records[0].get('LocationId');

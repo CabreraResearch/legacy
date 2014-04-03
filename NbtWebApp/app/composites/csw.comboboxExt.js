@@ -13,6 +13,8 @@
             defaultValue: 'Type here to search',
             displayField: 'Text',
             valueField: 'Value',
+            selectedField: 'Selected',
+            disabledField: 'Disabled',
             queryMode: 'local',
             queryDelay: 2000,
             options: [],
@@ -41,7 +43,7 @@
 
             // set the combobox display
             if (Csw.isNullOrEmpty(cswPrivate.tpl)) {
-                cswPrivate.tpl = new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{' + cswPrivate.displayField + '}' + '</li></tpl>');
+                cswPrivate.tpl = new Ext.XTemplate('<tpl for="."><li style="height:22px;" class="x-combo-list-item {disabledItemCls}" role="option">' + '{' + cswPrivate.displayField + '}' + '</li></tpl>');
             }
 
             // To search or not to search?
@@ -75,12 +77,23 @@
             /// </summary>
             /// <returns type="Ext.data.TreeStore">Ext data store</returns>
             cswPrivate.store = new Ext.data.Store({
-                fields: [cswPrivate.valueField, cswPrivate.displayField],
+                fields: [
+                    { name: cswPrivate.valueField },
+                    { name: cswPrivate.displayField },
+                    { name: cswPrivate.selectedField, hidden: true },
+                    { name: cswPrivate.disabledField, hidden: true },
+                    { name: "disabledItemCls", hidden: true }
+                ],
                 autoLoad: false,
                 sorters: [{ property: cswPrivate.displayField, direction: 'ASC' }]
             });
 
             if (false === cswPrivate.search && (cswPrivate.options && cswPrivate.options.length > 1)) {
+                cswPrivate.options.forEach(function (option) {
+                    //if (option["Disabled"] === true) {
+                    //    option["disabledItemCls"] = "x-combo-grayed-out-item";
+                    //}
+                });
                 cswPrivate.store.loadData(cswPrivate.options);
             }
 
@@ -106,6 +119,9 @@
                     width: 'auto'
                 },
                 listeners: {
+                    beforeselect: function (combo, record, index, eOpts) {
+                        Csw.tryExec(cswPrivate.listeners.beforeselect, combo, record);
+                    },
                     select: function (combo, records) {
                         if (cswPrivate.isRequired) {
                             var val = records[0].get(cswPrivate.valueField);

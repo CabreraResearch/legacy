@@ -1462,6 +1462,13 @@ ul li div {
     height: 12px;
 }
 
+/* grayed out combobox item */
+.x-combo-grayed-out-item {
+color: lightgray;
+background-color: whitesmoke;
+font-style: italic;
+}
+
 
 
 .MergeTable {
