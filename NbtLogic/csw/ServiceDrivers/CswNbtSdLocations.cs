@@ -115,6 +115,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             [DataMember]
             public bool Selected { get; set; }
+
+            [DataMember]
+            public bool Disabled { get; set; }
         }
 
         public Collection<Location> getLocationListMobile()
@@ -194,7 +197,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public Collection<Location> searchLocations( string Query, string ViewId )
         {
-            Collection<Location> Ret = new Collection<Location>();
+            //Collection<Location> Ret = new Collection<Location>();
 
             CswNbtView LocationView = _getLocationsView( ViewId, Query );
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationView, false, false, false );
@@ -208,17 +211,17 @@ namespace ChemSW.Nbt.ServiceDrivers
                     _iterateTree( Tree, null );
                 }
 
-                foreach( Location LocationObj in _LocationCollection )
-                {
-                    Location location = new Location();
-                    location.Name = LocationObj.Name;
-                    location.LocationId = LocationObj.LocationId;
-                    location.Path = LocationObj.Path;
-                    Ret.Add( location );
-                }
+                //foreach( Location LocationObj in _LocationCollection )
+                //{
+                //    Location location = new Location();
+                //    location.Name = LocationObj.Name;
+                //    location.LocationId = LocationObj.LocationId;
+                //    location.Path = LocationObj.Path;
+                //    Ret.Add( location );
+                //}
             }
 
-            return Ret;
+            return _LocationCollection;
         }//searchLocations()
 
         private CswNbtView _getLocationsView( string ViewId, string NameFilter = "" )
@@ -227,7 +230,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( string.IsNullOrEmpty( ViewId ) )
             {
-                Ret = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null, ResultMode: CswEnumNbtFilterResultMode.Hide, NameFilter: NameFilter );
+                Ret = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null, ResultMode: CswEnumNbtFilterResultMode.Disabled, NameFilter: NameFilter );
                 Ret.SaveToCache( false );
                 ViewId = Ret.SessionViewId.ToString();
             }
@@ -284,6 +287,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 LocationObj.Name = nameTreeProp.Field1;
                 LocationObj.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
                 LocationObj.Selected = ( Tree.getNodeIdForCurrentPosition() == SelectedNodeId );
+                LocationObj.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
                 _LocationCollection.Add( LocationObj );
 
                 if( Tree.getChildNodeCount() > 0 )

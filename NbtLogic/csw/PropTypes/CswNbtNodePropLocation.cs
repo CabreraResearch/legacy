@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtView _View = null;
         public CswNbtView View
         {
-            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId, ResultMode: CswEnumNbtFilterResultMode.Hide ) ); } // get
+            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId, ResultMode: CswEnumNbtFilterResultMode.Disabled ) ); } // get
             set { _View = value; }
         } // View
 
@@ -320,6 +320,7 @@ namespace ChemSW.Nbt.PropTypes
                         Opt["LocationId"] = location.LocationId;
                         Opt["Name"] = location.Name;
                         Opt["Path"] = location.Path;
+                        Opt["Disabled"] = location.Disabled;
                         Options.Add( Opt );
                     }
                     ParentObject["options"] = Options;
