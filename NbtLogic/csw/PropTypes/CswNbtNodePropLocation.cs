@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, CswEnumNbtFilterResultMode ResultMode = null, string NameFilter = "" )
+        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, CswEnumNbtFilterResultMode ResultMode = null, string FullPathFilter = "" )
         {
             CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
@@ -260,7 +260,7 @@ namespace ChemSW.Nbt.PropTypes
                                                           InventoryGroupIds: InventoryGroupIds,
                                                           DisableLowestLevel: IsLocationNode,
                                                           ResultMode: ResultMode,
-                                                          NameFilter: NameFilter );
+                                                          FullPathFilter: FullPathFilter );
             return Ret;
         }
 

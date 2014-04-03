@@ -131,17 +131,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false, CswEnumNbtFilterResultMode ResultMode = null, string NameFilter = "" )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false, CswEnumNbtFilterResultMode ResultMode = null, string FullPathFilter = "" )
         {
-            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel, ResultMode ?? CswEnumNbtFilterResultMode.Disabled, NameFilter );
+            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel, ResultMode ?? CswEnumNbtFilterResultMode.Disabled, FullPathFilter );
         }
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false, CswEnumNbtFilterResultMode ResultMode = null, string NameFilter = "" )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false, CswEnumNbtFilterResultMode ResultMode = null, string FullPathFilter = "" )
         {
-            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel, ResultMode ?? CswEnumNbtFilterResultMode.Disabled, NameFilter );
+            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel, ResultMode ?? CswEnumNbtFilterResultMode.Disabled, FullPathFilter );
         }
 
-        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, IEnumerable<CswPrimaryKey> InventoryGroupIds, bool DisableLowestLevel, CswEnumNbtFilterResultMode ResultMode, string NameFilter = "" )
+        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, IEnumerable<CswPrimaryKey> InventoryGroupIds, bool DisableLowestLevel, CswEnumNbtFilterResultMode ResultMode, string FullPathFilter = "" )
         {
             if( null != LocationsView )
             {
@@ -151,6 +151,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( PropertyName.AllowInventory );
                 CswNbtMetaDataObjectClassProp LocationInventoryGroupOCP = LocationOC.getObjectClassProp( PropertyName.InventoryGroup );
                 CswNbtMetaDataObjectClassProp LocationNameOCP = LocationOC.getObjectClassProp( PropertyName.Name );
+                CswNbtMetaDataObjectClassProp LocationFullPathOCP = LocationOC.getObjectClassProp( PropertyName.FullPath );
 
                 LocationsView.Root.ChildRelationships.Clear();
 
@@ -193,18 +194,22 @@ namespace ChemSW.Nbt.ObjClasses
                                                             Value: CswEnumTristate.True.ToString() );
                 }
 
-                if( false == string.IsNullOrEmpty( NameFilter ) )
+                // Filter on Full Path property
+                if( false == string.IsNullOrEmpty( FullPathFilter ) )
                 {
-                    LocationsView.AddViewPropertyAndFilter( LocReln, LocationNameOCP,
+                    LocationsView.AddViewPropertyAndFilter( LocReln, LocationFullPathOCP,
                                                            Conjunction: CswEnumNbtFilterConjunction.And,
-                                                           SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                           SubFieldName: CswEnumNbtSubFieldName.Value,
                                                            FilterMode: CswEnumNbtFilterMode.Contains,
-                                                           Value: NameFilter );
+                                                           Value: FullPathFilter );
                 }
                 else
                 {
-                    LocationsView.AddViewProperty( LocReln, LocationNameOCP );
+                    LocationsView.AddViewProperty( LocReln, LocationFullPathOCP );
                 }
+
+                // Add the Name property to the view
+                    LocationsView.AddViewProperty( LocReln, LocationNameOCP );
 
             } // if( null != LocationsView )
         } // makeLocationsTreeView()
