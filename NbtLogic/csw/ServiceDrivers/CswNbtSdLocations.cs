@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public Collection<Location> GetLocationsList( string ViewId, string SelectedNodeId = "" )
         {
             // Only return options if the total number of locations is < the relationshipoptionlimit configuration variable
-            if( CswNbtNodePropLocation.getNumberOfLocationNodes( _CswNbtResources ) < _SearchThreshold )
+            if( CswNbtNodePropLocation.getNumberOfLocationNodes( _CswNbtResources ) <= _SearchThreshold )
             {
                 CswPrimaryKey SelectedLocationId = String.IsNullOrEmpty( SelectedNodeId ) ? _CswNbtResources.CurrentNbtUser.DefaultLocationId : CswConvert.ToPrimaryKey( SelectedNodeId );
 
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             int count = Tree.getChildNodeCount();
             // Only return options if the total number of locations is < the relationshipoptionlimit configuration variable
-            if( count < _SearchThreshold )
+            if( count <= _SearchThreshold )
             {
                 if( Tree.getChildNodeCount() > 0 )
                 {
