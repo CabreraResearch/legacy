@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.WebServices
         public static void Initialize( ICswResources CswResources, CswNbtConfigurationVariablesPageReturn Return, object Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            Return.Data.ConfigurationVariables = _getConfigVars( NbtResources );
+            Return.Data = _getConfigVars( NbtResources );
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         /// <param name="NbtResources">Instance of NbtResources</param>
         /// <returns>dictionary of config vars, arranged by module</returns>
-        private static CswNbtDataContractConfigurationVars _getConfigVars( CswNbtResources NbtResources )
+        private static CswNbtDataContractConfigurationVariablesPage _getConfigVars( CswNbtResources NbtResources )
         {
             Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>> configVarsByModule = new Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>>();
             HashSet<int> enabledModuleIDs = new HashSet<int>();
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( DataRow currentRow in CVDataTable.Rows )
             {
                 //check if the config var should be added based on module
-                if( _includeConfigVar( NbtResources, enabledModuleIDs, currentRow[COL_MODULEID], currentRow[COL_ISSYSTEM] ) )
+                if( _includeConfigVar( enabledModuleIDs, currentRow[COL_MODULEID] ) )
                 {
                     CswNbtDataContractConfigurationVariable thisConfigVarDataContract = new CswNbtDataContractConfigurationVariable
                         {
@@ -99,8 +99,9 @@ namespace ChemSW.Nbt.WebServices
                 configVarsByModule.Add( "System", systemConfigVars );
             }
 
-            CswNbtDataContractConfigurationVars ret = new CswNbtDataContractConfigurationVars();
-            ret.ConfigVarsByModule = configVarsByModule;
+            CswNbtDataContractConfigurationVariablesPage ret = new CswNbtDataContractConfigurationVariablesPage();
+            ret.ConfigVarsByModule = configVarsByModule; 
+
             return ret;
         }
 
@@ -112,7 +113,7 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="moduleIDForConfigVar">The module id of this configVar. </param>
         /// <param name="configVarIsSystem">True if this config var is a system config var</param>
         /// <returns></returns>
-        private static bool _includeConfigVar( CswNbtResources nbtResources, HashSet<int> enabledModuleIds, object moduleIDForConfigVar, object configVarIsSystem )
+        private static bool _includeConfigVar( HashSet<int> enabledModuleIds, object moduleIDForConfigVar )
         {
             Boolean ret = true;
 
@@ -136,12 +137,6 @@ namespace ChemSW.Nbt.WebServices
 
     [DataContract]
     public class CswNbtDataContractConfigurationVariablesPage
-    {
-        [DataMember] public CswNbtDataContractConfigurationVars ConfigurationVariables = new CswNbtDataContractConfigurationVars();
-    }
-
-    [DataContract]
-    public class CswNbtDataContractConfigurationVars
     {
         [DataMember] public Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>>();
     }
