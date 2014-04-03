@@ -32,7 +32,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtNode DoomedNode = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
-                    if( null != DoomedNode )
+                    if( null != DoomedNode && GenericRequest.MetaDataName == DoomedNode.getNodeType().NodeTypeName )
                     {
                         DoomedNode.delete();
                         Return.Status = HttpStatusCode.OK;
@@ -47,6 +47,10 @@ namespace NbtWebApp.WebSvc.Logic.API
                 {
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
+            }
+            else
+            {
+                Return.Status = HttpStatusCode.Forbidden;
             }
         }
 

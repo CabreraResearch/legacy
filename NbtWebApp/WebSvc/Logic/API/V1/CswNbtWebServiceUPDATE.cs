@@ -33,7 +33,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtNode Node = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
-                    if( null != Node )
+                    if( null != Node && GenericRequest.MetaDataName == Node.getNodeType().NodeTypeName )
                     {
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         SdTabsAndProps.saveNodeProps( Node, GenericRequest.PropData );
@@ -55,6 +55,10 @@ namespace NbtWebApp.WebSvc.Logic.API
                 {
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
+            }
+            else
+            {
+                Return.Status = HttpStatusCode.Forbidden;
             }
         }
 

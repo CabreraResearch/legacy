@@ -52,6 +52,10 @@ namespace NbtWebApp.WebSvc.Logic.API
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
             }
+            else
+            {
+                Return.Status = HttpStatusCode.Forbidden;
+            }
         }
 
         #endregion
