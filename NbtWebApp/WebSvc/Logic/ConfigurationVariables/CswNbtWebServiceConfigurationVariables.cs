@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Csw.WebSvc;
 using ChemSW.DB;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Security;
 using NbtWebApp.Services;
 
@@ -36,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
         /// <returns>dictionary of config vars, arranged by module</returns>
         private static CswNbtDataContractConfigurationVariablesPage _getConfigVars( CswNbtResources NbtResources )
         {
-            Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>> configVarsByModule = new Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>>();
+            CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> configVarsByModule = new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
             HashSet<int> enabledModuleIDs = new HashSet<int>();
             //system vars are grouped manually in order to add them
             //to the end of the collection
@@ -67,7 +69,12 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtDataContractConfigurationVariable thisConfigVarDataContract = new CswNbtDataContractConfigurationVariable
                         {
-                            VariableName = currentRow[COL_VARIABLENAME].ToString(), VariableValue = currentRow[COL_VARIABLEVALUE].ToString(), IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ), Constraint = currentRow[COL_CONSTRAINT].ToString(), DataType = currentRow[COL_DATATYPE].ToString(), Description = currentRow[COL_DESCRIPTION].ToString()
+                            VariableName = currentRow[COL_VARIABLENAME].ToString(),
+                            VariableValue = currentRow[COL_VARIABLEVALUE].ToString(),
+                            IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ),
+                            Constraint = currentRow[COL_CONSTRAINT].ToString(),
+                            DataType = currentRow[COL_DATATYPE].ToString(),
+                            Description = currentRow[COL_DESCRIPTION].ToString()
                         };
                     //if this configVar is a system id, group as system settings
                     //if this configVar has a moduleID, find the module name.
@@ -80,6 +87,12 @@ namespace ChemSW.Nbt.WebServices
                     else
                     {
                         string thisConfigVarModuleName = NbtResources.Modules.GetModuleName( CswConvert.ToInt32( currentRow[COL_MODULEID] ) );
+
+                        if( thisConfigVarModuleName == "" )
+                        {
+                            thisConfigVarModuleName = "Common";
+                        }
+
                         //add the config var module to the collection
                         //if the module doesn't exist in the collection, create it
                         if( false == configVarsByModule.ContainsKey( thisConfigVarModuleName ) )
@@ -96,11 +109,11 @@ namespace ChemSW.Nbt.WebServices
             //user is chemsw_admin
             if( NbtResources.CurrentUser.Username == CswAuthenticator.ChemSWAdminUsername )
             {
-                configVarsByModule.Add( "System", systemConfigVars );
+                configVarsByModule.Add( "System", systemConfigVars);
             }
 
             CswNbtDataContractConfigurationVariablesPage ret = new CswNbtDataContractConfigurationVariablesPage();
-            ret.ConfigVarsByModule = configVarsByModule; 
+            ret.ConfigVarsByModule = configVarsByModule;
 
             return ret;
         }
@@ -135,10 +148,10 @@ namespace ChemSW.Nbt.WebServices
 //_includeConfigVar
     }
 
-    [DataContract]
+    [DataContract, KnownType( typeof( Collection<CswNbtDataContractConfigurationVariable> ) )]
     public class CswNbtDataContractConfigurationVariablesPage
     {
-        [DataMember] public Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new Dictionary<string, Collection<CswNbtDataContractConfigurationVariable>>();
+        [DataMember] public CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
     }
 
     [DataContract]
