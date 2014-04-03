@@ -143,20 +143,25 @@
                     searchUrl: 'Locations/searchLocations',
                     listeners: {
                         beforeselect: function (combo, record) {
-                            return false === record.data.Disabled;
+                            if (record.data.Disabled) {
+                                return false === record.data.Disabled;
+                            } else {
+                                return true;
+                            }
                         },
                         select: function (combo, records) {
                             var locpath = records[0].get('Path');
                             var nodeid = records[0].get('LocationId');
 
                             Csw.tryExec(cswPrivate.onChange, nodeid);
-                        },
-                        storebeforeload: function () {
                             cswPrivate.value = nodeid;
                             cswPrivate.nodeid = nodeid;
                             cswPrivate.path = locpath;
                         },
                         change: function (combo, newvalue) {
+                            Csw.tryExec(cswPrivate.onChange, newvalue);
+                        },
+                        storebeforeload: function () {
                             var obj = {};
                             obj.Query = cswPublic.comboBox.combobox.getValue();
                             obj.ViewId = cswPrivate.viewid;
