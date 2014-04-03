@@ -248,7 +248,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtViewProperty viewProp2 = ParentRelationship.View.AddViewProperty( ParentRelationship, ObsoleteProp );
                 viewProp2.ShowInGrid = false;
-                ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode : CswEnumNbtFilterMode.Equals, Value : CswEnumTristate.False, ShowAtRuntime : true );
+                ParentRelationship.View.AddViewPropertyFilter( viewProp2, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True, ShowAtRuntime : true );
             }
 
             onPropertySetAddDefaultViewFilters( ParentRelationship );
