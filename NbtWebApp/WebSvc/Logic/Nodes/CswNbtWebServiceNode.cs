@@ -480,6 +480,8 @@ namespace ChemSW.Nbt.WebServices
                         tree.goToParentNode();
                     }
 
+                    sizesView.SaveToCache( false, true );
+                    Response.Data.ViewId = sizesView.SessionViewId.ToString();
                 }
             }
         }

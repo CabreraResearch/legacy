@@ -130,6 +130,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "PropertySetId" )]
             public Int32 PropertySetId = Int32.MinValue;
 
+            [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "ViewId" )]
+            public string ViewId = string.Empty;
+
             [DataMember( EmitDefaultValue = true, IsRequired = true, Name = "Nodes" )]
             public Collection<CswNbtNode.Node> Nodes = new Collection<CswNbtNode.Node>();
 
