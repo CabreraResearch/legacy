@@ -278,10 +278,10 @@ select u.AUDITFLAG,
        u.ROLEID,
        u.SUPERVISORID,
        u.TITLE,
-       u.USERID,
        u.USERNAME,
        u.WELCOMEREDIRECT,
-       u.WORKUNITID
+       u.WORKUNITID,
+	   upv.*
   from users u
   join user_props_view upv on u.userid = upv.userid
  where u.issystemuser != 1;
