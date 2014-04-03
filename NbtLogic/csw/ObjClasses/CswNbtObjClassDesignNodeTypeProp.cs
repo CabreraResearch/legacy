@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // Copy values from ObjectClassProp
-                    _syncFromObjectClassProp( InsertedRow );
+                    _syncFromObjectClassProp();
                     postChanges( false, SkipEvents: true );
 
                     ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
@@ -955,18 +955,19 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void syncFromObjectClassProp( bool updateLayout = true )
         {
-            Int32 PropId = RelationalId.PrimaryKey;
-            CswTableUpdate PropsUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeTypeProp_afterCreateNode_PropsUpdate", "nodetype_props" );
-            DataTable PropsTable = PropsUpdate.getTable( "nodetypepropid", PropId );
-            if( PropsTable.Rows.Count > 0 )
-            {
-                _syncFromObjectClassProp( PropsTable.Rows[0], updateLayout );
-                PropsUpdate.update( PropsTable );
-            }
+            //Int32 PropId = RelationalId.PrimaryKey;
+            //CswTableUpdate PropsUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeTypeProp_afterCreateNode_PropsUpdate", "nodetype_props" );
+            //DataTable PropsTable = PropsUpdate.getTable( "nodetypepropid", PropId );
+            //if( PropsTable.Rows.Count > 0 )
+            //{
+            //    _syncFromObjectClassProp( PropsTable.Rows[0], updateLayout );
+            //    PropsUpdate.update( PropsTable );
+            //}
+            _syncFromObjectClassProp( updateLayout );
         }
 
 
-        private void _syncFromObjectClassProp( DataRow PropRow, bool UpdateLayout = true )
+        private void _syncFromObjectClassProp( bool UpdateLayout = true )
         {
             // Copy values from ObjectClassProp
             if( DerivesFromObjectClassProp )
@@ -974,14 +975,16 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp OCProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( ObjectClassPropName.Value ) );
                 if( null != OCProp )
                 {
-                    // Copy all attributes from the Object Class Prop
-                    _CswNbtResources.MetaData.CopyNodeTypePropFromObjectClassProp( OCProp, PropRow );
+                    string NodeTypePropName = PropName.Text;
 
-                    // Override propname if provided
-                    if( false == string.IsNullOrEmpty( PropName.Text ) )
-                    {
-                        PropRow["propname"] = PropName.Text;
-                    }
+                    // Copy all attributes from the Object Class Prop
+                    //_CswNbtResources.MetaData.CopyNodeTypePropFromObjectClassProp( OCProp, PropRow );
+
+                    //// Override propname if provided
+                    //if( false == string.IsNullOrEmpty( PropName.Text ) )
+                    //{
+                    //    PropRow["propname"] = PropName.Text;
+                    //}
 
                     // Sync properties with what was just copied
                     CswTableSelect mapSelect = _CswNbtResources.makeCswTableSelect( "CswNbtObjClassDesignNodeTypeProp_afterCreateNode_jctSelect", "jct_dd_ntp" );
@@ -993,7 +996,7 @@ namespace ChemSW.Nbt.ObjClasses
                         _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
                         if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Fktype )
                         {
-                            _applyValToProperty( mapRow, PropRow );
+                            _applyValToProperty( mapRow, OCProp );
                         }
                     } // foreach( DataRow mapRow in mapTable.Rows )
 
@@ -1003,7 +1006,7 @@ namespace ChemSW.Nbt.ObjClasses
                         _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
                         if( _CswNbtResources.DataDictionary.ColumnName != CswEnumNbtPropertyAttributeColumn.Fktype )
                         {
-                            _applyValToProperty( mapRow, PropRow );
+                            _applyValToProperty( mapRow, OCProp );
                         }
                     } // foreach( DataRow mapRow in mapTable.Rows )
 
@@ -1066,15 +1069,20 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // Handle default values from ObjectClassProp
                     _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp );
+
+                    // Restore the original nodetype_prop.propname if it was different than the object_class_prop.propname
+                    PropName.Text = NodeTypePropName;
+
                 } // if( null != OCProp )
             } // if( DerivesFromObjectClassProp )
         } // syncFromObjectClass()
 
 
-        private void _applyValToProperty( DataRow mapRow, DataRow PropRow )
+        private void _applyValToProperty( DataRow mapRow, CswNbtMetaDataObjectClassProp OCProp )
         {
             _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
-            if( false == string.IsNullOrEmpty( PropRow[_CswNbtResources.DataDictionary.ColumnName].ToString() ) )
+            if( OCProp._DataRow.Table.Columns.Contains( _CswNbtResources.DataDictionary.ColumnName ) &&
+                false == string.IsNullOrEmpty( OCProp._DataRow[_CswNbtResources.DataDictionary.ColumnName].ToString() ) )
             {
                 CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
                 if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
@@ -1085,12 +1093,13 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         SubFieldName = ntp.getFieldTypeRule().SubFields.Default.Name;
                     }
+
                     if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
                     {
                         // Special case: sequenceid needs to be decoded from sequences_# to nodes_# (case 31748)
                         if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Sequenceid )
                         {
-                            CswPrimaryKey SequenceId = new CswPrimaryKey( "sequences", CswConvert.ToInt32( PropRow[_CswNbtResources.DataDictionary.ColumnName] ) );
+                            CswPrimaryKey SequenceId = new CswPrimaryKey( "sequences", CswConvert.ToInt32( OCProp._DataRow[_CswNbtResources.DataDictionary.ColumnName] ) );
                             if( CswTools.IsPrimaryKey( SequenceId ) )
                             {
                                 CswNbtObjClassDesignSequence SequenceNode = _CswNbtResources.Nodes.getNodeByRelationalId( SequenceId );
@@ -1102,7 +1111,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         else
                         {
-                            Node.Properties[ntp].SetSubFieldValue( SubFieldName, PropRow[_CswNbtResources.DataDictionary.ColumnName] );
+                            Node.Properties[ntp].SetSubFieldValue( SubFieldName, OCProp._DataRow[_CswNbtResources.DataDictionary.ColumnName] );
 
                             // Object class property attributes shouldn't be modifiable on the NodeType
                             if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Fktype ||
@@ -1110,7 +1119,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Listoptions ||
                                 _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Valueoptions ||
                                 _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Multi ||
-                                ( CswConvert.ToBoolean( PropRow[_CswNbtResources.DataDictionary.ColumnName] ) &&
+                                ( CswConvert.ToBoolean( OCProp._DataRow[_CswNbtResources.DataDictionary.ColumnName] ) &&
                                   ( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Isrequired ||
                                     _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Isunique ||
                                     _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Iscompoundunique ||
@@ -1119,9 +1128,9 @@ namespace ChemSW.Nbt.ObjClasses
                                 Node.Properties[ntp].setReadOnly( true, true );
                             }
                         }
-                    }
-                }
-            }
+                    } // if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
+                } // if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
+            } // if( false == string.IsNullOrEmpty( OCProp._DataRow[_CswNbtResources.DataDictionary.ColumnName].ToString() ) )
         } // _applyValToProperty()
 
 
