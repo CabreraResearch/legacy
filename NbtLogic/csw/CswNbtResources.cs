@@ -8,6 +8,7 @@ using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
@@ -150,16 +151,11 @@ namespace ChemSW.Nbt
 
             AcclDirect = new CswACCLDirect(this, "mol_data", "ctab", "nodeid", delegate()
                 {
-                    CswNbtMetaDataObjectClass ChemicalOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-                    CswNbtMetaDataObjectClassProp StructureOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Structure );
-                    CswCommaDelimitedString StructureNTPIds = new CswCommaDelimitedString();
-                    foreach( CswNbtMetaDataNodeTypeProp StructureNTP in StructureOCP.getNodeTypeProps() )
+                    if( false == _CswNbtModuleManager.IsModuleEnabled( CswEnumNbtModuleName.DirectStructureSearch ) )
                     {
-                        StructureNTPIds.Add( StructureNTP.PropId.ToString() );
+                        throw new CswDniException(CswEnumErrorType.Error, "Cannot run ACCLDirect functions without the Direct module enabled", "An attempt was made to run an ACCLDirect function when the Direct module was not enabled. Direct is likely not installed.");
                     }
-                    string whereClause = " nodetypepropid in (" + StructureNTPIds.ToString() + ")";
-
-                    return whereClause;
+                    return true;
                 });
 
 

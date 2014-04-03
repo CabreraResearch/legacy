@@ -438,6 +438,18 @@ namespace ChemSW.Nbt.ObjClasses
             }
             _setDefaultValues();
             TypeDef.setDescription();
+            if( null != InventoryGroup.RelatedNodeId && null != Location.SelectedNodeId )
+            {
+                CswNbtObjClassInventoryGroup InvGrp = _CswNbtResources.Nodes[InventoryGroup.RelatedNodeId];
+                if( InvGrp.LimitRequestDeliveryLocation.Checked == CswEnumTristate.True )
+                {
+                    CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes[Location.SelectedNodeId];
+                    if( LocationNode.RequestDeliveryLocation.Checked != CswEnumTristate.True )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "Unable to submit request item to this location because the selected Inventory Group only allows requests to Request Delivery locations.", "" );
+                    }
+                }
+            }
         }
 
         protected override void beforeDeleteNodeLogic()
