@@ -1,9 +1,10 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Web;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 using Newtonsoft.Json.Linq;
 
@@ -11,6 +12,10 @@ namespace NbtWebApp.WebSvc.Logic.API
 {
     public abstract class CswNbtWebServiceAPI
     {
+        public static string AppPath = string.Empty;
+
+        public static int VersionNo = 1;
+
         protected CswNbtResources _CswNbtResources;
         protected abstract bool hasPermission( CswNbtAPIGenericRequest GenericRequest, CswNbtAPIReturn Return );
 
@@ -35,6 +40,24 @@ namespace NbtWebApp.WebSvc.Logic.API
             else
             {
                 Return.Status = Return.Status = HttpStatusCode.NotFound;
+            }
+            return ret;
+        }
+
+        public static string BuildURI( string MetaDataName, int id = Int32.MinValue )
+        {
+            //We need to extract the full application URI from the request url
+            string appUri = ( HttpContext.Current.Request.Url.IsDefaultPort ) ? HttpContext.Current.Request.Url.Host : HttpContext.Current.Request.Url.Authority;
+            appUri = String.Format( "{0}://{1}", HttpContext.Current.Request.Url.Scheme, appUri );
+            if( HttpContext.Current.Request.ApplicationPath != "/" )
+            {
+                appUri += HttpContext.Current.Request.ApplicationPath;
+            }
+
+            string ret = appUri + "/api/v" + VersionNo + "/" + MetaDataName;
+            if( Int32.MinValue != id )
+            {
+                ret += "/" + id;
             }
             return ret;
         }
