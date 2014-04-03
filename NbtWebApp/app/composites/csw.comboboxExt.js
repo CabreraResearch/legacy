@@ -120,7 +120,11 @@
                 },
                 listeners: {
                     beforeselect: function (combo, record, index, eOpts) {
-                        return Csw.tryExec(cswPrivate.listeners.beforeselect, combo, record);
+                        if (cswPrivate.listeners.beforeselect) {
+                            return Csw.tryExec(cswPrivate.listeners.beforeselect, combo, record);
+                        } else {
+                            return true;
+                        }
                     },
                     select: function (combo, records) {
                         if (cswPrivate.isRequired) {
