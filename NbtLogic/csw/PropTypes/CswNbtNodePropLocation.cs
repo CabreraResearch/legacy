@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -282,7 +281,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_NameSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_PathSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = string.Empty;
-            ParentObject["search"] = false;
+            //ParentObject["search"] = false;
 
             CswNbtNode SelectedNode = _CswNbtResources.Nodes[SelectedNodeId];
             if( null != SelectedNode )
@@ -308,28 +307,29 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 ParentObject["locationnodetypeids"] = LocationNTArray;
 
+                //TODO: Remove if David approves Location control always searching
                 // If the # of locations in the system is > than the relationshipoptionlimit, then do a search
-                int LocationNodeCnt = getNumberOfLocationNodes( _CswNbtResources );
-                if( LocationNodeCnt <= _SearchThreshold )
-                {
-                    CswNbtSdLocations Sd = new CswNbtSdLocations( _CswNbtResources );
-                    JArray Options = new JArray();
-                    foreach( CswNbtSdLocations.Location location in Sd.GetLocationsList( View.SessionViewId.ToString() ) )
-                    {
-                        JObject Opt = new JObject();
-                        Opt["LocationId"] = location.LocationId;
-                        Opt["Name"] = location.Name;
-                        Opt["Path"] = location.Path;
-                        Opt["Disabled"] = location.Disabled;
-                        Options.Add( Opt );
-                    }
-                    ParentObject["options"] = Options;
-                }
-                else
-                {
-                    ParentObject["search"] = true;
-                    ParentObject["options"] = "";
-                }
+                //int LocationNodeCnt = getNumberOfLocationNodes( _CswNbtResources );
+                //if( LocationNodeCnt <= _SearchThreshold )
+                //{
+                //    CswNbtSdLocations Sd = new CswNbtSdLocations( _CswNbtResources );
+                //    JArray Options = new JArray();
+                //    foreach( CswNbtSdLocations.Location location in Sd.GetLocationsList( View.SessionViewId.ToString() ) )
+                //    {
+                //        JObject Opt = new JObject();
+                //        Opt["LocationId"] = location.LocationId;
+                //        Opt["Name"] = location.Name;
+                //        Opt["Path"] = location.Path;
+                //        Opt["Disabled"] = location.Disabled;
+                //        Options.Add( Opt );
+                //    }
+                //    ParentObject["options"] = Options;
+                //}
+                //else
+                //{
+                //    ParentObject["search"] = true;
+                //    ParentObject["options"] = "";
+                //}
             }
         }
 
