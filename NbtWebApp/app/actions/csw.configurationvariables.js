@@ -25,11 +25,10 @@
         };
 
         cswPrivate.render = function(response) {
-//            cswPrivate.div.text('Configuration Variables');
-//            cswPrivate.div.css({
-//                width: '500px'
-//            });
-
+            // this action is laid out using 3 tables embedded in each other
+            // the outer table contains each section (e.g: Common)
+            // the middle table contains each section title + section table
+            // the inner table lists out each config var in that section
             var parentTable = cswPrivate.div.table({
                 suffix: 'tbl',
                 width: '90%'
@@ -39,20 +38,17 @@
 
             //generate the supertable showing the module name
             Csw.each(response.ConfigVarsByModule, function(ConfigVarsForModule, ModuleName) {
-                var cellDiv = cswParent.div();
-                var cellTable = cswParent.table({
+
+                var cellDivTable = parentTable.cell(superTableRow,1).table();
+                cellDivTable.cell(1, 1).text(ModuleName);
+
+                var cellTable = cellDivTable.cell(2,1).table({
                     suffix: 'tbl',
                     border: 1,
                     margin: 0,
                     cellpadding: 5,
                     name: 'ConfigVarChildTable'
                 });
-
-                cellDiv.text(ModuleName).css({
-                                        
-                });                 
-
-                cellDiv.div(cellTable);
 
                 var subTableRow = 1;
 
@@ -69,12 +65,7 @@
                     cellTable.cell(subTableRow, 3).text(ConfigVarObject.description);
                     subTableRow += 1;
                 });
-
-
-                parentTable.cell(superTableRow, 1);
-
                 superTableRow += 1;
-
             });
 
             //close Button
