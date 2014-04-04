@@ -3,7 +3,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Test;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 using NUnit.Framework;
@@ -66,7 +65,7 @@ namespace NbtWebApp.Test.REST_API
         public void TestResourceGET()
         {
             const string TestUsername = "MyRestUser";
-            const string RoleName = "Administrator";
+            const string RoleName = "CISPro_Admin";
             const int TestPageSize = 15;
             const string TestLanguage = "da";
 
@@ -96,7 +95,7 @@ namespace NbtWebApp.Test.REST_API
         [Test]
         public void TestCollectionGET()
         {
-            const string RoleName = "Administrator";
+            const string RoleName = "CISPro_Admin";
 
             const string TestUsername1 = "MyRestUser1";
             const int TestPageSize1 = 15;

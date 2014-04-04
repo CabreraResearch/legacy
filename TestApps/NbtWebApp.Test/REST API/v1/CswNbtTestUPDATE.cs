@@ -64,7 +64,7 @@ namespace NbtWebApp.Test.REST_API
         [Test]
         public void TestUpdate()
         {
-            CswNbtObjClassUser TestUser = _createTestUser( "Username1", "Administrator", 15, "en" );
+            CswNbtObjClassUser TestUser = _createTestUser( "Username1", "CISPro_Admin", 15, "en" );
             CswNbtAPIGenericRequest Request = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() );
             CswNbtResource FetchedResource = new CswNbtResource();
             CswNbtWebServiceREAD.GetResource( TestData.CswNbtResources, FetchedResource, Request );
@@ -73,7 +73,7 @@ namespace NbtWebApp.Test.REST_API
             CswNbtMetaDataNodeTypeProp UserNameProp = UserNT.getNodeTypeProp( "Username" );
 
             const string NewFirstName = "EditedFirstName";
-            FetchedResource.PropertyData.properties["First_Name"].values["text"] = NewFirstName;
+            FetchedResource.PropertyData.properties["First Name"].values["text"] = NewFirstName;
 
             CswNbtAPIGenericRequest EditRequest = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() )
                 {

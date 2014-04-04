@@ -64,7 +64,7 @@ namespace NbtWebApp.Test.REST_API
         [Test]
         public void TestDelete()
         {
-            CswNbtObjClassUser TestUser = _createTestUser( "TestDeleteUser1", "Administrator", 15, "en" );
+            CswNbtObjClassUser TestUser = _createTestUser( "TestDeleteUser1", "CISPro_Admin", 15, "en" );
             CswNbtAPIGenericRequest Request = new CswNbtAPIGenericRequest( "User", TestUser.NodeId.PrimaryKey.ToString() );
 
             CswNbtResource EditedResource = new CswNbtResource();

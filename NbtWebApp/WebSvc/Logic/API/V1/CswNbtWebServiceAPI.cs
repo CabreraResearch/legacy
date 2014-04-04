@@ -48,12 +48,16 @@ namespace NbtWebApp.WebSvc.Logic.API
 
         public static string BuildURI( string MetaDataName, int id = Int32.MinValue )
         {
+            string appUri = string.Empty;
             //We need to extract the full application URI from the request url
-            string appUri = ( HttpContext.Current.Request.Url.IsDefaultPort ) ? HttpContext.Current.Request.Url.Host : HttpContext.Current.Request.Url.Authority;
-            appUri = String.Format( "{0}://{1}", HttpContext.Current.Request.Url.Scheme, appUri );
-            if( HttpContext.Current.Request.ApplicationPath != "/" )
+            if( null != HttpContext.Current ) //This is null for unit tests
             {
-                appUri += HttpContext.Current.Request.ApplicationPath;
+                appUri = ( HttpContext.Current.Request.Url.IsDefaultPort ) ? HttpContext.Current.Request.Url.Host : HttpContext.Current.Request.Url.Authority;
+                appUri = String.Format( "{0}://{1}", HttpContext.Current.Request.Url.Scheme, appUri );
+                if( HttpContext.Current.Request.ApplicationPath != "/" )
+                {
+                    appUri += HttpContext.Current.Request.ApplicationPath;
+                }
             }
 
             string ret = appUri + "/api/v" + VersionNo + "/" + MetaDataName;
