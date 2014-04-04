@@ -38,6 +38,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp CzNameOCP = ControlZoneOC.getObjectClassProp( CswNbtObjClassControlZone.PropertyName.ControlZoneName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CzNameOCP, CswEnumNbtObjectClassPropAttributes.propname, "Control Zone Name" );
 
+            // update the name template, too
+            foreach( CswNbtMetaDataNodeType ControlZoneNT in ControlZoneOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp ControlZoneNameNTP = ControlZoneNT.getNodeTypePropByObjectClassProp( CswNbtObjClassControlZone.PropertyName.ControlZoneName );
+                ControlZoneNT.DesignNode.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( ControlZoneNameNTP.PropName );
+            }
+
             // From CswUpdateMetaData_02L_Case52284
             CswNbtMetaDataObjectClass MEPOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ManufacturerEquivalentPartClass );
             CswNbtMetaDataObjectClass ManufacturerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ManufacturerClass );

@@ -13,6 +13,8 @@
             defaultValue: 'Type here to search',
             displayField: 'Text',
             valueField: 'Value',
+            selectedField: 'Selected',
+            disabledField: 'Disabled',
             queryMode: 'local',
             queryDelay: 2000,
             options: [],
@@ -41,7 +43,13 @@
 
             // set the combobox display
             if (Csw.isNullOrEmpty(cswPrivate.tpl)) {
-                cswPrivate.tpl = new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{' + cswPrivate.displayField + '}' + '</li></tpl>');
+                cswPrivate.tpl = new Ext.XTemplate(
+                    '<tpl for=".">' +
+                        '<li style="height:22px;" class="x-boundlist-item {disabledItemCls}" role="option">' +
+                            '{' + cswPrivate.displayField + '}' +
+                        '</li>' +
+                    '</tpl>'
+                );
             }
 
             // To search or not to search?
@@ -66,7 +74,7 @@
         }());
 
         //#endregion Pre-ctor
-        
+
         //#region Define Class Members
 
         cswPrivate.makeStore = function () {
@@ -75,16 +83,37 @@
             /// </summary>
             /// <returns type="Ext.data.TreeStore">Ext data store</returns>
             cswPrivate.store = new Ext.data.Store({
-                fields: [cswPrivate.valueField, cswPrivate.displayField],
+                fields: [
+                    { name: cswPrivate.valueField },
+                    { name: cswPrivate.displayField },
+                    { name: cswPrivate.selectedField, hidden: true },
+                    { name: cswPrivate.disabledField, hidden: true },
+                    { name: "disabledItemCls", hidden: true }
+                ],
                 autoLoad: false,
                 sorters: [{ property: cswPrivate.displayField, direction: 'ASC' }]
             });
 
             if (false === cswPrivate.search && (cswPrivate.options && cswPrivate.options.length > 1)) {
+                cswPrivate.options.forEach(function (option) {
+                    if (option["Disabled"] === true) {
+                        option["disabledItemCls"] = "x-combo-grayed-out-item";
+                    }
+                });
                 cswPrivate.store.loadData(cswPrivate.options);
             }
 
             return cswPrivate.store;
+        };
+
+        cswPrivate.setDisabledOptsClass = function (optionsArray) {
+            optionsArray.forEach(function (option) {
+                if (option["Disabled"] === true) {
+                    option["disabledItemCls"] = "x-combo-grayed-out-item";
+                }
+            });
+
+            return optionsArray;
         };
 
         cswPrivate.makeComboBox = function () {
@@ -103,9 +132,18 @@
                 queryDelay: cswPrivate.queryDelay,
                 value: cswPrivate.getInitialValue(),
                 listConfig: {
-                    width: 'auto'
+                    width: 'auto',
+                    loadingText: 'Searching...', // TODO: This doesn't seem to work (we might need to update our ExtJS)
+                    emptyText: 'No matches found.',
                 },
                 listeners: {
+                    beforeselect: function (combo, record, index, eOpts) {
+                        if (cswPrivate.listeners.beforeselect) {
+                            return Csw.tryExec(cswPrivate.listeners.beforeselect, combo, record);
+                        } else {
+                            return true;
+                        }
+                    },
                     select: function (combo, records) {
                         if (cswPrivate.isRequired) {
                             var val = records[0].get(cswPrivate.valueField);
@@ -119,7 +157,7 @@
                                 // Is the newvalue an option in the list?
                                 var inlist = false;
                                 if (cswPrivate.options) {
-                                    cswPrivate.options.forEach(function(option) {
+                                    cswPrivate.options.forEach(function (option) {
                                         if (option[cswPrivate.valueField] === newvalue) {
                                             inlist = true;
                                         }
@@ -173,17 +211,22 @@
                 reader: {
                     type: 'json',
                     root: cswPrivate.searchProxyReaderRoot,
-                    getResponseData: function(response) {
+                    getResponseData: function (response) {
                         // This function allows us to intercept the data before the reader
                         // reads it so that we can convert it into an array of objects the 
                         // store will accept.
                         var json = Ext.decode(response.responseText);
 
                         if (json["Status"]["Success"] === true) {
+
+                            // Set the css class for any disabled options
+                            var sanitizedOptions = cswPrivate.setDisabledOptsClass(json[cswPrivate.searchProxyReaderRoot]);
+                            json[cswPrivate.searchProxyReaderRoot] = sanitizedOptions;
+
                             if (json[cswPrivate.searchProxyReaderRoot].length > 0) {
                                 cswPrivate.setComboBoxSize(json[cswPrivate.searchProxyReaderRoot]);
                             }
-                            
+
                         } else {
                             if (json["Status"]["Errors"].length > 0) {
                                 var errors = json["Status"]["Errors"];
@@ -198,7 +241,7 @@
                                 });
                             }
                         }
-                        
+
                         return this.readRecords(json);
                     }
                 }
@@ -212,7 +255,7 @@
             /// <param name="optionsArray"></param>
             var newWidth = cswPrivate.width;
             if (optionsArray.length > 0) {
-                var longestOption = optionsArray.sort(function(a, b) {
+                var longestOption = optionsArray.sort(function (a, b) {
                     return b[cswPrivate.displayField].length - a[cswPrivate.displayField].length;
                 })[0];
                 newWidth = (longestOption[cswPrivate.displayField].length * 7) + 20;
@@ -221,13 +264,13 @@
                     newWidth = (cswPrivate.selectedValue.length * 7) + 20;
                 }
             }
-            
+
             if (newWidth > cswPrivate.width) {
                 cswPublic.combobox.setWidth(newWidth);
                 cswPrivate.width = newWidth;
             }
         };//setComboBoxSize()
-        
+
         cswPrivate.getInitialValue = function () {
             if (Csw.isNullOrEmpty(cswPrivate.selectedValue) && cswPrivate.search) {
                 return cswPrivate.defaultValue;
@@ -235,7 +278,7 @@
                 return cswPrivate.selectedValue;
             }
         };
-        
+
         //#region Validation
 
         var addValidation = function () {
@@ -285,13 +328,13 @@
         //#endregion Validation
 
         //#endregion Define Class Members
-        
+
         //#region Getters
-        
-        cswPublic.getWidth = function() {
+
+        cswPublic.getWidth = function () {
             return cswPrivate.width;
         }
-        
+
         //#endregion Getters
 
         //#region Post-ctor
@@ -318,7 +361,7 @@
                     }
                 });
             }
-            
+
             if (cswPrivate.isRequired) {
                 addValidation();
             }//if (cswPrivate.isRequired)

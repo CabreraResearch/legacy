@@ -82,44 +82,36 @@
 
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.ready = Csw.promises.all();
-                if (false === cswPrivate.ReadOnly && cswPrivate.options.length === 0 && false === cswPrivate.search) {
-                    cswPrivate.ready.push(Csw.ajaxWcf.get({
-                        urlMethod: 'Locations/getLocationsList',
-                        data: cswPrivate.viewid,
-                        success: function (data) {
-                            cswPrivate.options = data;
-                            if (cswPrivate.options.length > 0) {
-                                if (cswPrivate.useDefaultLocation) {
-                                    cswPrivate.options.forEach(function(option) {
-                                        if (option["Selected"] === true) {
-                                            cswPrivate.nodeid = option.LocationId;
-                                            cswPrivate.path = option.Path;
-                                        }
-                                    });
-                                } else {
-                                    // What should we set this to?
-                                }
+                //if (false === cswPrivate.ReadOnly && cswPrivate.options.length === 0 && false === cswPrivate.search) {
+                //    cswPrivate.ready.push(Csw.ajaxWcf.get({
+                //        urlMethod: 'Locations/getLocationsList',
+                //        data: cswPrivate.viewid,
+                //        success: function (data) {
+                //            cswPrivate.options = data;
+                //            if (cswPrivate.options.length > 0) {
+                //                if (cswPrivate.useDefaultLocation) {
+                //                    cswPrivate.options.forEach(function(option) {
+                //                        if (option["Selected"] === true) {
+                //                            cswPrivate.nodeid = option.LocationId;
+                //                            cswPrivate.path = option.Path;
+                //                        }
+                //                        if (option["Disabled"] === true) {
+                //                            option["disabledItemCls"] = "x-combo-grayed-out-item";
+                //                        }
+                //                    });
+                //                } else {
+                //                    // What should we set this to?
+                //                }
 
-                            } else {
-                                cswPrivate.search = true;
-                            }
-
-                            //if (cswPrivate.useDefaultLocation) {
-                            //    if (cswPrivate.nodeid !== data.nodeid) {
-                            //        Csw.tryExec(cswPrivate.onChange, data.nodeid, data.path);
-                            //    }
-                            //    cswPrivate.nodeid = data.nodeid;
-                            //    cswPrivate.path = data.path;
-                            //} else {
-                            //    //Case 30243 - If we're not using DefaultLocation, use root every time instead (yuck)
-                            //    Csw.clientDb.setItem('CswTree_Top_LastSelectedPath', Csw.enums.nodeTree_DefaultSelect.root.name);
-                            //}
-                            render();
-                        }
-                    }));
-                } else {
-                    render();
-                }
+                //            } else {
+                //                cswPrivate.search = true;
+                //            }
+                //            render();
+                //        }
+                //    }));
+                //} else {
+                render();
+                //}
 
             }());
             //#endregion init ctor
@@ -143,13 +135,19 @@
                     name: cswPrivate.name + '_comboExt',
                     displayField: 'Path',
                     valueField: 'LocationId',
-                    queryMode: 'local',
-                    queryDelay: 2000,
+                    queryDelay: 1000,
                     options: cswPrivate.options,
                     selectedValue: cswPrivate.path,
-                    search: cswPrivate.search,
+                    search: true, // Location control always searches the server
                     searchUrl: 'Locations/searchLocations',
                     listeners: {
+                        beforeselect: function (combo, record) {
+                            if (record.data.Disabled) {
+                                return false === record.data.Disabled;
+                            } else {
+                                return true;
+                            }
+                        },
                         select: function (combo, records) {
                             var locpath = records[0].get('Path');
                             var nodeid = records[0].get('LocationId');
