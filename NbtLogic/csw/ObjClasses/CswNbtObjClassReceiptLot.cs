@@ -124,6 +124,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView AssignedCofADocsView = CswNbtObjClassCofADocument.getAssignedCofADocumentsView( _CswNbtResources, NodeId );
                     if( null != AssignedCofADocsView )
                     {
+                        AssignedCofADocsView.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true );
                         ButtonData.Data["viewid"] = AssignedCofADocsView.SessionViewId.ToString();
                         ButtonData.Data["title"] = AssignedCofADocsView.ViewName;
                         ButtonData.Data["nodeid"] = NodeId.ToString();

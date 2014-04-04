@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.MetaData
               { DisplayConditionValue         , DisplayConditionValue        },
               { FieldType                     , FieldType                    },
               { HelpText                      , HelpText                     },
+              { Hidden                        , Hidden                       },
               { NodeTypeValue                 , NodeTypeValue                },
               { ObjectClassPropName           , ObjectClassPropName          },
               { PropName                      , PropName                     },
@@ -157,6 +158,7 @@ namespace ChemSW.Nbt.MetaData
         public const string DisplayConditionValue = "Display Condition Value";
         public const string FieldType = "Field Type";
         public const string HelpText = "Help Text";
+        public const string Hidden = "Hidden";
         public const string NodeTypeValue = "NodeType";
         public const string ObjectClassPropName = "Original Name";
         public const string PropName = "Prop Name";

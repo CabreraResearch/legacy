@@ -18,21 +18,22 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;
-            public const string CompoundUnique = CswEnumNbtPropertyAttributeName.CompoundUnique; //"Compound Unique";
-            public const string DisplayConditionFilterMode = CswEnumNbtPropertyAttributeName.DisplayConditionFilterMode; //"Display Condition Filter Mode";
-            public const string DisplayConditionProperty = CswEnumNbtPropertyAttributeName.DisplayConditionProperty; //"Display Condition Property";
-            public const string DisplayConditionSubfield = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield; //"Display Condition Subfield";
-            public const string DisplayConditionValue = CswEnumNbtPropertyAttributeName.DisplayConditionValue; // "Display Condition Value";
-            public const string FieldType = CswEnumNbtPropertyAttributeName.FieldType; // "Field Type";
-            public const string HelpText = CswEnumNbtPropertyAttributeName.HelpText; // "Help Text";
-            public const string NodeTypeValue = CswEnumNbtPropertyAttributeName.NodeTypeValue; // "NodeType";
-            public const string ObjectClassPropName = CswEnumNbtPropertyAttributeName.ObjectClassPropName; //"Original Name";
-            public const string PropName = CswEnumNbtPropertyAttributeName.PropName; //"Prop Name";
-            public const string ReadOnly = CswEnumNbtPropertyAttributeName.ReadOnly; //"Read Only";
-            public const string Required = CswEnumNbtPropertyAttributeName.Required; //"Required";
-            public const string ServerManaged = CswEnumNbtPropertyAttributeName.ServerManaged; // "Server Managed";
-            public const string Unique = CswEnumNbtPropertyAttributeName.Unique; // "Unique";
-            public const string UseNumbering = CswEnumNbtPropertyAttributeName.UseNumbering; // "Use Numbering";
+            public const string CompoundUnique = CswEnumNbtPropertyAttributeName.CompoundUnique;
+            public const string DisplayConditionFilterMode = CswEnumNbtPropertyAttributeName.DisplayConditionFilterMode;
+            public const string DisplayConditionProperty = CswEnumNbtPropertyAttributeName.DisplayConditionProperty;
+            public const string DisplayConditionSubfield = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield;
+            public const string DisplayConditionValue = CswEnumNbtPropertyAttributeName.DisplayConditionValue;
+            public const string FieldType = CswEnumNbtPropertyAttributeName.FieldType;
+            public const string HelpText = CswEnumNbtPropertyAttributeName.HelpText;
+            public const string Hidden = CswEnumNbtPropertyAttributeName.Hidden;
+            public const string NodeTypeValue = CswEnumNbtPropertyAttributeName.NodeTypeValue;
+            public const string ObjectClassPropName = CswEnumNbtPropertyAttributeName.ObjectClassPropName;
+            public const string PropName = CswEnumNbtPropertyAttributeName.PropName;
+            public const string ReadOnly = CswEnumNbtPropertyAttributeName.ReadOnly;
+            public const string Required = CswEnumNbtPropertyAttributeName.Required;
+            public const string ServerManaged = CswEnumNbtPropertyAttributeName.ServerManaged;
+            public const string Unique = CswEnumNbtPropertyAttributeName.Unique;
+            public const string UseNumbering = CswEnumNbtPropertyAttributeName.UseNumbering;
             public const string QuestionNo = CswEnumNbtPropertyAttributeName.QuestionNo;
             public const string SubQuestionNo = CswEnumNbtPropertyAttributeName.SubQuestionNo;
         }
@@ -770,6 +771,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText DisplayConditionValue { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionValue] ); } }
         public CswNbtNodePropList FieldType { get { return ( _CswNbtNode.Properties[PropertyName.FieldType] ); } }
         public CswNbtNodePropMemo HelpText { get { return ( _CswNbtNode.Properties[PropertyName.HelpText] ); } }
+        public CswNbtNodePropLogical Hidden { get { return ( _CswNbtNode.Properties[PropertyName.Hidden] ); } }
         public CswNbtNodePropRelationship NodeTypeValue { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeValue] ); } }
         public CswNbtNodePropList ObjectClassPropName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassPropName] ); } }
 
