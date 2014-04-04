@@ -24,26 +24,55 @@
             });
         };
 
-        cswPrivate.render = function (response) {
+        cswPrivate.render = function(response) {
             cswPrivate.modules = {};
-            cswPrivate.div.empty();
+            cswPrivate.div.empty().text('Configuration Variables');
             cswPrivate.div.css({
                 width: '500px'
             });
 
-            var modulesTree = cswParent.tree({
-                root: response.Modules,
-                expandAll: true,
-                title: 'Config Vars',
-                useCheckboxes: true,
-                rootVisible: false,
-                forceSelected: false,
-                width: 700,
-                height: 700,
-                onAfterCheckNode: function (node) {
-                    modulesTree.tree.destroy();
-                    cswPrivate.update(node.raw);
-                }
+            var parentTable = cswParent.table({
+                suffix: 'tbl',
+                name: 'ConfigVarParentTable'
+            });
+
+            var superTableRow = 1;
+
+            //generate the supertable showing the module name
+            Csw.each(response.ConfigVarsByModule, function(ConfigVarsForModule, ModuleName) {
+
+                var cellDiv = cswParent.div();
+                var cellTable = cswParent.table({
+                    suffix: 'tbl',
+                    border: 1,
+                    margin: 0,
+                    cellpadding: 5,
+                    name: 'ConfigVarChildTable'
+                });
+
+                cellDiv.text(ModuleName).css({
+                                        
+                });                 
+
+                cellDiv.div(cellTable);
+
+                var subTableRow = 1;
+
+                //generate the subtable showing the config vars for this
+                //module
+                Csw.each(ConfigVarsForModule, function(ConfigVarObject) {
+
+                    cellTable.cell(subTableRow, 1).text(ConfigVarObject.variableName);
+                    cellTable.cell(subTableRow, 2).text(ConfigVarObject.variableName);
+                    cellTable.cell(subTableRow, 3).text(ConfigVarObject.description);
+                    subTableRow += 1;
+                });
+
+
+                parentTable.cell(superTableRow, 1);
+
+                superTableRow += 1;
+
             });
         };
 
@@ -63,6 +92,5 @@
         }; // cswPrivate.init()
 
         return cswPrivate.init();
-
-    }); // register()
+   }); // register()
 }());
