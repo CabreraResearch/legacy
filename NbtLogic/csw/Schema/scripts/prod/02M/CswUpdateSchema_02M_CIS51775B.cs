@@ -70,6 +70,13 @@ namespace ChemSW.Nbt.Schema
             }
             jctUpdate.update( jctTable );
 
+
+            // make Request module require the Multi-Inventory-Group module
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( @"update modules 
+                                                                          set prereq = (select moduleid from modules 
+                                                                                         where name = '" + CswEnumNbtModuleName.MultiInventoryGroup + @"')
+                                                                        where name = '" + CswEnumNbtModuleName.Requesting + @"'" );
+
         } // update()
     } // class
 } // namespace
