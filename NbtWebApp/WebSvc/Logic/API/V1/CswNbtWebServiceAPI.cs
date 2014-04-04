@@ -80,9 +80,29 @@ namespace NbtWebApp.WebSvc.Logic.API
                 {
                     NewProp.values[OldPropValue.Name] = OldPropValue.Value.ToString();
                 }
-                ret.addProperty(NewProp);
+                ret.addProperty( NewProp );
             }
             return ret;
         }
+
+        public JObject ConvertWcfPropertyData( CswNbtWcfProperty Prop )
+        {
+            JObject ret = new JObject();
+            ret["id"] = Prop.PropId;
+            ret["name"] = Prop.PropName;
+            ret["ocpname"] = Prop.OriginalPropName;
+            JObject values = new JObject();
+            foreach( string subFieldStr in Prop.values.Keys )
+            {
+                object subFieldVal = Prop.values[subFieldStr];
+                string subFieldStrOrig = subFieldStr.Replace( '_', ' ' );
+                values[subFieldStrOrig] = subFieldVal.ToString();
+            }
+            ret["values"] = values;
+
+            return ret;
+        }
+
+
     }
 }

@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Core;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.API;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
@@ -81,10 +83,14 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = CswNbtWebServiceCREATE.VERB, UriTemplate = "/v1/{metadataname}" )]
         [Description( "Create a new entity of the specified type" )]
-        public CswNbtResource Create( string metadataname )
+        public CswNbtResource Create( Collection<CswNbtWcfProperty> Properties, string metadataname )
         {
             CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, string.Empty );
             CswNbtResource Ret = new CswNbtResource();
+            if( null != Properties )
+            {
+                Req.Properties = Properties;
+            }
 
             var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -116,7 +122,10 @@ namespace NbtWebApp.Services
         {
             CswNbtAPIReturn Ret = new CswNbtAPIReturn();
             CswNbtAPIGenericRequest Req2 = new CswNbtAPIGenericRequest( metadataname, id );
-            Req2.PropData = Req.PropData;
+            if( null != Req )
+            {
+                Req2.PropData = Req.PropData;
+            }
 
             var SvcDriver = new CswWebSvcDriver<CswNbtAPIReturn, CswNbtAPIGenericRequest>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
