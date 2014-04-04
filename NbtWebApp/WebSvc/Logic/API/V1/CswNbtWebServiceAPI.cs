@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Web;
+using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -95,9 +96,18 @@ namespace NbtWebApp.WebSvc.Logic.API
             JObject values = new JObject();
             foreach( string subFieldStr in Prop.values.Keys )
             {
-                object subFieldVal = Prop.values[subFieldStr];
                 string subFieldStrOrig = subFieldStr.Replace( '_', ' ' );
-                values[subFieldStrOrig] = subFieldVal.ToString();
+                object subFieldVal = Prop.values[subFieldStr];
+                JObject subFieldObj = CswConvert.ToJObject( subFieldVal.ToString() );
+                if( subFieldObj.HasValues )
+                {
+                    //Some out our subfield values are actually JObjects and must be added as such.
+                    values.Add( subFieldStrOrig, subFieldObj );   
+                }
+                else
+                {
+                    values.Add( subFieldStrOrig, subFieldVal.ToString() );   
+                }
             }
             ret["values"] = values;
 

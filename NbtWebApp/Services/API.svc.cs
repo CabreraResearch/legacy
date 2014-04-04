@@ -118,26 +118,37 @@ namespace NbtWebApp.Services
             BodyStyle = WebMessageBodyStyle.Bare
              )]
         [Description( "Update an entity " )]
-        public void Update( CswNbtAPIGenericRequest Req, string metadataname, string id )
+        public void Update( CswNbtResource ResourceToUpdate, string metadataname, string id )
         {
+            WebOperationContext ctx = WebOperationContext.Current;
+
             CswNbtAPIReturn Ret = new CswNbtAPIReturn();
-            CswNbtAPIGenericRequest Req2 = new CswNbtAPIGenericRequest( metadataname, id );
-            if( null != Req )
+            CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, id );
+            
+            bool idsMatch = true;
+            if( null != ResourceToUpdate )
             {
-                Req2.PropData = Req.PropData;
+                Req.ResourceToUpdate = ResourceToUpdate;
+                if( ResourceToUpdate.NodeId.PrimaryKey != Req.NodeId.PrimaryKey )
+                {
+                    //if someone posts a different node with a different ID in the URI template that's a problem.
+                    ctx.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                    idsMatch = false;
+                }
             }
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtAPIReturn, CswNbtAPIGenericRequest>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceUPDATE.Edit,
-                    ParamObj : Req2
+            if( idsMatch )
+            {
+                var SvcDriver = new CswWebSvcDriver<CswNbtAPIReturn, CswNbtAPIGenericRequest>(
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceUPDATE.Edit,
+                    ParamObj: Req
                     );
 
-            SvcDriver.run();
-
-            WebOperationContext ctx = WebOperationContext.Current;
-            ctx.OutgoingResponse.StatusCode = Ret.Status;
+                SvcDriver.run();
+                ctx.OutgoingResponse.StatusCode = Ret.Status;
+            }
 
             if( ctx.OutgoingResponse.StatusCode != HttpStatusCode.OK )
             {
