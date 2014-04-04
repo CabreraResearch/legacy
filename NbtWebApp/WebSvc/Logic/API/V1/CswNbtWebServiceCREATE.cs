@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
@@ -34,7 +35,14 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
-                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : true );
+                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : GenericRequest.Properties.Count > 0, OnAfterMakeNode : delegate( CswNbtNode node )
+                        {
+                            foreach( CswNbtWcfProperty WcfProp in GenericRequest.Properties )
+                            {
+                                ReadPropertyData( node, WcfProp );
+                            }
+                        } );
+
 
                     Return.NodeId = NewNode.NodeId;
                     Return.NodeName = NewNode.NodeName;

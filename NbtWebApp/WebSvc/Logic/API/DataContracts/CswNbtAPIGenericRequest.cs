@@ -1,7 +1,8 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.PropTypes;
 
 namespace NbtWebApp.WebSvc.Logic.API.DataContracts
 {
@@ -20,13 +21,11 @@ namespace NbtWebApp.WebSvc.Logic.API.DataContracts
             set { NodeId = new CswPrimaryKey( "nodes", value ); }
         }
 
-        public JObject PropData = new JObject();
-        [DataMember( Name = "propdata" )]
-        private string _propData
-        {
-            get { return PropData.ToString(); }
-            set { PropData = CswConvert.ToJObject( value ); }
-        }
+        //Not a data member
+        public CswNbtResource ResourceToUpdate;
+
+        //Not a data member
+        public Collection<CswNbtWcfProperty> Properties = new Collection<CswNbtWcfProperty>();
 
         //Not a data member
         public NameValueCollection PropertyFilters = new NameValueCollection();

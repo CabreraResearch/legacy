@@ -148,6 +148,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.Hidden,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Hidden
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
                 Name = CswEnumNbtPropertyAttributeName.NodeTypeValue,
                 AttributeFieldType = CswEnumNbtFieldType.Relationship,
                 Column = CswEnumNbtPropertyAttributeColumn.Nodetypeid,

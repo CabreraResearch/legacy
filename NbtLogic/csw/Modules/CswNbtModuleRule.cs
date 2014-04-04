@@ -21,6 +21,14 @@ namespace ChemSW.Nbt
             get { return CswEnumNbtModuleName.Unknown; }
         }
 
+        /// <summary>
+        /// Whether or not the module is able to be enabled. If no error message is present, the module is allowed to be enabled. It is the callers responsibility to use the error message in an intelligent way
+        /// </summary>
+        public virtual string CanModuleBeEnabled()
+        {
+            return string.Empty;
+        }
+
         protected abstract void OnEnable();
         protected abstract void OnDisable();
 
