@@ -9,7 +9,6 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
-using Newtonsoft.Json.Linq;
 
 namespace NbtWebApp.WebSvc.Logic.API
 {
@@ -36,25 +35,13 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
-                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : GenericRequest.Properties.Count > 0, OnAfterMakeNode:delegate( CswNbtNode node )
+                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : GenericRequest.Properties.Count > 0, OnAfterMakeNode : delegate( CswNbtNode node )
                         {
                             foreach( CswNbtWcfProperty WcfProp in GenericRequest.Properties )
                             {
-                                CswNbtNodePropWrapper propWrapper = null;
-                                if( false == String.IsNullOrEmpty( WcfProp.OriginalPropName ) )
-                                {
-                                    propWrapper = node.Properties[WcfProp.OriginalPropName];
-                                }
-                                else
-                                {
-                                    CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( WcfProp.PropName );
-                                    propWrapper = node.Properties[ntp];
-                                }
-
-                                JObject propData = ConvertWcfPropertyData( WcfProp );
-                                propWrapper.ReadJSON( propData, null, null );
+                                ReadPropertyData( node, WcfProp );
                             }
-                        });
+                        } );
 
 
                     Return.NodeId = NewNode.NodeId;

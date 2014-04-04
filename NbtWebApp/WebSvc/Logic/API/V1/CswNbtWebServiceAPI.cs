@@ -3,6 +3,7 @@ using System.Net;
 using System.Web;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
@@ -103,6 +104,23 @@ namespace NbtWebApp.WebSvc.Logic.API
             return ret;
         }
 
+        public void ReadPropertyData( CswNbtNode Node, CswNbtWcfProperty WcfProp )
+        {
+            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+            CswNbtNodePropWrapper propWrapper = null;
+            if( false == String.IsNullOrEmpty( WcfProp.OriginalPropName ) )
+            {
+                propWrapper = Node.Properties[WcfProp.OriginalPropName];
+            }
+            else
+            {
+                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( WcfProp.PropName );
+                propWrapper = Node.Properties[ntp];
+            }
+
+            JObject propData = ConvertWcfPropertyData( WcfProp );
+            propWrapper.ReadJSON( propData, null, null );
+        }
 
     }
 }
