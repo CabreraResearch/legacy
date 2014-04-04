@@ -237,6 +237,11 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, RequestNT, AdminRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Delete, RequestNT, AdminRole, false );
 
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, SIReportNT, AdminRole, false );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Create, SIReportNT, AdminRole, false );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, SIReportNT, AdminRole, false );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Delete, SIReportNT, AdminRole, false );
+
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Create, UnitRadiationNT, AdminRole, true );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, UnitRadiationNT, AdminRole, true );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, UnitRadiationNT, AdminRole, true );
@@ -404,7 +409,7 @@ namespace ChemSW.Nbt.Schema
 
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, CofANT, GeneralRole, true );
 
-                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, ConstituentNT, GeneralRole, false );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, ConstituentNT, GeneralRole, true );
 
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Create, ContainerDispenseNT, GeneralRole, true );
 
@@ -447,7 +452,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Create, RequestItemNT, GeneralRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Delete, RequestItemNT, GeneralRole, false );
 
-                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, SIReportNT, GeneralRole, true );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, SIReportNT, GeneralRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, SDSNT, GeneralRole, true );
 
 
@@ -490,8 +495,10 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, ReportNT, ViewRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, ReportGroupNT, ViewRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, ReportGroupPermissionNT, ViewRole, false );
-                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, RequestNT, ViewRole, true );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, RequestNT, ViewRole, false );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, RequestItemNT, ViewRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, SDSNT, ViewRole, true );
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, SIReportNT, ViewRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, UnitTimeNT, ViewRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, UnitEachNT, ViewRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, UnitWeightNT, ViewRole, false );
@@ -583,6 +590,8 @@ namespace ChemSW.Nbt.Schema
 
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, InventoryGroupNT, FulfillerRole, true );
 
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, RequestNT, FulfillerRole, false );
+
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, RequestItemNT, FulfillerRole, true );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, RequestItemNT, FulfillerRole, true );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Create, RequestItemNT, FulfillerRole, true );
@@ -605,6 +614,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, SiteNT, FulfillerRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Delete, SiteNT, FulfillerRole, false );
 
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Create, SizeNT, FulfillerRole, true );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, SizeNT, FulfillerRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Delete, SizeNT, FulfillerRole, false );
 
@@ -644,6 +654,9 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Multi_Edit, FulfillerRole, true );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Submit_Request, FulfillerRole, true );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Subscriptions, FulfillerRole, true );
+
+                    FulfillerRole.Timeout.Value = 15;
+                    FulfillerRole.postChanges( false );
                 }
             }
         }//update()
