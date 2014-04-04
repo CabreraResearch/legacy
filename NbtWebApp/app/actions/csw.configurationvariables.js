@@ -25,22 +25,20 @@
         };
 
         cswPrivate.render = function(response) {
-            cswPrivate.modules = {};
-            cswPrivate.div.empty().text('Configuration Variables');
-            cswPrivate.div.css({
-                width: '500px'
-            });
+//            cswPrivate.div.text('Configuration Variables');
+//            cswPrivate.div.css({
+//                width: '500px'
+//            });
 
-            var parentTable = cswParent.table({
+            var parentTable = cswPrivate.div.table({
                 suffix: 'tbl',
-                name: 'ConfigVarParentTable'
+                width: '90%'
             });
 
             var superTableRow = 1;
 
             //generate the supertable showing the module name
             Csw.each(response.ConfigVarsByModule, function(ConfigVarsForModule, ModuleName) {
-
                 var cellDiv = cswParent.div();
                 var cellTable = cswParent.table({
                     suffix: 'tbl',
@@ -63,7 +61,11 @@
                 Csw.each(ConfigVarsForModule, function(ConfigVarObject) {
 
                     cellTable.cell(subTableRow, 1).text(ConfigVarObject.variableName);
-                    cellTable.cell(subTableRow, 2).text(ConfigVarObject.variableName);
+                    cellTable.cell(subTableRow, 2).input({
+                       size : 30,
+                       name: ConfigVarObject.variableName + 'field',
+                       value: ConfigVarObject.variableValue
+                    });
                     cellTable.cell(subTableRow, 3).text(ConfigVarObject.description);
                     subTableRow += 1;
                 });
@@ -74,14 +76,27 @@
                 superTableRow += 1;
 
             });
+
+            //close Button
+            
         };
 
         // constructor
         cswPrivate.init = function () {
+            var layout = Csw.layouts.action(cswParent, {
+               title: 'Configuration Variables',
+               finishText: 'Apply',
+               onFinish: function() {
+                   console.log("finish");
+               }
+            });
 
-            cswParent.$.empty();
+//            cswParent.$.empty();
 
-            cswPrivate.div = cswParent.div();
+            //cswParent.div = layout.actionDiv;
+
+//            cswPrivate.div = cswParent.div();
+            cswPrivate.div = layout.actionDiv;
 
             return Csw.ajaxWcf.post({
                 urlMethod: 'ConfigurationVariables/Initialize',
