@@ -115,6 +115,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             [DataMember]
             public bool Selected { get; set; }
+
+            [DataMember]
+            public bool Disabled { get; set; }
         }
 
         public Collection<Location> getLocationListMobile()
@@ -176,7 +179,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public Collection<Location> GetLocationsList( string ViewId, string SelectedNodeId = "" )
         {
             // Only return options if the total number of locations is < the relationshipoptionlimit configuration variable
-            if( CswNbtNodePropLocation.getNumberOfLocationNodes( _CswNbtResources ) < _SearchThreshold )
+            if( CswNbtNodePropLocation.getNumberOfLocationNodes( _CswNbtResources ) <= _SearchThreshold )
             {
                 CswPrimaryKey SelectedLocationId = String.IsNullOrEmpty( SelectedNodeId ) ? _CswNbtResources.CurrentNbtUser.DefaultLocationId : CswConvert.ToPrimaryKey( SelectedNodeId );
 
@@ -194,40 +197,29 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public Collection<Location> searchLocations( string Query, string ViewId )
         {
-            Collection<Location> Ret = new Collection<Location>();
-
             CswNbtView LocationView = _getLocationsView( ViewId, Query );
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationView, false, false, false );
 
             int count = Tree.getChildNodeCount();
             // Only return options if the total number of locations is < the relationshipoptionlimit configuration variable
-            if( count < _SearchThreshold )
+            if( count <= _SearchThreshold )
             {
                 if( Tree.getChildNodeCount() > 0 )
                 {
                     _iterateTree( Tree, null );
                 }
-
-                foreach( Location LocationObj in _LocationCollection )
-                {
-                    Location location = new Location();
-                    location.Name = LocationObj.Name;
-                    location.LocationId = LocationObj.LocationId;
-                    location.Path = LocationObj.Path;
-                    Ret.Add( location );
-                }
             }
 
-            return Ret;
+            return _LocationCollection;
         }//searchLocations()
 
-        private CswNbtView _getLocationsView( string ViewId, string NameFilter = "" )
+        private CswNbtView _getLocationsView( string ViewId, string FullPathFilter = "" )
         {
             CswNbtView Ret = new CswNbtView();
 
             if( string.IsNullOrEmpty( ViewId ) )
             {
-                Ret = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null, ResultMode: CswEnumNbtFilterResultMode.Hide, NameFilter: NameFilter );
+                Ret = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null, ResultMode: CswEnumNbtFilterResultMode.Disabled, FullPathFilter: FullPathFilter );
                 Ret.SaveToCache( false );
                 ViewId = Ret.SessionViewId.ToString();
             }
@@ -237,17 +229,18 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 Ret = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
                 CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClassProp LocationNameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
-                if( false == string.IsNullOrEmpty( NameFilter ) )
+                CswNbtMetaDataObjectClassProp LocationFullPathOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.FullPath );
+                if( false == string.IsNullOrEmpty( FullPathFilter ) )
                 {
                     CswNbtViewRoot.forEachProperty forEachPropDelegate = delegate( CswNbtViewProperty ViewProp )
                         {
-                            if( ViewProp.ObjectClassPropId == LocationNameOCP.PropId )
+                            if( ViewProp.ObjectClassPropId == LocationFullPathOCP.PropId )
                             {
                                 Ret.AddViewPropertyFilter( ViewProp,
                                                           Conjunction: CswEnumNbtFilterConjunction.And,
                                                           FilterMode: CswEnumNbtFilterMode.Contains,
-                                                          Value: NameFilter );
+                                                          SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                          Value: FullPathFilter );
 
                             }
                         };
@@ -256,13 +249,13 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
 
             return Ret;
-        }
+        }//_getLocationsView()
 
         private void _iterateTree( ICswNbtTree Tree, CswPrimaryKey SelectedNodeId )
         {
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp LocationNameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
-            CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+            CswNbtMetaDataObjectClassProp LocationFullPathOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.FullPath );
 
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
             {
@@ -271,19 +264,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                 Location LocationObj = new Location();
 
                 CswNbtTreeNodeProp nameTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == LocationNameOCP.PropName );
-                CswNbtTreeNodeProp locationTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == LocationLocationOCP.PropName );
+                CswNbtTreeNodeProp fullPathTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == LocationFullPathOCP.PropName );
 
-                if( locationTreeProp.Field1_Fk > 0 )
-                {
-                    LocationObj.Path = locationTreeProp.Gestalt + CswNbtNodePropLocation.PathDelimiter + nameTreeProp.Field1;
-                }
-                else
-                {
-                    LocationObj.Path = nameTreeProp.Field1;
-                }
+                LocationObj.Path = fullPathTreeProp.Field1;
                 LocationObj.Name = nameTreeProp.Field1;
                 LocationObj.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
                 LocationObj.Selected = ( Tree.getNodeIdForCurrentPosition() == SelectedNodeId );
+                LocationObj.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
                 _LocationCollection.Add( LocationObj );
 
                 if( Tree.getChildNodeCount() > 0 )

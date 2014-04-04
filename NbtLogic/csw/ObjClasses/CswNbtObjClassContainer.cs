@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
                     Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = _CswNbtResources.CurrentNbtUser.getUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true );
-                    Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, null, UserPermissions.Keys, CswEnumNbtFilterResultMode.Hide ); //Location.SelectedNodeId, UserPermissions.Keys );
+                    Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, null, UserPermissions.Keys, CswEnumNbtFilterResultMode.Disabled ); //Location.SelectedNodeId, UserPermissions.Keys );
                 } );
 
             Open.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
