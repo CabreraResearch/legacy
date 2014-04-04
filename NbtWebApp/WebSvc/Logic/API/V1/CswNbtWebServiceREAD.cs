@@ -83,9 +83,9 @@ namespace NbtWebApp.WebSvc.Logic.API
                         ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( GetNodeTypeView, true, false, false );
                         for( int i = 0; i < tree.getChildNodeCount(); i++ )
                         {
-                            tree.goToNthChild( 0 );
+                            tree.goToNthChild( i );
                             CswNbtNodeKey nodeKey = tree.getNodeKeyForCurrentPosition();
-
+                            CswPrimaryKey nodeId = tree.getNodeIdForCurrentPosition();
                             CswNbtMetaDataObjectClass objectClass = _CswNbtResources.MetaData.getObjectClass( nodeKey.ObjectClassId );
                             CswNbtMetaDataPropertySet propSet = objectClass.getPropertySet();
                             string propSetStr = string.Empty;
@@ -94,7 +94,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                                 propSetStr = propSet.Name;
                             }
                             string nodeName = tree.getNodeNameForCurrentPosition();
-                            Return.Add( nodeName, nodeKey.NodeId, NodeType.NodeTypeName, objectClass.ObjectClassName, propSetStr, BuildURI( NodeType.NodeTypeName, nodeKey.NodeId.PrimaryKey ) );
+                            Return.Add( nodeName, nodeId, NodeType.NodeTypeName, objectClass.ObjectClassName, propSetStr, BuildURI( NodeType.NodeTypeName, nodeKey.NodeId.PrimaryKey ) );
                             tree.goToParentNode();
                         }
                     }

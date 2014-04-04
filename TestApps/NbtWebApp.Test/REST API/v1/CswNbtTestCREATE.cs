@@ -2,7 +2,6 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Test;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 using NUnit.Framework;

@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Core;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.API;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
@@ -81,10 +83,14 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = CswNbtWebServiceCREATE.VERB, UriTemplate = "/v1/{metadataname}" )]
         [Description( "Create a new entity of the specified type" )]
-        public CswNbtResource Create( string metadataname )
+        public CswNbtResource Create( Collection<CswNbtWcfProperty> Properties, string metadataname )
         {
             CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, string.Empty );
             CswNbtResource Ret = new CswNbtResource();
+            if( null != Properties )
+            {
+                Req.Properties = Properties;
+            }
 
             var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -112,23 +118,37 @@ namespace NbtWebApp.Services
             BodyStyle = WebMessageBodyStyle.Bare
              )]
         [Description( "Update an entity " )]
-        public void Update( CswNbtAPIGenericRequest Req, string metadataname, string id )
+        public void Update( CswNbtResource ResourceToUpdate, string metadataname, string id )
         {
-            CswNbtAPIReturn Ret = new CswNbtAPIReturn();
-            CswNbtAPIGenericRequest Req2 = new CswNbtAPIGenericRequest( metadataname, id );
-            Req2.PropData = Req.PropData;
+            WebOperationContext ctx = WebOperationContext.Current;
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtAPIReturn, CswNbtAPIGenericRequest>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceUPDATE.Edit,
-                    ParamObj : Req2
+            CswNbtAPIReturn Ret = new CswNbtAPIReturn();
+            CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, id );
+            
+            bool idsMatch = true;
+            if( null != ResourceToUpdate )
+            {
+                Req.ResourceToUpdate = ResourceToUpdate;
+                if( ResourceToUpdate.NodeId.PrimaryKey != Req.NodeId.PrimaryKey )
+                {
+                    //if someone posts a different node with a different ID in the URI template that's a problem.
+                    ctx.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                    idsMatch = false;
+                }
+            }
+
+            if( idsMatch )
+            {
+                var SvcDriver = new CswWebSvcDriver<CswNbtAPIReturn, CswNbtAPIGenericRequest>(
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceUPDATE.Edit,
+                    ParamObj: Req
                     );
 
-            SvcDriver.run();
-
-            WebOperationContext ctx = WebOperationContext.Current;
-            ctx.OutgoingResponse.StatusCode = Ret.Status;
+                SvcDriver.run();
+                ctx.OutgoingResponse.StatusCode = Ret.Status;
+            }
 
             if( ctx.OutgoingResponse.StatusCode != HttpStatusCode.OK )
             {
