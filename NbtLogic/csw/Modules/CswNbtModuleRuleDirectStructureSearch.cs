@@ -1,7 +1,6 @@
 using System.Data;
 using System.Threading;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
 {
@@ -16,14 +15,21 @@ namespace ChemSW.Nbt
         public CswNbtModuleRuleDirectStructureSearch( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.DirectStructureSearch; } }
 
-        protected override void OnEnable()
+        /// <summary>
+        /// Returns whether the Direct Structure Search Module can be enabled. Checks for the prescence of the c$direct90 user.
+        /// </summary>
+        public override string CanModuleBeEnabled()
         {
+            string ret = string.Empty;
             if( false == _CswNbtResources.AcclDirect.IsDirectInstalled() )
             {
-                throw new CswDniException( CswEnumErrorType.Error, "Direct is not installed, cannot enable the Direct Structure Search Module",
-                    "The 'c$direct90' user was not present indicating the Direct is not installed on the host. Cannot enable Direct Structure Search without Direct installed" );
+                ret = "Direct is not installed, cannot enable the Direct Structure Search Module";
             }
+            return ret;
+        }
 
+        protected override void OnEnable()
+        {
             if( false == _CswNbtResources.AcclDirect.IsDirectInitialized() )
             {
                 //Init direct
@@ -45,7 +51,7 @@ namespace ChemSW.Nbt
 
         protected override void OnDisable()
         {
-            if( _CswNbtResources.AcclDirect.IsDirectInitialized() )
+            if( _CswNbtResources.AcclDirect.IsDirectInstalled() && _CswNbtResources.AcclDirect.IsDirectInitialized() )
             {
                 _unsetupDirect();
             }
