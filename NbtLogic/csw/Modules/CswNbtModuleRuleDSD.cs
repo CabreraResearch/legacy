@@ -23,13 +23,13 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp PictogramsNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Pictograms );
-                PictogramsNTP.Hidden = false;
+                _CswNbtResources.Modules.ShowProp( PictogramsNTP );
 
                 CswNbtMetaDataNodeTypeProp LabelCodesNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodes );
-                LabelCodesNTP.Hidden = false;
+                _CswNbtResources.Modules.ShowProp( LabelCodesNTP );
 
                 CswNbtMetaDataNodeTypeProp LabelCodesGridNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodesGrid );
-                LabelCodesGridNTP.Hidden = false;
+                _CswNbtResources.Modules.ShowProp( LabelCodesGridNTP );
 
                 CswNbtMetaDataNodeTypeTab DSDTab = ChemicalNT.getNodeTypeTab( "DSD" );
                 if( null == DSDTab )
@@ -63,13 +63,13 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp PictogramsNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Pictograms );
-                PictogramsNTP.Hidden = true;
+                _CswNbtResources.Modules.HideProp( PictogramsNTP );
 
                 CswNbtMetaDataNodeTypeProp LabelCodesNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodes );
-                LabelCodesNTP.Hidden = true;
+                _CswNbtResources.Modules.HideProp( LabelCodesNTP );
 
                 CswNbtMetaDataNodeTypeProp LabelCodesGridNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodesGrid );
-                LabelCodesGridNTP.Hidden = true;
+                _CswNbtResources.Modules.HideProp( LabelCodesGridNTP );
             }
         } // OnDisable()
 

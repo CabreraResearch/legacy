@@ -5,7 +5,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// List of schema scripts for the labeled milestone
     /// </summary>
-    public class CswSchemaScriptsMagnolia: ICswSchemaScripts
+    public class CswSchemaScriptsMagnolia : ICswSchemaScripts
     {
         public Collection<CswUpdateSchemaTo> _DDLScripts()
         {
@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.Schema
                    new CswUpdateMetaData_02M_CIS52282(),
                    new CswUpdateMetaData_02M_CIS52301(),
                    new CswUpdateMetaData_02M_CIS53135(),
+                   new CswUpdateMetaData_02M_CIS51775()
                 };
         } // _MetaDataScripts()
 
@@ -55,7 +56,8 @@ namespace ChemSW.Nbt.Schema
                    new CswUpdateSchema_02M_CIS52799(),
                    new CswUpdateSchema_02M_CIS53135(),
                    new CswUpdateSchema_02M_CIS52301B(),
-                   new CswUpdateSchema_02M_CIS52993()
+                   new CswUpdateSchema_02M_CIS52993(),
+                   new CswUpdateSchema_02M_CIS51775B()
                 };
         } // _SchemaScripts()
 

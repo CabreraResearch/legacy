@@ -20,7 +20,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
-                UserJurisdictionNTP.Hidden = false;
+                _CswNbtResources.Modules.ShowProp( UserJurisdictionNTP );
             }
 
             //Case 27862 - show...
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
-                UserJurisdictionNTP.Hidden = true;
+                _CswNbtResources.Modules.HideProp( UserJurisdictionNTP );
             }
 
             //Case 27862 - hide...

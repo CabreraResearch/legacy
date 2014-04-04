@@ -30,7 +30,14 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp LinkChemWatchNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LinkChemWatch );
-                LinkChemWatchNTP.Hidden = Hidden;
+                if( Hidden )
+                {
+                    _CswNbtResources.Modules.HideProp( LinkChemWatchNTP );
+                }
+                else
+                {
+                    _CswNbtResources.Modules.ShowProp( LinkChemWatchNTP );
+                }
             }
         }
 

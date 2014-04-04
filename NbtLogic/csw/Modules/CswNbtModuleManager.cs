@@ -229,7 +229,7 @@ namespace ChemSW.Nbt
             usersView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: usernameOCP,
                 Value: modulename,
-                SubFieldName : CswNbtFieldTypeRuleText.SubFieldName.Text,
+                SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( usersView, false, true, true );
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt
             rolesView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: nameOCP,
                 Value: modulename,
-                SubFieldName : CswNbtFieldTypeRuleText.SubFieldName.Text,
+                SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( rolesView, false, true, true );
@@ -446,21 +446,25 @@ namespace ChemSW.Nbt
             AddPropToTab( NodeTypeId, PropName, tab );
         }
 
-        public void HideProp( int NodeTypeId, string PropName )
-        {
-            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
-            if( null != NodeTypeProp )
-            {
-                NodeTypeProp.Hidden = true;
-            }
-        }
+        public void ShowProp( int NodeTypeId, string PropName ) { ToggleProp( NodeTypeId, PropName, false ); }
+        public void ShowProp( CswNbtMetaDataNodeTypeProp NodeTypeProp ) { ToggleProp( NodeTypeProp, false ); }
+        public void HideProp( int NodeTypeId, string PropName ) { ToggleProp( NodeTypeId, PropName, true ); }
+        public void HideProp( CswNbtMetaDataNodeTypeProp NodeTypeProp ) { ToggleProp( NodeTypeProp, true ); }
 
-        public void ShowProp( int NodeTypeId, string PropName )
+        public void ToggleProp( int NodeTypeId, string PropName, bool Hidden )
         {
-            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
+            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, PropName );
+            if( null == NodeTypeProp )
+            {
+                NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
+            }
+            ToggleProp( NodeTypeProp, Hidden );
+        }
+        public void ToggleProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool Hidden )
+        {
             if( null != NodeTypeProp )
             {
-                NodeTypeProp.Hidden = false;
+                NodeTypeProp.DesignNode.Hidden.Checked = CswConvert.ToTristate( Hidden );
             }
         }
 
