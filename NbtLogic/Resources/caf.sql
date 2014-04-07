@@ -1094,6 +1094,5 @@ select mc.materialid || '_' || mc.componentcasnoid as legacyid,
   join materials_subclass ms ON ms.MATERIALSUBCLASSID =
                                 m.MATERIALSUBCLASSID
   join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
-  join component_casnos cc on cc.componentmaterialid = m.materialid
-
-   
+  join component_casnos cc on cc.componentmaterialid = m.materialid;
+  
