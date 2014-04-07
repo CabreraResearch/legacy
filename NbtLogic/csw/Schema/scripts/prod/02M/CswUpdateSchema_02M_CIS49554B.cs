@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Schema
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString(), Tuple.Create(MODULEID_CONTAINERS, INTTYPE, "0") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.total_comments_lines.ToString(), Tuple.Create<string, string, string>(null, INTTYPE, "0") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.custom_barcodes.ToString(), Tuple.Create(MODULEID_CONTAINERS, BOOLTYPE, "") );
-            rowsToUpdate.Add( CswEnumConfigurationVariableNames.Logging_Level.ToString().ToLower(), Tuple.Create<string, string, string>(null, STRINGTYPE, "") );
+            rowsToUpdate.Add( CswEnumConfigurationVariableNames.Logging_Level.ToString().ToLower(), Tuple.Create<string, string, string>(null, LISTTYPE, "") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.netquantity_enforced.ToString(), Tuple.Create(MODULEID_CONTAINERS, BOOLTYPE, "") );
             rowsToUpdate.Add( CswEnumConfigurationVariableNames.NodesProcessedPerCycle.ToString().ToLower(), Tuple.Create<string, string, string>(null, INTTYPE, "0") );
             rowsToUpdate.Add( CswEnumConfigurationVariableNames.container_max_depth.ToString(), Tuple.Create(MODULEID_CONTAINERS, INTTYPE, "0") );
