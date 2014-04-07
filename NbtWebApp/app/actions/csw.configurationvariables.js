@@ -13,26 +13,50 @@
         };
         if (options) Csw.extend(cswPrivate, options);
 
-        cswPrivate.update = function (module) {
+        cswPrivate.update = function (configVarControls) {
+
+            //make array of objects whose key: name of config var
+            //and value = value of config var, then send to
+            //server
+            var responseObject = {
+              Data : []                  
+            };
+
+            Csw.each(cswPrivate.configVarControls, function(thisControlReference) {
+                var thisControl = thisControlReference[0];
+                var thisConfigVarName = thisControl.name;
+                var thisControlValue = thisControl.value;
+                //disable each control 
+
+                var thisResponseObject = {
+                    variableName: thisConfigVarName,
+                    variableValue: thisControlValue
+                };
+                responseObject.Data.push(thisResponseObject);
+            });
+
             Csw.ajaxWcf.post({
-                urlMethod: 'Modules/HandleModule',
-                data: module,
+                urlMethod: 'ConfigurationVariables/Update',
+                data: responseObject,
                 success: function (response) {
-                    cswPrivate.render(response);
-                    Csw.tryExec(cswPrivate.onConfigVarChange);
+                    cswPrivate.init();
                 }
             });
         };
 
-        cswPrivate.render = function(response) {
+        cswPrivate.render = function(response, actionDiv) {
             // this action is laid out using 3 tables embedded in each other
             // the outer table contains each section (e.g: Common)
             // the middle table contains each section title + section table
             // the inner table lists out each config var in that section
-            var parentTable = cswPrivate.div.table({
+            var parentTable = actionDiv.table({
                 suffix: 'tbl',
                 width: '90%'
             });
+
+            //array of controls, used to get the config values from
+            //when applying changes
+            cswPrivate.configVarControls = [];
 
             var superTableRow = 1;
 
@@ -57,42 +81,43 @@
                 Csw.each(ConfigVarsForModule, function(ConfigVarObject) {
 
                     cellTable.cell(subTableRow, 1).text(ConfigVarObject.variableName);
-                    cellTable.cell(subTableRow, 2).input({
+                    var thisControl = cellTable.cell(subTableRow, 2).input({
                        size : 30,
-                       name: ConfigVarObject.variableName + 'field',
+                       name: ConfigVarObject.variableName,
                        value: ConfigVarObject.variableValue
                     });
                     cellTable.cell(subTableRow, 3).text(ConfigVarObject.description);
+
+                    cswPrivate.configVarControls.push(thisControl);
+
                     subTableRow += 1;
                 });
                 superTableRow += 1;
             });
 
-            //close Button
-            
         };
 
         // constructor
         cswPrivate.init = function () {
+
+            //clear the parent div
+            cswParent.empty();
+            
             var layout = Csw.layouts.action(cswParent, {
                title: 'Configuration Variables',
                finishText: 'Apply',
                onFinish: function() {
-                   console.log("finish");
+                   cswPrivate.update(cswPrivate.configVarControls);
+               },
+               onCancel: function() {
+                   cswPrivate.onCancel();
                }
             });
-
-//            cswParent.$.empty();
-
-            //cswParent.div = layout.actionDiv;
-
-//            cswPrivate.div = cswParent.div();
-            cswPrivate.div = layout.actionDiv;
 
             return Csw.ajaxWcf.post({
                 urlMethod: 'ConfigurationVariables/Initialize',
                 success: function (response) {
-                    cswPrivate.render(response);
+                    cswPrivate.render(response, layout.actionDiv);
                 }
             });
         }; // cswPrivate.init()
