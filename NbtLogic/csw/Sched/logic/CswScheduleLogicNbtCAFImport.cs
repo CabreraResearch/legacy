@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Sched
                                 break;//We've changed NodeTypes - we'll pick them up next time around
                             }
                             ImportQueuePKs.Add( QueueRow[QueuePkName].ToString() );
-                            ItemPKs.Add( QueueRow["itempk"].ToString() );
+                            ItemPKs.Add( "'" + QueueRow["itempk"] + "'" );
                         }
 
                         string ItemSql = "select * from " + QueueRowDef["sourcename"] + "@" + CAFDbLink +
