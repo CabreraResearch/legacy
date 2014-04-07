@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.WebServices
                         configVarsByModule[thisConfigVarModuleName].Add( thisConfigVarDataContract );
                     }
                 } //if configVar is to be included according to _includeConfigVar()
-            }//foreach dataRow
+            } //foreach dataRow
 
             configVarsByModule.Add( "Common", commonConfigVars );
 
@@ -154,7 +154,9 @@ namespace ChemSW.Nbt.WebServices
             ret.ConfigVarsByModule = configVarsByModule;
 
             return ret;
-        } //_getConfigVars
+        }
+
+        //_getConfigVars
 
         /// <summary>
         ///     returns a collection of config vars, to be displayed on the config var page. Only config vars the currently logged in user can see are included
@@ -164,15 +166,12 @@ namespace ChemSW.Nbt.WebServices
         private static CswNbtDataContractConfigurationUpdateSuccessResponse _updateConfigVars( CswNbtResources NbtResources,
                                                                                                CswNbtDataContractConfigurationVariableResponseContainer varsFromServer )
         {
-            CswNbtDataContractConfigurationUpdateSuccessResponse ret
-                = new CswNbtDataContractConfigurationUpdateSuccessResponse();
-            Dictionary<string, string> updatedConfigVarsFromClient =
-                new Dictionary<string, string>();
+            CswNbtDataContractConfigurationUpdateSuccessResponse ret = new CswNbtDataContractConfigurationUpdateSuccessResponse();
+            Dictionary<string, string> updatedConfigVarsFromClient = new Dictionary<string, string>();
 
             //add all the config vars into the dictionary
             //keyed by name
-            foreach( CswNbtDataContractConfigurationVariableResponse thisResponse
-                in varsFromServer.responseArray )
+            foreach( CswNbtDataContractConfigurationVariableResponse thisResponse in varsFromServer.responseArray )
             {
                 updatedConfigVarsFromClient.Add( thisResponse.VariableName, thisResponse.VariableValue );
             }
@@ -217,7 +216,7 @@ namespace ChemSW.Nbt.WebServices
                             case DATATYPE_LIST:
                                 Collection<string> listOptions = new Collection<string>(
                                     thisRow[COL_CONSTRAINT].ToString().Split( ',' ) );
-                                if( false == listOptions.Contains( updatedConfigVarValue) )
+                                if( false == listOptions.Contains( updatedConfigVarValue ) )
                                 {
                                     string listOptionsString = string.Join( ",", listOptions );
                                     throw new CswDniException( CswEnumErrorType.Warning,
@@ -231,14 +230,14 @@ namespace ChemSW.Nbt.WebServices
                                     thisRow[COL_VARIABLEVALUE] = updatedConfigVarValue;
                                 }
                                 break;
-                            
+
                             case DATATYPE_BOOL:
                                 if( false == ( updatedConfigVarValue == "0" ||
                                                updatedConfigVarValue == "1" ) )
                                 {
-                                    throw new CswDniException(CswEnumErrorType.Warning,
-                                                              configVarName + " must be set to 0 or 1",
-                                                              configVarName + " is of type BOOL, therefore it must be set to 0 or 1");
+                                    throw new CswDniException( CswEnumErrorType.Warning,
+                                                               configVarName + " must be set to 0 or 1",
+                                                               configVarName + " is of type BOOL, therefore it must be set to 0 or 1" );
                                 }
                                 else
                                 {
@@ -246,14 +245,14 @@ namespace ChemSW.Nbt.WebServices
                                 }
                                 break;
 
-                                //for string type there is no config var specific validation
+                            //for string type there is no config var specific validation
                             default:
                                 thisRow[COL_VARIABLEVALUE] = updatedConfigVarValue;
                                 break;
                         } //switch by ConfigVarDatatype
-                    }// if config var has been updated
-                }//if this config var was returned from client
-            }//for each dataRow
+                    } // if config var has been updated
+                } //if this config var was returned from client
+            } //for each dataRow
 
             //commit changes
             CVTableUpdate.update( CVDataTable );
@@ -262,7 +261,9 @@ namespace ChemSW.Nbt.WebServices
             //so there is no execution path where we return false
             ret.success = true;
             return ret;
-        }//updateConfigVars
+        }
+
+        //updateConfigVars
 
 
         /// <summary>
@@ -292,13 +293,14 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-//_includeConfigVar
+        //_includeConfigVar
     }
 
     [DataContract, KnownType( typeof( Collection<CswNbtDataContractConfigurationVariable> ) )]
     public class CswNbtDataContractConfigurationVariablesPage
     {
-        [DataMember] public CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
+        [DataMember]
+        public CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
     }
 
     [DataContract]
@@ -307,43 +309,51 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         ///     if this config var's datatype is INTTYPE this is the minimum permitted value 
         /// </summary>
-        [DataMember( Name = "minvalue" )] public string Minvalue = string.Empty;
+        [DataMember( Name = "minvalue" )]
+        public string Minvalue = string.Empty;
 
         /// <summary>
         ///     if the datatype is LIST, these are the rendered list options
         /// </summary>
-        [DataMember( Name = "listoptions" )] public Collection<string> ListOptions = new Collection<string>();
+        [DataMember( Name = "listoptions" )]
+        public Collection<string> ListOptions = new Collection<string>();
 
         /// <summary>
         ///     Used to determine how to apply the constraint. Can be INT, STRING, LIST, BOOL
         /// </summary>
-        [DataMember( Name = "dataType" )] public string DataType = string.Empty;
+        [DataMember( Name = "dataType" )]
+        public string DataType = string.Empty;
 
         /// <summary>
         ///     a description of the configuration variable
         /// </summary>
-        [DataMember( Name = "description" )] public string Description = string.Empty;
+        [DataMember( Name = "description" )]
+        public string Description = string.Empty;
 
         /// <summary>
         ///     true if this is a system config var
         /// </summary>
-        [DataMember( Name = "isSystem" )] public Boolean IsSystem = false;
+        [DataMember( Name = "isSystem" )]
+        public Boolean IsSystem = false;
 
         /// <summary>
         ///     the name of the config var
         /// </summary>
-        [DataMember( Name = "variableName" )] public string VariableName = string.Empty;
+        [DataMember( Name = "variableName" )]
+        public string VariableName = string.Empty;
 
         /// <summary>
         ///     the current value to which this config var is set
         /// </summary>
-        [DataMember( Name = "variableValue" )] public string VariableValue = string.Empty;
+        [DataMember( Name = "variableValue" )]
+        public string VariableValue = string.Empty;
     }
 
     [DataContract]
     public class CswNbtDataContractConfigurationVariableResponseContainer
     {
-        [DataMember( Name = "Data" )] public List<CswNbtDataContractConfigurationVariableResponse> responseArray
+        [DataMember( Name = "Data" )]
+        public List<CswNbtDataContractConfigurationVariableResponse> responseArray
             = new List<CswNbtDataContractConfigurationVariableResponse>();
     }
 
@@ -353,12 +363,14 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// the name of this config variable
         /// </summary>
-        [DataMember( Name = "variableName" )] public string VariableName = string.Empty;
+        [DataMember( Name = "variableName" )]
+        public string VariableName = string.Empty;
 
         /// <summary>
         /// value the config variable has been set to in the UI
         /// </summary>
-        [DataMember( Name = "variableValue" )] public string VariableValue = string.Empty;
+        [DataMember( Name = "variableValue" )]
+        public string VariableValue = string.Empty;
     }
 
     [DataContract]
@@ -367,7 +379,8 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// whether or not the config vars posted back to the server were succesfully applied
         /// </summary>
-        [DataMember( Name = "success" )] public Boolean success = false;
+        [DataMember( Name = "success" )]
+        public Boolean success = false;
     }
 }
 
