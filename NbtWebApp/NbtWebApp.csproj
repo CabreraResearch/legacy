@@ -281,7 +281,6 @@
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTable.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
-    <Content Include="ConfigVars.aspx" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -1316,9 +1315,6 @@
     <Compile Include="Base.master.designer.cs">
       <DependentUpon>Base.master</DependentUpon>
     </Compile>
-    <Compile Include="ConfigVars.aspx.designer.cs">
-      <DependentUpon>ConfigVars.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
     </Compile>
@@ -1345,10 +1341,6 @@
     <Compile Include="WebSvc\Logic\Tools\wsTools.cs" />
     <Compile Include="Base.master.cs">
       <DependentUpon>Base.master</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ConfigVars.aspx.cs">
-      <DependentUpon>ConfigVars.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
