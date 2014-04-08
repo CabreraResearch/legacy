@@ -365,7 +365,8 @@ AS
                    WHERE  p.DELETED = 0) 
            GROUP  BY MATERIALID, 
                      DELETED) 
-  SELECT v.VENDORID, 
+  SELECT /*+ ORDERED USE_HASH(cpv)  */
+         v.VENDORID, 
          p.PACKAGEID, 
          p.PRODUCTNO, 
          m."AQUEOUS_SOLUBILITY", 
