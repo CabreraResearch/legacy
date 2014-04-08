@@ -54,16 +54,21 @@
                 Csw.each(ConfigVarsForModule, function(ConfigVarObject) {
 
                     parentTable.cell(tableRow, 1).text(ConfigVarObject.variableName)
-                                                 .css('text-align', 'right');
+                                                 .css({
+                                                    textAlign:'right',
+                                                    verticalAlign: 'middle'
+                                                 });
                     var thisControl = parentTable.cell(tableRow, 2)
-                                                 .css('width', 70)
                                                  .input({
-                        size: "95%",
+                        size: 35,
                         name: ConfigVarObject.variableName,
                         value: ConfigVarObject.variableValue
                     });
                     parentTable.cell(tableRow, 3).text(ConfigVarObject.description)
-                                                 .css('text-align', 'left');
+                                                 .css({
+                                                    textAlign : 'left',
+                                                    verticalAlign : 'middle'
+                                                 });
 
                     cswPrivate.configVarControls.push(thisControl);
 
@@ -78,7 +83,7 @@
                 suffix: 'tbl',
                 margin: 0,
                 cellpadding: 5, 
-                width: '80%'
+                width: '100%'
             });
 
             //array of controls, used to get the config values from
