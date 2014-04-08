@@ -26,7 +26,6 @@
                 var thisControl = thisControlReference[0];
                 var thisConfigVarName = thisControl.name;
                 var thisControlValue = thisControl.value;
-                //disable each control 
 
                 var thisResponseObject = {
                     variableName: thisConfigVarName,
@@ -44,27 +43,7 @@
             });
         };
 
-        cswPrivate.render = function(response, actionDiv) {
-            // this action is laid out using 3 tables embedded in each other
-            // the outer table contains each section (e.g: Common)
-            // the middle table contains each section title + section table
-            // the inner table lists out each config var in that section
-            var parentTable = actionDiv.table({
-                suffix: 'tbl',
-                margin: 0,
-                cellpadding: 5, 
-                width: '80%'
-            });
-
-            //array of controls, used to get the config values from
-            //when applying changes
-            cswPrivate.configVarControls = [];
-
-            var tableRow = 1;
-
-            //generate the supertable showing the module name
-            Csw.each(response.ConfigVarsByModule, function(ConfigVarsForModule, ModuleName) {
-
+       cswPrivate.renderSection = function(ConfigVarsForModule, ModuleName, parentTable, tableRow) {
                 var headerRowCell = parentTable.cell(tableRow, 1);
                 headerRowCell.text(ModuleName);
                 headerRowCell.propDom('colspan', 3);
@@ -90,9 +69,42 @@
 
                     tableRow += 1;
                 });
+
+           return tableRow;
+       };
+
+       cswPrivate.render = function(response, actionDiv) {
+            var parentTable = actionDiv.table({
+                suffix: 'tbl',
+                margin: 0,
+                cellpadding: 5, 
+                width: '80%'
             });
 
-        };
+            //array of controls, used to get the config values from
+            //when applying changes
+            cswPrivate.configVarControls = [];
+
+            var tableRow = 1;
+            
+           //render each section, making sure common is at the top
+           //and that system is at the bottom
+            var CommonVars = response.ConfigVarsByModule.Common;
+            tableRow = cswPrivate.renderSection(CommonVars, "Common", parentTable, tableRow);
+
+            Csw.each(response.ConfigVarsByModule, function(ConfigVarsForModule, ModuleName) {
+                if (ModuleName !== "Common" && ModuleName !== "System") {
+                    tableRow = cswPrivate.renderSection(ConfigVarsForModule, ModuleName, parentTable, tableRow);
+                } 
+
+            });
+
+           if (response.ConfigVarsByModule.System) {
+               var systemVars = response.ConfigVarsByModule.System;
+               tableRow = cswPrivate.renderSection(systemVars, "System", parentTable, tableRow);
+           }
+
+       };
 
         // constructor
         cswPrivate.init = function () {
@@ -105,11 +117,10 @@
                finishText: 'Apply',
                onFinish: function() {
                    cswPrivate.update(cswPrivate.configVarControls);
-               },
-               onCancel: function() {
-                   cswPrivate.onCancel();
                }
             });
+
+            layout.cancel.hide();
 
             return Csw.ajaxWcf.post({
                 urlMethod: 'ConfigurationVariables/Initialize',
