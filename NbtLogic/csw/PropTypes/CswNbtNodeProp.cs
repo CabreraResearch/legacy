@@ -444,7 +444,20 @@ namespace ChemSW.Nbt.PropTypes
                     if( NodeTree.getChildNodeCount() > 0 )
                     {
                         NodeTree.goToNthChild( 0 );
-                        if( !IsCopy || Required )
+                        if( IsCopy && Required && NodeTypeProp.getFieldType().FieldType == CswEnumNbtFieldType.Text )
+                        {
+                            //CIS-53150 - we want to name mangle things like role names when we try to copy them
+                            ( (CswNbtNodePropText) this ).makeUnique();
+                        }
+                        else if ( false == Required )
+                        {
+                            //if the prop isn't required, we can just blank it out
+                            // BZ 9987 - Clear the value
+                            this._CswNbtNodePropData.ClearValue();
+                            //this.clearModifiedFlag();
+                            this.clearSubFieldModifiedFlags();
+                        }
+                        else 
                         {
                             CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
                             string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
@@ -454,13 +467,6 @@ namespace ChemSW.Nbt.PropTypes
                             EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
                             string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
                             throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
-                        }
-                        else
-                        {
-                            // BZ 9987 - Clear the value
-                            this._CswNbtNodePropData.ClearValue();
-                            //this.clearModifiedFlag();
-                            this.clearSubFieldModifiedFlags();
                         }
                     }
 
