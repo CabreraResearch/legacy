@@ -179,6 +179,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleMultiInventoryGroup.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleMultiSite.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
+    <Compile Include="csw\ObjClasses\MLM\CswNbtObjClassCertDefSpecLevel.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassCertificateDefinition.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />

@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.MetaData
             { CertDefConditionClass             , CertDefConditionClass              },
             {CertificateDefinitionClass         , CertificateDefinitionClass         },
             { CertDefSpecClass                  , CertDefSpecClass                   },
+            { CertDefSpecLevel                  , CertDefSpecLevel                   },
             { ChemicalClass                     , ChemicalClass                      },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
@@ -158,6 +159,7 @@ namespace ChemSW.Nbt.MetaData
         public const string CertDefConditionClass = "CertDefConditionClass";
         public const string CertificateDefinitionClass = "CertificateDefinitionClass";
         public const string CertDefSpecClass = "CertDefSpecClass";
+        public const string CertDefSpecLevel = "CertDefSpecLevelClass";
         public const string ChemicalClass = "ChemicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
