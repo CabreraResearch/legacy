@@ -32,7 +32,6 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( MethodOC )
                 {
                     Category = "MLM",
-                    IconFileName = "",
                     ObjectClass = MethodOC,
                     Searchable = true
                 } );
