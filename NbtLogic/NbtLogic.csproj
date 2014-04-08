@@ -780,6 +780,7 @@
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CIS52282.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateDDL_02M_CIS53175.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS49554B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS49554C.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS53189.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52751.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS52735D.cs" />
