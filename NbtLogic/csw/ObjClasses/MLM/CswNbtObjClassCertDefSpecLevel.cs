@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Level = "Level";
-            public const string CertDefSpec = "Cert Def Spec";
+            //public const string CertDefSpec = "Cert Def Spec"; //TODO - uncomment when CIS-52297 (slated for Mag.2) is done
             public const string AllowedDataSources = "Allowed Data Sources";
             public const string RequiredForApproval = "Required For Approval";
             public const string InitialSampleRegime = "Initial Sample Regime";
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
-        public CswNbtNodePropRelationship CertDefSpec { get { return _CswNbtNode.Properties[PropertyName.CertDefSpec]; } }
+        //public CswNbtNodePropRelationship CertDefSpec { get { return _CswNbtNode.Properties[PropertyName.CertDefSpec]; } }  //TODO - uncomment when CIS-52297 (slated for Mag.2) is done
         public CswNbtNodePropList AllowedDataSources { get { return _CswNbtNode.Properties[PropertyName.AllowedDataSources]; } }
         public CswNbtNodePropLogical RequiredForApproval { get { return _CswNbtNode.Properties[PropertyName.RequiredForApproval]; } }
         public CswNbtNodePropList InitialSampleRegime { get { return _CswNbtNode.Properties[PropertyName.InitialSampleRegime]; } }
