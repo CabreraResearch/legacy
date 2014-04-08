@@ -568,7 +568,26 @@ namespace ChemSW.Nbt.Actions
             JObject Ret = new JObject();
 
             SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, OverrideUniqueValidation: true );
-            CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["uom"]["id"].ToString() );
+            string UoMId = SizeObj["uom"]["id"].ToString();
+
+            // CIS-53182: Preventative measure against the uomid being empty from client
+            if( null != MaterialId && string.IsNullOrEmpty( UoMId ) && false == string.IsNullOrEmpty( SizeObj["uom"]["value"].ToString() ) )
+            {
+                // Try to find the id for the unit of measure
+                CswNbtUnitViewBuilder UnitViewBuilder = new CswNbtUnitViewBuilder( CswNbtResources );
+                CswNbtView UnitsView = UnitViewBuilder.getQuantityUnitOfMeasureView( MaterialId );
+                ICswNbtTree UnitTree = CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, false );
+                for( int i = 0; i < UnitTree.getChildNodeCount(); i++ )
+                {
+                    UnitTree.goToNthChild( i );
+                    if( UnitTree.getNodeNameForCurrentPosition().Equals( SizeObj["uom"]["value"].ToString() ) )
+                    {
+                        UoMId = UnitTree.getNodeIdForCurrentPosition().ToString();
+                    }
+                }
+            }
+
+            CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( UoMId );
             if( null != UnitIdPK )
             {
                 SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, delegate( CswNbtNode NewNode )
