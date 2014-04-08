@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodConditionClass, "check.png", true );
+            CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodConditionClass );
 
             _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( MethodConditionOC )
                 {
