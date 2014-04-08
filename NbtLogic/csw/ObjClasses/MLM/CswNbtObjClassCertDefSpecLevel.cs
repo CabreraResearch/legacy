@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
             RetestSampleRegime.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
                     CswNbtObjClassLevel LevelNode = _CswNbtResources.Nodes.GetNode( Level.RelatedNodeId );
-                    if( LevelNode.LabUseOnly.Checked == CswEnumTristate.True )
+                    if( null != LevelNode && LevelNode.LabUseOnly.Checked == CswEnumTristate.True ) //On Add, LevelNode will be null
                     {
                         Prop.setHidden( true, false );
                     }
