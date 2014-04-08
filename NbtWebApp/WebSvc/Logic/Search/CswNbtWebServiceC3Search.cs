@@ -906,9 +906,9 @@ namespace ChemSW.Nbt.WebServices
                 public string NBTSubFieldPropColName2 = string.Empty;
             }
 
-            private string _getUnitOfMeasure( string mappedUnitOfMeasure, string origUnitOfMeasure )
+            private KeyValuePair<string, string> _getUnitOfMeasure( string mappedUnitOfMeasure, string origUnitOfMeasure )
             {
-                string Ret = string.Empty;
+                KeyValuePair<string, string> Ret = new KeyValuePair<string, string>();
                 ICswNbtTree MatchingUOMsTree;
 
                 bool FoundMatch = false;
@@ -920,7 +920,7 @@ namespace ChemSW.Nbt.WebServices
                         for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
                         {
                             MatchingUOMsTree.goToNthChild( i );
-                            Ret = MatchingUOMsTree.getNodeNameForCurrentPosition();
+                            Ret = new KeyValuePair<string, string>( MatchingUOMsTree.getNodeIdForCurrentPosition().ToString(), MatchingUOMsTree.getNodeNameForCurrentPosition() );
                             MatchingUOMsTree.goToParentNode();
                         }
                         FoundMatch = true;
@@ -935,7 +935,7 @@ namespace ChemSW.Nbt.WebServices
                         for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
                         {
                             MatchingUOMsTree.goToNthChild( i );
-                            Ret = MatchingUOMsTree.getNodeNameForCurrentPosition();
+                            Ret = new KeyValuePair<string, string>( MatchingUOMsTree.getNodeIdForCurrentPosition().ToString(), MatchingUOMsTree.getNodeNameForCurrentPosition() );
                             MatchingUOMsTree.goToParentNode();
                         }
                     }
@@ -1149,9 +1149,11 @@ namespace ChemSW.Nbt.WebServices
                     //newUoM
                     C3CreateMaterialResponse.State.SizeRecord.SizeData NewUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
 
-                    NewUoM.value = _getUnitOfMeasure( CurrentSize.pkg_qty_uom, CurrentSize.c3_uom );
+                    KeyValuePair<string, string> UoM = _getUnitOfMeasure( CurrentSize.pkg_qty_uom, CurrentSize.c3_uom );
+                    NewUoM.value = UoM.Value;
                     NewUoM.readOnly = !string.IsNullOrEmpty( NewUoM.value );
                     NewUoM.hidden = false;
+                    NewUoM.id = UoM.Key;
                     Size.uom = NewUoM;
 
                     //originalUoM
