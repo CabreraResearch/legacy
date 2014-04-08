@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02M_Case52302 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02M_Case52302A : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -55,6 +55,7 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Units,
                 FieldType = CswEnumNbtFieldType.Relationship,
                 IsFk = true,
+                IsCompoundUnique = false,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                 FkValue = UoMOC.ObjectClassId
             } );
