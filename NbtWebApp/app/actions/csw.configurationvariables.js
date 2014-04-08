@@ -51,48 +51,45 @@
             // the inner table lists out each config var in that section
             var parentTable = actionDiv.table({
                 suffix: 'tbl',
-                width: '90%'
+                margin: 0,
+                cellpadding: 5, 
+                width: '80%'
             });
 
             //array of controls, used to get the config values from
             //when applying changes
             cswPrivate.configVarControls = [];
 
-            var superTableRow = 1;
+            var tableRow = 1;
 
             //generate the supertable showing the module name
             Csw.each(response.ConfigVarsByModule, function(ConfigVarsForModule, ModuleName) {
 
-                var cellDivTable = parentTable.cell(superTableRow,1).table();
-                cellDivTable.cell(1, 1).text(ModuleName);
-
-                var cellTable = cellDivTable.cell(2,1).table({
-                    suffix: 'tbl',
-                    border: 1,
-                    margin: 0,
-                    cellpadding: 5,
-                    name: 'ConfigVarChildTable'
-                });
-
-                var subTableRow = 1;
-
+                var headerRowCell = parentTable.cell(tableRow, 1);
+                headerRowCell.text(ModuleName);
+                headerRowCell.propDom('colspan', 3);
+                headerRowCell.css('background', "#D1DBE6");                    
+                tableRow += 1;
                 //generate the subtable showing the config vars for this
                 //module
                 Csw.each(ConfigVarsForModule, function(ConfigVarObject) {
 
-                    cellTable.cell(subTableRow, 1).text(ConfigVarObject.variableName);
-                    var thisControl = cellTable.cell(subTableRow, 2).input({
-                       size : 30,
-                       name: ConfigVarObject.variableName,
-                       value: ConfigVarObject.variableValue
+                    parentTable.cell(tableRow, 1).text(ConfigVarObject.variableName)
+                                                 .css('text-align', 'right');
+                    var thisControl = parentTable.cell(tableRow, 2)
+                                                 .css('width', 70)
+                                                 .input({
+                        size: "95%",
+                        name: ConfigVarObject.variableName,
+                        value: ConfigVarObject.variableValue
                     });
-                    cellTable.cell(subTableRow, 3).text(ConfigVarObject.description);
+                    parentTable.cell(tableRow, 3).text(ConfigVarObject.description)
+                                                 .css('text-align', 'left');
 
                     cswPrivate.configVarControls.push(thisControl);
 
-                    subTableRow += 1;
+                    tableRow += 1;
                 });
-                superTableRow += 1;
             });
 
         };
