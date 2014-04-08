@@ -35,9 +35,6 @@ namespace ChemSW.Nbt.Schema
         public override void doUpdate()
         {
             //getting NTs by name is acceptable, because this is a master only script
-            if( _CswNbtSchemaModTrnsctn.isMaster() )
-            {
-                _CswNbtSchemaModTrnsctn.ConfigVbls.setConfigVariableValue( "license_type", "1" );
 
                 CswNbtMetaDataNodeType AssemblyDocNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Assembly Document" );
                 CswNbtMetaDataNodeType AssemblyScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Assembly Schedule" );
@@ -259,7 +256,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Merge, AdminRole, false );
                     _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Submit_Request, AdminRole, false );
 
-                    AdminRole.Administrator.Checked = CswEnumTristate.False;
+                    AdminRole.Administrator.Checked = CswEnumTristate.True;
                     AdminRole.postChanges( false );
 
                     //also make 'admin' a CISPro_Admin
@@ -658,7 +655,6 @@ namespace ChemSW.Nbt.Schema
                     FulfillerRole.Timeout.Value = 15;
                     FulfillerRole.postChanges( false );
                 }
-            }
         }//update()
 
 
