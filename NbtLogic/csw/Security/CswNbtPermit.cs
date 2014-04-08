@@ -244,32 +244,38 @@ namespace ChemSW.Nbt.Security
                 {
 
                     bool ReturnVal = true;
-                    // case 24510
-                    CswEnumNbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
-                    if( ObjectClass == CswEnumNbtObjectClass.ContainerDispenseTransactionClass )
+                    if( null != NodeType.getObjectClass() ) // CIS-53252
                     {
-                        ReturnVal = NodeTypePermission != CswEnumNbtNodeTypePermission.Delete;
-                    }
-
-                    //case 28158: Another way to cope with this would for the CswNbtObjClass abstract 
-                    //class to expose an interface along the lines of allowNodeType(). 
-                    //If we come across additonal exception cases such as this, we can 
-                    //apply such a strategy.
-                    if( ( null != PropType ) && ( ObjectClass == CswEnumNbtObjectClass.UserClass ) )
-                    {
-
-                        CswNbtObjClassUser CswNbtObjClassUser = _CswNbtResources.Nodes[_CswNbtUser.UserId];
-                        if( null != CswNbtObjClassUser )
+                        // case 24510
+                        CswEnumNbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
+                        if( ObjectClass == CswEnumNbtObjectClass.ContainerDispenseTransactionClass )
                         {
-                            if( PropType.getObjectClassPropName() == CswNbtObjClassUser.PropertyName.Password &&
-                                CswNbtObjClassUser.IsPasswordReadOnly )
-                            {
-                                ReturnVal = false;
-                            }
+                            ReturnVal = NodeTypePermission != CswEnumNbtNodeTypePermission.Delete;
                         }
 
-                    }//get() 
+                        //case 28158: Another way to cope with this would for the CswNbtObjClass abstract 
+                        //class to expose an interface along the lines of allowNodeType(). 
+                        //If we come across additonal exception cases such as this, we can 
+                        //apply such a strategy.
+                        if( ( null != PropType ) && ( ObjectClass == CswEnumNbtObjectClass.UserClass ) )
+                        {
 
+                            CswNbtObjClassUser CswNbtObjClassUser = _CswNbtResources.Nodes[_CswNbtUser.UserId];
+                            if( null != CswNbtObjClassUser )
+                            {
+                                if( PropType.getObjectClassPropName() == CswNbtObjClassUser.PropertyName.Password &&
+                                    CswNbtObjClassUser.IsPasswordReadOnly )
+                                {
+                                    ReturnVal = false;
+                                }
+                            }
+
+                        }
+                    } // if( null != NodeType.getObjectClass() )
+                    else
+                    {
+                        ReturnVal = false;
+                    }
                     return ( ReturnVal );
 
                 }//get
