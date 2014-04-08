@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02M_Case52302B : CswUpdateSchemaTo
+    public class CswUpdateSchema_02M_Case52302B : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -32,11 +32,12 @@ namespace ChemSW.Nbt.Schema
                 {
                     Category = "MLM",
                     ObjectClass = MethodConditionOC,
+                    ObjectClassId = MethodConditionOC.ObjectClassId,
+                    NodeTypeName = "Method Condition",
                     Searchable = true
                 } );
         }
 
-        // update()
     }
 }
 
