@@ -54,6 +54,8 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, nt.NodeTypeId, certdefid, true );
 
                 CswNbtMetaDataNodeTypeProp material = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.Material );
+                material.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = _createMaterialPropertyView( material, nt.NodeTypeName );
+
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, material, true, IdentityTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, nt.NodeTypeId, material, true );
 
@@ -137,5 +139,31 @@ namespace ChemSW.Nbt.Schema
 
             _newNodeTypes.Add( NewNodeType );
         }//_createNodeType()
+
+        private CswNbtViewId _createMaterialPropertyView( CswNbtMetaDataNodeTypeProp materialprop, string nodetype )
+        {
+            CswNbtViewId ViewId = null;
+            CswNbtView View = _CswNbtSchemaModTrnsctn.makeSafeView( "CertDefMaterialProp_" + nodetype, CswEnumNbtViewVisibility.Property );
+
+            if( nodetype == "CertDef EP" )
+            {
+                CswNbtMetaDataObjectClass EPOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EnterprisePartClass );
+                View.AddViewRelationship( EPOC, true );
+                materialprop.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Target].AsMetaDataList.setValue( CswEnumNbtViewRelatedIdType.ObjectClassId, EPOC.ObjectClassId );
+            }
+            else
+            {
+                CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( "MaterialSet" );
+                View.AddViewRelationship( MaterialPS, true );
+                materialprop.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Target].AsMetaDataList.setValue( CswEnumNbtViewRelatedIdType.PropertySetId, MaterialPS.PropertySetId );
+            }
+
+            View.save();
+            ViewId = View.ViewId;
+
+
+
+            return ViewId;
+        }
     }
 }
