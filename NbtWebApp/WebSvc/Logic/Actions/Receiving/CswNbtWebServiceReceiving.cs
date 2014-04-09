@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Actions
 
         public static void CheckContainerBarcodes( ICswResources CswResources, CswNbtContainerBarcodeCheckReturn ErrorMsg, Collection<CswNbtAmountsGridQuantity> Quantities )
         {
-            CswCommaDelimitedString DuplicateBarcodes = new CswCommaDelimitedString();
+            HashSet<string> DuplicateBarcodes = new HashSet<string>();
             HashSet<string> BarcodeLookup = new HashSet<string>();
             foreach( CswNbtAmountsGridQuantity quantity in Quantities )
             {
@@ -84,9 +84,15 @@ namespace ChemSW.Nbt.Actions
                 }
             }
 
-            if( false == DuplicateBarcodes.IsEmpty )
+            if( DuplicateBarcodes.Count > 0 )
             {
-                ErrorMsg.Data = "There are following barcodes appear more than once: " + DuplicateBarcodes.ToString();
+                string[] dupeArray = new string[DuplicateBarcodes.Count];
+                DuplicateBarcodes.CopyTo( dupeArray );
+                CswCommaDelimitedString dupeCDS = new CswCommaDelimitedString()
+                    {
+                        dupeArray
+                    };
+                ErrorMsg.Data = "There are following barcodes appear more than once: " + dupeCDS;
             }
         }
 
