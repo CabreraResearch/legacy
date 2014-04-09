@@ -22,21 +22,23 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>
                 {
                 // new CswUpdateMetaData_02M_CISXXXXX(),
-                    new CswUpdateMetaData_02M_CIS52307(),
-                    new CswUpdateMetaData_02M_CIS53175(),
-                    new CswUpdateMetaData_02M_CIS52735(),
+                   new CswUpdateMetaData_02M_CIS52307(),
+                   new CswUpdateMetaData_02M_CIS53175(),
+                   new CswUpdateMetaData_02M_CIS52735(),
                    new CswUpdateMetaData_02M_Case52300(),
                    new CswUpdateMetaData_02M_Case52302(),
                    new CswUpdateMetaData_02M_Case52308(),
                    new CswUpdateMetaData_02M_Case52309(),
-                    new CswUpdateMetaData_02M_CIS52312(),
-                    new CswUpdateMetaData_02M_CIS53197(),
-                    new CswUpdateMetaData_02M_CIS52282(),
-                    new CswUpdateMetaData_02M_CIS52301(),
-                    new CswUpdateMetaData_02M_CIS53135(),
-                    new CswUpdateMetaData_02M_CIS51775(),
-                    new CswUpdateMetaData_02M_CIS52286(),
-                   new CswUpdateMetaData_02M_CIS52298A()
+                   new CswUpdateMetaData_02M_CIS52312(),
+                   new CswUpdateMetaData_02M_CIS53197(),
+                   new CswUpdateMetaData_02M_CIS52282(),
+                   new CswUpdateMetaData_02M_CIS52301(),
+                   new CswUpdateMetaData_02M_CIS53135(),
+                   new CswUpdateMetaData_02M_CIS51775(),
+                   new CswUpdateMetaData_02M_CIS52286(),
+                   new CswUpdateMetaData_02M_CIS52298A(),
+                   new CswUpdateMetaData_02M_CIS53248(),
+                   new CswUpdateMetaData_02M_CIS53120()
                 };
         } // _MetaDataScripts()
 
@@ -61,7 +63,8 @@ namespace ChemSW.Nbt.Schema
                    new CswUpdateSchema_02M_CIS52993(),
                    new CswUpdateSchema_02M_CIS51775B(),
                    new CswUpdateSchema_02M_CIS52789(),
-                   new CswUpdateSchema_02M_CIS52298B()
+                   new CswUpdateSchema_02M_CIS52298B(),
+                   new CswUpdateSchema_02M_CIS53248()
                 };
         } // _SchemaScripts()
 
