@@ -76,7 +76,8 @@ namespace ChemSW.Nbt.Sched
                     string Sql = "select nbtimportqueueid, state, itempk, pkcolumnname, sheetname, priority, importorder, tablename, coalesce(viewname, tablename) as sourcename, nodetypename from "
                         + QueueTableName + "@" + CAFDbLink + " iq"
                         + " join " + CswNbtImportTables.ImportDefOrder.TableName + " io on ( coalesce(viewname, tablename) = iq.sheetname )"
-                        + " where state = '" + State.I + "' or state = '" + State.U
+                        //TODO - remove ignoring Delete rows when we support Importing deleted nodes
+                        + " where state != '" + State.E + "' and state != '" + State.D //Much faster than (I or U)
                         + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, priority desc, importorder asc, nbtimportqueueid asc";
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
