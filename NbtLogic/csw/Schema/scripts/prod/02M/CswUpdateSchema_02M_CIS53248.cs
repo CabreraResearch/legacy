@@ -55,13 +55,10 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataNodeTypeProp material = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.Material );
                 material.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = _createMaterialPropertyView( material, nt.NodeTypeName );
-
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, material, true, IdentityTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, nt.NodeTypeId, material, true );
 
                 CswNbtMetaDataNodeTypeProp version = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.Version );
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, version, true, IdentityTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, nt.NodeTypeId, version, true );
 
                 CswNbtMetaDataNodeTypeProp newdraft = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.NewDraft );
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, newdraft, true, IdentityTab.TabId );
@@ -74,14 +71,9 @@ namespace ChemSW.Nbt.Schema
 
                 // Properties on Versions Tab 
                 CswNbtMetaDataNodeTypeProp versions = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.Versions );
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, versions, true, VersionsTab.TabId );
-                versions.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                 // Properties on CertDef Tab
                 CswNbtMetaDataNodeTypeProp currentapproved = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.CurrentApproved );
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, currentapproved, true, FirstTab.TabId );
-                currentapproved.removeFromLayout( CswEnumNbtLayoutType.Add );
-
                 CswNbtMetaDataNodeTypeProp obsolete = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.Obsolete );
                 CswNbtMetaDataNodeTypeProp retaincount = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.RetainCount );
                 CswNbtMetaDataNodeTypeProp retainquantity = nt.getNodeTypePropByObjectClassProp( CswNbtObjClassCertificateDefinition.PropertyName.RetainQuantity );
@@ -92,6 +84,15 @@ namespace ChemSW.Nbt.Schema
 
                 if( nt.NodeTypeName != "CertDef SPX" )
                 {
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, version, true, IdentityTab.TabId );
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, nt.NodeTypeId, version, true );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, versions, true, VersionsTab.TabId );
+                    versions.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, currentapproved, true, FirstTab.TabId );
+                    currentapproved.removeFromLayout( CswEnumNbtLayoutType.Add );
+
                     _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, obsolete, true, FirstTab.TabId );
                     obsolete.removeFromLayout( CswEnumNbtLayoutType.Add );
 
@@ -115,6 +116,9 @@ namespace ChemSW.Nbt.Schema
                 }
                 else
                 {
+                    version.removeFromAllLayouts();
+                    versions.removeFromAllLayouts();
+                    currentapproved.removeFromAllLayouts();
                     obsolete.removeFromAllLayouts();
                     retaincount.removeFromAllLayouts();
                     retainquantity.removeFromAllLayouts();
