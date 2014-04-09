@@ -24,6 +24,11 @@ namespace ChemSW.Nbt.Schema
             get { return "MLM2: Add default OC for Method Condition"; }
         }
 
+        public override string AppendToScriptName()
+        {
+            return "B";
+        }
+
         public override void update()
         {
             CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodConditionClass );
