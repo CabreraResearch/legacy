@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using ChemSW;
 using ChemSW.Core;
@@ -8,7 +7,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
@@ -36,7 +34,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtNode Node = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
-                    if( null != Node )
+                    if( null != Node && GenericRequest.MetaDataName == Node.getNodeType().NodeTypeName )
                     {
                         Return.NodeId = GenericRequest.NodeId;
                         Return.NodeName = Node.NodeName;
@@ -47,7 +45,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         {
                             Return.PropertySet = propSet.Name;
                         }
-                        Return.URI = "api/v1/" + Node.getNodeType().NodeTypeName + "/" + GenericRequest.NodeId.PrimaryKey; //TODO: this URI needs to have the "localhost/NbtDev" part
+                        Return.URI = BuildURI( Return.NodeType, Node.NodeId.PrimaryKey );
 
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         CswNbtMetaDataNodeType NodeType = Node.getNodeType();
@@ -64,6 +62,10 @@ namespace NbtWebApp.WebSvc.Logic.API
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
             }
+            else
+            {
+                Return.Status = HttpStatusCode.Forbidden;
+            }
 
         }
 
@@ -76,9 +78,24 @@ namespace NbtWebApp.WebSvc.Logic.API
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
                     if( null != NodeType )
                     {
-                        foreach( KeyValuePair<CswPrimaryKey, string> pair in NodeType.getNodeIdAndNames( false, false ) )
+                        CswNbtView GetNodeTypeView = new CswNbtView( _CswNbtResources );
+                        GetNodeTypeView.AddViewRelationship( NodeType, false );
+                        ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( GetNodeTypeView, true, false, false );
+                        for( int i = 0; i < tree.getChildNodeCount(); i++ )
                         {
-                            Return.Add( pair.Value, pair.Key, NodeType.NodeTypeName, string.Empty, string.Empty );
+                            tree.goToNthChild( i );
+                            CswNbtNodeKey nodeKey = tree.getNodeKeyForCurrentPosition();
+                            CswPrimaryKey nodeId = tree.getNodeIdForCurrentPosition();
+                            CswNbtMetaDataObjectClass objectClass = _CswNbtResources.MetaData.getObjectClass( nodeKey.ObjectClassId );
+                            CswNbtMetaDataPropertySet propSet = objectClass.getPropertySet();
+                            string propSetStr = string.Empty;
+                            if( null != propSet )
+                            {
+                                propSetStr = propSet.Name;
+                            }
+                            string nodeName = tree.getNodeNameForCurrentPosition();
+                            Return.Add( nodeName, nodeId, NodeType.NodeTypeName, objectClass.ObjectClassName, propSetStr, BuildURI( NodeType.NodeTypeName, nodeKey.NodeId.PrimaryKey ) );
+                            tree.goToParentNode();
                         }
                     }
                     else

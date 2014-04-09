@@ -179,6 +179,7 @@
                     values: LanguageOptions,
                     readonlyless: cswPrivate.OperationData.Languages.readonlyless,
                     readonlymore: cswPrivate.OperationData.Languages.readonlymore,
+                    EditMode: Csw.enums.editMode.Edit,
                     onChange: function (updatedValues) {
                         Csw.iterate(LanguageOptions, function (lang) {
                             lang.selected = false;
@@ -216,6 +217,7 @@
                     values: CountryOptions,
                     readonlyless: cswPrivate.OperationData.Countries.readonlyless,
                     readonlymore: cswPrivate.OperationData.Countries.readonlymore,
+                    EditMode: Csw.enums.editMode.Edit,
                     onChange: function (updatedValues) {
                         Csw.iterate(CountryOptions, function (country) {
                             country.selected = false;

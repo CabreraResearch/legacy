@@ -153,10 +153,17 @@ namespace ChemSW.Nbt.ObjClasses
                         ViewSDS.setHidden( true, false );
                     }
                 } );
-
+            //Never show these properties on Constituents
             if( IsConstituent.Checked == CswEnumTristate.True )
             {
                 AssignedSDS.setHidden( true, false );
+                Receive.setHidden( true, false );
+                ApprovedForReceiving.setHidden( true, false );
+                Supplier.setHidden( true, false );
+                PartNumber.setHidden( true, false );
+                ContainerExpirationLocked.setHidden( true, false );
+                OpenExpireInterval.setHidden( true, false );
+                Request.setHidden( true, false );
             }
             Jurisdiction.SetSelected = delegate()
             {

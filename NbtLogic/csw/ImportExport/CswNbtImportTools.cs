@@ -132,13 +132,15 @@ namespace ChemSW.Nbt.csw.ImportExport
             //add a / before the first trigger and split the file into an array of strings on space-only preceded / chars (breaking off potential PL/SQL blocks)
             string[] SQLCommands = Regex.Split( CAFSql
                              .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
-                             .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" ),
+                             .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" )
+                             .Replace( "/*+", "*+" ),//Strip slash out of Oracle Hints to prevent splitting the view query
                          @"\s+/" );
 
-
-
-            foreach( string SQLCommand in SQLCommands )
-            {   //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
+            foreach( string Command in SQLCommands )
+            {   
+                //If we stripped a slash out of an Oracle Hint, put it back in
+                string SQLCommand = Command.Replace( "*+", "/*+" );
+                //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
                 if( SQLCommand.Trim().StartsWith( "begin" ) || SQLCommand.Trim().StartsWith( "create or replace trigger" ) || SQLCommand.Trim().StartsWith( "create or replace procedure" ) )
                 {
                     CAFConnection.execArbitraryPlatformNeutralSql( SQLCommand );

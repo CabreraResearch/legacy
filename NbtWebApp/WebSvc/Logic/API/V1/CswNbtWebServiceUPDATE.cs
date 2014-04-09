@@ -3,9 +3,8 @@ using System.Net;
 using ChemSW;
 using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
@@ -33,10 +32,17 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtNode Node = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
-                    if( null != Node )
+                    if( null != Node && GenericRequest.MetaDataName == Node.getNodeType().NodeTypeName )
                     {
-                        CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        SdTabsAndProps.saveNodeProps( Node, GenericRequest.PropData );
+                        if( null != GenericRequest.ResourceToUpdate )
+                        {
+                            foreach( string propKey in GenericRequest.ResourceToUpdate.PropertyData.properties.Keys )
+                            {
+                                CswNbtWcfProperty wcfProp = GenericRequest.ResourceToUpdate.PropertyData.properties[propKey];
+                                ReadPropertyData( Node, wcfProp );
+                            }
+                        }
+
                         if( Node.IsTemp )
                         {
                             Node.PromoteTempToReal();
@@ -55,6 +61,10 @@ namespace NbtWebApp.WebSvc.Logic.API
                 {
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
+            }
+            else
+            {
+                Return.Status = HttpStatusCode.Forbidden;
             }
         }
 

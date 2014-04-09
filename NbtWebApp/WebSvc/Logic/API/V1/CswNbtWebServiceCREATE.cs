@@ -5,9 +5,9 @@ using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
@@ -35,13 +35,20 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
-                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : true );
+                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp : GenericRequest.Properties.Count > 0, OnAfterMakeNode : delegate( CswNbtNode node )
+                        {
+                            foreach( CswNbtWcfProperty WcfProp in GenericRequest.Properties )
+                            {
+                                ReadPropertyData( node, WcfProp );
+                            }
+                        } );
+
 
                     Return.NodeId = NewNode.NodeId;
                     Return.NodeName = NewNode.NodeName;
                     Return.NodeType = NewNode.getNodeType().NodeTypeName;
                     Return.ObjectClass = NewNode.ObjClass.ObjectClass.ObjectClassName;
-                    Return.URI = "api/v1/" + NodeType.NodeTypeName + "/" + NewNode.NodeId.PrimaryKey; //TODO: this URI is incomplete
+                    Return.URI = BuildURI( NodeType.NodeTypeName, NewNode.NodeId.PrimaryKey );
 
                     CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Return.PropertyData = ConvertPropertyData( CswConvert.ToJObject( SdTabsAndProps.getProps( NewNode, string.Empty, null, CswEnumNbtLayoutType.Add )["properties"] ) );
@@ -52,6 +59,10 @@ namespace NbtWebApp.WebSvc.Logic.API
                 {
                     Return.Status = HttpStatusCode.InternalServerError;
                 }
+            }
+            else
+            {
+                Return.Status = HttpStatusCode.Forbidden;
             }
         }
 

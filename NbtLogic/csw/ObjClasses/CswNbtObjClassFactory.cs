@@ -187,6 +187,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassJurisdiction( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.Level:
+                    ReturnVal = new CswNbtObjClassLevel( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
@@ -229,6 +233,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.MethodCharacteristicClass:
+                    ReturnVal = new CswNbtObjClassMethodCharacteristic( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.MethodConditionClass:

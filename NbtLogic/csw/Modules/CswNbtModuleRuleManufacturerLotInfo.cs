@@ -66,10 +66,7 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.ViewCofA );
             }
 
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
-            {
-                CswNbtModuleRuleMLM.setReceiptLotPermissions( _CswNbtResources, false );
-            }
+            CswNbtModuleRuleMLM.setReceiptLotPermissions( _CswNbtResources, false );
 
         } // OnDisable()
     } // class CswNbtModuleRuleCofA

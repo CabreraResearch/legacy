@@ -6,6 +6,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -140,13 +141,14 @@ namespace ChemSW.Nbt.PropTypes
                 bool first = true;
                 foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
-                    if( Int32.MinValue == ConstrainToObjectClassId ||                                              //  no constraint, or
-                        ( FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() &&                        //  constraint is object-class-based and
-                          NodeType.ObjectClassId == ConstrainToObjectClassId ) ||                                  //   constraint matches object class, or 
-                        ( FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() &&                        //  constraint is property-set-based and
-                          null != NodeType.getObjectClass() &&                                                     //   nodetype has an object class and 
-                          null != NodeType.getObjectClass().getPropertySet() &&                                    //   object class has a property set and 
-                          NodeType.getObjectClass().getPropertySet().PropertySetId == ConstrainToObjectClassId ) ) //   constraint matches property set
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) &&          // has view permissions (CIS-52993) and
+                        ( Int32.MinValue == ConstrainToObjectClassId ||                                                //  no constraint, or
+                          ( FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() &&                          //  constraint is object-class-based and
+                            NodeType.ObjectClassId == ConstrainToObjectClassId ) ||                                    //   constraint matches object class, or 
+                          ( FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() &&                          //  constraint is property-set-based and
+                            null != NodeType.getObjectClass() &&                                                       //   nodetype has an object class and 
+                            null != NodeType.getObjectClass().getPropertySet() &&                                      //   object class has a property set and 
+                            NodeType.getObjectClass().getPropertySet().PropertySetId == ConstrainToObjectClassId ) ) ) //   constraint matches property set
                     {
                         DataRow NTRow = Data.NewRow();
                         NTRow[NameColumn] = NodeType.NodeTypeName;            // latest name
@@ -210,7 +212,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            CswCommaDelimitedString NewSelectedNodeTypeIds = new CswCommaDelimitedString();
+            CswCommaDelimitedString NewSelectedNodeTypeIds = SelectedNodeTypeIds;
 
             CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
             if( null != JObject[_ElemName_Options] )
@@ -219,9 +221,16 @@ namespace ChemSW.Nbt.PropTypes
             }
             foreach( CswCheckBoxArrayOptions.Option Option in CBAOptions.Options )
             {
-                if( Option.Values.Count > 0 && true == Option.Values[0] )
+                if( Option.Values.Count > 0 )
                 {
-                    NewSelectedNodeTypeIds.Add( Option.Key );
+                    if( Option.Values.Count > 0 && true == Option.Values[0] )
+                    {
+                        NewSelectedNodeTypeIds.Add( Option.Key );
+                    }
+                    else if( false == Option.Values[0] )
+                    {
+                        NewSelectedNodeTypeIds.Remove( Option.Key );
+                    }
                 }
             }
             SelectedNodeTypeIds = NewSelectedNodeTypeIds;

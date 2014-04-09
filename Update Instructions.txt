@@ -1,0 +1,219 @@
+ All Releases
+
+    Notifications:
+        STAGING: Send notification E-Mail to nbt@chemsw.com outlining server target and start time.
+        PRODUCTION: Send notification email to nbt customers and nbt@chemsw.com of scheduled update (use view contained in nbtmgr schema, MUST update email list each month)
+    Check for milestone-specific changes to these instruction (below)
+    Production: backup all customer schemata (use 10.55.17.146 to backup to)
+    Staging: reset all schema passwords using CSWConfixUX
+    Login to TeamCity
+        Authorize the Production agent if doing a production update
+        Select the Project 00 - Production Release
+        Next to the 'Deploy to Production' task, click 'Run'. Wait for success.
+        Next to the 'Run Schema Updater' task, click 'Run'. Wait for success.
+        Deauthorize the production agent if doing a production update
+    Send notification E-Mail to nbt@chemsw.com outlining server target and completion status once the update is finished
+
+Deprecated steps:
+
+    ** IMPORTANT ** Stop and disable PA Server Monitor to prevent NBT services from restarting during update process.
+    (Deprecated) Verify that the installed version of TortoiseHg is up to date. (Click Help - About).
+    (Deprecated) Verify that the Kiln extensions for TortoiseHg are up to date.
+        (Deprecated) Tortoise should now do this check for you automatically.
+    (Deprecated) Determine what the correct Nbt Release Tag will be (QA is a good place to start)
+    (Deprecated) Execute /kiln/Nbt/Build/Scripts/Production/UpdateReposToTag.bat with the appropriate Release Tag.
+        (Deprecated) /kiln/Nbt/Build/Scripts/Production/UpdateReposToTag.bat
+        (Deprecated) Enter release tag.
+    (Deprecated) Execute /kiln/Nbt/Nbt/Scripts/Production/NbtUpdate.bat with the appropriate log.txt parameter.
+        (Deprecated) /kiln/Nbt/Nbt/Scripts/Production/NbtUpdate.bat D:\kiln > d:\log.txt 2>&1
+        (Deprecated) After update, open d:\log.txt and navigate to "Listing Updated Customer Schema Versions" and verify schema versions.
+    Enable and restart PA Server Monitor
+
+02 - Larch (Mar 2014):
+
+    Scheduled Rules:
+        The ContainerRecords rule must be enabled on the WFU schema.
+    C3:
+        Execute C:\Users\ClientAdmin\Desktop\pullC3.bat
+        Execute C:\Users\ClientAdmin\Desktop\C3Update.bat
+        Run ConfigUX.exe located inside D:\kilnC3\common\CswCommon\bin\Release and make sure that the pick-list is set to "c3."
+        Set the C3AccessId setup variable value in NBT to "c3." 
+
+02 - Katsura (Feb 2014):
+
+    Accelrys Direct:
+        Direct must be installed for properly functioning of ACD searches in ChemCat. The files can be fetched from https://accelrysdlc.subscribenet.com with the following credentials:
+             username: support@accelrys.com
+             password: ESD*JFM*14-1
+        Download the version of the installer for Accelrys Direct 9.0 HF2 for the appropriate operating system where the chemcat database runs, and download the relevant installation documentation.
+        Remotely copy the installer to the database's machine.
+        Following the installation instructions, install Direct to the server and the schema cartridge on the ChemCat schema.
+    C3:
+        Create a datapipe ticket to copy c3test@chemcat to chemcatc3@chemcat. Overwrite any existing data in chemcatc3@chemcat.
+        Execute C:\Users\ClientAdmin\Desktop\pullC3.bat
+        Execute C:\Users\ClientAdmin\Desktop\C3Update.bat
+        Run ConfigUX.exe located inside D:\kilnC3\common\CswCommon\bin\Release and make sure that the pick-list is set to "c3."
+        Set the C3AccessId setup variable value in NBT to "c3." 
+
+02 - Hickory (Dec 2013):
+
+    C3:
+        Execute C:\Users\ClientAdmin\Desktop\pullC3.bat
+        Execute C:\Users\ClientAdmin\Desktop\C3Update.bat
+        Run ConfigUX.exe located inside D:\kilnC3\common\CswCommon\bin\Release and make sure that the pick-list is set to "c3test."
+        Set the C3AccessId setup variable value in NBT to "c3test." 
+
+02 - Ginkgo (Nov 2013):
+
+    After the update, navigate to fonts/ and install all fonts (for case 30761).
+    Run CswConfigUX and set the "UseMasterForDd" setup variable to 0 (for case 31010).
+    C3:
+        Execute C:\Users\ClientAdmin\Desktop\pullC3.bat
+        Execute C:\Users\ClientAdmin\Desktop\C3Update.bat
+        Navigate to D:\kilnC3\common\CswConfigUX\bin and copy the 'etc' folder.
+        Navigate to D:\kilnC3\common\CswCommon\bin and paste the 'etc' folder.
+        Run ConfigUX.exe located inside D:\kilnC3\common\CswCommon\bin\Release and make sure that the pick-list is set to "c3."
+
+02 - Foxglove (Oct 2013):
+
+    C3:
+        Navigate to D:\kilnC3\common. Rename the 'CswConfigUI' folder to 'CswConfigUX'
+        Execute C:\Users\ClientAdmin\Desktop\pullC3.bat
+        Execute C:\Users\ClientAdmin\Desktop\C3Update.bat
+        Run ConfigUX.exe (not ConfigUI) located in D:\kilnC3\common\CswConfigUX\bin\Release
+        Make sure that the c3test schema is not deactivated
+        Change the selected option in the pick-list on the bottom right to "c3test" if it isn't already selected
+
+02 - Eucalyptus (07-SEP-2013):
+02 - Dogwood (10-AUG-2013):
+
+    Prior to update: Purge the entire contents of session_data for each customer schemata
+    Following update:
+        Confirm that the setup variable values in ConfigUX (new) match those in ConfigUI (old)
+        Update IIS:
+            Update the web application target in IIS to point to D:\CswLive\WebApp.
+            Remove the "mobile" virtual directories from the web app in IIS.
+            Disable and stop the Cedar version of the Log Service and Schedule Service, and start the Dogwood versions.
+    C3:
+        Run ConfigUX.exe and set:
+            The C3UrlStem variable to "http://localhost/c3/Search.svc"
+            The C3AccessId variable to "c3test"
+        Execute C:\Users\ClientAdmin\Desktop\pullC3.bat.
+        Execute C:\Users\ClientAdmin\Desktop\C3Update.bat.
+        Run ConfigUI.exe located in D:\kilnC3\common\CswConfigUI\bin\Release. 
+        Deactivate the "c3" schema and activate the "c3test" schema.
+        Change the selected option in the pick-list on the bottom right from "c3" to "c3test."
+
+02 - Cedar (Release Notes):
+
+    Revert local changes made to kiln/Nbt/Nbt/NbtWebApp/web.config using Tortoise.
+    Correct Mobile paths in IIS
+        Open IIS Manager
+        Delete the existing Mobile virtual directory (this will not change the files on disk)
+        Select the NBT Web App
+        Add a new virtual directory named "mobile" which targets the incandescent > chemsw-fe > landing folder (e.g.  D:\kiln\incandescentsw\chemsw-fe\landing)
+        Right click the "mobile" virtual directory and create a new virtual directory "simobile" which targers incandescent > chemsw-fe > simobile > release (e.g. D:\kiln\incandescentsw\chemsw-fe\simobile\release)
+        Right click the "mobile" virtual directory and create a new virtual directory "cispromobile" which targers incandescent > chemsw-fe > simobile > release (e.g. D:\kiln\incandescentsw\chemsw-fe\cispromobile\release)
+        Make sure both "simobile" and "cispromobile" have a default document of "index.html".
+    Update the link to Mobile in the ChemSW portal page to point to the new Mobile app choosing page:
+    https://nbtlive.chemswlive.com/nbtwebapp/landing/index.html
+    Delete the Dev.html file (if present)
+        Open Windows Explorer
+        Navigate to the NbtWebApp folder (e.g. D:\kiln\Nbt\Nbt\NbtWebApp)
+        If present, delete the file named "Dev.html"
+    Run ConfigUI.exe and set:
+        The C3UrlStem variable to "http://localhost/c3/Search.svc"
+        The C3AccessId variable to "c3"
+    Execute C:\Users\ClientAdmin\Desktop\pullC3.bat.
+    Execute C:\Users\ClientAdmin\Desktop\C3Update.bat.
+    Execute C:\Users\ClientAdmin\Desktop\C3DatabaseUpdate.bat.
+
+02 - Buckeye:
+
+    Run ConfigUI.exe and set:
+        The SystemFailureNotifyEmail variable to "nbtservernotice@chemsw.com"
+        The C3UrlStem variable to "http://localhost/c3/Search.svc"
+        The C3AccessId variable to "c3test"
+    Execute C:\Users\ClientAdmin\Desktop\pullC3.bat.
+    Execute C:\Users\ClientAdmin\Desktop\C3Update.bat.
+    Add the Crystal Report HTML content to IIS
+        If present, pull the ThirdParty/Crystal repo.
+        If not present, clone the ThirdParty/Crystal repo from https://fogbugz.chemswlive.com/kiln/Code/Tools/ThirdParty/Crystal
+        Open IIS
+        Add a virtual directory, named "crystal" which targets the local ThirdParty/Crystal repo identified above.
+
+ 
+02 - Aspen (04-MAY-2013):
+
+    Delete the 'NbtServices' application from IIS
+    Run ConfigUI.exe and set the SupportEmail variable to "enterprisesupport@chemsw.com".
+    Verify that the C3UrlStem variable is set to "https://nbtlive.chemswlive.com/c3/Search.svc".
+
+ 
+01 - Yorick (04-APR-2013):
+
+    After the build, run ConfigUI.exe and set ShowFullExceptions to false. Also make sure that the C3UrlStem variable is present.
+
+01 - William:
+
+    Run ConfigUI.exe and set the SchedServiceUri variable to "http://localhost:8010/SchedService/".
+
+01 - Viola:
+01 - Ursula (05-JAN-2013):
+
+    No additional steps required
+
+01 - Titania (01-DEC-2012):
+01 - Sebastian:
+01 - Romeo (Patches):
+
+    No additional steps required for patches.
+
+01 - Romeo:
+
+    Follow updated IIS Config instructions for adding new Handler mapping to IIS Root (Step 3.5)
+    Ensure NbtWebApp is ready for SSL + WCF following notes in IIS Config
+    Update repository aliases to use NbtProd project as 'default'.  "Main" no longer exists.
+
+01 - Quince:
+01 - Prospero
+
+    The UpdateReposToTag.bat and UpdateNbt.bat scripts have changed in Prospero. Execute UpdateReposToTag.bat twice to ensure that changes are correctly applied.
+
+01 - Othello
+
+    Before the update: Execute pullMain.bat to get the latest release scripts. Then follow the All Releases instructions.
+    After the update: From updated  IIS instructions, run "ServiceModelReg.exe -r"
+
+01 - Nestor
+
+    Tag name: Nestor_2012.5.8.1
+    Fix the NBT repository on production -- it has changesets that are not in Main, mostly having to do with web.config.  This may involve pushing from production, or stripping changesets.
+    Run ConfigUI.exe and redirect all accessids from CISLIVE02 to NBTLIVE before running the update.
+
+01 - Mercutio
+
+    - Update paths to Kiln repositories to new URL (https://fogbugz.chemswlive.com/kiln) prior to running any scripts.
+    - Update the Oracle client as needed
+    - Update IIS as needed
+    - Install Microsoft Access Database Engine 2010 Redistributable x64
+    Update setup variable UpdtShellWaitMsec to 120000.
+
+01 - Lear
+
+Prior to the installation of NBT:
+
+    Add a unique constraint to the sessionlist's sessionid column on the Nbt Manager schema: 
+
+    alter table SESSIONLIST
+      add constraint sessionlist_sessionid unique (SESSIONID);
+
+    Remove deprecated customer access IDs from ConfigUI.
+
+Following the installation of NBT:
+
+    Setup Variable 'cachemetadata' should be 0
+    All IMCS Schemata should have SI turned off (true on the Staging data)
+    All SI Schemata (Betas) should have IMCS turned off (true on the Staging data)
+    Inspect the  CswSetupVbls.xml file. If the VblItem name "SessionListAccessId" is present, delete it.
+    Inspect the CswDbConfigInfo.xml file. Ensure that masterschema value === the Nbt Manager accessid.

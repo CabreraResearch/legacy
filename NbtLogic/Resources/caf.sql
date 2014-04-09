@@ -365,7 +365,8 @@ AS
                    WHERE  p.DELETED = 0) 
            GROUP  BY MATERIALID, 
                      DELETED) 
-  SELECT v.VENDORID, 
+  SELECT /*+ ORDERED USE_HASH(cpv)  */
+         v.VENDORID, 
          p.PACKAGEID, 
          p.PRODUCTNO, 
          m."AQUEOUS_SOLUBILITY", 
@@ -1050,65 +1051,50 @@ SELECT p.productno,
 --Material Components
 create or replace view materialcomps_view as
 select componentcasnoid || '_' || pk.packageid as legacyid,
-       mc.materialid || '_' || componentcasnoid as constituentid,
+       cc.materialid || '_' || cc.componentcasnoid as constituentid,
        pk.packageid,
        quantity,
-       mc.deleted
-  from component_casnos mc
-  join packages pk on pk.materialid = mc.materialid
- where mc.deleted = 0
-   and mc.componentmaterialid is null
- 
+       cc.deleted
+  from component_casnos cc
+  join packages pk on pk.materialid = cc.materialid
+ where cc.deleted = 0
+   and cc.componentmaterialid is null
+
  union
- 
+
  select componentcasnoid || '_' || pk.packageid as legacyid,
-       '' || mc.materialid as constituentid,
+       cc.materialid || '_' || cc.componentcasnoid as constituentid,
        pk.packageid a,
        quantity,
-       mc.deleted
-  from component_casnos mc
-  join packages pk on pk.materialid = mc.materialid
- where mc.deleted = 0
+       cc.deleted
+  from component_casnos cc
+  join packages pk on pk.materialid = cc.materialid
+ where cc.deleted = 0
    and pk.deleted = 0
-   and mc.componentmaterialid is not null;
+   and cc.componentmaterialid is not null;
 
 --Constituents
-create or replace view constituents_view as
-select mc.materialid || '_' || mc.componentcasnoid as legacyid,
-       mc.componentname as name,
-       mc.casno,
+CREATE OR REPLACE VIEW CONSTITUENTS_VIEW AS
+select cc.materialid || '_' || cc.componentcasnoid as legacyid,
+       cc.componentname as name,
+       cc.casno,
        '' as einecs,
        deleted
-  from component_casnos mc
- where mc.deleted = 0
-   and mc.componentmaterialid is null
- 
+  from component_casnos cc
+ where cc.deleted = 0
+   and cc.componentmaterialid is null
+
  union
- 
- SELECT '' || m.materialid as legacyid, 
-        m.materialname as name, 
-        m.casno, 
-        m.einecs, 
+
+ SELECT cc.materialid || '_' || cc.componentcasnoid as legacyid,
+        m.materialname as name,
+        m.casno,
+        m.einecs,
         m.deleted
   FROM materials m
   join materials_subclass ms ON ms.MATERIALSUBCLASSID =
                                 m.MATERIALSUBCLASSID
   join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
   join component_casnos cc on cc.componentmaterialid = m.materialid
- WHERE m.DELETED = 0
-   AND mc.CLASSNAME <> 'CONSTITUENT'
-   
-   union
-   
-   SELECT '' || m.materialid as legacyid, 
-          m.materialname as name, 
-          m.casno, 
-          m.einecs, 
-          m.deleted
-  FROM materials m
-  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
-                                m.MATERIALSUBCLASSID
-  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
- WHERE m.DELETED = 0
-   AND mc.CLASSNAME = 'CONSTITUENT';
-
+ WHERE m.DELETED = 0;
+  

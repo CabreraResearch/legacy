@@ -400,31 +400,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             LogicalSetXmlDoc = new XmlDocument();
 
-            // Kludge for nodetype permissions...
-            if( this.ObjectClassPropName == CswNbtObjClassRole.PropertyName.NodeTypePermissions )
-            {
-                // Have to map the nodetypes
-                ResetXml();
-                XmlDocument TempXmlDoc = new XmlDocument();
-                TempXmlDoc.LoadXml( PropRow[_ElemName_LogicalSetXml].ToString() );
-                XmlNodeList YValueNodes = TempXmlDoc.ChildNodes[0].SelectNodes( "YValue" );
-                foreach( XmlNode YValueNode in YValueNodes )
-                {
-                    Int32 YValue = CswConvert.ToInt32( YValueNode.Attributes["y"].Value );
-                    if( NodeTypeMap.ContainsKey( YValue ) && NodeTypeMap[YValue] != Int32.MinValue )
-                    {
-                        foreach( XmlNode XValueNode in YValueNode.ChildNodes )
-                        {
-                            SetValue( XValueNode.Name, NodeTypeMap[YValue].ToString(), ( XValueNode.InnerText == "1" ) );
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // Load verbatim
-                setXml( PropRow[_ElemName_LogicalSetXml].ToString() );
-            }
+            setXml( PropRow[_ElemName_LogicalSetXml].ToString() );
+
             Save();
         } // ReadDataRow()
 

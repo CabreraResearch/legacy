@@ -481,7 +481,7 @@
                         PropertySetId: Csw.number(cswPrivate.propertySetId, 0),
                         ObjectClass: Csw.string(cswPrivate.objectClassName),
                         RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
-                        RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId)
+                        RelatedToNodeId: Csw.string(cswPrivate.relatedTo.relatednodeid)
                     },
                     success: function (data) {
                         //Case 28798 - we only want the else condition if we expected results, but didn't get any.

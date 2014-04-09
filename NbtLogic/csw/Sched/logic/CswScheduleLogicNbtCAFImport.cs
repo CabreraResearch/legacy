@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Sched
                                 break;//We've changed NodeTypes - we'll pick them up next time around
                             }
                             ImportQueuePKs.Add( QueueRow[QueuePkName].ToString() );
-                            ItemPKs.Add( QueueRow["itempk"].ToString() );
+                            ItemPKs.Add( "'" + QueueRow["itempk"] + "'" );
                         }
 
                         string ItemSql = "select * from " + QueueRowDef["sourcename"] + "@" + CAFDbLink +
@@ -345,13 +345,17 @@ namespace ChemSW.Nbt.Sched
                     case "containers_view":
                         WhenClause = "new.containerclass != 'lotholder'";
                         break;
+                    case "constituents_view":
+                        TableName = "component_casnos";
+                        ItemSubquery = "select :new.materialid || '_' || :new.componentcasnoid as primarykey from dual";
+                        break;
                 }
 
 
 
                 Ret += "\r\n\r\n" +
                        "create or replace trigger " + TriggerName + "_trigger" + "\r\n" +
-                       "  after insert or update on " + Row["tablename"] + "\r\n" +
+                       "  after insert or update on " + TableName + "\r\n" +
                        "for each row" + "\r\n";
 
                 if( false == String.IsNullOrEmpty( WhenClause ) ) { Ret += "  when (" + WhenClause + ")\r\n"; }

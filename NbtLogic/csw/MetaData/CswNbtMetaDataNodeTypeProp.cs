@@ -752,7 +752,7 @@ namespace ChemSW.Nbt.MetaData
         public bool Hidden
         {
             get { return CswConvert.ToBoolean( _NodeTypePropRow["hidden"] ); }
-            set { _setAttribute( "hidden", value, true ); }
+            private set { _setAttribute( "hidden", value, true ); }
         }
 
         #region FK Matching

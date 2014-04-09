@@ -5,7 +5,6 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Search;
 using ChemSW.Nbt.WebServices;
-using NbtWebApp.Services;
 using NbtWebApp.WebSvc.Logic.API.DataContracts;
 
 namespace NbtWebApp.WebSvc.Logic.API
@@ -53,7 +52,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                         PropSetName = propSet.Name;
                     }
 
-                    Return.Add( Name, NodeKey.NodeId, nt.NodeTypeName, oc.ObjectClassName, PropSetName );
+                    Return.Add( Name, NodeKey.NodeId, nt.NodeTypeName, oc.ObjectClassName, PropSetName, BuildURI( nt.NodeTypeName, NodeKey.NodeId.PrimaryKey ) );
                     results.goToParentNode();
                 }
 

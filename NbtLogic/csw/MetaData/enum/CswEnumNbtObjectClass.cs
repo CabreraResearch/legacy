@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.MetaData
             { InventoryGroupPermissionClass     , InventoryGroupPermissionClass      },
             { InventoryLevelClass               , InventoryLevelClass                },
             { JurisdictionClass                 , JurisdictionClass                  },
+            { Level                             , Level                              },
             { LocationClass                     , LocationClass                      },
             { LQNoClass                         , LQNoClass                          },
             { MailReportClass                   , MailReportClass                    },
@@ -63,6 +64,7 @@ namespace ChemSW.Nbt.MetaData
             { MaterialComponentClass            , MaterialComponentClass             },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
+            { MethodCharacteristicClass         , MethodCharacteristicClass          },
             { MethodConditionClass              , MethodConditionClass               },
             { NonChemicalClass                  , NonChemicalClass                   },
             { InspectionTargetClass             , InspectionTargetClass              },
@@ -186,6 +188,7 @@ namespace ChemSW.Nbt.MetaData
         public const string InventoryGroupPermissionClass = "InventoryGroupPermissionClass";
         public const string InventoryLevelClass = "InventoryLevelClass";
         public const string JurisdictionClass = "JurisdictionClass";
+        public const string Level = "LevelClass";
         public const string LocationClass = "LocationClass";
         public const string LQNoClass = "LQNoClass";
         public const string MailReportClass = "MailReportClass";
@@ -197,6 +200,7 @@ namespace ChemSW.Nbt.MetaData
         public const string MaterialSynonymClass = "MaterialSynonymClass";
         public const string MethodClass = "MethodClass";
         public const string MethodConditionClass = "MethodConditionClass";
+        public const string MethodCharacteristicClass = "MethodCharacteristicClass";
         public const string NonChemicalClass = "NonChemicalClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";

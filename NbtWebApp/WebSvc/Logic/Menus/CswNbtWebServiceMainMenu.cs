@@ -187,16 +187,12 @@ namespace ChemSW.Nbt.WebServices
                         Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
                         )
                     {
-                        string BadPropertyName = string.Empty;
-                        if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
-                        {
-                            MoreObj["Copy"] = new JObject();
-                            MoreObj["Copy"]["copytype"] = _getActionType( Node.getNodeType() );
-                            MoreObj["Copy"]["action"] = CswEnumNbtMainMenuActions.CopyNode.ToString();
-                            MoreObj["Copy"]["nodeid"] = Node.NodeId.ToString();
-                            MoreObj["Copy"]["nodename"] = Node.NodeName;
-                            MoreObj["Copy"]["nodetypeid"] = Node.NodeTypeId.ToString();
-                        }
+                        MoreObj["Copy"] = new JObject();
+                        MoreObj["Copy"]["copytype"] = _getActionType( Node.getNodeType() );
+                        MoreObj["Copy"]["action"] = CswEnumNbtMainMenuActions.CopyNode.ToString();
+                        MoreObj["Copy"]["nodeid"] = Node.NodeId.ToString();
+                        MoreObj["Copy"]["nodename"] = Node.NodeName;
+                        MoreObj["Copy"]["nodetypeid"] = Node.NodeTypeId.ToString();
                     }
 
                     // DELETE
