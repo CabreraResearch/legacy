@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using NbtWebApp.Actions.Receiving;
@@ -11,6 +12,17 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtWebServiceReceiving
     {
+        [DataContract]
+        public class CswNbtContainerBarcodeCheckReturn: CswWebSvcReturn
+        {
+            public CswNbtContainerBarcodeCheckReturn()
+            {
+                Data = string.Empty;
+            }
+            [DataMember]
+            public string Data;
+        }
+
         [DataContract]
         public class CswNbtReceivingDefinitionReturn: CswWebSvcReturn
         {
@@ -49,6 +61,32 @@ namespace ChemSW.Nbt.Actions
                 }
 
                 CswNbtWebServicePrintLabels.newPrintJob( CswResources, ReceivingDefiniton.PrinterNodeId, ReceivingDefiniton.PrintLabelId, ReceivingDefiniton.ContainerNodeId, PropVals );
+            }
+        }
+
+        public static void CheckContainerBarcodes( ICswResources CswResources, CswNbtContainerBarcodeCheckReturn ErrorMsg, Collection<CswNbtAmountsGridQuantity> Quantities )
+        {
+            CswCommaDelimitedString DuplicateBarcodes = new CswCommaDelimitedString();
+            HashSet<string> BarcodeLookup = new HashSet<string>();
+            foreach( CswNbtAmountsGridQuantity quantity in Quantities )
+            {
+                CswCommaDelimitedString barcodes = quantity.getBarcodes();
+                foreach( string barcode in barcodes )
+                {
+                    if( BarcodeLookup.Contains( barcode ) )
+                    {
+                        DuplicateBarcodes.Add( barcode );
+                    }
+                    else
+                    {
+                        BarcodeLookup.Add( barcode );
+                    }
+                }
+            }
+
+            if( false == DuplicateBarcodes.IsEmpty )
+            {
+                ErrorMsg.Data = "There are following barcodes appear more than once: " + DuplicateBarcodes.ToString();
             }
         }
 
