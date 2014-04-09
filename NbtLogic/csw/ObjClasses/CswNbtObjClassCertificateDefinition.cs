@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -11,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CertDefId = "CertDef Id";
             public const string Material = "Material";
             public const string Version = "Version";
-            public const string RetainNumber = "Retain Number";
+            public const string RetainCount = "Retain Count";
             public const string RetainQuantity = "Retain Quantity";
             public const string RetainExpiration = "Retain Expiration"; //Unit = Years
             public const string Approved = "Approved";
@@ -61,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText CertDefId { get { return _CswNbtNode.Properties[PropertyName.CertDefId]; } }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         public CswNbtNodePropNumber Version { get { return _CswNbtNode.Properties[PropertyName.Version]; } }
-        public CswNbtNodePropNumber RetainNumber { get { return _CswNbtNode.Properties[PropertyName.RetainNumber]; } }
+        public CswNbtNodePropNumber RetainCount { get { return _CswNbtNode.Properties[PropertyName.RetainCount]; } }
         public CswNbtNodePropQuantity RetainQuantity { get { return _CswNbtNode.Properties[PropertyName.RetainQuantity]; } }
         public CswNbtNodePropQuantity RetainExpiration { get { return _CswNbtNode.Properties[PropertyName.RetainExpiration]; } }
         public CswNbtNodePropLogical Approved { get { return _CswNbtNode.Properties[PropertyName.Approved]; } }
@@ -81,9 +83,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Dictionary<string, string> Ret = new Dictionary<string, string>();
 
-            //CswNbtMetaDataObjectClass LevelOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.Level );
-            //Dictionary<CswPrimaryKey, string> Levels = LevelOC.getNodeIdAndNames( false, false );
-            //Ret = Levels.Keys.ToDictionary( pk => pk.ToString(), pk => Levels[pk] );
+            CswNbtMetaDataObjectClass LevelOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.Level );
+            Dictionary<CswPrimaryKey, string> Levels = LevelOC.getNodeIdAndNames( false, false );
+            Ret = Levels.Keys.ToDictionary( pk => pk.ToString(), pk => Levels[pk] );
 
             return Ret;
         } // _initQualifiedManufacturerOnlyOptions()

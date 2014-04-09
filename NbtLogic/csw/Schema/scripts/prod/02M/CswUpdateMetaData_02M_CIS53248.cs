@@ -37,36 +37,36 @@ namespace ChemSW.Nbt.Schema
 
             // Create Object Class Props
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.CertDefId,
-                FieldType = CswEnumNbtFieldType.Text,
-                ServerManaged = true
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.CertDefId,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.Material,
-                FieldType = CswEnumNbtFieldType.Relationship,
-                IsRequired = true
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.Material,
+                    FieldType = CswEnumNbtFieldType.Relationship,
+                    IsRequired = true
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.Version,
-                FieldType = CswEnumNbtFieldType.Number
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.Version,
+                    FieldType = CswEnumNbtFieldType.Number
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.RetainNumber,
-                FieldType = CswEnumNbtFieldType.Number
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.RetainCount,
+                    FieldType = CswEnumNbtFieldType.Number
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.RetainQuantity,
-                FieldType = CswEnumNbtFieldType.Quantity
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.RetainQuantity,
+                    FieldType = CswEnumNbtFieldType.Quantity
+                } );
 
             CswNbtMetaDataNodeType UnitTimeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit Time" );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -79,76 +79,54 @@ namespace ChemSW.Nbt.Schema
 
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.Approved,
-                FieldType = CswEnumNbtFieldType.Logical
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.Approved,
+                    FieldType = CswEnumNbtFieldType.Logical
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.ApprovedDate,
-                FieldType = CswEnumNbtFieldType.DateTime,
-                ServerManaged = true
-            } );
-
-            // TODO: This needs to be a multilist of levels
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.QualifiedManufacturerOnly,
-                FieldType = CswEnumNbtFieldType.MultiList
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.ApprovedDate,
+                    FieldType = CswEnumNbtFieldType.DateTime,
+                    ServerManaged = true
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.CertDefSpecs,
-                FieldType = CswEnumNbtFieldType.Grid
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.QualifiedManufacturerOnly,
+                    FieldType = CswEnumNbtFieldType.MultiList
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.NewDraft,
-                FieldType = CswEnumNbtFieldType.Button
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.CertDefSpecs,
+                    FieldType = CswEnumNbtFieldType.Grid
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.CurrentApproved,
-                FieldType = CswEnumNbtFieldType.Logical,
-                ServerManaged = true
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.NewDraft,
+                    FieldType = CswEnumNbtFieldType.Button
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.Obsolete,
-                FieldType = CswEnumNbtFieldType.Logical
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.CurrentApproved,
+                    FieldType = CswEnumNbtFieldType.Logical,
+                    ServerManaged = true
+                } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertificateDefinition.PropertyName.Versions,
-                FieldType = CswEnumNbtFieldType.Grid
-            } );
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.Obsolete,
+                    FieldType = CswEnumNbtFieldType.Logical
+                } );
 
-            //Create the default Nodetype
-            _createNodeType( CertDefOC, "Certificate Definition" );
-            //Create other Nodetypes
-            _createNodeType( CertDefOC, "CertDef SPX" );
-            _createNodeType( CertDefOC, "CertDef SPR" );
-            _createNodeType( CertDefOC, "CertDef EP" );
-        }
-
-        private void _createNodeType( CswNbtMetaDataObjectClass objectClass, string nodeTypeName )
-        {
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( objectClass )
-            {
-                Category = "MLM",
-                IconFileName = "doc.png",
-                NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertificateDefinition.PropertyName.CertDefId ),
-                NodeTypeName = nodeTypeName,
-                ObjectClass = objectClass,
-                ObjectClassId = objectClass.ObjectClassId,
-                Searchable = true
-            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassCertificateDefinition.PropertyName.Versions,
+                    FieldType = CswEnumNbtFieldType.Grid
+                } );
         }
     }
 }
