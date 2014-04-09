@@ -46,8 +46,7 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Name,
                 FieldType = CswEnumNbtFieldType.List,
-                IsCompoundUnique = true,
-                ListOptions = "Temperature,Salinity"
+                IsCompoundUnique = true
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp

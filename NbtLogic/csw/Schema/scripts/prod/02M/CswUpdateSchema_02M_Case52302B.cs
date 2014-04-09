@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodConditionClass );
 
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( MethodConditionOC )
+            CswNbtMetaDataNodeType MethodConditionNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( MethodConditionOC )
                 {
                     Category = "MLM",
                     ObjectClass = MethodConditionOC,
@@ -41,6 +41,9 @@ namespace ChemSW.Nbt.Schema
                     NodeTypeName = "Method Condition",
                     Searchable = true
                 } );
+
+            CswNbtMetaDataNodeTypeProp MethodConditionNameProp = MethodConditionNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMethodCondition.PropertyName.Name );
+            MethodConditionNameProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = "Temperature, Salinity";
         }
 
     }
