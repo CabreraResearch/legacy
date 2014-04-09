@@ -24,6 +24,11 @@ namespace ChemSW.Nbt.Schema
             get { return "MLM2: Create new OC Testing Lab User Assignment"; }
         }
 
+        public override string AppendToScriptName()
+        {
+            return "B";
+        }
+
         public override void update()
         {
             CswNbtMetaDataObjectClass TestingLabUserAssignmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.TestingLabUserAssignmentClass);
