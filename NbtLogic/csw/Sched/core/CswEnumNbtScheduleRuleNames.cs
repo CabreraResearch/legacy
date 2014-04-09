@@ -22,7 +22,6 @@ namespace ChemSW.Nbt.Sched
             { MolData                       , MolData                        },
             { NodeCounts                    , NodeCounts                     },
             { PurgeSessionData              , PurgeSessionData               },
-            { SetMaterialObsolete           , SetMaterialObsolete            },
             { Reconciliation                , Reconciliation                 },
             { TierII                        , TierII                         },
             { UpdtInspection                , UpdtInspection                 },
@@ -102,7 +101,6 @@ namespace ChemSW.Nbt.Sched
         public const string UpdtPropVals = "UpdtPropVals";
         public const string UpdtMTBF = "UpdtMTBF";
         public const string ValidateAccessIds = "ValidateAccessIds";
-        public const string SetMaterialObsolete = "SetMaterialObsolete";
 
         #endregion Enum members
 

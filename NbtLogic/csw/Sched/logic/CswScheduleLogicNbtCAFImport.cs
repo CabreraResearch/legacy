@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Sched
             string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "' or state = '" + State.U + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
-            return CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] ); ;
+            return CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] );
         }
 
         public void threadCallBack( ICswResources CswResources )
@@ -69,89 +69,99 @@ namespace ChemSW.Nbt.Sched
                 CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
+                    Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    Int32 NumberOfCommits = 1000 / NumberToProcess;//CIS-53123 - process 1000 rows per rule iteration, committing every NumberToProcess rows
                     const string QueueTableName = "nbtimportqueue";
                     const string QueuePkName = "nbtimportqueueid";
 
-                    Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    string Sql = "select nbtimportqueueid, state, itempk, pkcolumnname, sheetname, priority, importorder, tablename, coalesce(viewname, tablename) as sourcename, nodetypename from "
-                        + QueueTableName + "@" + CAFDbLink + " iq"
-                        + " join " + CswNbtImportTables.ImportDefOrder.TableName + " io on ( coalesce(viewname, tablename) = iq.sheetname )"
-                        + " where state = '" + State.I + "' or state = '" + State.U
-                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, priority desc, importorder asc, nbtimportqueueid asc";
-
-                    CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
-                    DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false );
-                    if( QueueTable.Rows.Count > 0 )
+                    for( int c = 0; c < NumberOfCommits; c++ )
                     {
-                        Collection<String> ImportQueuePKs = new Collection<string>();
-                        CswCommaDelimitedString ItemPKs = new CswCommaDelimitedString();
-                        string ImportOrder = QueueTable.Rows[0]["importorder"].ToString();
-                        DataRow QueueRowDef = QueueTable.Rows[0];
+                        string Sql = "select nbtimportqueueid, state, itempk, pkcolumnname, sheetname, priority, importorder, tablename, coalesce(viewname, tablename) as sourcename, nodetypename from "
+                            + QueueTableName + "@" + CAFDbLink + " iq"
+                            + " join " + CswNbtImportTables.ImportDefOrder.TableName + " io on ( coalesce(viewname, tablename) = iq.sheetname )"
+                            //TODO - remove ignoring Delete rows when we support Importing deleted nodes
+                            + " where state != '" + State.E + "' and state != '" + State.D //Much faster than (I or U)
+                            + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, priority desc, importorder asc, nbtimportqueueid asc";
 
-                        CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
-                        foreach( DataRow QueueRow in QueueTable.Rows )
+                        CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
+                        DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false );
+                        if( QueueTable.Rows.Count > 0 )
                         {
-                            string CurrentTblNamePkCol = CswConvert.ToString( QueueRow["pkcolumnname"] );
-                            if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
-                            {
-                                throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"] );
-                            }
-                            if( QueueRow["importorder"].ToString() != ImportOrder )
-                            {
-                                break;//We've changed NodeTypes - we'll pick them up next time around
-                            }
-                            ImportQueuePKs.Add( QueueRow[QueuePkName].ToString() );
-                            ItemPKs.Add( "'" + QueueRow["itempk"] + "'" );
-                        }
+                            Collection<String> ImportQueuePKs = new Collection<string>();
+                            CswCommaDelimitedString ItemPKs = new CswCommaDelimitedString();
+                            string ImportOrder = QueueTable.Rows[0]["importorder"].ToString();
+                            DataRow QueueRowDef = QueueTable.Rows[0];
 
-                        string ItemSql = "select * from " + QueueRowDef["sourcename"] + "@" + CAFDbLink +
-                                         " where " + QueueRowDef["pkcolumnname"] + " in(" + ItemPKs + ")";
-
-                        CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
-                        DataTable ItemTable = ItemSelect.getTable();
-                        for( int i = 0; i < ItemTable.Rows.Count; i++ )
-                        {
-                            DataRow ItemRow = ItemTable.Rows[i];
-                            string NodetypeName = QueueRowDef["nodetypename"].ToString();
-                            bool Overwrite = QueueRowDef["state"].ToString().Equals( "U" );
-
-                            string Error = Importer.ImportRow( ItemRow, DefinitionName, NodetypeName, Overwrite );
-                            if( string.IsNullOrEmpty( Error ) )
+                            CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
+                            foreach( DataRow QueueRow in QueueTable.Rows )
                             {
-                                // record success - delete the record
-                                _CswNbtResources.execArbitraryPlatformNeutralSql( "delete from " + QueueTableName + "@" + CAFDbLink +
-                                                                                  " where " + QueuePkName + " = " + ImportQueuePKs[i] );
-                            }
-                            else
-                            {
-                                // truncate error to 2000 chars
-                                string SafeError = CswTools.SafeSqlParam( Error );
-                                if( SafeError.Length > 2000 )
+                                string CurrentTblNamePkCol = CswConvert.ToString( QueueRow["pkcolumnname"] );
+                                if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
                                 {
-                                    SafeError = SafeError.Substring( 0, 2000 );
+                                    throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"] );
                                 }
-                                // record failure - record the error on nbtimportqueue
-                                _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
-                                                                                  "   set state = '" + State.E + "', " +
-                                                                                  "       errorlog = '" + SafeError + "' " +
-                                                                                  " where " + QueuePkName + " = " + ImportQueuePKs[i] );
+                                if( QueueRow["importorder"].ToString() != ImportOrder )
+                                {
+                                    break;//We've changed NodeTypes - we'll pick them up next time around
+                                }
+                                ImportQueuePKs.Add( QueueRow[QueuePkName].ToString() );
+                                ItemPKs.Add( "'" + QueueRow["itempk"] + "'" );
                             }
-                        }
 
-                        Importer.Finish();
+                            string ItemSql = "select * from " + QueueRowDef["sourcename"] + "@" + CAFDbLink +
+                                             " where " + QueueRowDef["pkcolumnname"] + " in(" + ItemPKs + ")";
+
+                            CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
+                            DataTable ItemTable = ItemSelect.getTable();
+                            for( int i = 0; i < ItemTable.Rows.Count; i++ )
+                            {
+                                DataRow ItemRow = ItemTable.Rows[i];
+                                string NodetypeName = QueueRowDef["nodetypename"].ToString();
+                                bool Overwrite = QueueRowDef["state"].ToString().Equals( "U" );
+
+                                string Error = Importer.ImportRow( ItemRow, DefinitionName, NodetypeName, Overwrite );
+                                if( string.IsNullOrEmpty( Error ) )
+                                {
+                                    // record success - delete the record
+                                    _CswNbtResources.execArbitraryPlatformNeutralSql( "delete from " + QueueTableName + "@" + CAFDbLink +
+                                                                                      " where " + QueuePkName + " = " + ImportQueuePKs[i] );
+                                }
+                                else
+                                {
+                                    // truncate error to 2000 chars
+                                    string SafeError = CswTools.SafeSqlParam( Error );
+                                    if( SafeError.Length > 2000 )
+                                    {
+                                        SafeError = SafeError.Substring( 0, 2000 );
+                                    }
+                                    // record failure - record the error on nbtimportqueue
+                                    _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
+                                                                                      "   set state = '" + State.E + "', " +
+                                                                                      "       errorlog = '" + SafeError + "' " +
+                                                                                      " where " + QueuePkName + " = " + ImportQueuePKs[i] );
+                                }
+                            }
+
+                            Importer.Finish();
+                            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.LoadCount - NumberToProcess;
+                            //CIS-53123 - Commit every NumberToProcess rows (performes better than spawning a new thread every NumberToProcess rows)
+                            _CswNbtResources.finalize();
+                        }
+                        else
+                        {
+                            c = NumberOfCommits;//We're done importing!
+                        }
                     }
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
                 }//try
-
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtCAFImport::ImportItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
-
                 }//catch
 
             }//if we're not shutting down

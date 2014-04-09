@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( false == string.IsNullOrEmpty( LegacyId ) ) //Check for matching nodes using a view on legacy id
                 {
                     CswTableSelect LegacyNodeSelect = _CswNbtResources.makeCswTableSelect( "LegacyNodeSelect", "nodes" );
-                    DataTable LegacyNodesTable = LegacyNodeSelect.getTable( "where nodetypeid = " + Order.NodeType.NodeTypeId + " and legacyid = " + LegacyId );
+                    DataTable LegacyNodesTable = LegacyNodeSelect.getTable( "where nodetypeid = " + Order.NodeType.NodeTypeId + " and legacyid = '" + LegacyId + "'" );
                     if( LegacyNodesTable.Rows.Count > 0 )
                     {
                         if( Overwrite )
