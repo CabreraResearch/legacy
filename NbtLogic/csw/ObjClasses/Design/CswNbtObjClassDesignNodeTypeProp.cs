@@ -546,17 +546,23 @@ namespace ChemSW.Nbt.ObjClasses
                                 if( SelectedNTPTarget.Type == CswEnumNbtViewRelatedIdType.NodeTypeId )
                                 {
                                     CswNbtMetaDataNodeType SelectedTargetNT = (CswNbtMetaDataNodeType) SelectedNTPTarget.MetaDataValue;
-                                    foreach( CswNbtMetaDataNodeTypeProp OtherNTP in SelectedTargetNT.getNodeTypeProps() )
+                                    if( null != SelectedTargetNT )
                                     {
-                                        ret.Options.Add( new CswNbtNodeTypePropListOption( OtherNTP.PropName, OtherNTP.PropId.ToString() ) );
+                                        foreach( CswNbtMetaDataNodeTypeProp OtherNTP in SelectedTargetNT.getNodeTypeProps() )
+                                        {
+                                            ret.Options.Add( new CswNbtNodeTypePropListOption( OtherNTP.PropName, OtherNTP.PropId.ToString() ) );
+                                        }
                                     }
                                 }
                                 if( SelectedNTPTarget.Type == CswEnumNbtViewRelatedIdType.ObjectClassId )
                                 {
                                     CswNbtMetaDataObjectClass SelectedTargetOC = (CswNbtMetaDataObjectClass) SelectedNTPTarget.MetaDataValue;
-                                    foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedTargetOC.getObjectClassProps() )
+                                    if( null != SelectedTargetOC )
                                     {
-                                        ret.Options.Add( new CswNbtNodeTypePropListOption( OtherOCP.PropName + PropRefValue_OCP_Suffix, OtherOCP.PropId.ToString() ) );
+                                        foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedTargetOC.getObjectClassProps() )
+                                        {
+                                            ret.Options.Add( new CswNbtNodeTypePropListOption( OtherOCP.PropName + PropRefValue_OCP_Suffix, OtherOCP.PropId.ToString() ) );
+                                        }
                                     }
                                 }
                             }
