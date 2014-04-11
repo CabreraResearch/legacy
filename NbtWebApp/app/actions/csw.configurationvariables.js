@@ -13,34 +13,25 @@
         };
         if (options) Csw.extend(cswPrivate, options);
 
-        cswPrivate.update = function (configVarControls) {
+        cswPrivate.update = function (responseData) {
+            var responseDataObject = {
+                Data : responseData
+            }
 
-            //make array of objects whose key: name of config var
-            //and value = value of config var, then send to
-            //server
-            var responseObject = {
-              Data : []                  
-            };
-
-            Csw.each(cswPrivate.configVarControls, function(thisControlReference) {
-                var thisControl = thisControlReference[0];
-                var thisConfigVarName = thisControl.name;
-                var thisControlValue = thisControl.value;
-
-                var thisResponseObject = {
-                    variableName: thisConfigVarName,
-                    variableValue: thisControlValue
-                };
-                responseObject.Data.push(thisResponseObject);
-            });
-
+            //clear responseData after posting it to prevent the 
+            //data from being resent 
             Csw.ajaxWcf.post({
                 urlMethod: 'ConfigurationVariables/Update',
-                data: responseObject,
+                data: responseDataObject,
                 success: function (response) {
                     cswPrivate.init();
+                    cswPrivate.responseData = [];
+                },
+                error: function(response) {
+                    cswPrivate.responseData = [];
                 }
             });
+
         };
 
        cswPrivate.renderSection = function(ConfigVarsForModule, ModuleName, parentTable, tableRow) {
@@ -62,15 +53,21 @@
                                                  .input({
                         size: 35,
                         name: ConfigVarObject.variableName,
-                        value: ConfigVarObject.variableValue
+                        value: ConfigVarObject.variableValue,
+                        onChange: function() {
+                            var thisControlName = thisControl[0].name;
+                            cswPrivate.responseData.push({
+                                variableName : thisControlName,
+                                variableValue : thisControl.val()
+                            });
+                            console.log(cswPrivate.responseData);
+                        }
                     });
                     parentTable.cell(tableRow, 3).text(ConfigVarObject.description)
                                                  .css({
                                                     textAlign : 'left',
                                                     verticalAlign : 'middle'
                                                  });
-
-                    cswPrivate.configVarControls.push(thisControl);
 
                     tableRow += 1;
                 });
@@ -86,9 +83,9 @@
                 width: '100%'
             });
 
-            //array of controls, used to get the config values from
-            //when applying changes
-            cswPrivate.configVarControls = [];
+            //array of objects, where each object represents a 
+            //config var that has been modified
+            cswPrivate.responseData = [];
 
             var tableRow = 1;
             
@@ -121,7 +118,7 @@
                title: 'Configuration Variables',
                finishText: 'Apply',
                onFinish: function() {
-                   cswPrivate.update(cswPrivate.configVarControls);
+                   cswPrivate.update(cswPrivate.responseData);
                }
             });
 
