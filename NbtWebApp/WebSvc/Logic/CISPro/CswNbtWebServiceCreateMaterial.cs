@@ -73,12 +73,16 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
-                Response.Data.AllowSupplierAdd = true;
+
+                // CIS-53353 - Allow adding suppliers if the user has Create on any Vendor nodetype
+                Response.Data.AllowSupplierAdd = false;
                 CswNbtMetaDataObjectClass VendorOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
-                CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
-                if( null != VendorNT )
+                foreach( CswNbtMetaDataNodeType VendorNT in VendorOC.getNodeTypes() )
                 {
-                    Response.Data.AllowSupplierAdd = NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, VendorNT );
+                    if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, VendorNT ) )
+                    {
+                        Response.Data.AllowSupplierAdd = true;
+                    }
                 }
 
                 //Determine the steps
