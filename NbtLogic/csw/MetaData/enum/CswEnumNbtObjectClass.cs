@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
             { BalanceConfigurationClass         , BalanceConfigurationClass          },
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
+            {CertificateDefinitionClass         , CertificateDefinitionClass         },
             { ChemicalClass                     , ChemicalClass                      },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
@@ -53,6 +54,7 @@ namespace ChemSW.Nbt.MetaData
             { InventoryGroupPermissionClass     , InventoryGroupPermissionClass      },
             { InventoryLevelClass               , InventoryLevelClass                },
             { JurisdictionClass                 , JurisdictionClass                  },
+            { Level                             , Level                              },
             { LocationClass                     , LocationClass                      },
             { LQNoClass                         , LQNoClass                          },
             { MailReportClass                   , MailReportClass                    },
@@ -63,6 +65,8 @@ namespace ChemSW.Nbt.MetaData
             { MaterialComponentClass            , MaterialComponentClass             },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
+            { MethodCharacteristicClass         , MethodCharacteristicClass          },
+            { MethodConditionClass              , MethodConditionClass               },
             { NonChemicalClass                  , NonChemicalClass                   },
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
@@ -84,6 +88,9 @@ namespace ChemSW.Nbt.MetaData
             { SDSDocumentClass                  , SDSDocumentClass                   },
             { SizeClass                         , SizeClass                          },
             { TaskClass                         , TaskClass                          },
+            { TestingLabClass                   , TestingLabClass                    },
+            { TestingLabUserAssignmentClass     , TestingLabUserAssignmentClass      },
+            { TestingLabMethodAssignmentClass   , TestingLabMethodAssignmentClass    },
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
@@ -146,6 +153,7 @@ namespace ChemSW.Nbt.MetaData
         public const string BalanceConfigurationClass = "BalanceConfigurationClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
+        public const string CertificateDefinitionClass = "CertificateDefinitionClass";
         public const string ChemicalClass = "ChemicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
@@ -182,6 +190,7 @@ namespace ChemSW.Nbt.MetaData
         public const string InventoryGroupPermissionClass = "InventoryGroupPermissionClass";
         public const string InventoryLevelClass = "InventoryLevelClass";
         public const string JurisdictionClass = "JurisdictionClass";
+        public const string Level = "LevelClass";
         public const string LocationClass = "LocationClass";
         public const string LQNoClass = "LQNoClass";
         public const string MailReportClass = "MailReportClass";
@@ -192,6 +201,8 @@ namespace ChemSW.Nbt.MetaData
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
         public const string MethodClass = "MethodClass";
+        public const string MethodConditionClass = "MethodConditionClass";
+        public const string MethodCharacteristicClass = "MethodCharacteristicClass";
         public const string NonChemicalClass = "NonChemicalClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
@@ -214,6 +225,9 @@ namespace ChemSW.Nbt.MetaData
         public const string GHSSignalWordClass = "GHSSignalWord";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
+        public const string TestingLabClass = "TestingLabClass";
+        public const string TestingLabUserAssignmentClass = "TestingLabUserAssignmentClass";
+        public const string TestingLabMethodAssignmentClass = "TestingLabMethodAssignmentClass";
         public const string UnitOfMeasureClass = "UnitOfMeasureClass";
         public const string UserClass = "UserClass";
         public const string VendorClass = "VendorClass";

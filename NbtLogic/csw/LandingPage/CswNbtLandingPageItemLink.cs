@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ObjClasses;
-using System.Collections.Generic;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt.LandingPage
@@ -16,6 +15,7 @@ namespace ChemSW.Nbt.LandingPage
 
         public override void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request )
         {
+            bool finishLoading = false; //this will be set to true if and only if there's a valid link to be made
             String DisplayText = LandingPageRow["displaytext"].ToString();
             Int32 ViewId = CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] );
             if( ViewId != Int32.MinValue )
@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.LandingPage
                 CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( NodeViewId );
                 if( null != ThisView && ThisView.IsFullyEnabled() && ThisView.IsVisible() )
                 {
+                    finishLoading = true;
                     _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? LandingPageRow["displaytext"].ToString() : ThisView.ViewName;
 
                     _ItemData.ViewId = NodeViewId.ToString();
@@ -43,6 +44,7 @@ namespace ChemSW.Nbt.LandingPage
                 {
                     if( _CswNbtResources.Permit.can( ThisAction.Name ) )
                     {
+                        finishLoading = true;
                         _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
                         _ItemData.ActionId = ActionId.ToString();
                         _ItemData.ActionName = ThisAction.Name.ToString();
@@ -59,6 +61,7 @@ namespace ChemSW.Nbt.LandingPage
                 CswNbtNode ThisReportNode = _CswNbtResources.Nodes[ReportPk];
                 if( null != ThisReportNode )
                 {
+                    finishLoading = true;
                     _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : ThisReportNode.NodeName;
                     _ItemData.ReportId = ReportPk.ToString();
                     _ItemData.Type = "report";
@@ -72,16 +75,22 @@ namespace ChemSW.Nbt.LandingPage
                 CswNbtSearch Search = _CswNbtResources.SearchManager.restoreSearch( SearchPk );
                 if( null != Search )
                 {
+                    finishLoading = true;
                     _ItemData.Text = Search.Name;
                     _ItemData.ReportId = SearchPk.ToString();
                     _ItemData.Type = "search";
                     _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + "magglass.png";
                 }
             }
-            _setCommonItemDataForUI( LandingPageRow );
+
+            //we only want to send the item back with a landingpageid if it contains a valid link
+            if( finishLoading )
+            {
+                _setCommonItemDataForUI( LandingPageRow );
+            }
         }
 
-        public override void setItemDataForDB( LandingPageData.Request Request )
+        public override void setDBValuesFromRequest( LandingPageData.Request Request )
         {
             CswEnumNbtViewType ViewType = (CswEnumNbtViewType) Request.ViewType;
             if( ViewType == CswEnumNbtViewType.View )
@@ -106,7 +115,33 @@ namespace ChemSW.Nbt.LandingPage
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
             }
-            _setCommonItemDataForDB( Request );
+            _setCommonDbValuesFromRequest( Request );
+        }
+
+        public override void setDBValuesFromExistingLandingPageItem( string RoleId, LandingPageData.LandingPageItem Item )
+        {
+            CswEnumNbtViewType ViewType = (CswEnumNbtViewType) Item.Type;
+            if( ViewType == CswEnumNbtViewType.View )
+            {
+                _ItemRow["to_nodeviewid"] = new CswNbtViewId(Item.ViewId).get();
+            }
+            else if( ViewType == CswEnumNbtViewType.Action )
+            {
+                _ItemRow["to_actionid"] = Item.ActionId;
+            }
+            else if( ViewType == CswEnumNbtViewType.Report )
+            {
+                _ItemRow["to_reportid"] = Item.ReportId;
+            }
+            else if( ViewType == CswEnumNbtViewType.Search )
+            {;
+                _ItemRow["to_searchid"] = Item.ReportId;
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
+            }
+            _setCommonDBValuesFromExistingLandingPageItem( RoleId, Item );
         }
     }
 }

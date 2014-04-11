@@ -27,6 +27,7 @@ namespace ChemSW.Nbt
             {CISPro                   , CISPro},
             {Containers               , Containers},
             {Dev                      , Dev},
+            {DirectStructureSearch    , DirectStructureSearch },
             {DSD                      , DSD},
             {FireCode                 , FireCode},
             {FireDbSync               , FireDbSync},
@@ -97,6 +98,10 @@ namespace ChemSW.Nbt
         /// Development
         /// </summary>
         public const string Dev = "Dev";
+        /// <summary>
+        /// ACCL Direct Structure Search
+        /// </summary>
+        public const string DirectStructureSearch = "Direct Structure Search";
         /// <summary>
         /// Dangerous Substances Directive
         /// </summary>

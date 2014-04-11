@@ -16,6 +16,11 @@ namespace ChemSW.Nbt
         brand_pageicon,
 
         /// <summary>
+        /// If an operation affects this number of nodes, run as a batch operation instead
+        /// </summary>
+        batchthreshold,
+
+        /// <summary>
         /// Title to display on every page
         /// </summary>
         brand_pagetitle,
@@ -168,7 +173,12 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Domain for accessing ChemWatch
         /// </summary>
-        chemwatchdomain
+        chemwatchdomain,
+
+        /// <summary>
+        /// Number of previously used passwords to disallow
+        /// </summary>
+        password_reuse_count,
     };
 
 }

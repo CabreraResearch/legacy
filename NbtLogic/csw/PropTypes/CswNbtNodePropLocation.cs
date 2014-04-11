@@ -34,6 +34,8 @@ namespace ChemSW.Nbt.PropTypes
             _SubFieldMethods.Add( _ColumnSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedColumn, x => SelectedColumn = CswConvert.ToInt32( x ) ) );
             _SubFieldMethods.Add( _PathSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedPath, x => CachedPath = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _BarcodeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedBarcode, x => CachedBarcode = CswConvert.ToString( x ) ) );
+
+            _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
         }
 
         private CswNbtSubField _NameSubField;
@@ -42,6 +44,8 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _ColumnSubField;
         private CswNbtSubField _PathSubField;
         private CswNbtSubField _BarcodeSubField;
+
+        private Int32 _SearchThreshold;
 
         public static string GetTopLevelName( CswNbtResources NbtResources )
         {
@@ -220,7 +224,7 @@ namespace ChemSW.Nbt.PropTypes
             CachedBarcode = string.Empty;
         }
 
-        public static readonly string PathDelimiter = " > ";
+        public const string PathDelimiter = " > ";
         private string _generateLocationPath( CswNbtObjClassLocation NodeAsLocation )
         {
             string ret;
@@ -234,7 +238,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, IEnumerable<CswPrimaryKey> InventoryGroupIds = null )
+        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, CswEnumNbtFilterResultMode ResultMode = null, string FullPathFilter = "" )
         {
             CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
@@ -253,14 +257,16 @@ namespace ChemSW.Nbt.PropTypes
                                                           NodeIdToFilterOut: NodeId,
                                                           RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode || IsRequestItemNode ) ),
                                                           InventoryGroupIds: InventoryGroupIds,
-                                                          DisableLowestLevel: IsLocationNode );
+                                                          DisableLowestLevel: IsLocationNode,
+                                                          ResultMode: ResultMode,
+                                                          FullPathFilter: FullPathFilter );
             return Ret;
         }
 
         private CswNbtView _View = null;
         public CswNbtView View
         {
-            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId, null ) ); } // get
+            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId, ResultMode: CswEnumNbtFilterResultMode.Disabled ) ); } // get
             set { _View = value; }
         } // View
 
@@ -269,13 +275,13 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_PathSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = string.Empty;
+            //ParentObject["search"] = false;
 
             CswNbtNode SelectedNode = _CswNbtResources.Nodes[SelectedNodeId];
             if( null != SelectedNode )
@@ -284,7 +290,6 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject[_NameSubField.ToXmlNodeName( true )] = CachedNodeName;
                 ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
                 ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
-
                 ParentObject["selectednodelink"] = SelectedNode.NodeLink;
             }
             if( IsEditModeEditable )
@@ -301,10 +306,32 @@ namespace ChemSW.Nbt.PropTypes
                     LocationNTArray.Add( LocationNT.NodeTypeId );
                 }
                 ParentObject["locationnodetypeids"] = LocationNTArray;
+
+                //TODO: Remove if David approves Location control always searching
+                // If the # of locations in the system is > than the relationshipoptionlimit, then do a search
+                //int LocationNodeCnt = getNumberOfLocationNodes( _CswNbtResources );
+                //if( LocationNodeCnt <= _SearchThreshold )
+                //{
+                //    CswNbtSdLocations Sd = new CswNbtSdLocations( _CswNbtResources );
+                //    JArray Options = new JArray();
+                //    foreach( CswNbtSdLocations.Location location in Sd.GetLocationsList( View.SessionViewId.ToString() ) )
+                //    {
+                //        JObject Opt = new JObject();
+                //        Opt["LocationId"] = location.LocationId;
+                //        Opt["Name"] = location.Name;
+                //        Opt["Path"] = location.Path;
+                //        Opt["Disabled"] = location.Disabled;
+                //        Options.Add( Opt );
+                //    }
+                //    ParentObject["options"] = Options;
+                //}
+                //else
+                //{
+                //    ParentObject["search"] = true;
+                //    ParentObject["options"] = "";
+                //}
             }
         }
-
-        // ReadXml()
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -451,6 +478,12 @@ namespace ChemSW.Nbt.PropTypes
             }
             return true;
         }
+
+        public static int getNumberOfLocationNodes( CswNbtResources _CswNbtResources )
+        {
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            return LocationOC.NodeCount;
+        }//_getNumberOfLocationNodes()
 
     }//CswNbtNodePropLocation
 }//namespace ChemSW.Nbt.PropTypes

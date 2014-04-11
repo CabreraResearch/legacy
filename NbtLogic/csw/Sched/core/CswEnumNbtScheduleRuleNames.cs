@@ -19,10 +19,9 @@ namespace ChemSW.Nbt.Sched
             { GenNode                       , GenNode                        },
             { GenRequest                    , GenRequest                     },
             { Import                        , Import                         },
-            { MolFingerprints               , MolFingerprints                },
+            { MolData                       , MolData                        },
             { NodeCounts                    , NodeCounts                     },
             { PurgeSessionData              , PurgeSessionData               },
-            { SetMaterialObsolete           , SetMaterialObsolete            },
             { Reconciliation                , Reconciliation                 },
             { TierII                        , TierII                         },
             { UpdtInspection                , UpdtInspection                 },
@@ -93,7 +92,7 @@ namespace ChemSW.Nbt.Sched
         public const string GenNode = "GenNode";
         public const string GenRequest = "GenRequest";
         public const string Import = "Import";
-        public const string MolFingerprints = "MolFingerprints";
+        public const string MolData = "MolData";
         public const string NodeCounts = "NodeCounts";
         public const string PurgeSessionData = "PurgeSessionData";
         public const string Reconciliation = "Reconciliation";
@@ -102,7 +101,6 @@ namespace ChemSW.Nbt.Sched
         public const string UpdtPropVals = "UpdtPropVals";
         public const string UpdtMTBF = "UpdtMTBF";
         public const string ValidateAccessIds = "ValidateAccessIds";
-        public const string SetMaterialObsolete = "SetMaterialObsolete";
 
         #endregion Enum members
 

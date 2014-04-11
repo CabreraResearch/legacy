@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
             bool ret = false;
             if( null != SubField )
             {
-                SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
+                ret = SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
             }
             return ret;
         }
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
                 dbval = CswConvert.ToDbVal( value );
             }
 
-            if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
+            if( _PropRow == null && dbval != DBNull.Value )
             {
                 makePropRow();
                 ret = true;
@@ -530,6 +530,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public void ClearBlob()
         {
+            //Clear Blobs from Blob_data
             CswTableUpdate blobDataTU = _CswNbtResources.makeCswTableUpdate( "clearBlob", "blob_data" );
             DataTable blobDataTbl = blobDataTU.getTable( "where jctnodepropid = " + JctNodePropId );
 
@@ -544,6 +545,16 @@ namespace ChemSW.Nbt.PropTypes
                 Row.Delete();
             }
             blobDataTU.update( blobDataTbl );
+
+            //Clear blobs from mol_data
+            CswTableUpdate molDataTU = _CswNbtResources.makeCswTableUpdate( "clearBlobMol", "mol_data" );
+            DataTable molDataTbl = molDataTU.getTable( "where jctnodepropid = " + JctNodePropId );
+
+            foreach( DataRow Row in molDataTbl.Rows )
+            {
+                Row.Delete();
+            }
+            molDataTU.update( molDataTbl );
         }
 
 

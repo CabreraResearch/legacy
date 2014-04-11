@@ -74,7 +74,7 @@ end;
 /
 
 begin
-  -- Call the procedure
+  -- Call the procedure (Chemical Properties)
   pivotpropertiesvalues(viewname => 'chemicals_props_view',
                         propstblname => 'properties_values',
                         proptblpkcol => 'propertiesvaluesid',
@@ -83,7 +83,7 @@ begin
 end;
 /
 begin
-  -- Call the procedure
+  -- Call the procedure (Receipt Lot Properties)
   pivotpropertiesvalues(viewname => 'receiptlots_props_view',
                         propstblname => 'properties_values_lot',
                         proptblpkcol => 'lotpropsvaluesid',
@@ -92,7 +92,7 @@ begin
 end;
 /
 begin
-  -- Call the procedure
+  -- Call the procedure (Container Properties)
   pivotpropertiesvalues(viewname => 'containers_props_view',
                         propstblname => 'properties_values_cont',
                         proptblpkcol => 'contpropsvaluesid',
@@ -100,7 +100,15 @@ begin
 						fromtbl => 'containers');
 end;
 /	
-
+begin
+  -- Call the procedure (User Properties)
+  pivotpropertiesvalues(viewname => 'user_props_view',
+                        propstblname => 'properties_values_user',
+                        proptblpkcol => 'userpropsvaluesid',
+                        joincol => 'userid',
+						fromtbl => 'users');
+end;
+/	
 
 -- Create views ( these are in order of creation)
 
@@ -245,7 +253,38 @@ select w.businessunitid,
   
 --Users
 create or replace view users_view as
-(select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users where issystemuser != 1);
+select u.AUDITFLAG,
+       u.DEFAULTCATEGORYID,
+       u.DEFAULTLANGUAGE,
+       u.DEFAULTLOCATIONID,
+       u.DEFAULTPRINTERID,
+       u.DELETED,
+       u.DISABLED,
+       u.EMAIL,
+       u.EMPLOYEEID,
+       u.FAILEDLOGINCOUNT,
+       u.HIDEHINTS,
+       u.HOMEINVENTORYGROUPID,
+       u.ISSYSTEMUSER,
+       u.LOCKED,
+       u.MYSTARTURL,
+       u.NAMEFIRST,
+       u.NAMELAST,
+       u.NAVROWS,
+       u.NODEVIEWID,
+       u.PASSWORD,
+       u.PASSWORD_DATE,
+       u.PHONE,
+       u.ROLEID,
+       u.SUPERVISORID,
+       u.TITLE,
+       u.USERNAME,
+       u.WELCOMEREDIRECT,
+       u.WORKUNITID,
+	   upv.*
+  from users u
+  join user_props_view upv on u.userid = upv.userid
+ where u.issystemuser != 1;
 
 ---Packdetail
 create or replace view packdetail_view as
@@ -326,7 +365,8 @@ AS
                    WHERE  p.DELETED = 0) 
            GROUP  BY MATERIALID, 
                      DELETED) 
-  SELECT v.VENDORID, 
+  SELECT /*+ ORDERED USE_HASH(cpv)  */
+         v.VENDORID, 
          p.PACKAGEID, 
          p.PRODUCTNO, 
          m."AQUEOUS_SOLUBILITY", 
@@ -1011,65 +1051,50 @@ SELECT p.productno,
 --Material Components
 create or replace view materialcomps_view as
 select componentcasnoid || '_' || pk.packageid as legacyid,
-       mc.materialid || '_' || componentcasnoid as constituentid,
+       cc.materialid || '_' || cc.componentcasnoid as constituentid,
        pk.packageid,
        quantity,
-       mc.deleted
-  from component_casnos mc
-  join packages pk on pk.materialid = mc.materialid
- where mc.deleted = 0
-   and mc.componentmaterialid is null
- 
+       cc.deleted
+  from component_casnos cc
+  join packages pk on pk.materialid = cc.materialid
+ where cc.deleted = 0
+   and cc.componentmaterialid is null
+
  union
- 
+
  select componentcasnoid || '_' || pk.packageid as legacyid,
-       '' || mc.materialid as constituentid,
+       cc.materialid || '_' || cc.componentcasnoid as constituentid,
        pk.packageid a,
        quantity,
-       mc.deleted
-  from component_casnos mc
-  join packages pk on pk.materialid = mc.materialid
- where mc.deleted = 0
+       cc.deleted
+  from component_casnos cc
+  join packages pk on pk.materialid = cc.materialid
+ where cc.deleted = 0
    and pk.deleted = 0
-   and mc.componentmaterialid is not null;
+   and cc.componentmaterialid is not null;
 
 --Constituents
-create or replace view constituents_view as
-select mc.materialid || '_' || mc.componentcasnoid as legacyid,
-       mc.componentname as name,
-       mc.casno,
+CREATE OR REPLACE VIEW CONSTITUENTS_VIEW AS
+select cc.materialid || '_' || cc.componentcasnoid as legacyid,
+       cc.componentname as name,
+       cc.casno,
        '' as einecs,
        deleted
-  from component_casnos mc
- where mc.deleted = 0
-   and mc.componentmaterialid is null
- 
+  from component_casnos cc
+ where cc.deleted = 0
+   and cc.componentmaterialid is null
+
  union
- 
- SELECT '' || m.materialid as legacyid, 
-        m.materialname as name, 
-        m.casno, 
-        m.einecs, 
+
+ SELECT cc.materialid || '_' || cc.componentcasnoid as legacyid,
+        m.materialname as name,
+        m.casno,
+        m.einecs,
         m.deleted
   FROM materials m
   join materials_subclass ms ON ms.MATERIALSUBCLASSID =
                                 m.MATERIALSUBCLASSID
   join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
   join component_casnos cc on cc.componentmaterialid = m.materialid
- WHERE m.DELETED = 0
-   AND mc.CLASSNAME <> 'CONSTITUENT'
-   
-   union
-   
-   SELECT '' || m.materialid as legacyid, 
-          m.materialname as name, 
-          m.casno, 
-          m.einecs, 
-          m.deleted
-  FROM materials m
-  join materials_subclass ms ON ms.MATERIALSUBCLASSID =
-                                m.MATERIALSUBCLASSID
-  join materials_class mc ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
- WHERE m.DELETED = 0
-   AND mc.CLASSNAME = 'CONSTITUENT';
-
+ WHERE m.DELETED = 0;
+  

@@ -95,13 +95,6 @@ namespace ChemSW.Nbt
             }
             CswTableUpdateNodes.update( NewNodeTable );
 
-            //setDefaultPropertyValues( Node );
-
-            // case 22591 - make empty rows for every property
-            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
-            {
-                PropWrapper.makePropRow();
-            }
         }//makeNewNodeEntry()
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
@@ -144,6 +137,7 @@ namespace ChemSW.Nbt
                 NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
                 NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
                 NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+                NodesTable.Rows[0]["legacyid"] = CswConvert.ToDbVal( Node.LegacyId );
 
                 // case 29311 - Sync with relational data
                 if( Node.getNodeType().DoRelationalSync )

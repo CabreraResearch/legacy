@@ -286,8 +286,17 @@ namespace ChemSW.Nbt.ImportExport
                                                                                                         r.Relationship.IsCompoundUnique() ||
                                                                                                         Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
 
-            IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
-                                                                                              b.DestProperty.IsCompoundUnique() );
+            IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b =>
+                {
+                    // See CIS-53175: Legacy Id is no longer a property
+                    bool Ret = false;
+                    if( b.DestPropName != "Legacy Id" )
+                    {
+                        Ret = b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique();
+                    }
+                    return Ret;
+                } );
+
             if( false == UniqueBindings.Any() ) // case 30821
             {
                 UniqueBindings = NodeTypeBindings.Where( b => Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
@@ -309,7 +318,7 @@ namespace ChemSW.Nbt.ImportExport
             string LegacyId = string.Empty;
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
-                if( Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId )
+                if( Binding.DestPropName == "Legacy Id" )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                     allEmpty = false;
@@ -321,22 +330,14 @@ namespace ChemSW.Nbt.ImportExport
                 bool foundMatch = false;
                 if( false == string.IsNullOrEmpty( LegacyId ) ) //Check for matching nodes using a view on legacy id
                 {
-                    CswNbtView LegacyIdView = new CswNbtView( _CswNbtResources );
-                    LegacyIdView.ViewName = "Check Legacy Id";
-                    CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
-
-                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                    LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
-                                                           Value: LegacyId,
-                                                      SubFieldName: CswEnumNbtSubFieldName.Text, CaseSensitive: false );
-
-                    ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
-                    if( LegacyIdTree.getChildNodeCount() > 0 )
+                    CswTableSelect LegacyNodeSelect = _CswNbtResources.makeCswTableSelect( "LegacyNodeSelect", "nodes" );
+                    DataTable LegacyNodesTable = LegacyNodeSelect.getTable( "where nodetypeid = " + Order.NodeType.NodeTypeId + " and legacyid = '" + LegacyId + "'" );
+                    if( LegacyNodesTable.Rows.Count > 0 )
                     {
-                        LegacyIdTree.goToNthChild( 0 );
-                        Node = LegacyIdTree.getNodeForCurrentPosition();
                         if( Overwrite )
                         {
+                            CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( LegacyNodesTable.Rows[0]["nodeid"] ) );
+                            Node = _CswNbtResources.Nodes[NodeId];
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                             Node.postChanges( false, false, true );
                         }
@@ -408,16 +409,17 @@ namespace ChemSW.Nbt.ImportExport
                                 Node = UniqueTree.getNodeForCurrentPosition();
                                 if( Overwrite )
                                 {
+                                    Node.LegacyId = LegacyId;
                                     _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                                     Node.postChanges( false );
                                 }
                                 else
                                 {
                                     //we still want to set legacy id on nodes matched by unique properties
-                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId ) )
+                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy Id" ) )
                                     {
                                         //there should always be exactly one iteration of this loop
-                                        Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );
+                                        Node.LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                                     }
                                 }
                             }
@@ -432,12 +434,20 @@ namespace ChemSW.Nbt.ImportExport
                     //need to get around blank conversion factors for UOM nodes not yet filled in here
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
+                            NewNode.LegacyId = LegacyId;
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, NewNode );
 
                             // Specific logic for Roles (see Case 31043)
                             if( Order.NodeType.NodeTypeName == "Role" )
                             {
                                 _setRolePermissions( NewNode, CswEnumTristate.True == NewNode.Properties[CswNbtObjClassRole.PropertyName.Administrator].AsLogical.Checked ? "CISPro_Admin" : "CISPro_General" );
+                            }
+                            else if( Order.NodeTypeName == "Container" )// More Specific Logic (see CIS-52852)
+                            {
+                                CswNbtObjClassContainer Container = NewNode;
+                                double Qty = Container.Quantity.Quantity;
+                                Container.Quantity.Quantity = 0;
+                                Container.DispenseIn( CswEnumNbtContainerDispenseType.Receive, Qty, Container.Quantity.UnitId );
                             }
 
                         }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
@@ -493,7 +503,6 @@ namespace ChemSW.Nbt.ImportExport
             return ImportedNodeId;
         } // _ImportOneRow()
 
-
         private Int32 _getRelationValue( CswNbtImportDef BindingDef, CswNbtImportDefRelationship Relation, DataRow ImportRow )
         {
             CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) &&
@@ -522,131 +531,136 @@ namespace ChemSW.Nbt.ImportExport
             // Iterate each binding 
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
-                string PropertyData = string.Empty;
-                byte[] BlobData = null;
-                if( String.IsNullOrEmpty( Binding.SourceBlobTableName ) && String.IsNullOrEmpty( Binding.SourceClobTableName ) )
+                // See CIS-53175: Legacy Id is no longer a property
+                if( Binding.DestPropName != "Legacy Id" )
                 {
-                    PropertyData = ImportRow[Binding.ImportDataColumnName].ToString();
-                }
-                else //get lob data
-                {
-                    _getLobData( Binding, ImportRow, out PropertyData, out BlobData );
-                }
-
-                // Special case for TimeInterval, specifically for IMCS imports
-                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
-                {
-                    XElement input = XElement.Parse( "<rateintervalvalue>" + PropertyData.ToLower() + "</rateintervalvalue>" );
-                    XmlDocument xmlDoc = new XmlDocument();
-                    xmlDoc.Load( input.CreateReader() );
-
-                    CswRateInterval rateInterval = new CswRateInterval( _CswNbtResources );
-                    rateInterval.ReadXml( xmlDoc.DocumentElement );
-
-                    ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
-                    Node.Properties[Binding.DestProperty].SyncGestalt();
-                }
-                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.File && Binding.DestSubFieldName != CswEnumNbtSubFieldName.Href.ToString() ) || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Image )
-                {
-                    CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                    int BlobDataId = sdBlobData.GetBlobDataId( Node.Properties[Binding.DestProperty].JctNodePropId );
-
-                    CswTableUpdate blobDataTblUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "importer.fileimport", "blob_data" );
-
-                    DataTable blobDataTbl = ( Int32.MinValue != BlobDataId ? blobDataTblUpdate.getTable( "where blobdataid = " + BlobDataId ) : blobDataTblUpdate.getEmptyTable() );
-                    DataRow blobDataRow = null;
-                    if( blobDataTbl.Rows.Count > 0 )
+                    string PropertyData = string.Empty;
+                    byte[] BlobData = null;
+                    if( String.IsNullOrEmpty( Binding.SourceBlobTableName ) && String.IsNullOrEmpty( Binding.SourceClobTableName ) )
                     {
-                        blobDataRow = blobDataTbl.Rows[0];
+                        PropertyData = ImportRow[Binding.ImportDataColumnName].ToString();
                     }
-                    else
+                    else //get lob data
                     {
-                        blobDataRow = blobDataTbl.NewRow();
-                        blobDataRow["jctnodepropid"] = Node.Properties[Binding.DestProperty].JctNodePropId;
-                        blobDataTbl.Rows.Add( blobDataRow );
+                        _getLobData( Binding, ImportRow, out PropertyData, out BlobData );
                     }
 
-                    if( CswEnumNbtSubFieldName.Name.ToString() == Binding.DestSubFieldName )
+                    CswEnumNbtFieldType DestPropertyFieldType = Binding.DestProperty.getFieldTypeValue();
+                    // Special case for TimeInterval, specifically for IMCS imports
+                    if( DestPropertyFieldType == CswEnumNbtFieldType.TimeInterval )
                     {
-                        blobDataRow["filename"] = PropertyData;
-                    }
-                    else if( CswEnumNbtSubFieldName.ContentType.ToString() == Binding.DestSubFieldName )
-                    {
-                        blobDataRow["contenttype"] = PropertyData;
-                    }
-                    else if( CswEnumNbtSubFieldName.Blob.ToString() == Binding.DestSubFieldName )
-                    {
-                        blobDataRow["blobdata"] = BlobData;
-                    }
+                        XElement input = XElement.Parse( "<rateintervalvalue>" + PropertyData.ToLower() + "</rateintervalvalue>" );
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.Load( input.CreateReader() );
 
-                    blobDataTblUpdate.update( blobDataTbl );
-                }
-                // NodeTypeSelect
-                else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
-                {
-                    CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( PropertyData.ToString() );
-                    if( nt != null )
-                    {
-                        Node.Properties[Binding.DestProperty].AsNodeTypeSelect.SelectedNodeTypeIds = new CswCommaDelimitedString() { nt.NodeTypeId.ToString() };
-                    }
-                    else
-                    {
-                        OnMessage( "Skipped invalid nodetype: " + PropertyData );
-                    }
-                }
-                // Quantity or Relationship
-                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Column.ToString() == CswEnumNbtPropColumn.Field1_FK.ToString() )
-                            || ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Name.ToString().ToLower() == "name" )
-                            || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship
-                            || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
-                {
-                    CswCommaDelimitedString inClause = new CswCommaDelimitedString();
+                        CswRateInterval rateInterval = new CswRateInterval( _CswNbtResources );
+                        rateInterval.ReadXml( xmlDoc.DocumentElement );
 
-                    if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
-                    {
-                        inClause.Add( Binding.DestProperty.FKValue.ToString() );
+                        ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
+                        Node.Properties[Binding.DestProperty].SyncGestalt();
                     }
-                    else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                    else if( ( DestPropertyFieldType == CswEnumNbtFieldType.File && Binding.DestSubFieldName != CswEnumNbtSubFieldName.Href.ToString() )
+                        || DestPropertyFieldType == CswEnumNbtFieldType.Image )
                     {
-                        CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( Binding.DestProperty.FKValue );
-                        foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
+                        CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                        int BlobDataId = sdBlobData.GetBlobDataId( Node.Properties[Binding.DestProperty].JctNodePropId );
+
+                        CswTableUpdate blobDataTblUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "importer.fileimport", "blob_data" );
+
+                        DataTable blobDataTbl = ( Int32.MinValue != BlobDataId ? blobDataTblUpdate.getTable( "where blobdataid = " + BlobDataId ) : blobDataTblUpdate.getEmptyTable() );
+                        DataRow blobDataRow = null;
+                        if( blobDataTbl.Rows.Count > 0 )
                         {
-                            inClause.Add( nt.NodeTypeId.ToString() );
+                            blobDataRow = blobDataTbl.Rows[0];
+                        }
+                        else
+                        {
+                            blobDataRow = blobDataTbl.NewRow();
+                            blobDataRow["jctnodepropid"] = Node.Properties[Binding.DestProperty].JctNodePropId;
+                            blobDataTbl.Rows.Add( blobDataRow );
+                        }
+
+                        if( CswEnumNbtSubFieldName.Name.ToString() == Binding.DestSubFieldName )
+                        {
+                            blobDataRow["filename"] = PropertyData;
+                        }
+                        else if( CswEnumNbtSubFieldName.ContentType.ToString() == Binding.DestSubFieldName )
+                        {
+                            blobDataRow["contenttype"] = PropertyData;
+                        }
+                        else if( CswEnumNbtSubFieldName.Blob.ToString() == Binding.DestSubFieldName )
+                        {
+                            blobDataRow["blobdata"] = BlobData;
+                        }
+
+                        blobDataTblUpdate.update( blobDataTbl );
+                    }
+                    // NodeTypeSelect
+                    else if( DestPropertyFieldType == CswEnumNbtFieldType.NodeTypeSelect )
+                    {
+                        CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( PropertyData.ToString() );
+                        if( nt != null )
+                        {
+                            Node.Properties[Binding.DestProperty].AsNodeTypeSelect.SelectedNodeTypeIds = new CswCommaDelimitedString() { nt.NodeTypeId.ToString() };
+                        }
+                        else
+                        {
+                            OnMessage( "Skipped invalid nodetype: " + PropertyData );
                         }
                     }
-                    else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                    // Quantity, Relationship, or Location
+                    else if( ( DestPropertyFieldType == CswEnumNbtFieldType.Quantity &&
+                                 ( Binding.DestSubfield.Column.ToString() == CswEnumNbtPropColumn.Field1_FK.ToString() || Binding.DestSubfield.Name.ToString().ToLower() == "name" ) )
+                                || DestPropertyFieldType == CswEnumNbtFieldType.Relationship
+                                || DestPropertyFieldType == CswEnumNbtFieldType.Location )
                     {
-                        CswNbtMetaDataPropertySet ps = _CswNbtResources.MetaData.getPropertySet( Binding.DestProperty.FKValue );
-                        foreach( CswNbtMetaDataObjectClass oc in ps.getObjectClasses() )
+                        CswCommaDelimitedString inClause = new CswCommaDelimitedString();
+
+                        if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                         {
+                            inClause.Add( Binding.DestProperty.FKValue.ToString() );
+                        }
+                        else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                        {
+                            CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( Binding.DestProperty.FKValue );
                             foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
                             {
                                 inClause.Add( nt.NodeTypeId.ToString() );
                             }
                         }
-                    }
+                        else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                        {
+                            CswNbtMetaDataPropertySet ps = _CswNbtResources.MetaData.getPropertySet( Binding.DestProperty.FKValue );
+                            foreach( CswNbtMetaDataObjectClass oc in ps.getObjectClasses() )
+                            {
+                                foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
+                                {
+                                    inClause.Add( nt.NodeTypeId.ToString() );
+                                }
+                            }
+                        }
 
-                    // If the subfield isn't set to NodeID, then we don't need to look up the Legacy Id
-                    bool MatchedOnLegacyId = false;
-                    if( Binding.DestSubFieldName == CswEnumNbtSubFieldName.NodeID.ToString() )
-                    {
-                        // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
-                        MatchedOnLegacyId = _relationshipSearchViaLegacyId( Node,
-                                                                           ImportRow[Binding.SourceColumnName].ToString(),
-                                                                           Binding.DestProperty.getFieldTypeValue(),
-                                                                           Binding.DestNodeTypeName,
-                                                                           Binding.DestProperty );
-                    }
-                    if( false == MatchedOnLegacyId )
-                    {
-                        // Alternatively, we try to search based on the Name property
-                        _relationshipSearchViaName( Node, inClause, ImportRow, Binding );
-                    }
+                        // If the subfield isn't set to NodeID, then we don't need to look up the Legacy Id
+                        bool MatchedOnLegacyId = false;
+                        if( Binding.DestSubFieldName == CswEnumNbtSubFieldName.NodeID.ToString() )
+                        {
+                            // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
+                            MatchedOnLegacyId = _relationshipSearchViaLegacyId( Node,
+                                                                               ImportRow[Binding.SourceColumnName].ToString(),
+                                                                               DestPropertyFieldType,
+                                                                               Binding.DestProperty );
+                        }
+                        if( false == MatchedOnLegacyId )
+                        {
+                            // Alternatively, we try to search based on the Name property
+                            _relationshipSearchViaName( Node, inClause, ImportRow, Binding );
+                        }
 
-                }
-                else
-                {
-                    Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, PropertyData );
+                    }
+                    else if( false == String.IsNullOrEmpty( PropertyData ) )
+                    {
+                        Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, PropertyData );
+                    }
                 }
             }//foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
 
@@ -671,7 +685,6 @@ namespace ChemSW.Nbt.ImportExport
                         _relationshipSearchViaLegacyId( Node,
                                                         ImportRow[RowRelationship.SourceRelColumnName].ToString(),
                                                         RowRelationship.Relationship.getFieldTypeValue(),
-                                                        RowRelationship.NodeTypeName,
                                                         RowRelationship.Relationship );
                     }
                 }
@@ -680,10 +693,6 @@ namespace ChemSW.Nbt.ImportExport
                     // In this case, we are matching on NodeId
                     if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
                     {
-                        //Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                        //    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
-                        //    ImportRow[TargetOrder.PkColName]
-                        //    );
                         Node.Properties[RowRelationship.Relationship].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, ImportRow[TargetOrder.PkColName] );
 
                         if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
@@ -693,6 +702,10 @@ namespace ChemSW.Nbt.ImportExport
                         if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Location )
                         {
                             Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
+                        }
+                        if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                        {
+                            Node.Properties[RowRelationship.Relationship].AsQuantity.RefreshNodeName();
                         }
 
                         Node.Properties[RowRelationship.Relationship].SyncGestalt();
@@ -704,60 +717,47 @@ namespace ChemSW.Nbt.ImportExport
 
         } // _importPropertyValues()
 
-
         // This should actually set the value if there is one and return true if it was set and false if not
-        //private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes )
-        private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswEnumNbtFieldType FieldType, string DestNodeTypeName, CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswEnumNbtFieldType FieldType, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             bool Ret = false;
 
             if( false == string.IsNullOrEmpty( LegacyId ) )
             {
-                CswNbtView View = new CswNbtView( _CswNbtResources );
-                View.ViewName = "MatchingLegacyId_View";
-
-                CswNbtViewRelationship ParentRelationship = null;
-                ICswNbtMetaDataProp MetaDataProp = null;
-
+                //CIS-53123 - use this instead of treeloader for performance
+                String MetaDataClause = "";
                 switch( NodeTypeProp.FKType )
                 {
                     case "PropertySetId":
                         CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( NodeTypeProp.FKValue );
-                        MetaDataProp =
-                            PropertySet.getObjectClasses()
-                                       .FirstOrDefault()
-                                       .getNodeTypes()
-                                       .FirstOrDefault()
-                                       .getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                        ParentRelationship = View.AddViewRelationship( PropertySet, false );
+                        MetaDataClause = @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                            join object_class o on t.objectclassid = o.objectclassid
+                                            join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
+                                            join property_set ps on (jpo.propertysetid = ps.propertysetid) 
+                                            where (ps.propertysetid = " + PropertySet.PropertySetId + ") ";
                         break;
                     case "ObjectClassId":
                         CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeProp.FKValue );
-                        MetaDataProp = ObjectClass.getNodeTypes().FirstOrDefault().getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                        ParentRelationship = View.AddViewRelationship( ObjectClass, false );
+                        MetaDataClause = @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                            join object_class o on t.objectclassid = o.objectclassid
+                                            where (o.objectclassid = " + ObjectClass.ObjectClassId + ") ";
                         break;
                     case "NodeTypeId":
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeProp.FKValue );
-                        MetaDataProp = NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                        ParentRelationship = View.AddViewRelationship( NodeType, false );
+                        MetaDataClause = @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                            where (t.firstversionid = " + NodeType.NodeTypeId + ") ";
                         break;
                 }
-
-                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                              MetaDataProp: MetaDataProp,
-                                              Conjunction: CswEnumNbtFilterConjunction.And,
-                                              SubFieldName: CswEnumNbtSubFieldName.Text,
-                                              FilterMode: CswEnumNbtFilterMode.Equals,
-                                              Value: LegacyId );
-
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-                if( Tree.getChildNodeCount() > 0 )
+                String Sql = @"select n.nodeid from nodes n 
+                                " + MetaDataClause + @"
+                                and n.legacyid = '" + LegacyId + "'";
+                CswArbitrarySelect LegacyNodeIdSelect = _CswNbtResources.makeCswArbitrarySelect( "LegacyIdRel_select", Sql );
+                DataTable LegacyNodeIdTable = LegacyNodeIdSelect.getTable();
+                if( LegacyNodeIdTable.Rows.Count > 0 )
                 {
-                    // Get the Node
-                    Tree.goToNthChild( 0 );
-
+                    int LegacyNodeId = CswConvert.ToInt32( LegacyNodeIdTable.Rows[0]["nodeid"] );
                     // Set the relationship property to the nodeid of the found node
-                    Node.Properties[NodeTypeProp].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, Tree.getNodeIdForCurrentPosition().PrimaryKey );
+                    Node.Properties[NodeTypeProp].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, LegacyNodeId );
 
                     // Refresh
                     if( FieldType == CswEnumNbtFieldType.Relationship )
@@ -768,14 +768,15 @@ namespace ChemSW.Nbt.ImportExport
                     {
                         Node.Properties[NodeTypeProp].AsLocation.RefreshNodeName();
                     }
+                    if( FieldType == CswEnumNbtFieldType.Quantity )
+                    {
+                        Node.Properties[NodeTypeProp].AsQuantity.RefreshNodeName();
+                    }
                     Node.Properties[NodeTypeProp].SyncGestalt();
 
                     Ret = true;
-
-                }//if (Tree.getChildNodeCount() > 0)
-
-            }//if( false == string.IsNullOrEmpty( LegacyId ) )
-
+                }
+            }
             return Ret;
         }
 

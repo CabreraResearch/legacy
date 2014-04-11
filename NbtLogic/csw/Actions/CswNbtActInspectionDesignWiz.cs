@@ -526,7 +526,7 @@ namespace ChemSW.Nbt.Actions
             //Inspection Design Target is Inspection Target NT
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
             IdTargetNtp.updateLayout( CswEnumNbtLayoutType.Add, true );
-            IdTargetNtp._DataRow["isrequired"] = CswConvert.ToDbVal( true );
+            IdTargetNtp.DesignNode.Required.Checked = CswEnumTristate.True;
             //IdTargetNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.NodeTypeId );
             CswNbtNodePropMetaDataList TargetTargetProp = IdTargetNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList;
             TargetTargetProp.clearCachedOptions();
@@ -553,11 +553,11 @@ namespace ChemSW.Nbt.Actions
                 GeneratorTargetProp.clearCachedOptions();
                 GeneratorTargetProp.setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, GeneratorNt.NodeTypeId );
 
-                IdGeneratorNtp._DataRow["propname"] = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
+                IdGeneratorNtp.DesignNode.PropName.Text = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
             }
 
             CswNbtMetaDataNodeTypeProp IdDueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate );
-            IdDueDateNtp._DataRow["isrequired"] = CswConvert.ToDbVal( true );
+            IdDueDateNtp.DesignNode.Required.Checked = CswEnumTristate.True;
             IdDueDateNtp.updateLayout( CswEnumNbtLayoutType.Add, true );
         }
 

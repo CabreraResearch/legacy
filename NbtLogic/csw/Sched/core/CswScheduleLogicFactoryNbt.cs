@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtUpdtPropVals() );
             ReturnVal.Add( new CswScheduleLogicNbtDisableCswAdmin() );
             ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
-            ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
+            ReturnVal.Add( new CswScheduleLogicNbtMolData() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
             ReturnVal.Add( new CswScheduleLogicNbtGenRequests() );
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );
@@ -30,7 +30,6 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtNodeCounts() );
             ReturnVal.Add( new CswScheduleLogicNbtValidateAccessIds() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerRecords() );
-            ReturnVal.Add( new CswScheduleLogicNbtSetMaterialObsolete() );
 
             return ( ReturnVal );
 

@@ -4,10 +4,12 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
+using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -504,8 +506,11 @@ namespace ChemSW.Nbt.MetaData
 
 
 
-        public void CopyPropToNewPropRow( DataRow NewPropRow )
+        public void CopyPropToNewPropRow( CswNbtMetaDataNodeTypeProp NewProp ) //DataRow NewPropRow )
         {
+            CswTableSelect MappingSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "PropCollDataRelational_mapping", "jct_dd_ntp" );
+            DataTable MappingTable = MappingSelect.getTable();
+
             foreach( DataColumn Column in _ObjectClassPropRow.Table.Columns )
             {
                 string ColumnName = Column.ColumnName;
@@ -514,15 +519,23 @@ namespace ChemSW.Nbt.MetaData
                     ColumnName != "setvalonadd" &&
                     ColumnName != "defaultvalueid" )
                 {
-                    if( NewPropRow.Table.Columns.Contains( ColumnName ) )
+                    if( false == _ObjectClassPropRow.IsNull( ColumnName ) )
                     {
-                        if( !_ObjectClassPropRow.IsNull( ColumnName ) )
+                        if( _CswNbtMetaDataResources.CswNbtResources.DataDictionary.isColumnDefined( "nodetype_props", Column.ColumnName ) )
                         {
-                            NewPropRow[ColumnName] = _ObjectClassPropRow[ColumnName];
-                        }
-                    }
-                }
-            }
+                            _CswNbtMetaDataResources.CswNbtResources.DataDictionary.setCurrentColumn( "nodetype_props", Column.ColumnName );
+                            DataRow MappingRow = MappingTable.Rows.Cast<DataRow>()
+                                                             .FirstOrDefault( r => NewProp.DesignNode.NodeType.getNodeTypePropIds().Contains( CswConvert.ToInt32( r["nodetypepropid"] ) ) &&
+                                                                                   CswConvert.ToInt32( r["datadictionaryid"] ) == _CswNbtMetaDataResources.CswNbtResources.DataDictionary.TableColId );
+                            if( null != MappingRow )
+                            {
+
+                                NewProp.DesignNode.Node.Properties[CswConvert.ToInt32( MappingRow["nodetypepropid"] )].SetSubFieldValue( (CswEnumNbtSubFieldName) MappingRow["subfieldname"].ToString(), _ObjectClassPropRow[ColumnName] );
+                            }
+                        } // if( _CswNbtMetaDataResources.CswNbtResources.DataDictionary.isColumnDefined( "nodetype_props", Column.ColumnName ) )
+                    } // if( false == _ObjectClassPropRow.IsNull( ColumnName ) )
+                } // if( ColumnName != "displayrowadd" && ... )
+            } // foreach( DataColumn Column in _ObjectClassPropRow.Table.Columns )
         } // CopyPropToNewPropRow()
 
 

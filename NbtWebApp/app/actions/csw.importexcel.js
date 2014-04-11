@@ -216,8 +216,8 @@
                         fontWeight: 'bold'
                     });
 
-            cswPrivate.excelDataFileText = null;
-            cswPrivate.uploadButton = null;
+            //cswPrivate.excelDataFileText = null;
+            //cswPrivate.uploadButton = null;
             
             cswPublic.uploadDataTable = cswPublic.table.cell(4, 2)
             .empty()
@@ -261,9 +261,28 @@
             });
 
             cswPrivate.makeUploadDataProps = function (visible) {
-                if (!cswPrivate.excelDataFileText && !cswPrivate.uploadButton) {
+                if (!cswPrivate.excelDataFileText) {
                     cswPrivate.excelDataFileText = cswPublic.uploadDataTable.cell(3, 1).text('Excel Data File (.xlsx):');
-                    cswPrivate.uploadButton = cswPublic.uploadDataTable.cell(3, 2).buttonExt({
+                }
+                if (!cswPrivate.downloadButton) {
+                    cswPrivate.downloadButton = cswPublic.uploadDataTable.cell(3, 2).buttonExt({
+                        name: 'downloadDataBtn',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docexport),
+                        enabledText: 'Download',
+                        disabledText: 'Download',
+                        disableOnClick: false,
+                        onClick: function() {
+                            if (cswPrivate.selDefName.val() == "IMCS") {
+                                window.open("etc/imcs_import_template.xlsx");
+                            } else if (cswPrivate.selDefName.val() == "CISPro") {
+                                window.open("etc/cispro_import_template.xlsx");
+                            }
+                        }
+                    });
+                }
+                    
+                if(!cswPrivate.uploadButton) {
+                    cswPrivate.uploadButton = cswPublic.uploadDataTable.cell(3, 3).buttonExt({
                         name: 'uploadnewDataBtn',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
                         enabledText: 'Upload',
@@ -286,12 +305,13 @@
                         }
                     });
                 }
-
                 if (visible) {
                     cswPrivate.excelDataFileText.show();
+                    cswPrivate.downloadButton.show();
                     cswPrivate.uploadButton.show();
                 } else {
                     cswPrivate.excelDataFileText.hide();
+                    cswPrivate.downloadButton.hide();
                     cswPrivate.uploadButton.hide();
                 }
             };//cswPrivate.makeUploadDataProps()
@@ -325,7 +345,7 @@
 
             cswPrivate.makeStartImportProps = function (visible) {
                 if (!cswPrivate.startImportBtn) {
-                    cswPrivate.startImportBtn = cswPublic.uploadDataTable.cell(3, 3).buttonExt({
+                    cswPrivate.startImportBtn = cswPublic.uploadDataTable.cell(4, 2).buttonExt({
                         name: 'startCAFImportBtn',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.star),
                         enabledText: 'Start',
@@ -378,7 +398,6 @@
                     });
 
                 }
-
                 if (visible) {
                     cswPrivate.startImportBtn.show();
                 } else {

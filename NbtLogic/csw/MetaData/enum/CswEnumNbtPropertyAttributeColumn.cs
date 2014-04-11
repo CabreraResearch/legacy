@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
             { Datetoday          , Datetoday          },
             { Fieldtypeid        , Fieldtypeid        },
             { Fkvalue            , Fkvalue            },
+            { Hidden             , Hidden             },
             { Isbatchentry       , Isbatchentry       },
             { Isfk               , Isfk               },
             { Isrequired         , Isrequired         },
@@ -131,6 +132,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Datetoday          = "datetoday"                ;
         public const string Fieldtypeid        = "fieldtypeid"              ;
         public const string Fkvalue            = "fkvalue"                  ;
+        public const string Hidden             = "hidden"                   ;
         public const string Isbatchentry       = "isbatchentry"             ;
         public const string Isfk               = "isfk"                     ;
         public const string Isrequired         = "isrequired"               ;

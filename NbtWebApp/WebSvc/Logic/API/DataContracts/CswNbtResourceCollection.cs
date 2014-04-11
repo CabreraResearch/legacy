@@ -10,7 +10,7 @@ namespace NbtWebApp.WebSvc.Logic.API.DataContracts
         [DataMember(Name = "entities")]
         private Collection<CswNbtResource> _Entities = new Collection<CswNbtResource>(); 
 
-        public void Add( string Name, CswPrimaryKey NodeId, string NodeType, string ObjClass, string PropertySet )
+        public void Add( string Name, CswPrimaryKey NodeId, string NodeType, string ObjClass, string PropertySet, string URI )
         {
             _Entities.Add(new CswNbtResource()
                 {
@@ -18,8 +18,19 @@ namespace NbtWebApp.WebSvc.Logic.API.DataContracts
                     NodeName = Name,
                     NodeType = NodeType,
                     ObjectClass = ObjClass,
-                    PropertySet = PropertySet
+                    PropertySet = PropertySet,
+                    URI = URI
                 });
+        }
+
+        public int Count()
+        {
+            return _Entities.Count;
+        }
+
+        public Collection<CswNbtResource> getEntities()
+        {
+            return _Entities;
         }
     }
 }

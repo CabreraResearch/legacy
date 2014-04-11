@@ -144,8 +144,15 @@ namespace ChemSW.Nbt.WebServices
                     SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
                     foreach( CswSessionsListEntry Entry in from _Entry in SessionList.Values orderby _Entry.TimeoutDate select _Entry )
                     {
+                        
+                         Boolean canSeeThisSessionID = 
+                       ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) ||
+                         Entry.AccessId == _CswNbtResources.AccessId ) &&
+                       ( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ||
+                         _CswNbtResources.CurrentNbtUser.IsAdministrator() );
+
                         // Filter to the administrator's access id only
-                        if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+                        if( canSeeThisSessionID )
                         {
                             //TODO - Case 30573 - Fix so that the client apps only use one session instead of creating a new one for every call
                             //TODO - Then remove this if statement.
@@ -2445,31 +2452,31 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getObjectClassButtons()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getLocationView( string NodeId )
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.getLocationView( NodeId );
-                }
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
-                ReturnVal["success"] = false;
-            }
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-            return ReturnVal.ToString();
-        } // getLocationView()
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getLocationView( string NodeId )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
+        //        if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+        //            ReturnVal = ws.getLocationView( NodeId );
+        //        }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
+        //        ReturnVal["success"] = false;
+        //    }
+        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+        //    return ReturnVal.ToString();
+        //} // getLocationView()
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]

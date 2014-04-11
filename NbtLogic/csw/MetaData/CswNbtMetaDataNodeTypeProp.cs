@@ -752,7 +752,7 @@ namespace ChemSW.Nbt.MetaData
         public bool Hidden
         {
             get { return CswConvert.ToBoolean( _NodeTypePropRow["hidden"] ); }
-            set { _setAttribute( "hidden", value, true ); }
+            private set { _setAttribute( "hidden", value, true ); }
         }
 
         #region FK Matching
@@ -1231,57 +1231,18 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _NodeTypePropRow["filterpropid"] ); }
         }
 
-        //public void setFilterDeprecated( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        //{
-        //    CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
-        //    setFilterDeprecated( FilterProp, SubField, FilterMode, FilterValue );
-        //}
-
-        //public void setFilterDeprecated( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        //{
-        //    if( IsRequired )
-        //    {
-        //        throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
-        //    }
-
-        //    bool changed = false;
-        //    if( FilterProp != null )
-        //    {
-        //        changed = _setAttribute( "filterpropid", FilterProp.FirstPropVersionId, true );
-        //        if( null != SubField && SubField.Name != CswEnumNbtSubFieldName.Unknown )
-        //        {
-        //            changed = _setAttribute( "filtersubfield", SubField.Name.ToString(), true ) || changed;
-        //        }
-        //        if( null != FilterMode && FilterMode != CswEnumNbtFilterMode.Unknown )
-        //        {
-        //            changed = _setAttribute( "filtermode", FilterMode.ToString(), true ) || changed;
-        //        }
-        //        if( null != FilterValue )
-        //        {
-        //            changed = _setAttribute( "filtervalue", FilterValue.ToString(), true ) || changed;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        _CswNbtMetaDataResources.CswNbtResources.logMessage( "Attempted to create a conditional property filter with based upon a null NodeTypeProperty." );
-        //    }
-        //    if( changed )
-        //    {
-        //        _CswNbtMetaDataResources.RecalculateQuestionNumbersDeprecated( getNodeType() );
-        //    }
-        //} // setFilterDeprecated()
-
-        //public void clearFilterDeprecated()
-        //{
-        //    bool changed = _setAttribute( "filterpropid", Int32.MinValue, true );
-        //    changed = _setAttribute( "filtersubfield", string.Empty, true ) || changed;
-        //    changed = _setAttribute( "filtermode", string.Empty, true ) || changed;
-        //    changed = _setAttribute( "filtervalue", string.Empty, true ) || changed;
-        //    if( changed )
-        //    {
-        //        _CswNbtMetaDataResources.RecalculateQuestionNumbersDeprecated( getNodeType() );
-        //    }
-        //} // clearFilterDeprecated()
+        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswEnumNbtSubFieldName SubFieldName, CswEnumNbtFilterMode FilterMode, object FilterValue )
+        {
+            if( IsRequired )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+            }
+            DesignNode.DisplayConditionProperty.RelatedNodeId = FilterProp.DesignNode.NodeId;
+            DesignNode.DisplayConditionSubfield.Value = SubFieldName.ToString();
+            DesignNode.DisplayConditionFilterMode.Value = FilterMode.ToString();
+            DesignNode.DisplayConditionValue.Text = FilterValue.ToString();
+            DesignNode.postChanges( false );
+        }
 
         public void getFilter( ref CswNbtSubField SubField, ref CswEnumNbtFilterMode FilterMode, ref string FilterValue )
         {

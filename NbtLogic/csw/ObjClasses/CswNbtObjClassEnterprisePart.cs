@@ -11,6 +11,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string GCAS = "GCAS";
             public const string Request = "Request";
+            public const string Description = "Description";
+            public const string Version = "Version";
+            public const string EPNoLookup = "EPNo Lookup";
         }
 
         public CswNbtObjClassEnterprisePart( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
@@ -67,6 +70,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropText GCAS { get { return _CswNbtNode.Properties[PropertyName.GCAS]; } }
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
+        public CswNbtNodePropButton Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
+        public CswNbtNodePropButton Version { get { return _CswNbtNode.Properties[PropertyName.Version]; } }
+        public CswNbtNodePropButton EPNoLookup { get { return _CswNbtNode.Properties[PropertyName.EPNoLookup]; } }
 
         #endregion
 

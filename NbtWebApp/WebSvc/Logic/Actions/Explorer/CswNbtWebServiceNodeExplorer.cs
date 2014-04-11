@@ -111,7 +111,7 @@ namespace NbtWebApp.Actions.Explorer
                 CswNbtNodeKey nodeKey = tree.getNodeKeyForCurrentPosition();
                 string nodeName = tree.getNodeNameForCurrentPosition();
                 CswNbtMetaDataNodeType nodetype = NbtResources.MetaData.getNodeType( nodeKey.NodeTypeId );
-                RelatingNodes.Data.Add( nodeName, nodeKey.NodeId, nodetype.NodeTypeName, string.Empty, string.Empty );
+                RelatingNodes.Data.Add( nodeName, nodeKey.NodeId, nodetype.NodeTypeName, string.Empty, string.Empty, string.Empty );
                 tree.goToParentNode();
             }
         }

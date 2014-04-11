@@ -51,6 +51,11 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 Node.setModificationState( CswEnumNbtNodeModificationState.Posted );
+
+                if( AllowAuditing && ( false == Node.IsTemp ) )
+                {
+                    Node.Audit();
+                }
             }
         }
     }

@@ -94,6 +94,15 @@
                 opts = cswPrivate.controlPreProcessing(opts, 'comboBox');
                 return Csw.composites.comboBox(cswParent, opts);
             };
+            
+            cswParent.comboBoxExt = function (opts) {
+                /// <summary> Creates a Csw.comboBoxExt on this element</summary>
+                /// <param name="opts" type="Object">Options to define the comboBoxExt.</param>
+                /// <returns type="Csw.composites.comboBox">A Csw.composites.comboBoxExt</returns>
+                opts = cswPrivate.controlPreProcessing(opts, 'comboBoxExt');
+                return Csw.composites.comboBoxExt(cswParent, opts);
+            };
+
 
             cswParent.dateTimePicker = function (opts) {
                 /// <summary> Creates a Csw.dateTimePicker on this element</summary>

@@ -43,6 +43,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.CertificateDefinitionClass:
+                    ReturnVal = new CswNbtObjClassCertificateDefinition( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.CofADocumentClass:
                     ReturnVal = new CswNbtObjClassCofADocument( CswNbtResources, Node );
                     break;
@@ -82,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.DepartmentClass:
                     ReturnVal = new CswNbtObjClassDepartment( CswNbtResources, Node );
                     break;
-                    
+
                 case CswEnumNbtObjectClass.DesignNodeTypeClass:
                     ReturnVal = new CswNbtObjClassDesignNodeType( CswNbtResources, Node );
                     break;
@@ -187,6 +191,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassJurisdiction( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.Level:
+                    ReturnVal = new CswNbtObjClassLevel( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
@@ -229,6 +237,14 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.MethodCharacteristicClass:
+                    ReturnVal = new CswNbtObjClassMethodCharacteristic( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.MethodConditionClass:
+                    ReturnVal = new CswNbtObjClassMethodCondition( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.NonChemicalClass:
@@ -298,17 +314,29 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.SDSDocumentClass:
                     ReturnVal = new CswNbtObjClassSDSDocument( CswNbtResources, Node );
                     break;
-                    
+
+                case CswEnumNbtObjectClass.TestingLabClass:
+                    ReturnVal = new CswNbtObjClassTestingLab( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.GeneratorClass:
                     ReturnVal = new CswNbtObjClassGenerator( CswNbtResources, Node );
                     break;
-                    
+
                 case CswEnumNbtObjectClass.SizeClass:
                     ReturnVal = new CswNbtObjClassSize( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.TaskClass:
                     ReturnVal = new CswNbtObjClassTask( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.TestingLabUserAssignmentClass:
+                    ReturnVal = new CswNbtObjClassTestingLabUserAssignment( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.TestingLabMethodAssignmentClass:
+                    ReturnVal = new CswNbtObjClassTestingLabMethodAssignment( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.UnitOfMeasureClass:

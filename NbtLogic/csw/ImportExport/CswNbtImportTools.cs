@@ -43,9 +43,14 @@ namespace ChemSW.Nbt.csw.ImportExport
             CswNbtMetaDataObjectClass ReceiptLotOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
             List<string> ReceiptLotNts = ReceiptLotOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
 
+            // User Class
+            CswNbtMetaDataObjectClass UserOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            List<string> UserNts = UserOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
+
             CreateCafProps( NbtResources, ChemicalNts, "properties_values", "propertiesvaluesid", SetupMode );
             CreateCafProps( NbtResources, ContainerNts, "properties_values_cont", "contpropsvaluesid", SetupMode );
             CreateCafProps( NbtResources, ReceiptLotNts, "properties_values_lot", "lotpropsvaluesid", SetupMode );
+            CreateCafProps( NbtResources, UserNts, "properties_values_user", "userpropsvaluesid", SetupMode );
         }
 
         public static void CreateCafProps( CswNbtResources NbtResources, List<string> NodeTypes, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
@@ -67,15 +72,12 @@ namespace ChemSW.Nbt.csw.ImportExport
                     PropName = GetUniquePropName( NodeType, PropName ); //keep appending numbers until we have a unique prop name
 
                     CswEnumNbtFieldType propFT = GetFieldTypeFromCAFPropTypeCode( row["propertytype"].ToString() );
-
-                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName ) );
-                    newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Required].AsLogical.Checked = CswConvert.ToTristate( row["required"] );
-                    newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.ReadOnly].AsLogical.Checked = CswConvert.ToTristate( row["readonly"] );
-                    if( newProp.DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Options ) )
-                    {
-                        newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = CswConvert.ToString( row["listopts"] );
-                    }
-                    newProp.DesignNode.postChanges( false );
+                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName )
+                        {
+                            IsRequired = CswConvert.ToBoolean( row["required"] ),
+                            ReadOnly = CswConvert.ToBoolean( row["readonly"] ),
+                            ListOptions = CswConvert.ToString( row["listopts"] )
+                        } );
                     newProp.removeFromAllLayouts();
 
                     string cafColPropName = "prop" + row["propertyid"];
@@ -130,13 +132,15 @@ namespace ChemSW.Nbt.csw.ImportExport
             //add a / before the first trigger and split the file into an array of strings on space-only preceded / chars (breaking off potential PL/SQL blocks)
             string[] SQLCommands = Regex.Split( CAFSql
                              .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
-                             .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" ),
+                             .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" )
+                             .Replace( "/*+", "*+" ),//Strip slash out of Oracle Hints to prevent splitting the view query
                          @"\s+/" );
 
-
-
-            foreach( string SQLCommand in SQLCommands )
-            {   //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
+            foreach( string Command in SQLCommands )
+            {   
+                //If we stripped a slash out of an Oracle Hint, put it back in
+                string SQLCommand = Command.Replace( "*+", "/*+" );
+                //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
                 if( SQLCommand.Trim().StartsWith( "begin" ) || SQLCommand.Trim().StartsWith( "create or replace trigger" ) || SQLCommand.Trim().StartsWith( "create or replace procedure" ) )
                 {
                     CAFConnection.execArbitraryPlatformNeutralSql( SQLCommand );
@@ -249,7 +253,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                             from properties@caflink p
                                    join " + propValsTblName + @"@caflink pv on p.propertyid = pv.propertyid
                              where p.propertyid not in (select legacypropid from import_def_bindings idb
-                                         join properties@caflink p on p.propertyid = idb.legacypropid)
+                                         join properties@caflink p on p.propertyid = idb.legacypropid) and p.deleted = 0
                             order by propertyid";
 
             return sql;
@@ -411,9 +415,8 @@ namespace ChemSW.Nbt.csw.ImportExport
                     }
                     CswNbtResources.commitTransaction();
                     CswNbtResources.beginTransaction();
-
-                    //ret.Add( ImportDataTableName );
-
+                    CswNbtResources.DataDictionary.refresh();
+                  
                     // Store the sheet reference in import_data_map
                     CswTableUpdate ImportDataMapUpdate = CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
                     DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();

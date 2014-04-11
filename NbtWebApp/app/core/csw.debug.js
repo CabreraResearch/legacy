@@ -45,47 +45,10 @@
     };
 
     var cswPublic = {
-        loggly: {
-            info: function () { },
-            perf: function () { },
-            warn: function () { },
-            error: function () { }
-        }
     };
-
-    cswPrivate.prepareLoggly = Csw.method(function (url) {
-        cswPublic.loggly = cswPublic.loggly || {};
-        cswPublic.loggly.info = new window.loggly({ url: url, level: 'log' });
-        cswPublic.loggly.perf = new window.loggly({ url: url, level: 'debug' });
-        cswPublic.loggly.warn = new window.loggly({ url: url, level: 'warn' });
-        cswPublic.loggly.error = new window.loggly({ url: url, level: 'error' });
-    });
-
-    cswPrivate.initLoggly = function (keepTrying) {
-        try {
-            var key = Csw.clientSession.getLogglyInput();
-            var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
-            var url = host + '/inputs/' + key + '?rt=1';
-            if (loggly) {
-                cswPrivate.prepareLoggly(url);
-            } else {
-                window.setTimeout(function () {
-                    cswPrivate.initLoggly();
-                }, 5000);
-            }
-        } catch (e) {
-            //This kludge is for Dev. getLogglyInput() won't fail in compiled code.
-            if (keepTrying !== false) {
-                window.setTimeout(function () {
-                    cswPrivate.initLoggly(false);
-                }, 5000);
-            }
-        }
-    };
-    cswPrivate.initLoggly();
 
     cswPrivate.isLogLevelSupported = function (requestLevel) {
-        var maxLevel = Csw.clientSession.getLogglyLevel();
+        var maxLevel = 'error';//maybe this should be configurable in some way?
         return cswPrivate.logLevels.indexOf(maxLevel) <= cswPrivate.logLevels.indexOf(requestLevel);
     };
 
@@ -119,20 +82,10 @@
         }
     };
 
-    cswPrivate.tryExecSwallow = function (toConsole, toLoggly, onFail) {
+    cswPrivate.tryExecSwallow = function (toConsole, onFail) {
 
         try {
             toConsole();
-        } catch (e) {
-            try {
-                onFail();
-            } catch (e) {
-
-            }
-        }
-
-        try {
-            toLoggly();
         } catch (e) {
             try {
                 onFail();
@@ -148,11 +101,6 @@
             cswPrivate.tryExecSwallow(
                 function toConsole() {
                     console.error(msg);
-                },
-                function toLoggly() {
-                    msg = cswPrivate.prepMsg(msg);
-                    msg.type = 'Error';
-                    Csw.debug.loggly.error.error(Csw.serialize(msg));
                 },
                 function onFail() {
                     Csw.debug.log(msg);
@@ -204,11 +152,6 @@
                 function toConsole() {
                     console.info(msg);
                 },
-                function toLoggly() {
-                    msg = cswPrivate.prepMsg(msg);
-                    msg.type = 'Performance';
-                    Csw.debug.loggly.perf.info(Csw.serialize(msg));
-                },
                 function onFail() {
                     Csw.debug.log(msg);
                 }
@@ -222,11 +165,6 @@
             cswPrivate.tryExecSwallow(
                 function toConsole() {
                     console.log(msg);
-                },
-                function toLoggly() {
-                    msg = cswPrivate.prepMsg(msg);
-                    msg.type = 'Info';
-                    Csw.debug.loggly.info.debug(Csw.serialize(msg));
                 },
                 function onFail() {
                     window.dump(msg);
@@ -299,11 +237,6 @@
             cswPrivate.tryExecSwallow(
                 function toConsole() {
                     console.warn(msg);
-                },
-                function toLoggly() {
-                    msg = cswPrivate.prepMsg(msg);
-                    msg.type = 'Warning';
-                    Csw.debug.loggly.warn.warn(Csw.serialize(msg));
                 },
                 function onFail() {
                     Csw.debug.log(msg);

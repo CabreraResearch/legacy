@@ -44,6 +44,7 @@
                 customBarcodes: false,
                 nodeTypeName: '',
                 sizeSelectOpts: [],
+                sizeViewId: '',
                 balancesDefined: false,
             };
             Csw.extend(cswPrivate, options);
@@ -302,7 +303,8 @@
                                         onAfterAdd: function () {
                                             onSizeChange(true); //Case 31328 - when we add a size we need to check if the qty ctrl is there if there were no sizes before
                                         },
-                                        allowAdd: true
+                                        allowAdd: true,
+                                        viewid: cswPrivate.sizeViewId
                                     });
                                     updateSizeVals();
                                     break;
@@ -406,6 +408,7 @@
                                 cswPrivate.sizeSelectOpts[0].isSelected = true;
                                 cswPrivate.selectedSizeId = cswPrivate.sizeSelectOpts[0].id;
                             }
+                            cswPrivate.sizeViewId = response.ViewId;
                         }
                     }));
                 }

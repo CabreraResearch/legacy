@@ -136,10 +136,7 @@ namespace ChemSW.Nbt
                 }
             }
 
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
-            {
-                setReceiptLotPermissions( _CswNbtResources, false );
-            }
+            setReceiptLotPermissions( _CswNbtResources, false );
         } // OnDisable()
 
         private void _toggleMaterialSupplierView( bool MLMDisabled )
@@ -193,7 +190,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public static void setReceiptLotPermissions( CswNbtResources CswNbtResources, bool PermValue )
+        public static void setReceiptLotPermissions( CswNbtResources CswNbtResources, bool ModuleIsActive )
         {
             // CIS-52258 - grant Receipt Lot permissions to cispro_ roles
 
@@ -219,29 +216,28 @@ namespace ChemSW.Nbt
                 CswNbtObjClassRole RoleNode = RoleTree.getCurrentNode();
                 foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
                 {
-                    if( false == PermValue )
+                    //if MLM is on, everyone needs View and admins/receivers need Edit
+                    if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
                     {
-                        CswNbtResources.Permit.set( new CswEnumNbtNodeTypePermission[]
-                            {
-                                CswEnumNbtNodeTypePermission.View,
-                                CswEnumNbtNodeTypePermission.Create,
-                                CswEnumNbtNodeTypePermission.Edit,
-                                CswEnumNbtNodeTypePermission.Delete
-                            },
-                            ReceiptLotNT, RoleNode, PermValue );
+                        CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.View, ReceiptLotNT, RoleNode, true );
+
+                        if( "cispro_receiver" == RoleNode.Name.Text.ToLower() ||
+                            "cispro_admin" == RoleNode.Name.Text.ToLower())
+                        {
+                            CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Edit, ReceiptLotNT, RoleNode, true );
+                        }
                     }
+                    //otherwise, if only Lot Info is on, no one needs Edit, but everyone needs View
+                    else if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
+                    {
+                        CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.View, ReceiptLotNT, RoleNode, true );
+                        CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Edit, ReceiptLotNT, RoleNode, false );
+                    }
+                    //if both MLM and Lot Info are off, no one needs to View or Edit
                     else
                     {
-                        CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.View, ReceiptLotNT, RoleNode, PermValue );
-                        if( "cispro_receiver" == RoleNode.Name.Text.ToLower() ||
-                            "cispro_admin" == RoleNode.Name.Text.ToLower() )
-                        {
-                            CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Edit, ReceiptLotNT, RoleNode, PermValue );
-                        }
-                        if( "cispro_admin" == RoleNode.Name.Text.ToLower() )
-                        {
-                            CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Delete, ReceiptLotNT, RoleNode, PermValue );
-                        }
+                        CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.View, ReceiptLotNT, RoleNode, false );
+                        CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Edit, ReceiptLotNT, RoleNode, false );
                     }
                 }
                 //RoleNode.postChanges( false );  CswNbtPermit does this.

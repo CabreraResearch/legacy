@@ -69,6 +69,8 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName Special = new CswEnumNbtSubFieldName( "Special" );
         public static readonly CswEnumNbtSubFieldName Val_kg = new CswEnumNbtSubFieldName( "val_kg" );
         public static readonly CswEnumNbtSubFieldName Val_Liters = new CswEnumNbtSubFieldName( "val_Liters" );
+        public static readonly CswEnumNbtSubFieldName PreviouslyUsedPasswords = new CswEnumNbtSubFieldName( "PreviouslyUsedPasswords" );
+
     } // class SubFieldName
 
 }//namespace ChemSW.Nbt.MetaData
