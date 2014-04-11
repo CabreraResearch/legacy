@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using NbtWebApp.Actions.Receiving;
@@ -66,6 +69,18 @@ namespace ChemSW.Nbt.Actions
 
         public static void CheckContainerBarcodes( ICswResources CswResources, CswNbtContainerBarcodeCheckReturn ErrorMsg, Collection<CswNbtAmountsGridQuantity> Quantities )
         {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtMetaDataObjectClass ContainerOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp BarcodeOCP = (CswNbtMetaDataObjectClassProp) ContainerOC.getBarcodeProperty();
+            CswCommaDelimitedString barcodeNTPs = new CswCommaDelimitedString();
+            foreach( CswNbtMetaDataNodeTypeProp barcodeNTP in BarcodeOCP.getNodeTypeProps() )
+            {
+                barcodeNTPs.Add( barcodeNTP.PropId.ToString() );
+            }
+            CswNbtFieldTypeRuleBarCode BarcodeFTR = (CswNbtFieldTypeRuleBarCode) BarcodeOCP.getFieldTypeRule();
+
+            CswCommaDelimitedString AllProposedBarcodes = new CswCommaDelimitedString();
             HashSet<string> DuplicateBarcodes = new HashSet<string>();
             HashSet<string> BarcodeLookup = new HashSet<string>();
             foreach( CswNbtAmountsGridQuantity quantity in Quantities )
@@ -73,6 +88,7 @@ namespace ChemSW.Nbt.Actions
                 CswCommaDelimitedString barcodes = quantity.getBarcodes();
                 foreach( string barcode in barcodes )
                 {
+                    AllProposedBarcodes.Add( "'" + barcode.ToLower() + "'" );
                     if( BarcodeLookup.Contains( barcode ) )
                     {
                         DuplicateBarcodes.Add( barcode );
@@ -84,16 +100,39 @@ namespace ChemSW.Nbt.Actions
                 }
             }
 
-            if( DuplicateBarcodes.Count > 0 )
+            if( AllProposedBarcodes.Count > 0 )
             {
-                string[] dupeArray = new string[DuplicateBarcodes.Count];
-                DuplicateBarcodes.CopyTo( dupeArray );
-                CswCommaDelimitedString dupeCDS = new CswCommaDelimitedString()
+                if( DuplicateBarcodes.Count > 0 )
+                {
+                    CswCommaDelimitedString dupeCDS = HashSetToCDS( DuplicateBarcodes );
+                    ErrorMsg.Data = "There are following barcodes appear more than once: " + dupeCDS;
+                }
+                else
+                {
+                    string barcodeSQL = @"select nodeid, field1 from jct_nodes_props where nodetypepropid in (" + barcodeNTPs + ") and lower(" + BarcodeFTR.BarcodeSubField.Column + ") in (" + AllProposedBarcodes + ")";
+                    DataTable barcodesTbl = NbtResources.execArbitraryPlatformNeutralSqlSelect( "WebServiceReceiving.CheckContainerBarcodes", barcodeSQL );
+                    if( barcodesTbl.Rows.Count > 0 )
+                    {
+                        foreach( DataRow row in barcodesTbl.Rows )
+                        {
+                            DuplicateBarcodes.Add( row[BarcodeFTR.BarcodeSubField.Column.ToString()].ToString() );
+                        }
+                        CswCommaDelimitedString dupeCDS = HashSetToCDS( DuplicateBarcodes );
+                        ErrorMsg.Data = "There are following barcodes have already been assigned: " + dupeCDS;
+                    }
+                }
+            }
+        }
+
+        private static CswCommaDelimitedString HashSetToCDS( HashSet<string> set )
+        {
+            string[] dupeArray = new string[set.Count];
+            set.CopyTo( dupeArray );
+            CswCommaDelimitedString cds = new CswCommaDelimitedString()
                     {
                         dupeArray
                     };
-                ErrorMsg.Data = "There are following barcodes appear more than once: " + dupeCDS;
-            }
+            return cds;
         }
 
     }
