@@ -69,8 +69,11 @@ namespace ChemSW.Nbt.Sched
                 CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
+                    const Int32 MaxRowsToProcessPerThread = 1000;//This number must not exceed the amount of importing we expect to be able to do in _CswScheduleLogicDetail.MaxRunTimeMs
+                    const Int32 MinNumberToProcess = 100;//CIS-53123 - we should process at least this many rows at a time (because committing is expensive) - this number must not exceed 1000 (because we're using an IN clause)
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    Int32 NumberOfCommits = 1000 / NumberToProcess;//CIS-53123 - process 1000 rows per rule iteration, committing every NumberToProcess rows
+                    NumberToProcess = NumberToProcess < MinNumberToProcess ? MinNumberToProcess : NumberToProcess;
+                    Int32 NumberOfCommits = MaxRowsToProcessPerThread / NumberToProcess;//CIS-53123 - process MaxRowsToProcessPerThread rows per rule iteration, committing every NumberToProcess rows
                     const string QueueTableName = "nbtimportqueue";
                     const string QueuePkName = "nbtimportqueueid";
 
@@ -140,10 +143,10 @@ namespace ChemSW.Nbt.Sched
                                                                                       "       errorlog = '" + SafeError + "' " +
                                                                                       " where " + QueuePkName + " = " + ImportQueuePKs[i] );
                                 }
+                                _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.LoadCount - 1;
                             }
 
                             Importer.Finish();
-                            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.LoadCount - NumberToProcess;
                             //CIS-53123 - Commit every NumberToProcess rows (performes better than spawning a new thread every NumberToProcess rows)
                             _CswNbtResources.finalize();
                         }
