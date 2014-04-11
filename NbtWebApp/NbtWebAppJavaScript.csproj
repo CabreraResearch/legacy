@@ -131,6 +131,7 @@
     <Content Include="app\pagecmp\csw.dd.js" />
     <Content Include="app\layouts\csw.newlogin.js" />
     <Content Include="app\pagecmp\csw.draggablepanel.js" />
+    <Content Include="app\proptypes\csw.propTypeNumericRange.js" />
     <Content Include="app\proptypes\csw.propTypeMetaDataList.js" />
     <Content Include="app\main\csw.mainClear.js" />
     <Content Include="app\main\csw.mainGetViewGrid.js" />
