@@ -101,8 +101,8 @@
 
                     // Csw-handled errors
                     $.each($(jqXHR.result).find('Status').children(), function (i, xmlnode) {
-                        if (xmlnode.nodeName == "A:SUCCESS") {
-                            succeeded = Csw.bool($(xmlnode).text());
+                        if (xmlnode.nodeName == "A:MESSAGES") {
+                            succeeded = Csw.bool($(xmlnode).children().first().text());
                         }
                         if (xmlnode.nodeName == "A:ERRORS") {
                             var thiserr = {};
