@@ -21,6 +21,7 @@ namespace ChemSW.Nbt
     {
         private CswNbtResources _CswNbtResources;
         private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules;
+        private Dictionary<int, string> _ModuleIdToNameMapping; 
 
         public CswNbtModuleManager( CswNbtResources CswNbtResources )
         {
@@ -39,6 +40,8 @@ namespace ChemSW.Nbt
         private bool _RulesAreInitialized = false;
         private void initModules()
         {
+            _ModuleIdToNameMapping = new Dictionary<int, string>();
+
             // Fetch modules from database
             if( _CswNbtResources.IsInitializedForDbAccess )
             {
@@ -51,6 +54,9 @@ namespace ChemSW.Nbt
                     {
                         CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
                         ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
+
+                        int ModuleID = CswConvert.ToInt32( ModuleRow["moduleid"] );
+                        _ModuleIdToNameMapping.Add( ModuleID, ModuleName.ToString() );
                     }
                 }
                 _RulesAreInitialized = true;
@@ -68,6 +74,15 @@ namespace ChemSW.Nbt
             }
             return _ModuleRules[Module].Enabled;
         } // IsModuleEnabled()
+
+        public bool IsModuleEnabled( int ModuleID )
+        {
+            if( false == _RulesAreInitialized )
+            {
+                initModules();
+            }
+            return IsModuleEnabled( _ModuleIdToNameMapping[ModuleID] );
+        }
 
         public Int32 GetModuleId( CswEnumNbtModuleName Module )
         {

@@ -57,26 +57,12 @@ namespace ChemSW.Nbt.WebServices
         {
             CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> configVarsByModule =
                 new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
-            HashSet<int> enabledModuleIDs = new HashSet<int>();
             //system vars are grouped manually in order to add them
             //to the end of the collection
             Collection<CswNbtDataContractConfigurationVariable> systemConfigVars =
                 new Collection<CswNbtDataContractConfigurationVariable>();
             Collection<CswNbtDataContractConfigurationVariable> commonConfigVars =
                 new Collection<CswNbtDataContractConfigurationVariable>();
-
-
-            //a set of seen modules will help check which modules
-            //can be seen
-            foreach( CswEnumNbtModuleName moduleName in CswEnumNbtModuleName.All )
-            {
-                if( CswEnumNbtModuleName.Unknown != moduleName &&
-                    NbtResources.Modules.IsModuleEnabled( moduleName ) )
-                {
-                    int thisModuleID = NbtResources.Modules.GetModuleId( moduleName );
-                    enabledModuleIDs.Add( thisModuleID );
-                }
-            }
 
             CswTableSelect CVTableSelect = NbtResources.makeCswTableSelect( "config_var_nu", "configuration_variables" );
             DataTable CVDataTable = CVTableSelect.getTable();
@@ -96,7 +82,7 @@ namespace ChemSW.Nbt.WebServices
                 if( moduleIDForConfigVar != DBNull.Value )
                 {
                     int moduleIDForConfigVarInt = CswConvert.ToInt32( moduleIDForConfigVar );
-                    if( false == ( enabledModuleIDs.Contains( moduleIDForConfigVarInt ) ) )
+                    if( false == ( NbtResources.Modules.IsModuleEnabled( moduleIDForConfigVarInt )) )
                     {
                         includeConfigVar = false;
                     }
