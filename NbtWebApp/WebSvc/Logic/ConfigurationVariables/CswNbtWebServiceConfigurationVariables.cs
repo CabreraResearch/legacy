@@ -87,7 +87,22 @@ namespace ChemSW.Nbt.WebServices
             foreach( DataRow currentRow in CVDataTable.Rows )
             {
                 //check if the config var should be added based on module
-                if( _includeConfigVar( enabledModuleIDs, currentRow[COL_MODULEID] ) )
+                bool includeConfigVar = true;
+                object moduleIDForConfigVar = currentRow[COL_MODULEID]; 
+
+                //if this config var is associated with a module
+                //and that module is currently disabled
+                //hide it
+                if( moduleIDForConfigVar != DBNull.Value )
+                {
+                    int moduleIDForConfigVarInt = CswConvert.ToInt32( moduleIDForConfigVar );
+                    if( false == ( enabledModuleIDs.Contains( moduleIDForConfigVarInt ) ) )
+                    {
+                        includeConfigVar = false;
+                    }
+                }
+
+                if( includeConfigVar )
                 {
                     CswNbtDataContractConfigurationVariable thisConfigVarDataContract =
                         new CswNbtDataContractConfigurationVariable
@@ -108,8 +123,8 @@ namespace ChemSW.Nbt.WebServices
                     else if( DATATYPE_LIST == thisConfigVarDataContract.DataType )
                     {
                         string listOptionsAsString = currentRow[COL_CONSTRAINT].ToString();
-                        string[] listOptionsAsList = listOptionsAsString.Split( ',' );
-                        thisConfigVarDataContract.ListOptions = new Collection<string>( listOptionsAsList );
+                        //string[] listOptionsAsArray = listOptionsAsString.Split( ',' );
+                        thisConfigVarDataContract.ListOptions = new CswCommaDelimitedString(listOptionsAsString);
                     }
 
                     //if this configVar is a system id, group as system settings
@@ -157,12 +172,13 @@ namespace ChemSW.Nbt.WebServices
         }
 
         //_getConfigVars
-
+        
         /// <summary>
-        ///     returns a collection of config vars, to be displayed on the config var page. Only config vars the currently logged in user can see are included
+        /// powers the webservice, which handles incoming updated config vars from server
         /// </summary>
-        /// <param name="NbtResources">Instance of NbtResources</param>
-        /// <returns>dictionary of config vars, arranged by module</returns>
+        /// <param name="NbtResources">NbtResources object</param>
+        /// <param name="varsFromServer">Encapsulates a collection of config vars form server</param>
+        /// <returns></returns>
         private static CswNbtDataContractConfigurationUpdateSuccessResponse _updateConfigVars( CswNbtResources NbtResources,
                                                                                                CswNbtDataContractConfigurationVariableResponseContainer varsFromServer )
         {
@@ -214,11 +230,10 @@ namespace ChemSW.Nbt.WebServices
                                 break;
 
                             case DATATYPE_LIST:
-                                Collection<string> listOptions = new Collection<string>(
-                                    thisRow[COL_CONSTRAINT].ToString().Split( ',' ) );
+                                CswCommaDelimitedString listOptions = new CswCommaDelimitedString(thisRow[COL_CONSTRAINT].ToString());
                                 if( false == listOptions.Contains( updatedConfigVarValue ) )
                                 {
-                                    string listOptionsString = string.Join( ",", listOptions );
+                                    string listOptionsString = listOptions.ToString();
                                     throw new CswDniException( CswEnumErrorType.Warning,
                                                                configVarName + " must be set to one of these options: "
                                                                + listOptionsString,
@@ -265,35 +280,6 @@ namespace ChemSW.Nbt.WebServices
 
         //updateConfigVars
 
-
-        /// <summary>
-        ///     checks whether or not whether a given config var should be included in the list of config vars in the config vars page, based on whether the module it is associated to is enabled
-        /// </summary>
-        /// <param name="nbtResources">CswNbtResources object</param>
-        /// <param name="enabledModuleIds">HashSet containing ids of modules that are enabled</param>
-        /// <param name="moduleIDForConfigVar">The module id of this configVar. </param>
-        /// <param name="configVarIsSystem">True if this config var is a system config var</param>
-        /// <returns></returns>
-        private static bool _includeConfigVar( HashSet<int> enabledModuleIds, object moduleIDForConfigVar )
-        {
-            Boolean ret = true;
-
-            //if this config var is associated with a module
-            //and that module is currently disabled
-            //hide it
-            if( moduleIDForConfigVar != DBNull.Value )
-            {
-                int moduleIDForConfigVarInt = CswConvert.ToInt32( moduleIDForConfigVar );
-                if( false == ( enabledModuleIds.Contains( moduleIDForConfigVarInt ) ) )
-                {
-                    ret = false;
-                }
-            }
-
-            return ret;
-        }
-
-        //_includeConfigVar
     }
 
     [DataContract, KnownType( typeof( Collection<CswNbtDataContractConfigurationVariable> ) )]
@@ -303,7 +289,7 @@ namespace ChemSW.Nbt.WebServices
         public CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
     }
 
-    [DataContract]
+    [DataContract, KnownType(typeof(CswCommaDelimitedString))]
     public class CswNbtDataContractConfigurationVariable
     {
         /// <summary>
@@ -316,7 +302,7 @@ namespace ChemSW.Nbt.WebServices
         ///     if the datatype is LIST, these are the rendered list options
         /// </summary>
         [DataMember( Name = "listoptions" )]
-        public Collection<string> ListOptions = new Collection<string>();
+        public CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
 
         /// <summary>
         ///     Used to determine how to apply the constraint. Can be INT, STRING, LIST, BOOL
