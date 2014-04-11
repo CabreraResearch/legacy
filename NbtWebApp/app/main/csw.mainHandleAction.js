@@ -271,9 +271,6 @@
             });
             actionHandler.add('config vars', function (o) {
                 return Csw.actions.configurationvariables(Csw.main.centerTopDiv, {
-                    onConfigVarChange: function () {
-                        Csw.main.initAll();
-                    }
                 });
             });
            actionHandler.add('modules', function (o) {

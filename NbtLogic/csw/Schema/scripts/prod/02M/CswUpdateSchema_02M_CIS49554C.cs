@@ -49,13 +49,12 @@ namespace ChemSW.Nbt.Schema
                 if( thisConfigVarName == brand_pageicon ||
                     thisConfigVarName == brand_pagetitle )
                 {
-                    thisRow["DELETED"] = "1";
+                    _CswNbtSchemaModTrnsctn.deleteConfigurationVariable( thisConfigVarName );
                 }
             }
 
             UpdateConfigVarsTable.update( ConfigVarsDataTable );
 
-            _CswNbtSchemaModTrnsctn.commitTransaction();
         }
     }
 }
