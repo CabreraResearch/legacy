@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NodeTypesRow["tablename"] = "nodes";
                     NodeTypesRow["nodecount"] = 0;
                     NodeTypesRow["firstversionid"] = NodeTypeId.ToString();
-                    //NodeTypesUpdate.update( NodeTypesTable );
+                    _CswNbtResources.MetaData._CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeTypesRow.Table );
 
                     //CswNbtMetaDataNodeType NewNodeType = RelationalNodeType;
 

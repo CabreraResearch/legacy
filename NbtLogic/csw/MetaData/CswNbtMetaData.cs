@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -663,7 +660,7 @@ namespace ChemSW.Nbt.MetaData
                 Int32 FieldTypeId = CswConvert.ToInt32( Row["fieldtypeid"] );
                 _CswNbtMetaDataResources.FieldTypeTableUpdate.update( FieldTypeTable );
 
-                //refreshAll();
+                refreshAll();
                 //CswNbtMetaDataFieldType MetaDataFieldType = getFieldType( FieldType );
 
                 // Create a new "Design NodeTypeProp" nodetype node
@@ -768,6 +765,7 @@ namespace ChemSW.Nbt.MetaData
                 NTPFieldTypeNTP.getDefaultValue( true ).AsList.Text = FieldType.ToString();
                 //NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                 NTPFieldTypeNTP.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
+                 
 
                 //// Set display condition on QuestionNo and SubQuestionNo
                 //NTPQuestionNoNTP.DesignNode.DisplayConditionProperty.RelatedNodeId = NTPUseNumberingNTP.DesignNode.NodeId;
@@ -780,7 +778,11 @@ namespace ChemSW.Nbt.MetaData
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionFilterMode.Value = CswEnumNbtFilterMode.Equals.ToString();
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionValue.Text = CswEnumTristate.True.ToString();
 
+                refreshAll();
                 ICswNbtFieldTypeRule Rule = getFieldTypeRule( FieldType );
+
+                // Configure the nodetype to synchronize with nodetype_props
+                NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
 
                 // Make all the attribute properties
                 CswTableUpdate jctUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "MetaData_jctddntp_update", "jct_dd_ntp" );
@@ -805,13 +807,10 @@ namespace ChemSW.Nbt.MetaData
                     }
                     if( string.Empty != Attr.Column && CswNbtResources.UnknownEnum != Attr.Column )
                     {
-                        _addJctDdNtpRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column, Attr.SubFieldName );
+                        _addJctDdNtpRow( jctTable, thisNTP, "nodetype_props", Attr.Column, Attr.SubFieldName );
                     }
                 }
                 jctUpdate.update( jctTable );
-
-                // Configure the nodetype to synchronize with nodetype_props
-                NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
 
             } // if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
         }//makeNewFieldType()
@@ -1297,10 +1296,12 @@ namespace ChemSW.Nbt.MetaData
         {
             //CswNbtMetaDataObjectClass DesignNodeTypePropOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
             CswNbtMetaDataNodeType DesignNodeTypePropNT = getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( NtpModel.FieldType.FieldType ) );
+
             CswNbtObjClassDesignNodeTypeProp NewPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypePropNT.NodeTypeId, delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassDesignNodeTypeProp NewNtpNode = NewNode;
                     NewNtpNode.FieldType.Value = NtpModel.FieldType.FieldTypeId.ToString();
+                    NewNtpNode.FieldType.Text = NtpModel.FieldType.FieldType;
                     NewNtpNode.CompoundUnique.Checked = CswConvert.ToTristate( NtpModel.IsCompoundUnique );
                     NewNtpNode.Required.Checked = CswConvert.ToTristate( NtpModel.IsRequired );
                     NewNtpNode.Unique.Checked = CswConvert.ToTristate( NtpModel.IsUnique );
@@ -1318,6 +1319,7 @@ namespace ChemSW.Nbt.MetaData
                         NewNtpNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = NtpModel.ListOptions;
                     }
                 } );
+
 
             // Multi
             ICswNbtFieldTypeRule fieldTypeRule = getFieldTypeRule( NewPropNode.FieldTypeValue );

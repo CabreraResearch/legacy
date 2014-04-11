@@ -410,7 +410,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 _getWhere = new Dictionary<string, Collection<ICswNbtMetaDataObject>>();
             }
-            if( false == _getWhere.ContainsKey( Where ) )
+            if( false == _getWhere.ContainsKey( Where ) || _getWhere[Where].Count == 0 )
             {
                 string WhereClause = Where;
                 if( false == BypassModuleCheck )
