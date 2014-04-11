@@ -415,9 +415,8 @@ namespace ChemSW.Nbt.csw.ImportExport
                     }
                     CswNbtResources.commitTransaction();
                     CswNbtResources.beginTransaction();
-
-                    //ret.Add( ImportDataTableName );
-
+                    CswNbtResources.DataDictionary.refresh();
+                  
                     // Store the sheet reference in import_data_map
                     CswTableUpdate ImportDataMapUpdate = CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
                     DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();
