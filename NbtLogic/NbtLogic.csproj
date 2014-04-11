@@ -1014,6 +1014,7 @@
     <Compile Include="csw\Schema\scripts\prod\02M\CswSchemaScriptsMagnolia.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateDDL_02M_CISXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CISXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS53357.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CISXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_Case52354.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
