@@ -120,7 +120,6 @@ namespace ChemSW.Nbt.Schema
                 
             UpdateConfigVarsTable.update( ConfigVarsDataTable );
 
-            _CswNbtSchemaModTrnsctn.commitTransaction();
         }
     }
 }
