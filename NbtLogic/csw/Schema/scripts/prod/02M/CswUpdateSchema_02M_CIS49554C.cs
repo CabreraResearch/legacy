@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "";
+            return "C";
         }
 
         public override void update()
@@ -35,25 +35,8 @@ namespace ChemSW.Nbt.Schema
             const string brand_pagetitle = "brand_pagetitle";
             const string brand_pageicon = "brand_pageicon";
 
-            CswTableUpdate UpdateConfigVarsTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "populate moduleID, type and minvar columns in config_variables table CIS:49554B", "configuration_variables" );
-
-            //get entire config vars table
-            DataTable ConfigVarsDataTable = UpdateConfigVarsTable.getTable();
-
-            //update the configVarsTable datatable according to the 
-            //data in the rowsToUpdate dict
-            foreach( DataRow thisRow in ConfigVarsDataTable.Rows )
-            {
-                string thisConfigVarName = thisRow["variablename"].ToString();
-
-                if( thisConfigVarName == brand_pageicon ||
-                    thisConfigVarName == brand_pagetitle )
-                {
-                    _CswNbtSchemaModTrnsctn.deleteConfigurationVariable( thisConfigVarName );
-                }
-            }
-
-            UpdateConfigVarsTable.update( ConfigVarsDataTable );
+            _CswNbtSchemaModTrnsctn.deleteConfigurationVariable( brand_pagetitle );
+            _CswNbtSchemaModTrnsctn.deleteConfigurationVariable( brand_pageicon );
 
         }
     }
