@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Audit;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -56,7 +57,8 @@ namespace ChemSW.Nbt.Schema
                     NumberMaxValue = 100,
                     NumberPrecision = 3,
                     IsRequired = true,
-                    SetValOnAdd = true
+                    SetValOnAdd = true,
+                    AuditLevel = CswEnumAuditLevel.PlainAudit
                 } );
             
             
