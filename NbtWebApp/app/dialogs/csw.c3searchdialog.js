@@ -117,7 +117,7 @@
 
                     // Outer table
                     var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
-                    tableOuter.cell(1, 1).p({ text: '' });
+                    tableOuter.cell(1, 1).p({ text: 'Please provide search criteria. The search term must be 4 or more characters.' });
 
                     // Inner table
                     var tableInner = tableOuter.cell(2,1).table({ cellpadding: '2px' });
@@ -138,7 +138,7 @@
                         onKeyUp: function (keyCode) {
                             // If the key pressed is NOT the 'Enter' key
                             if (keyCode != 13) {
-                                if (Csw.isNullOrEmpty(cswPrivate.searchTermField.val())) {
+                                if (Csw.isNullOrEmpty(cswPrivate.searchTermField.val()) || cswPrivate.searchTermField.val().length < 4) {
                                     searchButton.disable();
                                 } else {
                                     searchButton.enable();
