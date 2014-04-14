@@ -62,9 +62,9 @@ namespace ChemSW.Nbt.csw.ImportExport
 
         public static void CreateCafProps( CswNbtResources NbtResources, List<string> NodeTypes, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
         {
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode: SetupMode );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode : SetupMode );
 
-            string sql = GetCAFPropertiesSQL( PropsValsTblName );
+            string sql = GetCAFPropertiesSQL( PropsValsTblName, NodeTypes );
             CswArbitrarySelect cafChemPropAS = NbtResources.makeCswArbitrarySelect( "cafProps_" + PropsValsPKName, sql );
             DataTable cafChemPropsDT = cafChemPropAS.getTable();
 
@@ -99,10 +99,10 @@ namespace ChemSW.Nbt.csw.ImportExport
                     }
 
                     ImpMgr.importBinding( cafSourceCol, PropName, "", "CAF", NodeType.NodeTypeName,
-                                         ClobTableName: PropsValsTblName,
-                                         LobDataPkColOverride: cafColPropName,
-                                         LobDataPkColName: PropsValsPKName,
-                                         LegacyPropId: PropId );
+                                         ClobTableName : PropsValsTblName,
+                                         LobDataPkColOverride : cafColPropName,
+                                         LobDataPkColName : PropsValsPKName,
+                                         LegacyPropId : PropId );
                 }
             }
 
@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                          @"\s+/" );
 
             foreach( string Command in SQLCommands )
-            {   
+            {
                 //If we stripped a slash out of an Oracle Hint, put it back in
                 string SQLCommand = Command.Replace( "*+", "/*+" );
                 //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.csw.ImportExport
 
 
             //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
-            //CreateAllCAFProps( _CswNbtResources, SetupMode );
+            CreateAllCAFProps( _CswNbtResources, SetupMode );
 
             // Enable the CAFImport rule
             CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
@@ -247,8 +247,14 @@ namespace ChemSW.Nbt.csw.ImportExport
         /// <summary>
         /// Get all the custom properties in a CAF schema
         /// </summary>
-        private static string GetCAFPropertiesSQL( string propValsTblName )
+        private static string GetCAFPropertiesSQL( string propValsTblName, List<string> NodeTypes )
         {
+            CswCommaDelimitedString cdsNTNames = new CswCommaDelimitedString();
+            foreach( string ntName in NodeTypes )
+            {
+                cdsNTNames.Add( "'" + ntName + "'" );
+            }
+
             string sql = @"select distinct p.propertyid,
                              p.propertyname,
                              p.propertytype,
@@ -260,7 +266,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                             from properties@caflink p
                                    join " + propValsTblName + @"@caflink pv on p.propertyid = pv.propertyid
                              where p.propertyid not in (select legacypropid from import_def_bindings idb
-                                         join properties@caflink p on p.propertyid = idb.legacypropid) and p.deleted = 0
+                                         join properties@caflink p on p.propertyid = idb.legacypropid and destnodetypename in (" + cdsNTNames + @") ) and p.deleted = 0
                             order by propertyid";
 
             return sql;
@@ -423,7 +429,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                     CswNbtResources.commitTransaction();
                     CswNbtResources.beginTransaction();
                     CswNbtResources.DataDictionary.refresh();
-                  
+
                     // Store the sheet reference in import_data_map
                     CswTableUpdate ImportDataMapUpdate = CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
                     DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();

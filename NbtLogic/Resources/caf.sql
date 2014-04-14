@@ -1127,7 +1127,10 @@ SELECT m.materialid || '_' || c.containerid as legacyid,
        c.expirationdate, 
        m.materialname,
        msub.subclassname,
-       m.materialname || nvl(',' || d.descript, '') description
+       m.materialname || nvl(',' || d.descript, '') description,
+	   cpv.*,
+	   contpv.*,
+	   m.deleted
 FROM   materials m 
        join packages p on p.materialid = m.materialid and m.materialsubclassid IN (SELECT ms.materialsubclassid 
                                              FROM   materials_subclass ms 
@@ -1140,4 +1143,6 @@ FROM   materials m
        join packdetail pd on pd.packageid = p.packageid
        join containers c on pd.packdetailid = c.packdetailid and c.containerclass <> 'lotholder'
        join d on d.materialid = m.materialid
-       join materials_subclass msub on msub.materialsubclassid = m.materialsubclassid;
+       join materials_subclass msub on msub.materialsubclassid = m.materialsubclassid
+	   join chemicals_props_view cpv on cpv.materialid = m.materialid
+	   join containers_props_view contpv on contpv.containerid = c.containerid;
