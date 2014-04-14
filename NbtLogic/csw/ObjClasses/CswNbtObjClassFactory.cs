@@ -43,6 +43,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.CertDefConditionClass:
+                    ReturnVal = new CswNbtObjClassCertDefCondition ( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.CofADocumentClass:
                     ReturnVal = new CswNbtObjClassCofADocument( CswNbtResources, Node );
                     break;
