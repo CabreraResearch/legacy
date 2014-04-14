@@ -10,6 +10,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -418,10 +419,11 @@ namespace ChemSW.Nbt.ImportExport
                                 CswNbtObjClassContainer Container = NewNode;
                                 double Qty = Container.Quantity.Quantity;
                                 Container.Quantity.Quantity = 0;
+                                Container.Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), Container, IsImport: true );
                                 Container.DispenseIn( CswEnumNbtContainerDispenseType.Receive, Qty, Container.Quantity.UnitId );
                             }
 
-                        }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
+                        }, OverrideUniqueValidation: true, OverrideMailReportEvents: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
                 }
 
                 ImportedNodeId = Node.NodeId;

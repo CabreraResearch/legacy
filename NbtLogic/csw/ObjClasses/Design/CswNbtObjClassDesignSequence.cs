@@ -185,11 +185,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void reSync( CswEnumNbtPropColumn Column, Int32 NewSeqVal )
         {
-            string SelectText = @"select max(j." + Column + @") as seqval
-                                    from sequences s
-                                    join nodetype_props p on ( p.sequenceid = s.sequenceid ) 
-                                    join jct_nodes_props j on ( p.nodetypepropid = j.nodetypepropid and j.nodeid is not null )
-                                   where s.sequenceid = :sequenceid ";
+            string SelectText = @"with seqntpids as 
+                                    (select nodetypepropid from nodetype_props where sequenceid in 
+                                        (select sequenceid from sequences where sequenceid = :sequenceid)
+                                    )
+                                    select max(" + Column + @") as seqval
+                                          from jct_nodes_props 
+                                          where nodetypepropid in (select nodetypepropid from seqntpids)";
 
             CswArbitrarySelect SeqValueSelect = _CswNbtResources.makeCswArbitrarySelect( "syncSequence_maxvalue_select", SelectText );
             SeqValueSelect.addParameter( "sequenceid", SequenceId.ToString() );

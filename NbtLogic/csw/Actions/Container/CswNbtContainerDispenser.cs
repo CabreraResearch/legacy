@@ -9,14 +9,16 @@ namespace ChemSW.Nbt.Actions
         private CswNbtObjClassContainer _Container;
         private CswNbtResources _CswNbtResources;
         private CswNbtContainerDispenseTransactionBuilder _ContainerDispenseTransactionBuilder;
+        private bool _IsImport;
 
         #region Constructor
 
-        public CswNbtContainerDispenser( CswNbtResources CswNbtResources, CswNbtContainerDispenseTransactionBuilder ContainerDispenseTransactionBuilder, CswNbtObjClassContainer Container )
+        public CswNbtContainerDispenser( CswNbtResources CswNbtResources, CswNbtContainerDispenseTransactionBuilder ContainerDispenseTransactionBuilder, CswNbtObjClassContainer Container, bool IsImport = false )
         {
             _CswNbtResources = CswNbtResources;
             _ContainerDispenseTransactionBuilder = ContainerDispenseTransactionBuilder;
             _Container = Container;
+            _IsImport = IsImport;
         }
 
         #endregion Constructor
@@ -73,7 +75,7 @@ namespace ChemSW.Nbt.Actions
             _Container.Quantity.Quantity = CurrentQuantity + RealQuantityToAdd;
             if( RecordTransaction )
             {
-                _ContainerDispenseTransactionBuilder.create( DispenseType, RealQuantityToAdd, _Container.Quantity.UnitId, RequestItemId, SourceContainer, _Container );
+                _ContainerDispenseTransactionBuilder.create( DispenseType, RealQuantityToAdd, _Container.Quantity.UnitId, RequestItemId, SourceContainer, _Container, IsImport: _IsImport );
             }
             CswEnumNbtContainerLocationTypeOptions ContainerLocationType =
                 SourceContainer == null ? CswEnumNbtContainerLocationTypeOptions.Receipt
