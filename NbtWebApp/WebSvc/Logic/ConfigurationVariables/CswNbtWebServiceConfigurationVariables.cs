@@ -74,15 +74,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 //check if the config var should be added based on module
                 bool includeConfigVar = true;
-                object moduleIDForConfigVar = currentRow[COL_MODULEID]; 
+                int moduleIDForConfigVar = CswConvert.ToInt32(currentRow[COL_MODULEID]); 
 
                 //if this config var is associated with a module
                 //and that module is currently disabled
                 //hide it
-                if( moduleIDForConfigVar != DBNull.Value )
+                if( moduleIDForConfigVar != Int32.MinValue)
                 {
-                    int moduleIDForConfigVarInt = CswConvert.ToInt32( moduleIDForConfigVar );
-                    if( false == ( NbtResources.Modules.IsModuleEnabled( moduleIDForConfigVarInt )) )
+                    if( false == ( NbtResources.Modules.IsModuleEnabled( moduleIDForConfigVar )) )
                     {
                         includeConfigVar = false;
                     }
