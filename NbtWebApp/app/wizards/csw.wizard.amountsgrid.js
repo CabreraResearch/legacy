@@ -175,7 +175,7 @@
                                         }//success
                                     });
                                 }//if there is a default balance
-                                
+
 
                                 if (cellOverride) {
                                     cswPublic.rows[rowid].qtyControl = cellOverride.quantity(cswPrivate.quantity);
@@ -191,7 +191,7 @@
                                     }
                                     value = anArray.join(',');
                                 };
-                                var barcodeToParse = Csw.delimitedString(Csw.string(value).trim()).array;
+                                var barcodeToParse = Csw.delimitedString(Csw.string(value).trim(), { removeDuplicates: false }).array;
                                 parseBarcodes(barcodeToParse);
                                 cswPublic.rows[rowid].quantityValues.barcodes = value;
                             };

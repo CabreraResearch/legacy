@@ -192,19 +192,6 @@
                         bindOnEnter: div,
                         isEnabled: enableSearchButton,
                         onClick: function () {
-
-                            //var CswC3SearchParams = {
-                            //    Field: cswPrivate.searchTypeSelect.selectedVal(),
-                            //    Query: $.trim(cswPrivate.searchTermField.val()),
-                            //    SearchOperator: cswPrivate.searchOperatorSelect.selectedVal(),
-                            //    SourceName: cswPrivate.vendorOptions.selectedVal(),
-                            //    ACDCompanyIds: cswPrivate.vendorOptions.selectedVal()
-                            //};
-
-                            //if (cswPrivate.searchTypeSelect.selectedText() == "Structure") {
-                            //    CswC3SearchParams.Query = $.trim(cswPrivate.molSearchField.val());
-                            //}
-
                             var CswC3SearchParams = createSearchParamsObj();
 
                             Csw.ajaxWcf.post({

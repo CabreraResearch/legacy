@@ -272,6 +272,7 @@
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtPurgeSessionData.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExtChemDataSync.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <None Include="Service References\ChemCatCentral\Search1.disco" />
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -284,27 +285,26 @@
     </None>
     <None Include="Service References\ChemCatCentral\configuration.svcinfo" />
     <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
-    <None Include="Service References\ChemCatCentral\Search.disco" />
-    <None Include="Service References\ChemCatCentral\Search.wsdl" />
-    <None Include="Service References\ChemCatCentral\Search.xsd">
+    <None Include="Service References\ChemCatCentral\Search1.wsdl" />
+    <None Include="Service References\ChemCatCentral\Search7.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search1.xsd">
+    <None Include="Service References\ChemCatCentral\Search71.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search2.xsd">
+    <None Include="Service References\ChemCatCentral\Search72.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search3.xsd">
+    <None Include="Service References\ChemCatCentral\Search73.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search4.xsd">
+    <None Include="Service References\ChemCatCentral\Search74.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search5.xsd">
+    <None Include="Service References\ChemCatCentral\Search75.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search6.xsd">
+    <None Include="Service References\ChemCatCentral\Search76.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ChemWatchMaterialServices\ChemSW.Nbt.ChemWatchMaterialServices.AutoCompleteData.datasource">
@@ -1014,6 +1014,7 @@
     <Compile Include="csw\Schema\scripts\prod\02M\CswSchemaScriptsMagnolia.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateDDL_02M_CISXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateMetaData_02M_CISXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CIS53357.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_CISXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02M\CswUpdateSchema_02M_Case52354.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
