@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -25,13 +26,15 @@ namespace ChemSW.Nbt.PropTypes
             _UpperSubField = ( (CswNbtFieldTypeRuleNumericRange) _FieldTypeRule ).UpperSubField;
             _LowerInclusiveSubField = ( (CswNbtFieldTypeRuleNumericRange) _FieldTypeRule ).LowerInclusiveSubField;
             _UpperInclusiveSubField = ( (CswNbtFieldTypeRuleNumericRange) _FieldTypeRule ).UpperInclusiveSubField;
+            _UnitsSubField = ( (CswNbtFieldTypeRuleNumericRange) _FieldTypeRule ).UnitsSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _LowerSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Lower, x => Lower = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _TargetSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Target, x => Target = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _UpperSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Upper, x => Upper = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _LowerInclusiveSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => LowerInclusive, x => LowerInclusive = x ) );
-            _SubFieldMethods.Add( _UpperInclusiveSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UpperInclusive, x => UpperInclusive = x ) );
+            _SubFieldMethods.Add( _LowerSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Lower, x => Lower = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _TargetSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Target, x => Target = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _UpperSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Upper, x => Upper = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _LowerInclusiveSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => LowerInclusive, x => LowerInclusive = CswConvert.ToBoolean( x ) ) );
+            _SubFieldMethods.Add( _UpperInclusiveSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => UpperInclusive, x => UpperInclusive = CswConvert.ToBoolean( x ) ) );
+            _SubFieldMethods.Add( _UnitsSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Units, x => Units = x ) );
         }
 
         private CswNbtSubField _LowerSubField;
@@ -39,12 +42,17 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _UpperSubField;
         private CswNbtSubField _LowerInclusiveSubField;
         private CswNbtSubField _UpperInclusiveSubField;
+        private CswNbtSubField _UnitsSubField;
 
-        override public bool Empty
+
+        public override bool Empty
         {
             get
             {
-                return ( 0 == Gestalt.Length );
+                return false == CswTools.IsDouble( Lower ) &&
+                       false == CswTools.IsDouble( Target ) &&
+                       false == CswTools.IsDouble( Upper ) &&
+                       string.IsNullOrEmpty( Units );  // need this for default values to work
             }
         }
 
@@ -65,6 +73,21 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
                     }
+
+                    // Validation
+                    if( CswTools.IsDouble( Target ) && RoundedValue > Target )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "Lower cannot be greater than Target",
+                                                   "New value for Lower (" + RoundedValue.ToString() + ") is greater than existing value for Target (" + Target.ToString() + ")" );
+                    }
+                    if( CswTools.IsDouble( Upper ) && RoundedValue > Upper )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "Lower cannot be greater than Upper",
+                                                   "New value for Lower (" + RoundedValue.ToString() + ") is greater than existing value for Upper (" + Upper.ToString() + ")" );
+                    }
+
                     SetPropRowValue( _LowerSubField, RoundedValue );
                 }
                 SyncGestalt();
@@ -88,6 +111,21 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
                     }
+
+                    // Validation
+                    if( CswTools.IsDouble( Upper ) && RoundedValue > Upper )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "Target cannot be greater than Upper",
+                                                   "New value for Target (" + RoundedValue.ToString() + ") is greater than existing value for Upper (" + Upper.ToString() + ")" );
+                    }
+                    if( CswTools.IsDouble( Lower ) && RoundedValue < Lower )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "Target cannot be less than Lower",
+                                                   "New value for Target (" + RoundedValue.ToString() + ") is less than existing value for Lower (" + Lower.ToString() + ")" );
+                    }
+
                     SetPropRowValue( _TargetSubField, RoundedValue );
                 }
                 SyncGestalt();
@@ -111,6 +149,21 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
                     }
+
+                    // Validation
+                    if( CswTools.IsDouble( Lower ) && RoundedValue < Lower )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "Upper cannot be less than Lower",
+                                                   "New value for Upper (" + RoundedValue.ToString() + ") is less than existing value for Lower (" + Lower.ToString() + ")" );
+                    }
+                    if( CswTools.IsDouble( Target ) && RoundedValue < Target )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "Upper cannot be less than Target",
+                                                   "New value for Upper (" + RoundedValue.ToString() + ") is less than existing value for Target (" + Target.ToString() + ")" );
+                    }
+
                     SetPropRowValue( _UpperSubField, RoundedValue );
                 }
                 SyncGestalt();
@@ -133,6 +186,16 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 SetPropRowValue( _UpperInclusiveSubField, value );
+                SyncGestalt();
+            }
+        }
+
+        public string Units
+        {
+            get { return GetPropRowValue( _UnitsSubField ); }
+            set
+            {
+                SetPropRowValue( _UnitsSubField, value );
                 SyncGestalt();
             }
         }
@@ -164,6 +227,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_UpperSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Upper ) ) ? Upper.ToString() : string.Empty;
             ParentObject[_LowerInclusiveSubField.ToXmlNodeName( true )] = LowerInclusive;
             ParentObject[_UpperInclusiveSubField.ToXmlNodeName( true )] = UpperInclusive;
+            ParentObject[_UnitsSubField.ToXmlNodeName( true )] = Units;
             ParentObject["precision"] = Precision;
         }
 
@@ -233,6 +297,10 @@ namespace ChemSW.Nbt.PropTypes
             if( false == Double.IsNaN( Lower ) )
             {
                 newGestalt += Lower.ToString();
+                if( false == string.IsNullOrEmpty( Units ) )
+                {
+                    newGestalt += Units;
+                }
                 if( LowerInclusive )
                 {
                     newGestalt += " <= ";
@@ -244,7 +312,12 @@ namespace ChemSW.Nbt.PropTypes
             }
             if( false == Double.IsNaN( Target ) )
             {
-                newGestalt += "[" + Target.ToString() + "]";
+                newGestalt += "[" + Target.ToString();
+                if( false == string.IsNullOrEmpty( Units ) )
+                {
+                    newGestalt += Units;
+                }
+                newGestalt += "]";
             }
             if( false == Double.IsNaN( Upper ) )
             {
@@ -257,6 +330,10 @@ namespace ChemSW.Nbt.PropTypes
                     newGestalt += " < ";
                 }
                 newGestalt += Upper.ToString();
+                if( false == string.IsNullOrEmpty( Units ) )
+                {
+                    newGestalt += Units;
+                }
             }
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, newGestalt );
         }

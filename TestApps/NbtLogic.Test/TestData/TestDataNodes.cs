@@ -224,10 +224,13 @@ namespace ChemSW.Nbt.Test
                                         CswNbtObjClassMaterialComponent MaterialComponentNode = Node;
                                         MaterialComponentNode.Mixture.RelatedNodeId = MaterialNode.NodeId;
                                         MaterialComponentNode.Constituent.RelatedNodeId = Constituent.NodeId;
-                                        MaterialComponentNode.LowPercentageValue.Value = ConstPercentage;
-                                        MaterialComponentNode.TargetPercentageValue.Value = ConstPercentage;
-                                        MaterialComponentNode.HighPercentageValue.Value = ConstPercentage;
-                                        MaterialComponentNode.Percentage.Value = ConstPercentage;
+                                        //MaterialComponentNode.LowPercentageValue.Value = ConstPercentage;
+                                        //MaterialComponentNode.TargetPercentageValue.Value = ConstPercentage;
+                                        //MaterialComponentNode.HighPercentageValue.Value = ConstPercentage;
+                                        //MaterialComponentNode.Percentage.Value = ConstPercentage;
+                                        MaterialComponentNode.PercentageRange.Lower = ConstPercentage;
+                                        MaterialComponentNode.PercentageRange.Target = ConstPercentage;
+                                        MaterialComponentNode.PercentageRange.Upper = ConstPercentage;
                                     } );
                             }
                         }
