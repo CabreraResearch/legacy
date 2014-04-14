@@ -633,7 +633,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 throw new CswDniException( CswEnumErrorType.Error,
                                            "Invalid subfield configuration",
-                                           PropName + " does not contain a set method for subfield " + SubFieldName.ToString() );
+                                           PropName + " (field type: " + getFieldTypeValue() + ") does not contain a set method for subfield " + SubFieldName.ToString() );
             }
         } // SetSubFieldValue
 
@@ -647,13 +647,13 @@ namespace ChemSW.Nbt.PropTypes
             if( _SubFieldMethods.ContainsKey( SubFieldName ) && null != _SubFieldMethods[SubFieldName].Item1 )
             {
                 // This calls the appropriate get; method in the CswNbtNodeProp* class
-                _SubFieldMethods[SubFieldName].Item1();
+                ret = _SubFieldMethods[SubFieldName].Item1();
             }
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error,
                                            "Invalid subfield configuration",
-                                           PropName + " does not contain a get method for subfield " + SubFieldName.ToString() );
+                                           PropName + " (field type: " + getFieldTypeValue() + ") does not contain a get method for subfield " + SubFieldName.ToString() );
             }
             return ret;
         } // GetSubFieldValue
