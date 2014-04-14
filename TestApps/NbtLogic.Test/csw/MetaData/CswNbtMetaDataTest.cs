@@ -1,4 +1,5 @@
-﻿using ChemSW.Core;
+﻿using ChemSW.Audit;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Schema;
 using NUnit.Framework;
@@ -39,7 +40,7 @@ namespace ChemSW.Nbt.Test.MetaData
             string fakeNodeTypeName = "fake Test";
 
             // new object class
-            _fakeTestOC = _SchemaModTrnsctn.createObjectClass( fakeObjectClassName, "doc.png", AuditLevel: false );
+            _fakeTestOC = _SchemaModTrnsctn.createObjectClass( fakeObjectClassName, "doc.png", AuditLevel: CswEnumAuditLevel.NoAudit );
             Assert.IsNotNull( _fakeTestOC, "fakeTestOC was null" );
 
             // new object class prop

@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Audit;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -32,7 +33,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             //Create the new ObjClass
-            CswNbtMetaDataObjectClass TestingLabOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabClass, "door.png", false );
+            CswNbtMetaDataObjectClass TestingLabOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabClass, "door.png", CswEnumAuditLevel.NoAudit );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabOC, new CswNbtWcfMetaDataModel.ObjectClassProp( TestingLabOC )
                 {

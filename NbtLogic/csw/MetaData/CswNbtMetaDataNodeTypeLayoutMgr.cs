@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -448,7 +449,7 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getPropNodesNotInLayout()
 
-        public void updateLayoutAuditLevel( CswNbtMetaDataNodeTypeProp NtProp, string AuditLevel )
+        public void updateLayoutAuditLevel( CswNbtMetaDataNodeTypeProp NtProp, CswEnumAuditLevel AuditLevel )
         {
             CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "updatePropAuditLevel_Update", "nodetype_layout" );
             string WhereClause = "where nodetypepropid = " + NtProp.PropId.ToString();
