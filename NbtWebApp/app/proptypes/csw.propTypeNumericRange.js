@@ -19,13 +19,15 @@
             cswPrivate.upper = nodeProperty.propData.values.upper;
             cswPrivate.lowerInclusive = nodeProperty.propData.values.lowerinclusive;
             cswPrivate.upperInclusive = nodeProperty.propData.values.upperinclusive;
+            cswPrivate.units = nodeProperty.propData.values.units;
 
             nodeProperty.onPropChangeBroadcast(function(val) {
                 if (cswPrivate.lower !== val.lower ||
                     cswPrivate.target !== val.target ||
                     cswPrivate.upper !== val.upper ||
                     cswPrivate.lowerInclusive !== val.lowerInclusive ||
-                    cswPrivate.upperInclusive !== val.upperInclusive) {
+                    cswPrivate.upperInclusive !== val.upperInclusive) 
+                {
                     cswPrivate.lower = val.lower;
                     cswPrivate.target = val.target;
                     cswPrivate.upper = val.upper;
@@ -59,8 +61,8 @@
 
 
                 cswPrivate.table.cell(1, 1).text('Lower');
-                cswPrivate.table.cell(1, 3).text('Target');
-                cswPrivate.table.cell(1, 5).text('Upper');
+                cswPrivate.table.cell(1, 4).text('Target');
+                cswPrivate.table.cell(1, 7).text('Upper');
 
                 cswPrivate.lowerNtb = cswPrivate.table.cell(2, 1).numberTextBox({
                     name: nodeProperty.name + '_lower',
@@ -84,7 +86,26 @@
                 });
                 cswPrivate.lowerNtb.required(nodeProperty.propData.required);
 
-                cswPrivate.targetNtb = cswPrivate.table.cell(2, 3).numberTextBox({
+                cswPrivate.table.cell(2, 2).css({ verticalAlign: 'middle' }).text(cswPrivate.units);
+
+                cswPrivate.lowerIncSel = cswPrivate.table.cell(2, 3).select({
+                    name: nodeProperty.name + '_lowerinc',
+                    selected: cswPrivate.lowerInclusive,
+                    values: [{ display: '<', value: false },
+                             { display: '<=', value: true }],
+                    onChange: function(val) {
+                        nodeProperty.propData.values.lowerinclusive = val;
+                        nodeProperty.broadcastPropChange({
+                            lower: cswPrivate.lower,
+                            target: cswPrivate.target,
+                            upper: cswPrivate.upper,
+                            lowerInclusive: val,
+                            upperInclusive: cswPrivate.upperInclusive
+                        });
+                    }
+                });
+
+                cswPrivate.targetNtb = cswPrivate.table.cell(2, 4).numberTextBox({
                     name: nodeProperty.name + '_target',
                     value: cswPrivate.target,
                     ceilingVal: cswPrivate.ceilingVal,
@@ -106,7 +127,26 @@
                 });
                 cswPrivate.targetNtb.required(nodeProperty.propData.required);
 
-                cswPrivate.upperNtb = cswPrivate.table.cell(2, 5).numberTextBox({
+                cswPrivate.table.cell(2, 5).css({ verticalAlign: 'middle' }).text(cswPrivate.units);
+
+                cswPrivate.upperIncSel= cswPrivate.table.cell(2, 6).select({
+                    name: nodeProperty.name + '_upperinc',
+                    selected: cswPrivate.upperInclusive,
+                    values: [{ display: '<', value: false },
+                             { display: '<=', value: true }],
+                    onChange: function(val) {
+                        nodeProperty.propData.values.upperinclusive = val;
+                        nodeProperty.broadcastPropChange({
+                            lower: cswPrivate.lower,
+                            target: cswPrivate.target,
+                            upper: cswPrivate.upper,
+                            lowerInclusive: cswPrivate.lowerInclusive,
+                            upperInclusive: val
+                        });
+                    }
+                });
+
+                cswPrivate.upperNtb = cswPrivate.table.cell(2, 7).numberTextBox({
                     name: nodeProperty.name + '_upper',
                     value: cswPrivate.upper,
                     ceilingVal: cswPrivate.ceilingVal,
@@ -128,38 +168,7 @@
                 });
                 cswPrivate.upperNtb.required(nodeProperty.propData.required);
 
-                cswPrivate.lowerIncSel = cswPrivate.table.cell(2, 2).select({
-                    name: nodeProperty.name + '_lowerinc',
-                    selected: cswPrivate.lowerInclusive,
-                    values: [{ display: '<', value: false },
-                             { display: '<=', value: true }],
-                    onChange: function(val) {
-                        nodeProperty.propData.values.lowerinclusive = val;
-                        nodeProperty.broadcastPropChange({
-                            lower: cswPrivate.lower,
-                            target: cswPrivate.target,
-                            upper: cswPrivate.upper,
-                            lowerInclusive: val,
-                            upperInclusive: cswPrivate.upperInclusive
-                        });
-                    }
-                });
-                cswPrivate.upperIncSel= cswPrivate.table.cell(2, 4).select({
-                    name: nodeProperty.name + '_upperinc',
-                    selected: cswPrivate.upperInclusive,
-                    values: [{ display: '<', value: false },
-                             { display: '<=', value: true }],
-                    onChange: function(val) {
-                        nodeProperty.propData.values.upperinclusive = val;
-                        nodeProperty.broadcastPropChange({
-                            lower: cswPrivate.lower,
-                            target: cswPrivate.target,
-                            upper: cswPrivate.upper,
-                            lowerInclusive: cswPrivate.lowerInclusive,
-                            upperInclusive: val
-                        });
-                    }
-                });
+                cswPrivate.table.cell(2, 8).css({ verticalAlign: 'middle' }).text(cswPrivate.units);
 
             } // if-else(isReadonly()))
         }; // render()

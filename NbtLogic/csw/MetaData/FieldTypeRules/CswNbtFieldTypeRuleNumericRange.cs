@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             public static CswEnumNbtSubFieldName Upper = CswEnumNbtSubFieldName.Upper;
             public static CswEnumNbtSubFieldName LowerInclusive = CswEnumNbtSubFieldName.LowerInclusive;
             public static CswEnumNbtSubFieldName UpperInclusive = CswEnumNbtSubFieldName.UpperInclusive;
+            public static CswEnumNbtSubFieldName Units = CswEnumNbtSubFieldName.Units;
         }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
@@ -61,7 +62,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             UpperSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( UpperSubField );
 
-            LowerInclusiveSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.LowerInclusive, true );
+            LowerInclusiveSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.LowerInclusive, true );
             LowerInclusiveSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             LowerInclusiveSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             LowerInclusiveSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -75,6 +76,17 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             UpperInclusiveSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( UpperInclusiveSubField );
 
+            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Units, true );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            SubFields.add( UnitsSubField );
+
         } //ctor
 
         public CswNbtSubField LowerSubField;
@@ -82,6 +94,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtSubField UpperSubField;
         public CswNbtSubField LowerInclusiveSubField;
         public CswNbtSubField UpperInclusiveSubField;
+        public CswNbtSubField UnitsSubField;
 
         public CswNbtSubFieldColl SubFields
         {
