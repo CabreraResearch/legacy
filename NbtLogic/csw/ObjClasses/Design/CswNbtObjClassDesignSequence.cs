@@ -155,10 +155,6 @@ namespace ChemSW.Nbt.ObjClasses
         public string getNext()
         {
             string DbName = getDbName();
-            if( false == _CswNbtResources.doesUniqueSequenceExist( DbName ) )
-            {
-                //_CswNbtResources.makeUniqueSequenceForProperty( DbName, 1 );
-            }
             Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal( DbName );
             return formatSequence( RawSequenceVal );
         }
@@ -189,7 +185,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void reSync( CswEnumNbtPropColumn Column, Int32 NewSeqVal )
         {
-            string SelectText = @"select j." + Column.ToString() + @"
+            string SelectText = @"select max(j." + Column + @") as seqval
                                     from sequences s
                                     join nodetype_props p on ( p.sequenceid = s.sequenceid ) 
                                     join jct_nodes_props j on ( p.nodetypepropid = j.nodetypepropid and j.nodeid is not null )
@@ -200,15 +196,15 @@ namespace ChemSW.Nbt.ObjClasses
             DataTable SeqValueTable = SeqValueSelect.getTable();
 
             Int32 MaxSeqVal = NewSeqVal;
-            foreach( DataRow SeqValueRow in SeqValueTable.Rows )
+            if( SeqValueTable.Rows.Count > 0 )
             {
-                Int32 ThisSeqVal = CswConvert.ToInt32( SeqValueRow[Column.ToString()] );
+                Int32 ThisSeqVal = CswConvert.ToInt32( SeqValueTable.Rows[0]["seqval"] );
                 if( ThisSeqVal > MaxSeqVal )
                 {
                     MaxSeqVal = ThisSeqVal;
                 }
-            } // foreach( DataRow SeqValueRow in SeqValueTable.Rows )
-            //_CswNbtResources.resetUniqueSequenceVal( getDbName(), MaxSeqVal + 1 );
+            }
+            _CswNbtResources.resetUniqueSequenceValForProperty( getDbName(), MaxSeqVal + 1 );
         } // reSync()
 
         public static CswNbtObjClassDesignSequence getSequence( CswNbtResources CswNbtResources, string SequenceName )
