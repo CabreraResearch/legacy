@@ -46,7 +46,8 @@ namespace ChemSW.Nbt.csw.Schema.Import
                 {"GHS Phrase", 33},
                 {"GHS", 34},
                 {"Material Synonym", 35},
-                {"Equipment", 36}
+                {"Equipment Type", 36},
+                {"Equipment", 37}
             };
     }
 }

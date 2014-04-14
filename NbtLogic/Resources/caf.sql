@@ -1098,51 +1098,64 @@ select cc.materialid || '_' || cc.componentcasnoid as legacyid,
   join component_casnos cc on cc.componentmaterialid = m.materialid
  WHERE m.DELETED = 0;
   
-  
---Equipment
-create or replace view equipment_view as
-WITH d 
-     AS (SELECT ms.materialid, Listagg(ms.synonymname, ',') 
-                  within GROUP( ORDER BY ms.synonymname) AS descript 
-         FROM   materials_synonyms ms 
-                join materials m 
-                  ON m.materialid = ms.materialid 
-         WHERE  m.materialsubclassid IN (SELECT ms.materialsubclassid 
-                                         FROM   materials_subclass ms 
-                                         WHERE 
-                ms.materialclassid IN (SELECT materialclassid 
-                                       FROM   materials_class mc 
-                                       WHERE 
-                mc.classname = 'EQUIPMENT' 
-                 OR mc.classname = 'ASSET')) 
-         GROUP  BY ms.materialid) 
-SELECT m.materialid || '_' || c.containerid as legacyid,
-       m.materialid, 
-       m.model, 
-       m.manufacturer, 
-       c.serialno, 
-       c.barcodeid, 
-       c.ownerid, 
-       c.locationid, 
-       c.expirationdate, 
-       m.materialname,
-       msub.subclassname,
-       m.materialname || nvl(',' || d.descript, '') description,
-	   cpv.*,
-	   contpv.*,
-	   m.deleted
-FROM   materials m 
-       join packages p on p.materialid = m.materialid and m.materialsubclassid IN (SELECT ms.materialsubclassid 
-                                             FROM   materials_subclass ms 
-                                             WHERE 
-                    ms.materialclassid IN (SELECT materialclassid 
-                                           FROM   materials_class mc 
+--Equipment 
+CREATE OR replace VIEW equipment_view 
+AS 
+  WITH d 
+       AS (SELECT ms.materialid, 
+                  Listagg(ms.synonymname, ',') 
+                    within GROUP( ORDER BY ms.synonymname) AS descript 
+           FROM   materials_synonyms ms 
+                  join materials m 
+                    ON m.materialid = ms.materialid 
+           WHERE  m.materialsubclassid IN (SELECT ms.materialsubclassid 
+                                           FROM   materials_subclass ms 
                                            WHERE 
-                    mc.classname = 'EQUIPMENT' 
-                     OR mc.classname = 'ASSET'))
-       join packdetail pd on pd.packageid = p.packageid
-       join containers c on pd.packdetailid = c.packdetailid and c.containerclass <> 'lotholder'
-       join d on d.materialid = m.materialid
-       join materials_subclass msub on msub.materialsubclassid = m.materialsubclassid
-	   join chemicals_props_view cpv on cpv.materialid = m.materialid
-	   join containers_props_view contpv on contpv.containerid = c.containerid;
+                  ms.materialclassid IN (SELECT materialclassid 
+                                         FROM   materials_class mc 
+                                         WHERE 
+                  mc.classname = 'EQUIPMENT' 
+                   OR mc.classname = 'ASSET')) 
+           GROUP  BY ms.materialid) 
+  SELECT m.materialid 
+         || '_' 
+         || c.containerid          AS legacyid, 
+         m.model, 
+         m.manufacturer, 
+         c.serialno, 
+         c.barcodeid, 
+         c.ownerid, 
+         c.locationid, 
+         c.expirationdate, 
+         m.materialname, 
+         m.materialsubclassid, 
+         m.materialname 
+         || Nvl(',' 
+                || d.descript, '') description, 
+         cpv.*, 
+         contpv.*, 
+         m.deleted 
+  FROM   materials m 
+         join packages p 
+           ON p.materialid = m.materialid 
+              AND m.materialsubclassid IN (SELECT ms.materialsubclassid 
+                                           FROM   materials_subclass ms 
+                                           WHERE 
+                  ms.materialclassid IN (SELECT materialclassid 
+                                         FROM   materials_class mc 
+                                         WHERE 
+                  mc.classname = 'EQUIPMENT' 
+                   OR mc.classname = 'ASSET')) 
+         join packdetail pd 
+           ON pd.packageid = p.packageid 
+         join containers c 
+           ON pd.packdetailid = c.packdetailid 
+              AND c.containerclass <> 'lotholder' 
+         join d 
+           ON d.materialid = m.materialid 
+         join materials_subclass msub 
+           ON msub.materialsubclassid = m.materialsubclassid 
+         join chemicals_props_view cpv 
+           ON cpv.materialid = m.materialid 
+         join containers_props_view contpv 
+           ON contpv.containerid = c.containerid; 
