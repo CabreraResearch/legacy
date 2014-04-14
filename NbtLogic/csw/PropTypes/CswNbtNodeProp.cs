@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -49,7 +50,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtMetaDataNodeTypeProp.getFieldTypeRule(); }
         }
 
-        protected Dictionary<CswNbtSubField, Tuple<Func<dynamic>, Action<dynamic>>> _SubFieldMethods = new Dictionary<CswNbtSubField, Tuple<Func<dynamic>, Action<dynamic>>>();
+        protected Dictionary<CswEnumNbtSubFieldName, Tuple<Func<dynamic>, Action<dynamic>>> _SubFieldMethods = new Dictionary<CswEnumNbtSubFieldName, Tuple<Func<dynamic>, Action<dynamic>>>();
 
 
         //TODO: witout at least one serializable item, this ENTIRE CLASS will try to serialize resulting in a helpfull "error" message. When we WCFify this class we can remove this prop
@@ -61,6 +62,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         protected CswNbtNodeProp()
         {
+            _construct();
         }
 
         //All WCF Data Contracts MUST have a default constructor
@@ -75,9 +77,15 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = MetaDataNodeTypeProp;
 
+            _construct();
         }
 
-        //generic
+        private void _construct()
+        {
+            // Default SubFieldMethods for Gestalt
+            _SubFieldMethods.Add( CswEnumNbtSubFieldName.Gestalt, new Tuple<Func<dynamic>, Action<dynamic>>( () => Gestalt, x => Gestalt = x ) );
+            _SubFieldMethods.Add( CswEnumNbtSubFieldName.GestaltSearch, new Tuple<Func<dynamic>, Action<dynamic>>( () => Gestalt, x => GestaltSearch = x ) );
+        }
 
         public delegate void OnPropChangeHandler( CswNbtNodeProp Prop, bool Creating );
 
@@ -133,6 +141,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return _CswNbtNodePropData.Gestalt; }
             set { _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, value ); }
+        }
+
+        /// <summary>
+        /// Searchable text value for property
+        /// </summary>
+        public string GestaltSearch
+        {
+            get { return _CswNbtNodePropData.GestaltSearch; }
+            set { _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, value ); }
         }
 
         /// <summary>
@@ -449,7 +466,7 @@ namespace ChemSW.Nbt.PropTypes
                             //CIS-53150 - we want to name mangle things like role names when we try to copy them
                             ( (CswNbtNodePropText) this ).makeUnique();
                         }
-                        else if ( false == Required )
+                        else if( false == Required )
                         {
                             //if the prop isn't required, we can just blank it out
                             // BZ 9987 - Clear the value
@@ -457,7 +474,7 @@ namespace ChemSW.Nbt.PropTypes
                             //this.clearModifiedFlag();
                             this.clearSubFieldModifiedFlags();
                         }
-                        else 
+                        else
                         {
                             CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
                             string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
@@ -607,16 +624,16 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void SetSubFieldValue( CswEnumNbtSubFieldName SubFieldName, object value )
         {
-            foreach( CswNbtSubField SubFieldKey in _SubFieldMethods.Keys )
+            if( _SubFieldMethods.ContainsKey( SubFieldName ) && null != _SubFieldMethods[SubFieldName].Item2 )
             {
-                if( SubFieldName == SubFieldKey.Name )
-                {
-                    // This calls the appropriate set; method in the CswNbtNodeProp* class
-                    if( null != _SubFieldMethods[SubFieldKey].Item2 )
-                    {
-                        _SubFieldMethods[SubFieldKey].Item2( value );
-                    }
-                }
+                // This calls the appropriate set; method in the CswNbtNodeProp* class
+                _SubFieldMethods[SubFieldName].Item2( value );
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error,
+                                           "Invalid subfield configuration",
+                                           PropName + " does not contain a set method for subfield " + SubFieldName.ToString() );
             }
         } // SetSubFieldValue
 
@@ -627,16 +644,16 @@ namespace ChemSW.Nbt.PropTypes
         public object GetSubFieldValue( CswEnumNbtSubFieldName SubFieldName )
         {
             object ret = null;
-            foreach( CswNbtSubField SubFieldKey in _SubFieldMethods.Keys )
+            if( _SubFieldMethods.ContainsKey( SubFieldName ) && null != _SubFieldMethods[SubFieldName].Item1 )
             {
-                if( SubFieldName == SubFieldKey.Name )
-                {
-                    // This calls the appropriate get; method in the CswNbtNodeProp* class
-                    if( null != _SubFieldMethods[SubFieldKey].Item1 )
-                    {
-                        ret = _SubFieldMethods[SubFieldKey].Item1();
-                    }
-                }
+                // This calls the appropriate get; method in the CswNbtNodeProp* class
+                _SubFieldMethods[SubFieldName].Item1();
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error,
+                                           "Invalid subfield configuration",
+                                           PropName + " does not contain a get method for subfield " + SubFieldName.ToString() );
             }
             return ret;
         } // GetSubFieldValue
@@ -726,7 +743,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 return ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Edit ||
-                         _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ||     
+                         _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ||
                          _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add );
             }
         }
