@@ -10,6 +10,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -263,40 +264,24 @@ namespace ChemSW.Nbt.ImportExport
         /// <returns>NodeId of imported node</returns>
         private CswPrimaryKey _ImportOneRow( DataRow ImportRow, CswNbtImportDef BindingDef, CswNbtImportDefOrder Order, bool Overwrite, CswTableUpdate ImportDataUpdate, bool OverrideUniqueValidation = false )
         {
-            CswPrimaryKey ImportedNodeId = null;
-            //string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
-
+            CswPrimaryKey ImportedNodeId;
             CswNbtNode Node = null;
 
-            IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where(
-                delegate( CswNbtImportDefBinding b )
-                {
-                    return null != b.DestNodeType && b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
-                } );
-
+            IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => null != b.DestNodeType && 
+                                                                                                   b.DestNodeType == Order.NodeType && 
+                                                                                                   b.Instance == Order.Instance );
+            CswNbtImportDefBinding LegacyIdBinding = NodeTypeBindings.FirstOrDefault( Binding => Binding.DestPropName == "Legacy Id" );
+            NodeTypeBindings = NodeTypeBindings.Where( Binding => Binding.DestPropName != "Legacy Id" );
 
             if( false == NodeTypeBindings.Any() )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "No bindings are defined for Row.", "No bindings passed the filter. Are appropriate nodetypes enabled in NBT?" );
             }
-
-
             IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
             IEnumerable<CswNbtImportDefRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
                                                                                                         r.Relationship.IsCompoundUnique() ||
                                                                                                         Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
-
-            IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b =>
-                {
-                    // See CIS-53175: Legacy Id is no longer a property
-                    bool Ret = false;
-                    if( b.DestPropName != "Legacy Id" )
-                    {
-                        Ret = b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique();
-                    }
-                    return Ret;
-                } );
-
+            IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() );
             if( false == UniqueBindings.Any() ) // case 30821
             {
                 UniqueBindings = NodeTypeBindings.Where( b => Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
@@ -304,7 +289,6 @@ namespace ChemSW.Nbt.ImportExport
 
             bool allEmpty = true;
             // Skip rows with null values for all unique properties
-
             foreach( CswNbtImportDefBinding Binding in UniqueBindings )
             {
                 allEmpty = allEmpty && string.IsNullOrEmpty( ImportRow[Binding.ImportDataColumnName].ToString() );
@@ -316,13 +300,10 @@ namespace ChemSW.Nbt.ImportExport
             }
 
             string LegacyId = string.Empty;
-            foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
+            if( null != LegacyIdBinding )
             {
-                if( Binding.DestPropName == "Legacy Id" )
-                {
-                    LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
-                    allEmpty = false;
-                }
+                LegacyId = ImportRow[LegacyIdBinding.ImportDataColumnName].ToString();
+                allEmpty = false;
             }
 
             if( false == allEmpty )
@@ -407,20 +388,11 @@ namespace ChemSW.Nbt.ImportExport
                             {
                                 UniqueTree.goToNthChild( 0 );
                                 Node = UniqueTree.getNodeForCurrentPosition();
+                                Node.LegacyId = LegacyId;
                                 if( Overwrite )
                                 {
-                                    Node.LegacyId = LegacyId;
                                     _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                                     Node.postChanges( false );
-                                }
-                                else
-                                {
-                                    //we still want to set legacy id on nodes matched by unique properties
-                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy Id" ) )
-                                    {
-                                        //there should always be exactly one iteration of this loop
-                                        Node.LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
-                                    }
                                 }
                             }
                         }
@@ -447,10 +419,11 @@ namespace ChemSW.Nbt.ImportExport
                                 CswNbtObjClassContainer Container = NewNode;
                                 double Qty = Container.Quantity.Quantity;
                                 Container.Quantity.Quantity = 0;
+                                Container.Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), Container, IsImport: true );
                                 Container.DispenseIn( CswEnumNbtContainerDispenseType.Receive, Qty, Container.Quantity.UnitId );
                             }
 
-                        }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
+                        }, OverrideUniqueValidation: true, OverrideMailReportEvents: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
                 }
 
                 ImportedNodeId = Node.NodeId;
