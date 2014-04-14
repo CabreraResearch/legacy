@@ -60,7 +60,6 @@
                                 variableName : thisControlName,
                                 variableValue : thisControl.val()
                             });
-                            console.log(cswPrivate.responseData);
                         }
                     });
                     parentTable.cell(tableRow, 3).text(ConfigVarObject.description)
