@@ -21,7 +21,7 @@ namespace ChemSW.Nbt
     {
         private CswNbtResources _CswNbtResources;
         private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules;
-        private Dictionary<int, string> _ModuleIdToNameMapping; 
+        private Dictionary<int, CswEnumNbtModuleName> _ModuleIdToNameMapping; 
 
         public CswNbtModuleManager( CswNbtResources CswNbtResources )
         {
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt
         private bool _RulesAreInitialized = false;
         private void initModules()
         {
-            _ModuleIdToNameMapping = new Dictionary<int, string>();
+            _ModuleIdToNameMapping = new Dictionary<int, CswEnumNbtModuleName>();
 
             // Fetch modules from database
             if( _CswNbtResources.IsInitializedForDbAccess )
