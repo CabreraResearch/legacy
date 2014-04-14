@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "AE";
+            return "B";
         }
 
         public override void update()
