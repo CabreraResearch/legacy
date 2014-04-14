@@ -534,6 +534,10 @@ namespace ChemSW.Nbt.ImportExport
                         || DestPropertyFieldType == CswEnumNbtFieldType.Image )
                     {
                         CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                        if( Int32.MinValue == Node.Properties[Binding.DestProperty].JctNodePropId )
+                        {
+                            Node.Properties[Binding.DestProperty].makePropRow();
+                        }
                         int BlobDataId = sdBlobData.GetBlobDataId( Node.Properties[Binding.DestProperty].JctNodePropId );
 
                         CswTableUpdate blobDataTblUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "importer.fileimport", "blob_data" );
