@@ -39,7 +39,9 @@ namespace ChemSW.Nbt.Schema
                 ObjectClass = TestingLabUserAssignmentOC,
                 ObjectClassId = TestingLabUserAssignmentOC.ObjectClassId,
                 NodeTypeName = "Testing Lab User Assignment",
-                Searchable = true
+                Searchable = true,
+                NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassTestingLabUserAssignment.PropertyName.TestingLab ) + ": " +
+                               CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassTestingLabUserAssignment.PropertyName.User)
             } );
 
         } // update()
