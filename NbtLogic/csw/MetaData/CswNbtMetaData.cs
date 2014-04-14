@@ -661,7 +661,22 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.FieldTypeTableUpdate.update( FieldTypeTable );
 
                 refreshAll();
-                //CswNbtMetaDataFieldType MetaDataFieldType = getFieldType( FieldType );
+
+                // Create field_types_subfields records
+                CswTableUpdate FTSubUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "makeNewFieldType_subfield_update", "field_types_subfields" );
+                DataTable FTSubTable = FTSubUpdate.getEmptyTable();
+                ICswNbtFieldTypeRule NewFieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( NewFieldType );
+                foreach( CswNbtSubField newSubField in NewFieldTypeRule.SubFields )
+                {
+                    DataRow row = FTSubTable.NewRow();
+                    row["fieldtypeid"] = CswConvert.ToDbVal( NewFieldTypeId );
+                    row["propcolname"] = newSubField.Column.ToString();
+                    row["reportable"] = CswConvert.ToDbVal( newSubField.isReportable );
+                    row["is_default"] = CswConvert.ToDbVal( newSubField == NewFieldTypeRule.SubFields.Default );
+                    row["subfieldname"] = newSubField.Name.ToString();
+                    FTSubTable.Rows.Add( row );
+                }
+                FTSubUpdate.update( FTSubTable );
 
                 // Create a new "Design NodeTypeProp" nodetype node
                 CswNbtMetaDataObjectClass NodeTypePropOC = this.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
@@ -765,7 +780,7 @@ namespace ChemSW.Nbt.MetaData
                 NTPFieldTypeNTP.getDefaultValue( true ).AsList.Text = NewFieldType.ToString();
                 //NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                 NTPFieldTypeNTP.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
-                 
+
 
                 //// Set display condition on QuestionNo and SubQuestionNo
                 //NTPQuestionNoNTP.DesignNode.DisplayConditionProperty.RelatedNodeId = NTPUseNumberingNTP.DesignNode.NodeId;
