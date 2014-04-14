@@ -13,7 +13,8 @@ namespace ChemSW.Nbt.Schema
                 {
                     // new CswUpdateDDL_02M_CISXXXXX(),
                     new CswUpdateDDL_02M_CIS53175(),
-                    new CswUpdateDDL_02M_CIS52735()
+                    new CswUpdateDDL_02M_CIS52735(),
+                    new CswUpdateDDL_02M_CIS53123()
                 };
         } // _DDLScripts()
 
