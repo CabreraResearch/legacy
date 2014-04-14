@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.PropTypes
             _CommentSubField = ( (CswNbtFieldTypeRuleComments) _FieldTypeRule ).CommentSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _CommentSubField, new Tuple<Func<dynamic>, Action<dynamic>>(
+            _SubFieldMethods.Add( _CommentSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>(
                                                         () => CommentsJson,
                                                         x =>
                                                         {

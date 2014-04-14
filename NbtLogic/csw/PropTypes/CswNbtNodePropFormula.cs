@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.PropTypes
             _RawFormulaTextSubfield = ( (CswNbtFieldTypeRuleFormula) _FieldTypeRule ).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _RawFormulaTextSubfield, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _RawFormulaTextSubfield.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _RawFormulaTextSubfield;
