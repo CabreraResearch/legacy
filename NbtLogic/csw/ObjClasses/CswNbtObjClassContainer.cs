@@ -494,7 +494,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="Type"></param>
         /// <param name="NewLocationBarcode"></param>
         /// <param name="ContainerBarcode"></param>
-        public void CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions Type, string NewLocationBarcode = "", string ContainerBarcode = "" )
+        public void CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions Type, string NewLocationBarcode = "", string ContainerBarcode = "", bool IsImport = false )
         {
             CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
             if( ContLocNT != null )
@@ -521,8 +521,7 @@ namespace ChemSW.Nbt.ObjClasses
                        ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
                        ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
                        ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                       //ContLocNode.postChanges( false );
-                   } );
+                   }, OverrideUniqueValidation: IsImport, OverrideMailReportEvents: IsImport );
                 LocationVerified.DateTimeValue = DateTime.Now;
             }
         }
