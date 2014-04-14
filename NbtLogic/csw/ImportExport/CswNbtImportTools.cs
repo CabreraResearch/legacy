@@ -47,10 +47,17 @@ namespace ChemSW.Nbt.csw.ImportExport
             CswNbtMetaDataObjectClass UserOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             List<string> UserNts = UserOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
 
+            CswNbtMetaDataObjectClass EquipmentOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
+            List<string> EquipmentNTs = EquipmentOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
+
             CreateCafProps( NbtResources, ChemicalNts, "properties_values", "propertiesvaluesid", SetupMode );
             CreateCafProps( NbtResources, ContainerNts, "properties_values_cont", "contpropsvaluesid", SetupMode );
             CreateCafProps( NbtResources, ReceiptLotNts, "properties_values_lot", "lotpropsvaluesid", SetupMode );
             CreateCafProps( NbtResources, UserNts, "properties_values_user", "userpropsvaluesid", SetupMode );
+
+            //Equipment get both Container AND Material custom props
+            CreateCafProps( NbtResources, EquipmentNTs, "properties_values", "propertiesvaluesid", SetupMode );
+            CreateCafProps( NbtResources, EquipmentNTs, "properties_values_cont", "contpropsvaluesid", SetupMode );
         }
 
         public static void CreateCafProps( CswNbtResources NbtResources, List<string> NodeTypes, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
@@ -172,7 +179,7 @@ namespace ChemSW.Nbt.csw.ImportExport
 
 
             //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
-            CreateAllCAFProps( _CswNbtResources, SetupMode );
+            //CreateAllCAFProps( _CswNbtResources, SetupMode );
 
             // Enable the CAFImport rule
             CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
