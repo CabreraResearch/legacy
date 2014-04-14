@@ -89,10 +89,21 @@ namespace ChemSW.Nbt.WebServices
 
                 if( includeConfigVar )
                 {
+                    // in _updateConfigVars, the data is parsed in the form
+                    // of a CswAjaxDict, where the key is the variable name.
+                    // Since the default behaviour of CswAjaxDict is to assume
+                    // that any '_' chars were caused by making an ' ' char safe,
+                    // and therefore converts them back to ' 's on deserialization,
+                    // we need to convert all outgoing '_'s to '__'s to avoid that behavior.
+                    // Since CswAjaxDict assumes all '__'s are '_'s made safe,
+                    // the variableNames will match when serialized
+                    string variableName = currentRow[COL_VARIABLENAME].ToString()
+                                                                      .Replace( "_", "__" );
+
                     CswNbtDataContractConfigurationVariable thisConfigVarDataContract =
                         new CswNbtDataContractConfigurationVariable
                             {
-                                VariableName = currentRow[COL_VARIABLENAME].ToString(),
+                                VariableName = variableName,
                                 VariableValue = currentRow[COL_VARIABLEVALUE].ToString(),
                                 IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ),
                                 DataType = currentRow[COL_DATATYPE].ToString(),
@@ -108,7 +119,6 @@ namespace ChemSW.Nbt.WebServices
                     else if( DATATYPE_LIST == thisConfigVarDataContract.DataType )
                     {
                         string listOptionsAsString = currentRow[COL_CONSTRAINT].ToString();
-                        //string[] listOptionsAsArray = listOptionsAsString.Split( ',' );
                         thisConfigVarDataContract.ListOptions = new CswCommaDelimitedString(listOptionsAsString);
                     }
 
@@ -168,14 +178,6 @@ namespace ChemSW.Nbt.WebServices
                                                                                                CswNbtDataContractConfigurationVariableResponseContainer varsFromServer )
         {
             CswNbtDataContractConfigurationUpdateSuccessResponse ret = new CswNbtDataContractConfigurationUpdateSuccessResponse();
-            Dictionary<string, string> updatedConfigVarsFromClient = new Dictionary<string, string>();
-
-            //add all the config vars into the dictionary
-            //keyed by name
-            foreach( CswNbtDataContractConfigurationVariableResponse thisResponse in varsFromServer.responseArray )
-            {
-                updatedConfigVarsFromClient.Add( thisResponse.VariableName, thisResponse.VariableValue );
-            }
 
             CswTableUpdate CVTableUpdate = NbtResources.makeCswTableUpdate( "update config vars", "configuration_variables" );
             DataTable CVDataTable = CVTableUpdate.getTable();
@@ -184,9 +186,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 string configVarName = thisRow[COL_VARIABLENAME].ToString();
 
-                if( updatedConfigVarsFromClient.ContainsKey( configVarName ) )
+                if( varsFromServer.responseDictionary.ContainsKey( configVarName ) )
                 {
-                    string updatedConfigVarValue = updatedConfigVarsFromClient[configVarName];
+                    string updatedConfigVarValue = varsFromServer.responseDictionary[configVarName];
                     string currentConfigVarValue = thisRow[COL_VARIABLEVALUE].ToString();
 
                     //make sure config var has been altered
@@ -320,12 +322,11 @@ namespace ChemSW.Nbt.WebServices
         public string VariableValue = string.Empty;
     }
 
-    [DataContract]
+    [DataContract, KnownType(typeof(CswAjaxDictionary<string> ))]
     public class CswNbtDataContractConfigurationVariableResponseContainer
     {
         [DataMember( Name = "Data" )]
-        public List<CswNbtDataContractConfigurationVariableResponse> responseArray
-            = new List<CswNbtDataContractConfigurationVariableResponse>();
+        public CswAjaxDictionary<string> responseDictionary = new CswAjaxDictionary<string>(); 
     }
 
     [DataContract]

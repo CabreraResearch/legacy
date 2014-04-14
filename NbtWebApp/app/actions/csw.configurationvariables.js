@@ -56,10 +56,7 @@
                         value: ConfigVarObject.variableValue,
                         onChange: function() {
                             var thisControlName = thisControl[0].name;
-                            cswPrivate.responseData.push({
-                                variableName : thisControlName,
-                                variableValue : thisControl.val()
-                            });
+                            cswPrivate.responseData[thisControlName] = thisControl.val();
                         }
                     });
                     parentTable.cell(tableRow, 3).text(ConfigVarObject.description)
@@ -84,7 +81,7 @@
 
             //array of objects, where each object represents a 
             //config var that has been modified
-            cswPrivate.responseData = [];
+            cswPrivate.responseData = {};
 
             var tableRow = 1;
             
