@@ -48,6 +48,8 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassCertDefSpec.PropertyName.Method,
                 FieldType = CswEnumNbtFieldType.Relationship,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                IsRequired = true,
+                ReadOnly = true,
                 FkValue = MethodOC.ObjectClassId
             } );
 
@@ -55,6 +57,8 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassCertDefSpec.PropertyName.CertDef,
                 FieldType = CswEnumNbtFieldType.Relationship,
+                IsRequired = true,
+                ReadOnly = true,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                 FkValue = CertDefOC.ObjectClassId
             } );
