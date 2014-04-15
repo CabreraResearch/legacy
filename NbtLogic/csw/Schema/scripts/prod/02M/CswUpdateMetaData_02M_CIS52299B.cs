@@ -1,6 +1,7 @@
 ﻿using System;
 using ChemSW.Audit;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -102,6 +103,18 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldTargetOCP, true );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldHighOCP, true );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldPercentageOCP, true );
+
+
+            // Fix CAF bindings
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
+
+            ImpMgr.removeImportBinding( CswScheduleLogicNbtCAFImport.DefinitionName, "quantity", "Material Component", oldTargetPercentageValue, "Value" );
+            ImpMgr.removeImportBinding( CswScheduleLogicNbtCAFImport.DefinitionName, "quantity", "Material Component", oldHighPercentageValue, "Value" );
+
+            ImpMgr.importBinding( "quantity", CswNbtObjClassMaterialComponent.PropertyName.PercentageRange, CswNbtFieldTypeRuleNumericRange.SubFieldName.Target.ToString() );
+            ImpMgr.importBinding( "quantity", CswNbtObjClassMaterialComponent.PropertyName.PercentageRange, CswNbtFieldTypeRuleNumericRange.SubFieldName.Upper.ToString() );
+
+            ImpMgr.finalize();
 
         }
     }
