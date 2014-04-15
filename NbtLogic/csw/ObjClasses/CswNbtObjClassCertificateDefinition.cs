@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string RetainQuantity = "Retain Quantity";
             public const string RetainExpiration = "Retain Expiration"; //Unit = Years
             public const string Approved = "Approved";
-            public const string ApprovedDate = "ApprovedDate";
+            public const string ApprovedDate = "Approved Date";
             public const string QualifiedManufacturerOnly = "Qualified Manufacturer Only"; // Multilist of Levels
             public const string CertDefSpecs = "CertDef Specs";
             public const string NewDraft = "New Draft";
