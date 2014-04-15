@@ -200,18 +200,24 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        private Int32 _Precision = Int32.MinValue;
+
         public Int32 Precision
         {
             get
             {
-                //Int32 Ret = _CswNbtMetaDataNodeTypeProp.NumericRangePrecision;
-                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleNumericRange.AttributeName.Precision] );
-                if( Ret < 0 )
+                if( Int32.MinValue == _Precision )
                 {
-                    Ret = 6;
+                    _Precision = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleNumericRange.AttributeName.Precision] );
                 }
-                return Ret;
+                if( _Precision < 0 )
+                {
+                    _Precision = 6;
+                }
+                return _Precision;
             }
+            // Allows overriding Precision via business logic
+            set { _Precision = value; }
         }
 
         private double _MinValue = Double.NaN;
