@@ -77,7 +77,7 @@
                     MaxValue: Csw.number(cswPrivate.maxvalue),
                     excludeRangeLimits: cswPrivate.excludeRangeLimits,
                     ReadOnly: nodeProperty.isReadOnly(),
-                    isRequired: nodeProperty.isRequired(),
+                    //isRequired: nodeProperty.isRequired(),
                     size: 8,
                     onChange: function(val) {
                         nodeProperty.propData.values.lower = val;
@@ -91,7 +91,7 @@
                     },
                     isValid: true
                 });
-                cswPrivate.lowerNtb.required(nodeProperty.propData.required);
+                //cswPrivate.lowerNtb.required(nodeProperty.propData.required);
 
                 cswPrivate.table.cell(2, 2).css({ verticalAlign: 'middle' }).text(cswPrivate.units);
 
@@ -121,7 +121,7 @@
                     MaxValue: Csw.number(cswPrivate.maxvalue),
                     excludeRangeLimits: cswPrivate.excludeRangeLimits,
                     ReadOnly: nodeProperty.isReadOnly(),
-                    isRequired: nodeProperty.isRequired(),
+                    //isRequired: nodeProperty.isRequired(),
                     size: 8,
                     onChange: function(val) {
                         nodeProperty.propData.values.target = val;
@@ -135,7 +135,7 @@
                     },
                     isValid: true
                 });
-                cswPrivate.targetNtb.required(nodeProperty.propData.required);
+                //cswPrivate.targetNtb.required(nodeProperty.propData.required);
 
                 cswPrivate.table.cell(2, 5).css({ verticalAlign: 'middle' }).text(cswPrivate.units);
 
@@ -165,7 +165,7 @@
                     MaxValue: Csw.number(cswPrivate.maxvalue),
                     excludeRangeLimits: cswPrivate.excludeRangeLimits,
                     ReadOnly: nodeProperty.isReadOnly(),
-                    isRequired: nodeProperty.isRequired(),
+                    //isRequired: nodeProperty.isRequired(),
                     size: 8,
                     onChange: function(val) {
                         nodeProperty.propData.values.upper = val;
@@ -179,9 +179,19 @@
                     },
                     isValid: true
                 });
-                cswPrivate.upperNtb.required(nodeProperty.propData.required);
+                //cswPrivate.upperNtb.required(nodeProperty.propData.required);
 
                 cswPrivate.table.cell(2, 8).css({ verticalAlign: 'middle' }).text(cswPrivate.units);
+
+                if (nodeProperty.isRequired()) {
+                    // CIS-52299: NumericRange.Required means at least ONE of Lower,Upper must be filled in
+                    $.validator.addMethod(cswPrivate.name + '_reqVld', function(value, element) {
+                        return (cswPrivate.lowerNtb.val() !== '' || cswPrivate.upperNtb.val() !== '');
+                    }, 'Lower or Upper is required');
+                    cswPrivate.lowerNtb.addClass(cswPrivate.name + '_reqVld');
+                    cswPrivate.upperNtb.addClass(cswPrivate.name + '_reqVld');
+                }
+
 
             } // if-else(isReadonly()))
         }; // render()
