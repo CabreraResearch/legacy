@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "MLM2: Add default OC for CertDef Condition"; }
+            get { return "MLM2: Add default NT for CertDef Spec"; }
         }
 
         public override string AppendToScriptName()
@@ -31,17 +31,16 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass CertDefConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefConditionClass );
+            CswNbtMetaDataObjectClass CertDefSpecOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecClass );
 
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( CertDefConditionOC )
+            _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( CertDefSpecOC )
                 {
                     Category = "MLM",
-                    ObjectClass = CertDefConditionOC,
-                    ObjectClassId = CertDefConditionOC.ObjectClassId,
-                    NodeTypeName = "CertDef Condition",
+                    ObjectClass = CertDefSpecOC,
+                    ObjectClassId = CertDefSpecOC.ObjectClassId,
+                    NodeTypeName = "CertDef Spec",
                     Searchable = true
                 } );
-
         }
 
     }

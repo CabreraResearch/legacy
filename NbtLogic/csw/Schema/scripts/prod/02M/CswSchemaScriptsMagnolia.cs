@@ -41,7 +41,8 @@ namespace ChemSW.Nbt.Schema
                    new CswUpdateMetaData_02M_CIS52298A(),
                    new CswUpdateMetaData_02M_CIS53248(),
                    new CswUpdateMetaData_02M_Case52303A(),
-                   new CswUpdateMetaData_02M_CIS53120()
+                   new CswUpdateMetaData_02M_CIS53120(),
+                   new CswUpdateMetaData_02M_Case52297A()
                 };
         } // _MetaDataScripts()
 
@@ -76,7 +77,8 @@ namespace ChemSW.Nbt.Schema
                    new CswUpdateSchema_02M_Case52303B(),
                    new CswUpdateSchema_02M_CIS53357(),
                    new CswUpdateSchema_02M_CIS52824A(),
-                   new CswUpdateSchema_02M_CIS52824B()
+                   new CswUpdateSchema_02M_CIS52824B(),
+                   new CswUpdateSchema_02M_Case52297B()
                 };
         } // _SchemaScripts()
 

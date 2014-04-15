@@ -19,6 +19,11 @@ namespace ChemSW.Nbt.Schema
             get { return 52297; }
         }
 
+        public override string AppendToScriptName()
+        {
+            return "A";
+        }
+
         public override string Title
         {
             get { return "MLM2: Create OC CertDef Spec"; }
@@ -30,7 +35,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, CertDefSpecOC.ObjectClassId );
 
             CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
-            CswNbtMetaDataObjectClass CertDefOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.Ce);
+            CswNbtMetaDataObjectClass CertDefOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertificateDefinitionClass);
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
@@ -51,46 +56,19 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassCertDefSpec.PropertyName.CertDef,
                 FieldType = CswEnumNbtFieldType.Relationship,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = MethodConditionOC.ObjectClassId
+                FkValue = CertDefOC.ObjectClassId
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.MethodCondition,
-                FieldType = CswEnumNbtFieldType.Relationship,
-                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = MethodConditionOC.ObjectClassId
+                PropName = CswNbtObjClassCertDefSpec.PropertyName.Conditions,
+                FieldType = CswEnumNbtFieldType.Grid
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.MethodCondition,
-                FieldType = CswEnumNbtFieldType.Relationship,
-                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = MethodConditionOC.ObjectClassId
-            } );
-
-
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.MethodCondition,
-                FieldType = CswEnumNbtFieldType.Relationship,
-                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = MethodConditionOC.ObjectClassId
-            } );
-
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.CertDefSpec,
-                FieldType = CswEnumNbtFieldType.Relationship//,
-                //FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                //FkValue = CertDefSpecOC.ObjectClassId
-            } );
-
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.Value,
-                FieldType = CswEnumNbtFieldType.Text
+                PropName = CswNbtObjClassCertDefSpec.PropertyName.Characteristics,
+                FieldType = CswEnumNbtFieldType.Grid
             } );
 
         } // update()
