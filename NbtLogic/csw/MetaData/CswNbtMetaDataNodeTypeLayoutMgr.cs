@@ -211,7 +211,7 @@ namespace ChemSW.Nbt.MetaData
                 Row["layouttype"] = LayoutType.ToString();
                 Row["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
                 Row["nodetypepropid"] = CswConvert.ToDbVal( NtProp.PropId );
-                Row["auditlevel"] = CswConvert.ToDbVal( NtProp.AuditLevel ); // layout audit goes with property audit
+                Row["auditlevel"] = NtProp.AuditLevel.ToString(); // layout audit goes with property audit
 
                 if( LayoutType == CswEnumNbtLayoutType.Edit )
                 {

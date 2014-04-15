@@ -973,7 +973,10 @@ namespace ChemSW.Nbt.Schema
                 DataRow NewOCRow = NewObjectClassTable.NewRow();
                 NewOCRow["objectclass"] = ObjectClass.ToString();
                 NewOCRow["iconfilename"] = IconFileName;
-                NewOCRow["auditlevel"] = AuditLevel.ToString();
+                if( null != AuditLevel && AuditLevel != CswEnumAuditLevel.Unknown )
+                {
+                    NewOCRow["auditlevel"] = AuditLevel.ToString();
+                }
                 NewOCRow["nodecount"] = 0;
 
                 NewOCRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( ObjectClass.ToString() );
@@ -1417,7 +1420,10 @@ namespace ChemSW.Nbt.Schema
                 OCPRow[CswEnumNbtObjectClassPropAttributes.filtermode.ToString()] = OcpModel.FilterMode;
                 OCPRow[CswEnumNbtObjectClassPropAttributes.filtervalue.ToString()] = OcpModel.FilterValue;
             }
-            OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = OcpModel.AuditLevel.ToString();
+            if( null != OcpModel.AuditLevel && OcpModel.AuditLevel != CswEnumAuditLevel.Unknown )
+            {
+                OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = OcpModel.AuditLevel.ToString();
+            }
 
             OCPRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( OcpModel.PropName );
 
