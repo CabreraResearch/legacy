@@ -14,8 +14,18 @@
         if (options) Csw.extend(cswPrivate, options);
 
         cswPrivate.update = function (responseData) {
+
+            //convert the responseData dictionary into an array
+            var responseDataArray = [];
+            $.each(responseData, function(key) {
+                responseDataArray.push({
+                   variableName: key,
+                   variableValue: responseData[key]
+                });
+            });
+
             var responseDataObject = {
-                Data : responseData
+                Data : responseDataArray
             }
 
             //clear responseData after posting it to prevent the 

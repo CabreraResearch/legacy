@@ -74,14 +74,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 //check if the config var should be added based on module
                 bool includeConfigVar = true;
-                int moduleIDForConfigVar = CswConvert.ToInt32(currentRow[COL_MODULEID]); 
+                int moduleIDForConfigVar = CswConvert.ToInt32( currentRow[COL_MODULEID] );
 
                 //if this config var is associated with a module
                 //and that module is currently disabled
                 //hide it
-                if( moduleIDForConfigVar != Int32.MinValue)
+                if( moduleIDForConfigVar != Int32.MinValue )
                 {
-                    if( false == ( NbtResources.Modules.IsModuleEnabled( moduleIDForConfigVar )) )
+                    if( false == ( NbtResources.Modules.IsModuleEnabled( moduleIDForConfigVar ) ) )
                     {
                         includeConfigVar = false;
                     }
@@ -89,21 +89,10 @@ namespace ChemSW.Nbt.WebServices
 
                 if( includeConfigVar )
                 {
-                    // in _updateConfigVars, the data is parsed in the form
-                    // of a CswAjaxDict, where the key is the variable name.
-                    // Since the default behaviour of CswAjaxDict is to assume
-                    // that any '_' chars were caused by making an ' ' char safe,
-                    // and therefore converts them back to ' 's on deserialization,
-                    // we need to convert all outgoing '_'s to '__'s to avoid that behavior.
-                    // Since CswAjaxDict assumes all '__'s are '_'s made safe,
-                    // the variableNames will match when serialized
-                    string variableName = currentRow[COL_VARIABLENAME].ToString()
-                                                                      .Replace( "_", "__" );
-
                     CswNbtDataContractConfigurationVariable thisConfigVarDataContract =
                         new CswNbtDataContractConfigurationVariable
                             {
-                                VariableName = variableName,
+                                VariableName = currentRow[COL_VARIABLENAME].ToString(),
                                 VariableValue = currentRow[COL_VARIABLEVALUE].ToString(),
                                 IsSystem = CswConvert.ToBoolean( currentRow[COL_ISSYSTEM] ),
                                 DataType = currentRow[COL_DATATYPE].ToString(),
@@ -119,7 +108,8 @@ namespace ChemSW.Nbt.WebServices
                     else if( DATATYPE_LIST == thisConfigVarDataContract.DataType )
                     {
                         string listOptionsAsString = currentRow[COL_CONSTRAINT].ToString();
-                        thisConfigVarDataContract.ListOptions = new CswCommaDelimitedString(listOptionsAsString);
+                        //string[] listOptionsAsArray = listOptionsAsString.Split( ',' );
+                        thisConfigVarDataContract.ListOptions = new CswCommaDelimitedString( listOptionsAsString );
                     }
 
                     //if this configVar is a system id, group as system settings
@@ -167,7 +157,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         //_getConfigVars
-        
+
         /// <summary>
         /// powers the webservice, which handles incoming updated config vars from server
         /// </summary>
@@ -178,6 +168,23 @@ namespace ChemSW.Nbt.WebServices
                                                                                                CswNbtDataContractConfigurationVariableResponseContainer varsFromServer )
         {
             CswNbtDataContractConfigurationUpdateSuccessResponse ret = new CswNbtDataContractConfigurationUpdateSuccessResponse();
+            Dictionary<string, string> updatedConfigVarsFromClient = new Dictionary<string, string>();
+
+            //add all the config vars into the dictionary
+            //keyed by name. If the incoming array contains
+            //more than one change to the same config var,
+            //the last change 'wins'.
+            foreach( CswNbtDataContractConfigurationVariableResponse thisResponse in varsFromServer.responseArray )
+            {
+                if( updatedConfigVarsFromClient.ContainsKey( thisResponse.VariableName ) )
+                {
+                    updatedConfigVarsFromClient[thisResponse.VariableName] = thisResponse.VariableValue;
+                }
+                else
+                {
+                    updatedConfigVarsFromClient.Add( thisResponse.VariableName, thisResponse.VariableValue );
+                }
+            }
 
             CswTableUpdate CVTableUpdate = NbtResources.makeCswTableUpdate( "update config vars", "configuration_variables" );
             DataTable CVDataTable = CVTableUpdate.getTable();
@@ -186,9 +193,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 string configVarName = thisRow[COL_VARIABLENAME].ToString();
 
-                if( varsFromServer.responseDictionary.ContainsKey( configVarName ) )
+                if( updatedConfigVarsFromClient.ContainsKey( configVarName ) )
                 {
-                    string updatedConfigVarValue = varsFromServer.responseDictionary[configVarName];
+                    string updatedConfigVarValue = updatedConfigVarsFromClient[configVarName];
                     string currentConfigVarValue = thisRow[COL_VARIABLEVALUE].ToString();
 
                     //make sure config var has been altered
@@ -217,7 +224,7 @@ namespace ChemSW.Nbt.WebServices
                                 break;
 
                             case DATATYPE_LIST:
-                                CswCommaDelimitedString listOptions = new CswCommaDelimitedString(thisRow[COL_CONSTRAINT].ToString());
+                                CswCommaDelimitedString listOptions = new CswCommaDelimitedString( thisRow[COL_CONSTRAINT].ToString() );
                                 if( false == listOptions.Contains( updatedConfigVarValue ) )
                                 {
                                     string listOptionsString = listOptions.ToString();
@@ -247,7 +254,7 @@ namespace ChemSW.Nbt.WebServices
                                 }
                                 break;
 
-                            //for string type there is no config var specific validation
+                                //for string type there is no config var specific validation
                             default:
                                 thisRow[COL_VARIABLEVALUE] = updatedConfigVarValue;
                                 break;
@@ -266,67 +273,58 @@ namespace ChemSW.Nbt.WebServices
         }
 
         //updateConfigVars
-
     }
 
     [DataContract, KnownType( typeof( Collection<CswNbtDataContractConfigurationVariable> ) )]
     public class CswNbtDataContractConfigurationVariablesPage
     {
-        [DataMember]
-        public CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
+        [DataMember] public CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>> ConfigVarsByModule = new CswAjaxDictionary<Collection<CswNbtDataContractConfigurationVariable>>();
     }
 
-    [DataContract, KnownType(typeof(CswCommaDelimitedString))]
+    [DataContract, KnownType( typeof( CswCommaDelimitedString ) )]
     public class CswNbtDataContractConfigurationVariable
     {
         /// <summary>
         ///     if this config var's datatype is INTTYPE this is the minimum permitted value 
         /// </summary>
-        [DataMember( Name = "minvalue" )]
-        public string Minvalue = string.Empty;
+        [DataMember( Name = "minvalue" )] public string Minvalue = string.Empty;
 
         /// <summary>
         ///     if the datatype is LIST, these are the rendered list options
         /// </summary>
-        [DataMember( Name = "listoptions" )]
-        public CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
+        [DataMember( Name = "listoptions" )] public CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
 
         /// <summary>
         ///     Used to determine how to apply the constraint. Can be INT, STRING, LIST, BOOL
         /// </summary>
-        [DataMember( Name = "dataType" )]
-        public string DataType = string.Empty;
+        [DataMember( Name = "dataType" )] public string DataType = string.Empty;
 
         /// <summary>
         ///     a description of the configuration variable
         /// </summary>
-        [DataMember( Name = "description" )]
-        public string Description = string.Empty;
+        [DataMember( Name = "description" )] public string Description = string.Empty;
 
         /// <summary>
         ///     true if this is a system config var
         /// </summary>
-        [DataMember( Name = "isSystem" )]
-        public Boolean IsSystem = false;
+        [DataMember( Name = "isSystem" )] public Boolean IsSystem = false;
 
         /// <summary>
         ///     the name of the config var
         /// </summary>
-        [DataMember( Name = "variableName" )]
-        public string VariableName = string.Empty;
+        [DataMember( Name = "variableName" )] public string VariableName = string.Empty;
 
         /// <summary>
         ///     the current value to which this config var is set
         /// </summary>
-        [DataMember( Name = "variableValue" )]
-        public string VariableValue = string.Empty;
+        [DataMember( Name = "variableValue" )] public string VariableValue = string.Empty;
     }
 
-    [DataContract, KnownType(typeof(CswAjaxDictionary<string> ))]
+    [DataContract]
     public class CswNbtDataContractConfigurationVariableResponseContainer
     {
-        [DataMember( Name = "Data" )]
-        public CswAjaxDictionary<string> responseDictionary = new CswAjaxDictionary<string>(); 
+        [DataMember( Name = "Data" )] public List<CswNbtDataContractConfigurationVariableResponse> responseArray
+            = new List<CswNbtDataContractConfigurationVariableResponse>();
     }
 
     [DataContract]
@@ -335,14 +333,12 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// the name of this config variable
         /// </summary>
-        [DataMember( Name = "variableName" )]
-        public string VariableName = string.Empty;
+        [DataMember( Name = "variableName" )] public string VariableName = string.Empty;
 
         /// <summary>
         /// value the config variable has been set to in the UI
         /// </summary>
-        [DataMember( Name = "variableValue" )]
-        public string VariableValue = string.Empty;
+        [DataMember( Name = "variableValue" )] public string VariableValue = string.Empty;
     }
 
     [DataContract]
@@ -351,8 +347,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// whether or not the config vars posted back to the server were succesfully applied
         /// </summary>
-        [DataMember( Name = "success" )]
-        public Boolean success = false;
+        [DataMember( Name = "success" )] public Boolean success = false;
     }
 }
 
