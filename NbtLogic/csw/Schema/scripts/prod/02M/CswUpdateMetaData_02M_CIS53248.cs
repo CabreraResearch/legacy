@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassCertificateDefinition.PropertyName.CertDefId,
                     FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true
+                    ReadOnly = true
                 } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
