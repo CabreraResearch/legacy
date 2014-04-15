@@ -113,6 +113,12 @@
             return true;  //isWholePageNavigation
         }
     });
+    menuAction.add('Config Vars', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onConfigVars);
+            return true;  //isWholePageNavigation
+        }
+    });
     menuAction.add('Modules', function (privateScope, menuItemName, menuItemJson, menuItem) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
             Csw.tryExec(privateScope.onModules);
@@ -182,6 +188,7 @@
             onPrintView: null,  // function () { },
             onQuotas: null, // function () { },
             onModules: null, // function () { },
+            onConfigVars: null, // function () { },
             onSessions: null, // function () { },
             onSubscriptions: null,
             onImpersonate: null,

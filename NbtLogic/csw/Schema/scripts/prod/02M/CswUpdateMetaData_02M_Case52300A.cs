@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02M_Case52300: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02M_Case52300A: CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -35,8 +35,13 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswEnumNbtFieldType.Logical,
                 IsRequired = true
             } );
-
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObsoleteOCP, CswEnumTristate.False );
+
+            //set existing OCP Method no's unique property to 
+            //false
+            CswNbtMetaDataObjectClassProp MethodNoOCP = MethodOC.getObjectClassProp( CswNbtObjClassMethod.PropertyName.MethodNo );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MethodNoOCP, CswEnumNbtObjectClassPropAttributes.isunique, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MethodNoOCP, CswEnumNbtObjectClassPropAttributes.iscompoundunique, false );
 
         } // update()
 

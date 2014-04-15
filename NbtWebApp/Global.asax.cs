@@ -21,6 +21,7 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Containers", Factory, typeof( Containers ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/ChemCatCentral", Factory, typeof( ChemCatCentral ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/CISProNbtMobile", Factory, typeof( CISProNbtMobile ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/ConfigurationVariables", Factory, typeof( ConfigurationVariables) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/DemoData", Factory, typeof( DemoData ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Import", Factory, typeof( Import ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Inspections", Factory, typeof( Inspections ) ) );

@@ -17,7 +17,9 @@ namespace ChemSW.Nbt.MetaData
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
             { CertDefCharacteristicLimitClass   , CertDefCharacteristicLimitClass    },
+            { CertDefConditionClass             , CertDefConditionClass              },
             { CertificateDefinitionClass        , CertificateDefinitionClass         },
+            { CertDefSpecClass                  , CertDefSpecClass                   },
             { ChemicalClass                     , ChemicalClass                      },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
@@ -155,7 +157,9 @@ namespace ChemSW.Nbt.MetaData
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
         public const string CertDefCharacteristicLimitClass = "CertDefCharacteristicLimitClass";
+        public const string CertDefConditionClass = "CertDefConditionClass";
         public const string CertificateDefinitionClass = "CertificateDefinitionClass";
+        public const string CertDefSpecClass = "CertDefSpecClass";
         public const string ChemicalClass = "ChemicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";

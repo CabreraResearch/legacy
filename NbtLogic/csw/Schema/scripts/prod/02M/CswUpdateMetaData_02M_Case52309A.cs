@@ -1,5 +1,4 @@
-﻿using ChemSW.Audit;
-using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
@@ -8,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02M_Case52309 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02M_Case52309A : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -25,9 +24,14 @@ namespace ChemSW.Nbt.Schema
             get { return "MLM2: Create new OC Testing Lab Method Assignment"; }
         }
 
+        public override string AppendToScriptName()
+        {
+            return "A";
+        }
+
         public override void update()
         {
-            CswNbtMetaDataObjectClass TestingLabMethodAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabMethodAssignmentClass, "check.png", CswEnumAuditLevel.PlainAudit );
+            CswNbtMetaDataObjectClass TestingLabMethodAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabMethodAssignmentClass, "check.png", true );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, TestingLabMethodAssignmentOC.ObjectClassId );
 
 
@@ -57,7 +61,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( TestingLabMethodAssignmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassTestingLabMethodAssignment.PropertyName.Cost,
-                FieldType = CswEnumNbtFieldType.Text
+                FieldType = CswEnumNbtFieldType.Text,
+                IsCompoundUnique = false
             } );
         } // update()
 
