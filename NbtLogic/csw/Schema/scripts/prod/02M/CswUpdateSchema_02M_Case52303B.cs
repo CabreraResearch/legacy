@@ -39,7 +39,9 @@ namespace ChemSW.Nbt.Schema
                     ObjectClass = CertDefConditionOC,
                     ObjectClassId = CertDefConditionOC.ObjectClassId,
                     NodeTypeName = "CertDef Condition",
-                    Searchable = true
+                    Searchable = true,
+                    NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefCondition.PropertyName.CertDefSpec) + ": " +
+                                   CswNbtMetaData.MakeTemplateEntry(  CswNbtObjClassCertDefCondition.PropertyName.MethodCondition)
                 } );
 
         }
