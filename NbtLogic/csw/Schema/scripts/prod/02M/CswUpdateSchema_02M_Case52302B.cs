@@ -39,7 +39,9 @@ namespace ChemSW.Nbt.Schema
                     ObjectClass = MethodConditionOC,
                     ObjectClassId = MethodConditionOC.ObjectClassId,
                     NodeTypeName = "Method Condition",
-                    Searchable = true
+                    Searchable = true,
+                    NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMethodCondition.PropertyName.Method) + ": " +
+                                   CswNbtMetaData.MakeTemplateEntry(  CswNbtObjClassMethodCondition.PropertyName.Name)
                 } );
 
             CswNbtMetaDataNodeTypeProp MethodConditionNameProp = MethodConditionNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMethodCondition.PropertyName.Name );
