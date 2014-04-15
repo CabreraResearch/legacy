@@ -36,8 +36,8 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp ReceiptLotNTP = _CswNbtResources.MetaData.getNodeTypeProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReceiptLot );
                 if( null != ReceiptLotNTP )
                 {
-                    CswNbtMetaDataNodeTypeProp DateCreatedNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
-                    ReceiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, DateCreatedNTP, true );
+                    CswNbtMetaDataNodeTypeProp StatusNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Status);
+                    ReceiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, StatusNTP, true );
                 }
             }
 

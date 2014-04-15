@@ -269,7 +269,11 @@
                     actionjson: o.ActionOptions
                 });
             });
-            actionHandler.add('modules', function (o) {
+            actionHandler.add('config vars', function (o) {
+                return Csw.actions.configurationvariables(Csw.main.centerTopDiv, {
+                });
+            });
+           actionHandler.add('modules', function (o) {
                 return Csw.actions.modules(Csw.main.centerTopDiv, {
                     onModuleChange: function () {
                         Csw.main.initAll();

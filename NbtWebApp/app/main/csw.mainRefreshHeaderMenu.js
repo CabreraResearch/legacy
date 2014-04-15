@@ -26,6 +26,9 @@
                 onQuotas: function () {
                     return Csw.main.handleAction({ 'actionname': 'Quotas' });
                 },
+                onConfigVars: function () {
+                    return Csw.main.handleAction({ 'actionname': 'Config_Vars' });
+                },
                 onModules: function () {
                     return Csw.main.handleAction({ 'actionname': 'Modules' });
                 },

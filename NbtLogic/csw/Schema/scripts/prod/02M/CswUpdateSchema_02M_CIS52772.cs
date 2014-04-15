@@ -54,16 +54,22 @@ namespace ChemSW.Nbt.Schema
 
                     CswNbtMetaDataNodeTypeProp OwnerNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
                     OwnerNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 1, 1 );
+                    OwnerNTP.updateLayout( CswEnumNbtLayoutType.Add, true, firstTab.TabId, 1, 1 );
 
                     CswNbtMetaDataNodeTypeProp LocationNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
                     LocationNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 2, 1 );
-                    CswNbtMetaDataNodeTypeProp ExpDateNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
+                    LocationNTP.updateLayout( CswEnumNbtLayoutType.Add, true, firstTab.TabId, 2, 1 );
 
                     CswNbtMetaDataNodeTypeProp DateCreatedNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
                     DateCreatedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 4, 1 );
 
                     CswNbtMetaDataNodeTypeProp LabelFormatNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
                     LabelFormatNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 7, 1 );
+                    LabelFormatNTP.updateLayout( CswEnumNbtLayoutType.Add, true, firstTab.TabId, 5, 1 );
+
+                    CswNbtMetaDataNodeTypeProp ExpDateNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
+                    ExpDateNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 3, 1 );
+                    ExpDateNTP.updateLayout( CswEnumNbtLayoutType.Add, true, firstTab.TabId, 3, 1 );
 
                     CswNbtMetaDataNodeTypeProp MissingNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
                     MissingNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 2, 2 );
@@ -80,7 +86,11 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp ContainerFamilyNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ContainerFamily );
                     ContainerFamilyNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 6, 2 );
 
-                    CswNbtMetaDataNodeTypeProp DisposeContainerNTP = ContainerNT.getNodeTypePropByObjectClassProp
+                    CswNbtMetaDataNodeTypeProp UndisposeContainerNTP = ContainerNT.getNodeTypePropByObjectClassProp
+( CswNbtObjClassContainer.PropertyName.Undispose);
+                    UndisposeContainerNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 7, 2 );
+
+                   CswNbtMetaDataNodeTypeProp DisposeContainerNTP = ContainerNT.getNodeTypePropByObjectClassProp
 ( CswNbtObjClassContainer.PropertyName.Dispose );
                     DisposeContainerNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 8, 2 );
                  
