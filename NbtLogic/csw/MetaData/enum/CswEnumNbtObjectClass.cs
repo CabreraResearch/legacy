@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.MetaData
         public const string RequestItemClass = "RequestItemClass";
         public const string RoleClass = "RoleClass";
         public const string SDSDocumentClass = "SDSDocumentClass";
-        public const string GHSSignalWordClass = "GHSSignalWord";
+        public const string GHSSignalWordClass = "GHSSignalWordClass";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
         public const string TestingLabClass = "TestingLabClass";

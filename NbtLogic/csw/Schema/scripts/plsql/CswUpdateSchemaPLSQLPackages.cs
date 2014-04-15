@@ -74,6 +74,21 @@ PACKAGE UNIT_CONVERSION AS
 END UNIT_CONVERSION;" );
 
             #endregion UNIT_CONVERSION_MANAGER
+
+            #region NBT_VIEW_BUILDER
+
+            public static readonly PackageHeaders NBT_VIEW_BUILDER = new PackageHeaders( CswEnumDeveloper.BV, 52432,
+            @"create or replace
+PACKAGE NBT_VIEW_BUILDER AS 
+
+  procedure CREATE_ALL_OC_VIEWS;
+  procedure CREATE_OC_VIEW (ocid number, oc_name varchar2);
+  procedure DROP_OLD_OC_VIEWS;
+  function MAKE_INTO_VALID_OC_VIEW_NAME (objectclassname varchar2) return varchar2;
+
+END NBT_VIEW_BUILDER;" );
+
+            #endregion NBT_VIEW_BUILDER
         }
 
         public sealed class PackageBodies : CswEnum<PackageBodies>
@@ -907,6 +922,124 @@ PACKAGE BODY UNIT_CONVERSION AS
 END UNIT_CONVERSION;" );
 
             #endregion UNIT_CONVERSION
+
+            #region NBT_VIEW_BUILDER
+
+            public static readonly PackageBodies NBT_VIEW_BUILDER_BODY = new PackageBodies( CswEnumDeveloper.BV, 52432,
+            @"create or replace
+PACKAGE BODY NBT_VIEW_BUILDER AS
+
+  --Creates and updates relational data views for all objectclasses
+  procedure CREATE_ALL_OC_VIEWS is
+    cursor ocs is
+      select objectclassid,objectclass from object_class
+      order by lower(objectclass);
+  begin
+    DROP_OLD_OC_VIEWS();
+    for rec in ocs loop
+      --dbms_output.put_line('createntview(' || to_char(rec.nodetypeid) || ',' || rec.nodetypename || ')');
+      CREATE_OC_VIEW(rec.objectclassid, rec.objectclass);
+    end loop;
+  end CREATE_ALL_OC_VIEWS;
+
+  --Creates or updates a relational data view for the given objectclass
+  procedure CREATE_OC_VIEW (ocid number, oc_name varchar2) is
+    cursor ocps is
+      select ocp.objectclasspropid, ocp.oraviewcolname, ft.fieldtype, fts.propcolname, fts.subfieldname, fts.is_default
+        from object_class_props ocp
+        join field_types ft on ft.fieldtypeid=ocp.fieldtypeid
+        join field_types_subfields fts on fts.fieldtypeid=ft.fieldtypeid
+        where fts.reportable='1' and fts.is_default='1' and ocp.objectclassid=ocid 
+        order by fts.is_default desc;
+    var_sql clob;
+    var_line varchar(2000);
+    viewname varchar2(30);
+    colname varchar2(30);
+  begin
+    --dbms_output.enable(32000);
+    --dbms_output.put_line('Before Transform: ' || oc_name);
+    viewname := MAKE_INTO_VALID_OC_VIEW_NAME(oc_name);
+    --dbms_output.put_line('After Transform: ' || viewname);
+
+    var_line:='create or replace view ' || viewname || ' as select n.nodeid ';
+    --dbms_output.put_line('creating ' || viewname || '...');
+    var_sql := var_sql || var_line;
+
+    for rec in ocps loop
+      --dbms_output.put_line(to_char(pcount) || '|' || safeSqlParam(rec.propname) || '|' || rec.subfieldname || '|' || rec.fieldtype || '|' || rec.objectclass || '|' || rec.nodetypename);
+      colname := makeintovalidname(rec.oraviewcolname);
+
+      --the gestalt
+      var_line := ',(select gestalt from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+      var_line := var_line || ') ' || colname || chr(13);
+      var_sql := var_sql || var_line;
+      
+      --dbms_output.put_line(var_line);
+      if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
+        var_line := ',(select field1_fk from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,27) || '_id';            
+        var_sql := var_sql || var_line;
+      elsif(rec.fieldtype='Quantity') then
+        var_line := ',(select field1 from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,26) || '_uom';            
+        var_line := var_line || ',(select field1_numeric from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,26) || '_val';
+        var_line := var_line || ',(select field2_numeric from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,23) || '_val_KG';
+        var_line := var_line || ',(select field3_numeric from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,24) || '_val_L';
+        var_line := var_line || ',(select field1_fk from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,24) || '_uomid';              
+        var_sql := var_sql || var_line;
+      elsif(rec.fieldtype='NFPA') then
+        var_line := ',(select field1 from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,27) || '_f';            
+        var_sql := var_sql || var_line;
+        var_line := ',(select field2 from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,27) || '_r';            
+        var_sql := var_sql || var_line;
+        var_line := ',(select field3 from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,27) || '_h';            
+        var_sql := var_sql || var_line;
+        var_line := ',(select field4 from vwNpv where nid=n.nodeid and ocpid=' || to_char(rec.objectclasspropid);
+        var_line := var_line || ') ' || substr(colname,1,27) || '_s';            
+        var_sql := var_sql || var_line;
+      end if;
+    end loop;
+    var_line := ' from nodes n JOIN nodetypes nt ON nt.nodetypeid = n.nodetypeid AND nt.objectclassid = ' || to_char(ocid) || 
+      ' where n.istemp = 0 and n.hidden = 0';
+    var_sql := var_sql || var_line;
+    --dbms_output.put_line(var_sql);
+    execute immediate (var_sql);
+    commit;
+  end CREATE_OC_VIEW;
+  
+  --Removes any deprecated views leftover from deleted objectclasses (but ignore the old OC views)
+  procedure DROP_OLD_OC_VIEWS is
+    cursor ntsdel is
+      select object_name from user_objects 
+      where object_type='VIEW' and object_name not like 'OC%' and object_name like '%CLASS' and object_name not in
+      (select MAKE_INTO_VALID_OC_VIEW_NAME(objectclass) from object_class);
+    var_sql varchar2(200);
+  begin
+    for delrec in ntsdel loop
+      var_sql := 'drop view ' || delrec.object_name;
+      execute immediate (var_sql);
+    end loop;
+    commit;
+  end DROP_OLD_OC_VIEWS;
+  
+  --Truncates objectclass name to 30 characters, keeping 'CLASS' at the end
+  function MAKE_INTO_VALID_OC_VIEW_NAME (objectclassname varchar2) return varchar2 is
+    valid_oc_name varchar2(30);
+  begin
+    valid_oc_name := upper(substr(substr(objectclassname, 0, INSTR(lower(objectclassname),'class')-1),0,25)) || 'CLASS';
+    return valid_oc_name;
+  end MAKE_INTO_VALID_OC_VIEW_NAME;
+
+END NBT_VIEW_BUILDER;" );
+
+            #endregion NBT_VIEW_BUILDER
         }
 
     }//class CswUpdateSchemaPLSQLPackages
