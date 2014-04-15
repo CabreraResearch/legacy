@@ -176,7 +176,7 @@
             if (Csw.isNullOrEmpty(cswParent)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a parent.', '', 'csw.receivematerial.js', 57));
             }
-           
+
             cswPrivate.validateState();
         }());
         //#endregion ctor preInit
@@ -304,7 +304,23 @@
                         cswPrivate['step' + StepNo + 'Complete'] = true;
                     }
                 };
-            }())
+            }()),
+            onStepChange: function (StepNo, onStepChangeSuccess) {
+                var nextStep = StepNo + 1;
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Containers/CheckContainerBarcodes',
+                    data: cswPrivate.amountsGrid.quantities(),
+                    success: function (data) {
+                        if (Csw.isNullOrEmpty(data)) {
+                        } else {
+                            cswPrivate['step' + nextStep + 'Complete'] = false;
+                            cswPrivate.currentStepNo = StepNo;
+                            cswPrivate.wizard.setStep(StepNo);
+                            Csw.dialogs.alert({ message: data }).open();
+                        }
+                    }
+                });
+            }
         };
         //#endregion Step: Create Containers
 
@@ -362,7 +378,7 @@
                         if (cswPrivate.state.addSDSPermission) {
                             attachSDSTable.cell(1, 1).a({
                                 text: 'Add a new SDS Document',
-                                onClick: function() {
+                                onClick: function () {
                                     attachSDSTable.cell(1, 1).hide();
                                     attachSDSTable.cell(1, 2).show();
                                 }
@@ -378,7 +394,7 @@
                                     EditMode: Csw.enums.editMode.Add
                                 },
                                 ReloadTabOnSave: false,
-                                onNodeIdSet: function(sdsDocId) {
+                                onNodeIdSet: function (sdsDocId) {
                                     cswPrivate.state.sdsDocId = sdsDocId;
                                 }
                             });
@@ -429,7 +445,7 @@
                         //get the properties of the container from the "Define Properties" step. Find the label format, and store it to pass in to the print label composite
                         var selectedLabel;
                         var containerProps = cswPrivate.containerTabsAndProps.getProps();
-                        Csw.iterate(containerProps, function(prop) {
+                        Csw.iterate(containerProps, function (prop) {
                             if (prop.name == "Label Format") {
                                 selectedLabel = prop.values.nodeid;
                             }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -150,6 +151,24 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "CheckContainerBarcodes" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Verify the proposed container barcodes are usable" )]
+        public CswNbtWebServiceReceiving.CswNbtContainerBarcodeCheckReturn CheckContainerBarcodes( Collection<CswNbtAmountsGridQuantity> Request )
+        {
+            CswNbtWebServiceReceiving.CswNbtContainerBarcodeCheckReturn Ret = new CswNbtWebServiceReceiving.CswNbtContainerBarcodeCheckReturn();
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceReceiving.CswNbtContainerBarcodeCheckReturn, Collection<CswNbtAmountsGridQuantity>>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceReceiving.CheckContainerBarcodes,
+                ParamObj : Request
+                );
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
         #endregion Receive Material Wizard
     }
 

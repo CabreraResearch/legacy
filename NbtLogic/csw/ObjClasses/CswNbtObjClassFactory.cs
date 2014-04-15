@@ -46,6 +46,10 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.CertDefSpecClass:
                     ReturnVal = new CswNbtObjClassCertDefSpec ( CswNbtResources, Node );
                     break;
+                    
+                case CswEnumNbtObjectClass.CertificateDefinitionClass:
+                    ReturnVal = new CswNbtObjClassCertificateDefinition( CswNbtResources, Node );
+                    break;
 
                 case CswEnumNbtObjectClass.CertDefConditionClass:
                     ReturnVal = new CswNbtObjClassCertDefCondition ( CswNbtResources, Node );
@@ -322,7 +326,7 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.TestingLabClass:
                     ReturnVal = new CswNbtObjClassTestingLab( CswNbtResources, Node );
                     break;
-                    
+
                 case CswEnumNbtObjectClass.GeneratorClass:
                     ReturnVal = new CswNbtObjClassGenerator( CswNbtResources, Node );
                     break;
