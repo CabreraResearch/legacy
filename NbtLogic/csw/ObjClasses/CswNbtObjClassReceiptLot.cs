@@ -1,5 +1,4 @@
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 
@@ -21,7 +20,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string RequestItem = "Request Item";
             public const string AssignedCofA = "Assigned C of A";
             public const string ViewCofA = "View C of A";
-            public const string Containers = "Containers";
         }
 
         public CswNbtObjClassReceiptLot( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
@@ -69,8 +67,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ViewCofA.setHidden( true, false );
             }
-
-
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
@@ -160,7 +156,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship RequestItem { get { return _CswNbtNode.Properties[PropertyName.RequestItem]; } }
         public CswNbtNodePropGrid AssignedCofA { get { return _CswNbtNode.Properties[PropertyName.AssignedCofA]; } }
         public CswNbtNodePropButton ViewCofA { get { return _CswNbtNode.Properties[PropertyName.ViewCofA]; } }
-        public CswNbtNodePropGrid Containers { get { return _CswNbtNode.Properties[PropertyName.Containers]; } }
 
         #endregion
 
