@@ -46,6 +46,9 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.ShowProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
                 _CswNbtResources.Modules.ShowProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.UseType );
             }
+
+            //Show the HMIS Materials and HMIS Totals
+            _toggleHMISReports( false );
         }
 
         protected override void OnDisable()
@@ -83,6 +86,32 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
                 _CswNbtResources.Modules.HideProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.UseType );
             }
+
+            //Show the HMIS Materials and HMIS Totals
+            _toggleHMISReports( true );
+
         } // OnDisable()
+
+        private void _toggleHMISReports( bool Hide )
+        {
+            CswNbtMetaDataObjectClass ReportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClassProp ReportNameOCP = ReportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.ReportName );
+
+            CswNbtView reportsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = reportsView.AddViewRelationship( ReportOC, false );
+            reportsView.AddViewPropertyAndFilter( parent, ReportNameOCP, Value : "HMIS Totals" );
+            reportsView.AddViewPropertyAndFilter( parent, ReportNameOCP, Value : "HMIS Materials", Conjunction : CswEnumNbtFilterConjunction.Or );
+
+            ICswNbtTree reportsTree = _CswNbtResources.Trees.getTreeFromView( reportsView, false, true, true );
+            for( int i = 0; i < reportsTree.getChildNodeCount(); i++ )
+            {
+                reportsTree.goToNthChild( i );
+                CswNbtNode ReportNode = reportsTree.getNodeForCurrentPosition();
+                ReportNode.Hidden = Hide;
+                ReportNode.postChanges( false, SkipEvents : true );
+                reportsTree.goToParentNode();
+            }
+        }
+
     } // class CswNbtModuleFireCode
 }// namespace ChemSW.Nbt
