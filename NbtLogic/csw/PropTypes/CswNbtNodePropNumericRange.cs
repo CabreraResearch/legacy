@@ -214,6 +214,49 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        private double _MinValue = Double.NaN;
+        public double MinValue
+        {
+            get
+            {
+                if( Double.IsNaN( _MinValue ) )
+                {
+                    //_MinValue = _CswNbtMetaDataNodeTypeProp.MinValue;
+                    _MinValue = CswConvert.ToDouble( _CswNbtNodePropData[CswNbtFieldTypeRuleNumericRange.AttributeName.MinimumValue] );
+                }
+                return _MinValue;
+            }
+            set { _MinValue = value; }
+        } // MinValue
+
+
+        private double _MaxValue = Double.NaN;
+        public double MaxValue
+        {
+            get
+            {
+                if( Double.IsNaN( _MaxValue ) )
+                {
+                    //_MaxValue = _CswNbtMetaDataNodeTypeProp.MaxValue;
+                    _MaxValue = CswConvert.ToDouble( _CswNbtNodePropData[CswNbtFieldTypeRuleNumericRange.AttributeName.MaximumValue] );
+                }
+                return _MaxValue;
+            }
+            set { _MaxValue = value; }
+        } // MaxValue
+
+        /// <summary>
+        /// When set to true, the MinValue and MaxValue limits are not included in the allowed number range.
+        /// </summary>
+        public bool ExcludeRangeLimits
+        {
+            get
+            {
+                //return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleNumber.AttributeName.ExcludeRangeLimits] );
+            }
+        }
+
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
@@ -228,7 +271,11 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_LowerInclusiveSubField.ToXmlNodeName( true )] = LowerInclusive;
             ParentObject[_UpperInclusiveSubField.ToXmlNodeName( true )] = UpperInclusive;
             ParentObject[_UnitsSubField.ToXmlNodeName( true )] = Units;
+
+            ParentObject["minvalue"] = MinValue.ToString();
+            ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision;
+            ParentObject["excludeRangeLimits"] = ExcludeRangeLimits;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

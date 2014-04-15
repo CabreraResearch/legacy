@@ -1,3 +1,4 @@
+
 /// <reference path="~/app/CswApp-vsdoc.js" />
 /* globals Csw:false, $:false  */
 
@@ -12,6 +13,9 @@
             var cswPrivate = {};
 
             cswPrivate.precision = nodeProperty.propData.values.precision;
+            cswPrivate.minvalue = nodeProperty.propData.values.minvalue;
+            cswPrivate.maxvalue = nodeProperty.propData.values.maxvalue;
+            cswPrivate.excludeRangeLimits = nodeProperty.propData.values.excludeRangeLimits;
             cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
 
             cswPrivate.lower = nodeProperty.propData.values.lower;
@@ -69,6 +73,9 @@
                     value: cswPrivate.lower,
                     ceilingVal: cswPrivate.ceilingVal,
                     Precision: cswPrivate.precision,
+                    MinValue: Csw.number(cswPrivate.minvalue),
+                    MaxValue: Csw.number(cswPrivate.maxvalue),
+                    excludeRangeLimits: cswPrivate.excludeRangeLimits,
                     ReadOnly: nodeProperty.isReadOnly(),
                     isRequired: nodeProperty.isRequired(),
                     size: 8,
@@ -110,6 +117,9 @@
                     value: cswPrivate.target,
                     ceilingVal: cswPrivate.ceilingVal,
                     Precision: cswPrivate.precision,
+                    MinValue: Csw.number(cswPrivate.minvalue),
+                    MaxValue: Csw.number(cswPrivate.maxvalue),
+                    excludeRangeLimits: cswPrivate.excludeRangeLimits,
                     ReadOnly: nodeProperty.isReadOnly(),
                     isRequired: nodeProperty.isRequired(),
                     size: 8,
@@ -151,6 +161,9 @@
                     value: cswPrivate.upper,
                     ceilingVal: cswPrivate.ceilingVal,
                     Precision: cswPrivate.precision,
+                    MinValue: Csw.number(cswPrivate.minvalue),
+                    MaxValue: Csw.number(cswPrivate.maxvalue),
+                    excludeRangeLimits: cswPrivate.excludeRangeLimits,
                     ReadOnly: nodeProperty.isReadOnly(),
                     isRequired: nodeProperty.isRequired(),
                     size: 8,

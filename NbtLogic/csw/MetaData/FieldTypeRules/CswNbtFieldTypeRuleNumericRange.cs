@@ -131,6 +131,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
             public const string Precision = CswEnumNbtPropertyAttributeName.Precision;
+            public const string MinimumValue = CswEnumNbtPropertyAttributeName.MinimumValue;
+            public const string MaximumValue = CswEnumNbtPropertyAttributeName.MaximumValue;
+            public const string ExcludeRangeLimits = CswEnumNbtPropertyAttributeName.ExcludeRangeLimits;
             public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
         }
 
@@ -143,6 +146,27 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = AttributeName.Precision,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Numberprecision
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.NumericRange,
+                    Name = AttributeName.MinimumValue,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Numberminvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.NumericRange,
+                    Name = AttributeName.MaximumValue,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.NumericRange,
+                    Name = AttributeName.ExcludeRangeLimits,
+                    Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
