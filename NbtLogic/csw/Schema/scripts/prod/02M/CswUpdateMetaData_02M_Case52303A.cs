@@ -31,13 +31,14 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodConditionClass);
 
-            //TODO: Once CIS-52297 is complete
-            //CswNbtMetaDataObjectClass CertDefSpecOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecOC);
+            CswNbtMetaDataObjectClass CertDefSpecOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecClass);
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassCertDefCondition.PropertyName.MethodCondition,
                 FieldType = CswEnumNbtFieldType.Relationship,
+                IsRequired = true,
+                ReadOnly = true,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                 FkValue = MethodConditionOC.ObjectClassId
             } );
@@ -45,9 +46,11 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassCertDefCondition.PropertyName.CertDefSpec,
-                FieldType = CswEnumNbtFieldType.Relationship//,
-                //FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                //FkValue = CertDefSpecOC.ObjectClassId
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsRequired = true,
+                ReadOnly = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = CertDefSpecOC.ObjectClassId
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
