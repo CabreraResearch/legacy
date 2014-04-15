@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.Schema
 
             // set SearchDefer
             CswTableUpdate ocUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "52299D_update_oc", "object_class" );
-            DataTable ocTable = ocUpdate.getTable( "objectclassid", MethodCharacteristicOC.ObjectClassId );
+            DataTable ocTable = ocUpdate.getTable( "objectclassid", CertDefCharLimitOC.ObjectClassId );
             ocTable.Rows[0]["searchdeferpropid"] = CertDefSpecOCP.ObjectClassPropId;
             ocUpdate.update( ocTable );
 
