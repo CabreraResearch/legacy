@@ -42,23 +42,24 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            // CIS-52299: "Limits" are required if certdef's level's labuseonly is false, hidden otherwise
-            CswNbtObjClassCertDefSpec CertDefSpecNode = _CswNbtResources.Nodes[CertDefSpec.RelatedNodeId];
-            if( null != CertDefSpecNode )
-            {
-                CswNbtObjClassLevel LevelNode = _CswNbtResources.Nodes[CertDefSpec.Level.RelatedNodeId];
-                if( null != LevelNode )
-                {
-                    if( LevelNode.LabUseOnly.Checked == CswEnumTristate.True )
-                    {
-                        Limits.TemporarilyRequired = true;
-                    }
-                    else
-                    {
-                        Limits.setHidden( true, true );
-                    }
-                }
-            }
+            // CertDef Specs do not have levels...?
+            //// CIS-52299: "Limits" are required if certdef's level's labuseonly is false, hidden otherwise
+            //CswNbtObjClassCertDefSpec CertDefSpecNode = _CswNbtResources.Nodes[CertDefSpec.RelatedNodeId];
+            //if( null != CertDefSpecNode )
+            //{
+            //    CswNbtObjClassLevel LevelNode = _CswNbtResources.Nodes[CertDefSpec.Level.RelatedNodeId];
+            //    if( null != LevelNode )
+            //    {
+            //        if( LevelNode.LabUseOnly.Checked == CswEnumTristate.True )
+            //        {
+            //            Limits.TemporarilyRequired = true;
+            //        }
+            //        else
+            //        {
+            //            Limits.setHidden( true, true );
+            //        }
+            //    }
+            //}
 
             CswNbtObjClassMethodCharacteristic MethodCharNode = _CswNbtResources.Nodes[MethodCharacteristic.RelatedNodeId];
             if( null != MethodCharNode )

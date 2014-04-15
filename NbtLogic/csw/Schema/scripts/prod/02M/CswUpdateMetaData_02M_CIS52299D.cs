@@ -1,4 +1,6 @@
-﻿using ChemSW.Audit;
+﻿using System.Data;
+using ChemSW.Audit;
+using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -84,7 +86,11 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.PropertyReference
                 } );
 
-            CertDefCharLimitOC._DataRow["searchdeferpropid"] = CertDefSpecOCP.ObjectClassPropId;
+            // set SearchDefer
+            CswTableUpdate ocUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "52299D_update_oc", "object_class" );
+            DataTable ocTable = ocUpdate.getTable( "objectclassid", MethodCharacteristicOC.ObjectClassId );
+            ocTable.Rows[0]["searchdeferpropid"] = CertDefSpecOCP.ObjectClassPropId;
+            ocUpdate.update( ocTable );
 
         } // update()
     } // class

@@ -48,19 +48,22 @@ namespace ChemSW.Nbt.Schema
                 } );
 
             CswNbtMetaDataNodeTypeProp MethodCharacteristicNTP = CertDefCharLimitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.MethodCharacteristic );
+            CswNbtMetaDataNodeTypeProp CertDefSpecNTP = CertDefCharLimitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.CertDefSpec );
             CswNbtMetaDataNodeTypeProp ResultTypeNTP = CertDefCharLimitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.ResultType );
             CswNbtMetaDataNodeTypeProp LimitsNTP = CertDefCharLimitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.Limits );
             CswNbtMetaDataNodeTypeProp PassOptionsNTP = CertDefCharLimitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassOptions );
             CswNbtMetaDataNodeTypeProp PassValueNTP = CertDefCharLimitNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassValue );
 
             // Layout
-            CswNbtSchemaUpdateLayoutMgr layoutMgr = new CswNbtSchemaUpdateLayoutMgr( _CswNbtSchemaModTrnsctn, CswEnumNbtObjectClass.CertDefCharacteristicLimitClass );
-            layoutMgr.First.moveProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.MethodCharacteristic, 1, 1 );
-            layoutMgr.First.moveProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.CertDefSpec, 2, 1 );
-            layoutMgr.First.moveProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.ResultType, 3, 1 );
-            layoutMgr.First.moveProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.Limits, 4, 1 );
-            layoutMgr.First.moveProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassOptions, 5, 1 );
-            layoutMgr.First.moveProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassValue, 6, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, CertDefCharLimitNT.NodeTypeId, MethodCharacteristicNTP, true, CertDefCharLimitNT.getFirstNodeTypeTab().TabId, 1, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, CertDefCharLimitNT.NodeTypeId, CertDefSpecNTP, true, CertDefCharLimitNT.getFirstNodeTypeTab().TabId, 2, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, CertDefCharLimitNT.NodeTypeId, ResultTypeNTP, true, CertDefCharLimitNT.getFirstNodeTypeTab().TabId, 3, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, CertDefCharLimitNT.NodeTypeId, LimitsNTP, true, CertDefCharLimitNT.getFirstNodeTypeTab().TabId, 4, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, CertDefCharLimitNT.NodeTypeId, PassOptionsNTP, true, CertDefCharLimitNT.getFirstNodeTypeTab().TabId, 5, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, CertDefCharLimitNT.NodeTypeId, PassValueNTP, true, CertDefCharLimitNT.getFirstNodeTypeTab().TabId, 6, 1 );
+
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, CertDefCharLimitNT.NodeTypeId, MethodCharacteristicNTP, true, 1, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, CertDefCharLimitNT.NodeTypeId, CertDefSpecNTP, true, 2, 1 );
 
             // Set up 'Result Type' property reference
             ResultTypeNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.FKType].AsText.Text = CswEnumNbtViewPropType.NodeTypePropId.ToString();
