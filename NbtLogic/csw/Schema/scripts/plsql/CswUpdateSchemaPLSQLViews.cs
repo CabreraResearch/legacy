@@ -68,7 +68,7 @@ order by lower(n.nodename), lower(p.propname)" );
                 field4,
                 field5,
                 TO_CHAR(clobdata) clobdata,
-                nodetypepropid ntpid,
+                ntp.nodetypepropid ntpid,
                 ntp.objectclasspropid ocpid
               FROM jct_nodes_props j
               JOIN nodetype_props ntp
