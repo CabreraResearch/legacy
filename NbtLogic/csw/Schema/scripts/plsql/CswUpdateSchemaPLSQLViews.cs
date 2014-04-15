@@ -52,7 +52,7 @@ order by lower(n.nodename), lower(p.propname)" );
             #region VWNTPROPDEFS
 
             public static readonly Views VwNPV = new Views( CswEnumDeveloper.NBT, 0,
-            @"CREATE OR REPLACE FORCE VIEW VWNPV (NID, GESTALT, FIELD1_FK, FIELD1_DATE, FIELD2_DATE, FIELD1_NUMERIC, FIELD2_NUMERIC, FIELD3_NUMERIC, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, CLOBDATA, NTPID)
+            @"CREATE OR REPLACE FORCE VIEW VWNPV (NID, GESTALT, FIELD1_FK, FIELD1_DATE, FIELD2_DATE, FIELD1_NUMERIC, FIELD2_NUMERIC, FIELD3_NUMERIC, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, CLOBDATA, NTPID, OCPID)
             AS
               SELECT j.nodeid nid,
                 TO_CHAR(j.gestalt) gestalt,
@@ -68,8 +68,11 @@ order by lower(n.nodename), lower(p.propname)" );
                 field4,
                 field5,
                 TO_CHAR(clobdata) clobdata,
-                nodetypepropid ntpid
-              FROM jct_nodes_props j" );
+                nodetypepropid ntpid,
+                ntp.objectclasspropid ocpid
+              FROM jct_nodes_props j
+              JOIN nodetype_props ntp
+              ON ntp.nodetypepropid=j.nodetypepropid" );
 
             #endregion VWNTPROPDEFS
 
