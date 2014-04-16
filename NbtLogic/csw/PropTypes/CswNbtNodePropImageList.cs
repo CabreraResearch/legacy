@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.PropTypes
             _ValueSubField = ( (CswNbtFieldTypeRuleImageList) _FieldTypeRule ).ValueSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = new CswDelimitedString( x.ToString(), Delimiter ) ) );
+            _SubFieldMethods.Add( _ValueSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = new CswDelimitedString( x.ToString(), Delimiter ) ) );
         }
 
         private CswNbtSubField _ValueSubField;

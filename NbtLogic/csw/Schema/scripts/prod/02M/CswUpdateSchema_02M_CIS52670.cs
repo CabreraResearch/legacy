@@ -47,12 +47,12 @@ namespace ChemSW.Nbt.Schema
                 {
                     if( NodeTypeRow["auditlevel"].ToString() == "0" )
                     {
-                        NodeType.DesignNode.AuditLevel.Value = CswEnumAuditLevel.NoAudit;
+                        NodeType.DesignNode.AuditLevel.Value = CswEnumAuditLevel.NoAudit.ToString();
                         NodeType.DesignNode.AuditLevel.setSubFieldModified( CswEnumNbtSubFieldName.Value, true );
                     }
                     else if( NodeTypeRow["auditlevel"].ToString() == "1" )
                     {
-                        NodeType.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
+                        NodeType.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit.ToString();
                         NodeType.DesignNode.AuditLevel.setSubFieldModified( CswEnumNbtSubFieldName.Value, true );
                     }
                 }
@@ -68,12 +68,12 @@ namespace ChemSW.Nbt.Schema
                 {
                     if( PropRow["auditlevel"].ToString() == "0" )
                     {
-                        NodeTypeProp.DesignNode.AuditLevel.Value = CswEnumAuditLevel.NoAudit;
+                        NodeTypeProp.DesignNode.AuditLevel.Value = CswEnumAuditLevel.NoAudit.ToString();
                         NodeTypeProp.DesignNode.AuditLevel.setSubFieldModified( CswEnumNbtSubFieldName.Value, true );
                     }
                     else if( PropRow["auditlevel"].ToString() == "1" )
                     {
-                        NodeTypeProp.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
+                        NodeTypeProp.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit.ToString();
                         NodeTypeProp.DesignNode.AuditLevel.setSubFieldModified( CswEnumNbtSubFieldName.Value, true );
                     }
                 }
@@ -86,12 +86,12 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeType AuditNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( a.Item1 );
                 if( null != AuditNT )
                 {
-                    AuditNT.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
+                    AuditNT.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit.ToString();
 
                     CswNbtMetaDataNodeTypeProp AuditPropNTP = AuditNT.getNodeTypeProp( a.Item2 );
                     if( null != AuditPropNTP && false == AuditPropNTP.getFieldType().IsDisplayType() )
                     {
-                        AuditPropNTP.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
+                        AuditPropNTP.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit.ToString();
                     }
                 }
             } // foreach( Tuple<string, string> a in AuditInfo )
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     if( false == RequiredNTP.getFieldType().IsDisplayType() )
                     {
-                        RequiredNTP.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
+                        RequiredNTP.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit.ToString();
                     }
                 }
 
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp NamePropNTP = AuditedNT.getNodeTypeProp( NamePropId );
                     if( null != NamePropNTP && false == NamePropNTP.getFieldType().IsDisplayType() )
                     {
-                        NamePropNTP.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit;
+                        NamePropNTP.DesignNode.AuditLevel.Value = CswEnumAuditLevel.PlainAudit.ToString();
                     }
                 }
             } // foreach( CswNbtMetaDataNodeType AuditedNT in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes().Where( nt => nt.AuditLevel == CswEnumAuditLevel.PlainAudit ) )

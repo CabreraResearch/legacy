@@ -754,16 +754,10 @@ namespace ChemSW.Nbt.MetaData
         } // getNodeIdAndNames()
 
         private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        public string AuditLevel
+        public CswEnumAuditLevel AuditLevel
         {
-            get
-            {
-                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
-            }
-            private set
-            {
-                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.CswEnumAuditLevel.Parse( value );
-            }
+            get { return _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString(); }
+            private set { _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = value.ToString(); }
         }
 
         #region IEquatable

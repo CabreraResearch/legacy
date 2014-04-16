@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 
@@ -50,7 +51,7 @@ namespace ChemSW.Nbt.MetaData
             }
 
             [DataMember]
-            public bool AuditLevel;
+            public CswEnumAuditLevel AuditLevel;
             [DataMember]
             public bool IsBatchEntry;
 

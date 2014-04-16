@@ -31,9 +31,9 @@ namespace ChemSW.Nbt.PropTypes
             _CswEncryption = new CswEncryption( CswNbtResources.MD5Seed );
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _EncryptedPasswordSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => EncryptedPassword, x => EncryptedPassword = CswConvert.ToString( x ) ) );
-            _SubFieldMethods.Add( _ChangedDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ChangedDate, x => ChangedDate = CswConvert.ToDateTime( x ) ) );
-            _SubFieldMethods.Add( _PreviouslyUsedPasswords, new Tuple<Func<dynamic>, Action<dynamic>>( () => PreviouslyUsedPasswords, x => PreviouslyUsedPasswords = CswConvert.ToString( x ) )  );
+            _SubFieldMethods.Add( _EncryptedPasswordSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => EncryptedPassword, x => EncryptedPassword = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _ChangedDateSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => ChangedDate, x => ChangedDate = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _PreviouslyUsedPasswords.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => PreviouslyUsedPasswords, x => PreviouslyUsedPasswords = CswConvert.ToString( x ) )  );
         }
 
         private CswNbtSubField _EncryptedPasswordSubField;

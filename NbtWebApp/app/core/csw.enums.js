@@ -484,6 +484,16 @@
                 Value: Csw.enums.subFieldNames.Value
             }
         },
+        NumericRange: {
+            name: 'NumericRange',
+            subfields: {
+                Lower: Csw.enums.subFieldNames.Lower,
+                Target: Csw.enums.subFieldNames.Target,
+                Upper: Csw.enums.subFieldNames.Upper,
+                LowerInclusive: Csw.enums.subFieldNames.LowerInclusive,
+                UpperInclusive: Csw.enums.subFieldNames.UpperInclusive
+            }
+        },
         Password: {
             name: 'Password',
             subfields: {
