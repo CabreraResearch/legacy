@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Audit;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -31,7 +32,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass CertDefSpecLevelOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.CertDefSpecLevelClass, "barchart.png", false );
+            CswNbtMetaDataObjectClass CertDefSpecLevelOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.CertDefSpecLevelClass, "barchart.png", CswEnumAuditLevel.NoAudit );
 
             CswNbtMetaDataObjectClass LevelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.Level );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
