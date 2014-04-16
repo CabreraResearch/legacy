@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -39,8 +40,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassCertificateDefinition.PropertyName.CertDefId,
-                    FieldType = CswEnumNbtFieldType.Text,
-                    ReadOnly = true
+                    FieldType = CswEnumNbtFieldType.Text
                 } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -69,14 +69,26 @@ namespace ChemSW.Nbt.Schema
                 } );
 
             CswNbtMetaDataNodeType UnitTimeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit Time" );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            CswPrimaryKey YearsNodePk = null;
+            CswNbtView UnitsOfTimeView = UnitTimeNT.CreateDefaultView();
+            ICswNbtTree UnitsTree = _CswNbtSchemaModTrnsctn.getTreeFromView( UnitsOfTimeView, false );
+            for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
+            {
+                UnitsTree.goToNthChild( i );
+                if( UnitsTree.getNodeNameForCurrentPosition().Equals( "Years" ) )
+                {
+                    YearsNodePk = UnitsTree.getNodeIdForCurrentPosition();
+                }
+                UnitsTree.goToRoot();
+            }
+            CswNbtMetaDataObjectClassProp RetainExpOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassCertificateDefinition.PropertyName.RetainExpiration,
                     FieldType = CswEnumNbtFieldType.Quantity,
                     FkType = CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(),
                     FkValue = UnitTimeNT.NodeTypeId
                 } );
-
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RetainExpOCP, YearsNodePk.PrimaryKey, CswEnumNbtSubFieldName.NodeID );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {

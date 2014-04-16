@@ -56,6 +56,12 @@ namespace ChemSW.Nbt.ObjClasses
             QualifiedManufacturerOnly.InitOptions = _initQualifiedManufacturerOnlyOptions;
         }
 
+        protected override void afterPromoteNodeLogic()
+        {
+            //TODO: Remove when we fix CIS-53405
+            CertDefId.setReadOnly( value: true, SaveToDb: true );
+        }
+
         #endregion
 
         #region Object class specific properties
