@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -869,12 +870,9 @@ namespace ChemSW.Nbt.MetaData
             set { _setAttribute( "extended", value, false ); }
         }
 
-        public string AuditLevel
+        public CswEnumAuditLevel AuditLevel
         {
-            get
-            {
-                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
-            }
+            get { return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.auditlevel.ToString()].ToString(); }
             private set
             {
                 _setAttribute( CswEnumNbtNodeTypePropAttributes.auditlevel.ToString(), value.ToString(), false );

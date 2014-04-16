@@ -120,6 +120,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleNumber( CswNbtFieldResources );
                     break;
 
+                case CswEnumNbtFieldType.NumericRange:
+                    ReturnVal = new CswNbtFieldTypeRuleNumericRange( CswNbtFieldResources );
+                    break;
+
                 case CswEnumNbtFieldType.Password:
                     ReturnVal = new CswNbtFieldTypeRulePassword( CswNbtFieldResources );
                     break;

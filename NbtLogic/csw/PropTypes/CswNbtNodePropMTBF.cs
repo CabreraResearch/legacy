@@ -29,9 +29,9 @@ namespace ChemSW.Nbt.PropTypes
             }
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _StartDateTimeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StartDateTime, x => StartDateTime = CswConvert.ToDateTime( x ) ) );
-            _SubFieldMethods.Add( _UnitsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Units, x => Units = CswConvert.ToString( x ) ) );
-            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, x => CachedValue = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _StartDateTimeSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => StartDateTime, x => StartDateTime = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _UnitsSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Units, x => Units = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _ValueSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, x => CachedValue = CswConvert.ToDouble( x ) ) );
         }
 
         private CswNbtSubField _StartDateTimeSubField;

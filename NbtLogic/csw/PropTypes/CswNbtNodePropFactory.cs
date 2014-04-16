@@ -119,6 +119,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswEnumNbtFieldType.Number:
                     InnerProperty = new CswNbtNodePropNumber( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
+                case CswEnumNbtFieldType.NumericRange:
+                    InnerProperty = new CswNbtNodePropNumericRange( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    break;
                 case CswEnumNbtFieldType.Password:
                     InnerProperty = new CswNbtNodePropPassword( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;

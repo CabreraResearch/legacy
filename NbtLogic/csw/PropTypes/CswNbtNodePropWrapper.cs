@@ -666,7 +666,17 @@ namespace ChemSW.Nbt.PropTypes
                     throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropNumber ) ) ) );
                 return ( (CswNbtNodePropNumber) _CswNbtNodeProp );
             }
-        }//Number
+        }//AsNumber
+
+        public CswNbtNodePropNumericRange AsNumericRange
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropNumericRange ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropNumericRange ) ) ) );
+                return ( (CswNbtNodePropNumericRange) _CswNbtNodeProp );
+            }
+        }//AsNumericRange
 
         public CswNbtNodePropPassword AsPassword
         {

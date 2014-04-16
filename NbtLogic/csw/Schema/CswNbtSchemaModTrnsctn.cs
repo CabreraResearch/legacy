@@ -958,7 +958,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public CswNbtMetaDataObjectClass createObjectClass( CswEnumNbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
+        public CswNbtMetaDataObjectClass createObjectClass( CswEnumNbtObjectClass ObjectClass, string IconFileName, CswEnumAuditLevel AuditLevel )
         {
             if( ObjectClass == CswNbtResources.UnknownEnum )
             {
@@ -973,7 +973,10 @@ namespace ChemSW.Nbt.Schema
                 DataRow NewOCRow = NewObjectClassTable.NewRow();
                 NewOCRow["objectclass"] = ObjectClass.ToString();
                 NewOCRow["iconfilename"] = IconFileName;
-                NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
+                if( null != AuditLevel && AuditLevel != CswEnumAuditLevel.Unknown )
+                {
+                    NewOCRow["auditlevel"] = AuditLevel.ToString();
+                }
                 NewOCRow["nodecount"] = 0;
 
                 NewOCRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( ObjectClass.ToString() );
@@ -1418,7 +1421,10 @@ namespace ChemSW.Nbt.Schema
                 OCPRow[CswEnumNbtObjectClassPropAttributes.filtermode.ToString()] = OcpModel.FilterMode;
                 OCPRow[CswEnumNbtObjectClassPropAttributes.filtervalue.ToString()] = OcpModel.FilterValue;
             }
-            OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
+            if( null != OcpModel.AuditLevel && OcpModel.AuditLevel != CswEnumAuditLevel.Unknown )
+            {
+                OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = OcpModel.AuditLevel.ToString();
+            }
 
             OCPRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( OcpModel.PropName );
 

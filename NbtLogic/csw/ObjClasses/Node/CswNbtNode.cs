@@ -378,8 +378,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropColl Properties { get { return ( _CswNbtNodePropColl ); } }
 
-        private string _AuditLevel = ChemSW.Audit.CswEnumAuditLevel.NoAudit;
-        public string AuditLevel //27709 nodes fully support audit level now
+        private CswEnumAuditLevel _AuditLevel = ChemSW.Audit.CswEnumAuditLevel.NoAudit;
+        public CswEnumAuditLevel AuditLevel //27709 nodes fully support audit level now
         {
             get { return ( _AuditLevel ); }
             set { _AuditLevel = value; }

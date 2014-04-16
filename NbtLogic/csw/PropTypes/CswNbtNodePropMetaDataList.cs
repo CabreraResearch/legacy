@@ -32,9 +32,9 @@ namespace ChemSW.Nbt.PropTypes
             _ConstrainToObjectClass = CswNbtNodePropData[CswNbtFieldTypeRuleMetaDataList.AttributeName.ConstrainToObjectClass];
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _TypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => Type = CswConvert.ToString( x ) ) );
-            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
-            _SubFieldMethods.Add( _IdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Id,
+            _SubFieldMethods.Add( _TypeSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => Type = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _TextSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _IdSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Id,
                                                                                           delegate( dynamic x )
                                                                                           {
                                                                                               if( CswTools.IsInteger( x ) )

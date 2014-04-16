@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -14,7 +15,8 @@ namespace ChemSW.Nbt.Schema
         {
             #region Properties and ctor
 
-            private PackageHeaders( string Dev, Int32 CaseNo, string Name ) : base( Name )
+            private PackageHeaders( string Dev, Int32 CaseNo, string Name )
+                : base( Name )
             {
                 _Dev = Dev;
                 _CaseNo = CaseNo;
@@ -93,7 +95,8 @@ END NBT_VIEW_BUILDER;" );
         {
             #region Properties and ctor
 
-            private PackageBodies( string Dev, Int32 CaseNo, string Name ) : base( Name )
+            private PackageBodies( string Dev, Int32 CaseNo, string Name )
+                : base( Name )
             {
                 _Dev = Dev;
                 _CaseNo = CaseNo;
@@ -466,24 +469,23 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     ),
     --Components
     components as (
-    select
-        c.constid, mat.istierii, m.materialid, per.percentage
+    select c.constid, mat.istierii, m.materialid, per.percentage
       from nodes n
-      left join (select jnp.nodeid, jnp.field1_numeric as percentage
+      left join (select jnp.nodeid, greatest(nvl(jnp.field1_numeric,0),nvl(jnp.field2_numeric,0),nvl(jnp.field3_numeric,0)) as percentage
     from jct_nodes_props jnp
       inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
       inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-      where ocp.propname = 'Percentage') per on n.nodeid = per.nodeid
+      where ocp.propname = '" + CswNbtObjClassMaterialComponent.PropertyName.PercentageRange + @"') per on n.nodeid = per.nodeid
     left join (select jnp.nodeid, jnp.field1_fk as materialid
       from jct_nodes_props jnp
       inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
       inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-      where ocp.propname = 'Mixture') m on n.nodeid = m.nodeid
+      where ocp.propname = '" + CswNbtObjClassMaterialComponent.PropertyName.Mixture + @"') m on n.nodeid = m.nodeid
     left join (select jnp.nodeid, jnp.field1_fk as constid
       from jct_nodes_props jnp
       inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
       inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-      where ocp.propname = 'Constituent') c on n.nodeid = c.nodeid
+      where ocp.propname = '" + CswNbtObjClassMaterialComponent.PropertyName.Constituent + @"') c on n.nodeid = c.nodeid
     left join (select n.nodeid, istierii.istierii
       from nodes n
       left join (select jnp.nodeid, jnp.field1 as istierii
