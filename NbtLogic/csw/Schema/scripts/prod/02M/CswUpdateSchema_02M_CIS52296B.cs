@@ -64,6 +64,22 @@ namespace ChemSW.Nbt.Schema
                     ntp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.UnitView].AsViewReference.ViewId = MonthsUnitView.ViewId;
                 }
             }
+
+            _makeSampleSizeView( CswNbtObjClassCertDefSpecLevel.GramsViewName, "g" );
+            _makeSampleSizeView( CswNbtObjClassCertDefSpecLevel.EachViewName, "Each" );
+
+        }
+
+        private void _makeSampleSizeView( string ViewName, string FilterVal )
+        {
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+
+            CswNbtView SampleSizeUnitsView = _CswNbtSchemaModTrnsctn.makeSafeView( ViewName, CswEnumNbtViewVisibility.Hidden );
+            CswNbtViewRelationship parent = SampleSizeUnitsView.AddViewRelationship( UnitOfMeasureOC, true );
+
+            SampleSizeUnitsView.AddViewPropertyAndFilter( parent, NameOCP, FilterVal );
+            SampleSizeUnitsView.save();
         }
     }
 }

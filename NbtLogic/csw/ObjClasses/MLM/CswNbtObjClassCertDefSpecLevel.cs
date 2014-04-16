@@ -23,6 +23,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string SampleSizeNumber = "Sample Size Number";
         }
 
+        public static string EachViewName = "CertDefSpecLevelEachView";
+        public static string GramsViewName = "CertDefSpecLevelGramsView";
+
         public CswNbtObjClassCertDefSpecLevel( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -55,40 +58,27 @@ namespace ChemSW.Nbt.ObjClasses
                         Prop.setHidden( true, false );
                     }
                 } );
+
+            SampleSize.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+                {
+                    if( false == IsTemp )
+                    {
+                        SampleSize.View = _getSampleSizeUnitsView();
+                    }
+                } );
         }
 
         protected override void afterPromoteNodeLogic()
         {
-            CswNbtObjClassCertDefSpec RelatedCertDefSpec = _CswNbtResources.Nodes.GetNode( CertDefSpec.RelatedNodeId );
-            CswNbtObjClassCertificateDefinition RelatedCertDef = _CswNbtResources.Nodes.GetNode( RelatedCertDefSpec.CertDef.RelatedNodeId );
-            CswNbtNode RelatedPart = _CswNbtResources.Nodes.GetNode( RelatedCertDef.Material.RelatedNodeId );
-
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
-            CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
-            CswNbtView MonthsUnitView = new CswNbtView( _CswNbtResources );
-            MonthsUnitView.saveNew( "UnitsViewForCertDefSpecApprovvalPeriodProp", CswEnumNbtViewVisibility.Property );
-            CswNbtViewRelationship parent = MonthsUnitView.AddViewRelationship( UnitOfMeasureOC, true );
-            if( CswEnumNbtObjectClass.ChemicalClass == RelatedPart.getObjectClass().ObjectClass )
-            {
-                MonthsUnitView.AddViewPropertyAndFilter( parent, NameOCP, "g" );
-            }
-            else if( CswEnumNbtObjectClass.EnterprisePartClass == RelatedPart.getObjectClass().ObjectClass )
-            {
-                MonthsUnitView.AddViewPropertyAndFilter( parent, NameOCP, "Each" );
-            }
-            MonthsUnitView.save();
-
-            ICswNbtTree unitsTree = _CswNbtResources.Trees.getTreeFromView( MonthsUnitView, false, false, false );
+            CswNbtView SampleSizeUnitsView = _getSampleSizeUnitsView();
+            ICswNbtTree unitsTree = _CswNbtResources.Trees.getTreeFromView( SampleSizeUnitsView, false, false, false );
             if( false == SampleSizeNumber.Empty && unitsTree.getChildNodeCount() > 0 )
             {
                 unitsTree.goToNthChild( 0 );
                 SampleSize.Quantity = SampleSizeNumber.Value;
                 SampleSize.UnitId = unitsTree.getNodeIdForCurrentPosition();
-                SampleSize.View = MonthsUnitView;
             }
-
             SampleSizeNumber.setHidden( true, true );
-
             postChanges( false );
         }
 
@@ -106,6 +96,30 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Frequency { get { return _CswNbtNode.Properties[PropertyName.Frequency]; } }
         public CswNbtNodePropQuantity ApprovalPeriod { get { return _CswNbtNode.Properties[PropertyName.ApprovalPeriod]; } }
         public CswNbtNodePropNumber SampleSizeNumber { get { return _CswNbtNode.Properties[PropertyName.SampleSizeNumber]; } }
+
+        #endregion
+
+        #region Custom Logic
+
+        private CswNbtView _getSampleSizeUnitsView()
+        {
+
+            CswNbtObjClassCertDefSpec RelatedCertDefSpec = _CswNbtResources.Nodes.GetNode( CertDefSpec.RelatedNodeId );
+            CswNbtObjClassCertificateDefinition RelatedCertDef = _CswNbtResources.Nodes.GetNode( RelatedCertDefSpec.CertDef.RelatedNodeId );
+            CswNbtNode RelatedPart = _CswNbtResources.Nodes.GetNode( RelatedCertDef.Material.RelatedNodeId );
+
+            CswNbtView SampleSizeUnitsView = null;
+            if( CswEnumNbtObjectClass.ChemicalClass == RelatedPart.getObjectClass().ObjectClass )
+            {
+                SampleSizeUnitsView = _CswNbtResources.ViewSelect.restoreView( GramsViewName, CswEnumNbtViewVisibility.Hidden );
+            }
+            else if( CswEnumNbtObjectClass.EnterprisePartClass == RelatedPart.getObjectClass().ObjectClass )
+            {
+                SampleSizeUnitsView = _CswNbtResources.ViewSelect.restoreView( EachViewName, CswEnumNbtViewVisibility.Hidden );
+            }
+
+            return SampleSizeUnitsView;
+        }
 
         #endregion
 
