@@ -1,12 +1,11 @@
-﻿using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    class CswNbtObjClassCertDefSpec : CswNbtObjClass
+    class CswNbtObjClassCertDefSpec: CswNbtObjClass
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string NameForTestingConditions = "Name For Testing Conditions";
             public const string Method = "Method";
@@ -37,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        #endregion
+       #endregion
 
         #region Object class specific properties
 
