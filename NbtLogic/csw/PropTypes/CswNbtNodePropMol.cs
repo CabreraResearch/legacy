@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.PropTypes
             _MolSubField = ( (CswNbtFieldTypeRuleMol) _FieldTypeRule ).MolSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getMol(), x => setMol( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _MolSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => getMol(), x => setMol( CswConvert.ToString( x ) ) ) );
         }
 
         private readonly CswNbtSubField _MolSubField;

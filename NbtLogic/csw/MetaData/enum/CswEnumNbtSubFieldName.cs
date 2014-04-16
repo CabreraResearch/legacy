@@ -70,6 +70,11 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName Val_kg = new CswEnumNbtSubFieldName( "val_kg" );
         public static readonly CswEnumNbtSubFieldName Val_Liters = new CswEnumNbtSubFieldName( "val_Liters" );
         public static readonly CswEnumNbtSubFieldName PreviouslyUsedPasswords = new CswEnumNbtSubFieldName( "PreviouslyUsedPasswords" );
+        public static readonly CswEnumNbtSubFieldName Lower = new CswEnumNbtSubFieldName( "Lower" );
+        public static readonly CswEnumNbtSubFieldName Target = new CswEnumNbtSubFieldName( "Target" );
+        public static readonly CswEnumNbtSubFieldName Upper = new CswEnumNbtSubFieldName( "Upper" );
+        public static readonly CswEnumNbtSubFieldName LowerInclusive = new CswEnumNbtSubFieldName( "LowerInclusive" );
+        public static readonly CswEnumNbtSubFieldName UpperInclusive = new CswEnumNbtSubFieldName( "UpperInclusive" );
 
     } // class SubFieldName
 

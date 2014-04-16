@@ -454,7 +454,7 @@ namespace ChemSW.Nbt
             _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
 
-        private void handleGetAuditLevel( DataRow DataRow, ref string ReturnVal )
+        private void handleGetAuditLevel( DataRow DataRow, ref CswEnumAuditLevel ReturnVal )
         {
             // case 22542
             // Override jct_nodes_props audit level with level set on nodetype prop

@@ -16,10 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
-            public const string Percentage = "Percentage";
-            public const string LowPercentageValue = "Low % Value";
-            public const string TargetPercentageValue = "Target % Value";
-            public const string HighPercentageValue = "High % Value";
+            public const string PercentageRange = "Percentage Range";
             public const string Mixture = "Mixture";
             public const string Constituent = "Constituent";
             public const string Active = "Active";
@@ -56,7 +53,6 @@ namespace ChemSW.Nbt.ObjClasses
                     "Material Components must be added from a Chemical.",
                     "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
             }
-            _setPercentage();
         }
 
         protected override void afterWriteNodeLogic()
@@ -75,9 +71,6 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             Mixture.SetOnPropChange( OnMixturePropChange );
-            LowPercentageValue.SetOnPropChange( _onLowPercentageValuePropChange );
-            TargetPercentageValue.SetOnPropChange( _onTargetPercentageValuePropChange );
-            HighPercentageValue.SetOnPropChange( _onHighPercentageValuePropChange );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
@@ -89,46 +82,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropNumber Percentage { get { return ( _CswNbtNode.Properties[PropertyName.Percentage] ); } }
-        public CswNbtNodePropNumber LowPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.LowPercentageValue] ); } }
-        private void _onLowPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            if( CswTools.IsDouble( TargetPercentageValue.Value ) && LowPercentageValue.Value > TargetPercentageValue.Value )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.LowPercentageValue + " cannot be higher than " + PropertyName.TargetPercentageValue, "" );
-            }
-            if( CswTools.IsDouble( HighPercentageValue.Value ) && LowPercentageValue.Value > HighPercentageValue.Value )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.LowPercentageValue + " cannot be higher than " + PropertyName.HighPercentageValue, "" );
-            }
-            _setPercentage();
-        }
-        public CswNbtNodePropNumber TargetPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.TargetPercentageValue] ); } }
-        private void _onTargetPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            if( CswTools.IsDouble( HighPercentageValue.Value ) && TargetPercentageValue.Value > HighPercentageValue.Value )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.TargetPercentageValue + " cannot be higher than " + PropertyName.HighPercentageValue, "" );
-            }
-            if( CswTools.IsDouble( LowPercentageValue.Value ) && TargetPercentageValue.Value < LowPercentageValue.Value )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.TargetPercentageValue + " cannot be lower than " + PropertyName.LowPercentageValue, "" );
-            }
-            _setPercentage();
-        }
-        public CswNbtNodePropNumber HighPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.HighPercentageValue] ); } }
-        private void _onHighPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            if( CswTools.IsDouble( LowPercentageValue.Value ) && HighPercentageValue.Value < LowPercentageValue.Value )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.HighPercentageValue + " cannot be lower than " + PropertyName.LowPercentageValue, "" );
-            }
-            if( CswTools.IsDouble( TargetPercentageValue.Value ) && HighPercentageValue.Value < TargetPercentageValue.Value )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.HighPercentageValue + " cannot be lower than " + PropertyName.TargetPercentageValue, "" );
-            }
-            _setPercentage();
-        }
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
         private void OnMixturePropChange( CswNbtNodeProp Prop, bool Creating )
         {
@@ -144,10 +97,12 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-
+        
+        public CswNbtNodePropNumericRange PercentageRange { get { return ( _CswNbtNode.Properties[PropertyName.PercentageRange] ); } }
         public CswNbtNodePropRelationship Constituent { get { return ( _CswNbtNode.Properties[PropertyName.Constituent] ); } }
         public CswNbtNodePropLogical Active { get { return ( _CswNbtNode.Properties[PropertyName.Active] ); } }
         public CswNbtNodePropLogical HazardousReporting { get { return ( _CswNbtNode.Properties[PropertyName.HazardousReporting] ); } }
+        
 
         #endregion
 
@@ -165,15 +120,6 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassChemical mixtureNode = _CswNbtResources.Nodes.GetNode( Mixture.RelatedNodeId );
                 mixtureNode.RefreshRegulatoryListMembers();
             }
-        }
-
-        private void _setPercentage()
-        {
-            double Percent = 0;
-            Percent = CswTools.IsDouble( LowPercentageValue.Value ) ? LowPercentageValue.Value : Percent;
-            Percent = CswTools.IsDouble( TargetPercentageValue.Value ) ? TargetPercentageValue.Value : Percent;
-            Percent = CswTools.IsDouble( HighPercentageValue.Value ) ? HighPercentageValue.Value : Percent;
-            Percentage.Value = Percent;
         }
 
         #endregion

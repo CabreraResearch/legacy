@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -210,7 +211,7 @@ namespace ChemSW.Nbt.MetaData
                 Row["layouttype"] = LayoutType.ToString();
                 Row["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
                 Row["nodetypepropid"] = CswConvert.ToDbVal( NtProp.PropId );
-                Row["auditlevel"] = CswConvert.ToDbVal( NtProp.AuditLevel ); // layout audit goes with property audit
+                Row["auditlevel"] = NtProp.AuditLevel.ToString(); // layout audit goes with property audit
 
                 if( LayoutType == CswEnumNbtLayoutType.Edit )
                 {
@@ -448,7 +449,7 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getPropNodesNotInLayout()
 
-        public void updateLayoutAuditLevel( CswNbtMetaDataNodeTypeProp NtProp, string AuditLevel )
+        public void updateLayoutAuditLevel( CswNbtMetaDataNodeTypeProp NtProp, CswEnumAuditLevel AuditLevel )
         {
             CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "updatePropAuditLevel_Update", "nodetype_layout" );
             string WhereClause = "where nodetypepropid = " + NtProp.PropId.ToString();

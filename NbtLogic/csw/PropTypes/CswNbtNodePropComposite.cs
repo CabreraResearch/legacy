@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
             _CachedValueSubField = ( (CswNbtFieldTypeRuleComposite) _FieldTypeRule ).CachedValueSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
+            _SubFieldMethods.Add( _CachedValueSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
         }
 
         private CswNbtSubField _CachedValueSubField;

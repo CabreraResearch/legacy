@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -648,29 +645,44 @@ namespace ChemSW.Nbt.MetaData
         /// ***                  If you're the first one to use this, good luck!               ***
         /// **************************************************************************************
         /// </summary>
-        public void makeNewFieldType( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType )
+        public void makeNewFieldType( CswEnumNbtFieldType NewFieldType, CswEnumNbtFieldTypeDataType DataType )
         {
-            if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
+            if( NewFieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
             {
                 // Insert row in the field_types table
                 DataTable FieldTypeTable = _CswNbtMetaDataResources.FieldTypeTableUpdate.getEmptyTable();
                 DataRow Row = FieldTypeTable.NewRow();
                 Row["datatype"] = CswConvert.ToDbVal( DataType.ToString().ToLower() );
-                Row["fieldtype"] = FieldType.ToString();
+                Row["fieldtype"] = NewFieldType.ToString();
                 //Row["fieldprecision"] = CswConvert.ToDbVal( FieldPrecision );
                 //Row["mask"] = CswConvert.ToDbVal( Mask );
                 FieldTypeTable.Rows.Add( Row );
-                Int32 FieldTypeId = CswConvert.ToInt32( Row["fieldtypeid"] );
+                Int32 NewFieldTypeId = CswConvert.ToInt32( Row["fieldtypeid"] );
                 _CswNbtMetaDataResources.FieldTypeTableUpdate.update( FieldTypeTable );
 
-                //refreshAll();
-                //CswNbtMetaDataFieldType MetaDataFieldType = getFieldType( FieldType );
+                refreshAll();
+
+                // Create field_types_subfields records
+                CswTableUpdate FTSubUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "makeNewFieldType_subfield_update", "field_types_subfields" );
+                DataTable FTSubTable = FTSubUpdate.getEmptyTable();
+                ICswNbtFieldTypeRule NewFieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( NewFieldType );
+                foreach( CswNbtSubField newSubField in NewFieldTypeRule.SubFields )
+                {
+                    DataRow row = FTSubTable.NewRow();
+                    row["fieldtypeid"] = CswConvert.ToDbVal( NewFieldTypeId );
+                    row["propcolname"] = newSubField.Column.ToString();
+                    row["reportable"] = CswConvert.ToDbVal( newSubField.isReportable );
+                    row["is_default"] = CswConvert.ToDbVal( newSubField == NewFieldTypeRule.SubFields.Default );
+                    row["subfieldname"] = newSubField.Name.ToString();
+                    FTSubTable.Rows.Add( row );
+                }
+                FTSubUpdate.update( FTSubTable );
 
                 // Create a new "Design NodeTypeProp" nodetype node
                 CswNbtMetaDataObjectClass NodeTypePropOC = this.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
                 CswNbtMetaDataNodeType NodeTypePropNT = this.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
                     {
-                        NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FieldType ),
+                        NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( NewFieldType ),
                         Category = "Design"
                     } );
                 //NodeTypePropNT.setNameTemplateText( MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue ) + ": " +
@@ -764,10 +776,11 @@ namespace ChemSW.Nbt.MetaData
                 NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 4, DisplayColumn: 1 );
 
                 // Set default value of "Field Type" to this fieldtype
-                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Value = FieldTypeId.ToString();
-                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Text = FieldType.ToString();
+                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Value = NewFieldTypeId.ToString();
+                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Text = NewFieldType.ToString();
                 //NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                 NTPFieldTypeNTP.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
+
 
                 //// Set display condition on QuestionNo and SubQuestionNo
                 //NTPQuestionNoNTP.DesignNode.DisplayConditionProperty.RelatedNodeId = NTPUseNumberingNTP.DesignNode.NodeId;
@@ -780,7 +793,11 @@ namespace ChemSW.Nbt.MetaData
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionFilterMode.Value = CswEnumNbtFilterMode.Equals.ToString();
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionValue.Text = CswEnumTristate.True.ToString();
 
-                ICswNbtFieldTypeRule Rule = getFieldTypeRule( FieldType );
+                refreshAll();
+                ICswNbtFieldTypeRule Rule = getFieldTypeRule( NewFieldType );
+
+                // Configure the nodetype to synchronize with nodetype_props
+                NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
 
                 // Make all the attribute properties
                 CswTableUpdate jctUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "MetaData_jctddntp_update", "jct_dd_ntp" );
@@ -805,13 +822,18 @@ namespace ChemSW.Nbt.MetaData
                     }
                     if( string.Empty != Attr.Column && CswNbtResources.UnknownEnum != Attr.Column )
                     {
-                        _addJctDdNtpRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column, Attr.SubFieldName );
+                        _addJctDdNtpRow( jctTable, thisNTP, "nodetype_props", Attr.Column, Attr.SubFieldName );
                     }
                 }
                 jctUpdate.update( jctTable );
 
-                // Configure the nodetype to synchronize with nodetype_props
-                NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
+                // special case for 'Default Value', which has the same fieldtype as what we're creating
+                // the design node for the Default Value property won't have sync'ed to the nodetype_props table because
+                // the jct records didn't exist yet
+                foreach( CswNbtMetaDataNodeTypeProp redundantNTP in NodeTypePropNT.getNodeTypeProps().Where( p => p.DesignNode.FieldTypeValue == NewFieldType ) )
+                {
+                    redundantNTP.DesignNode.postChanges( ForceUpdate: true );
+                }
 
             } // if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
         }//makeNewFieldType()
@@ -1297,10 +1319,12 @@ namespace ChemSW.Nbt.MetaData
         {
             //CswNbtMetaDataObjectClass DesignNodeTypePropOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
             CswNbtMetaDataNodeType DesignNodeTypePropNT = getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( NtpModel.FieldType.FieldType ) );
+
             CswNbtObjClassDesignNodeTypeProp NewPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypePropNT.NodeTypeId, delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassDesignNodeTypeProp NewNtpNode = NewNode;
                     NewNtpNode.FieldType.Value = NtpModel.FieldType.FieldTypeId.ToString();
+                    NewNtpNode.FieldType.Text = NtpModel.FieldType.FieldType;
                     NewNtpNode.CompoundUnique.Checked = CswConvert.ToTristate( NtpModel.IsCompoundUnique );
                     NewNtpNode.Required.Checked = CswConvert.ToTristate( NtpModel.IsRequired );
                     NewNtpNode.Unique.Checked = CswConvert.ToTristate( NtpModel.IsUnique );
@@ -1318,6 +1342,7 @@ namespace ChemSW.Nbt.MetaData
                         NewNtpNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = NtpModel.ListOptions;
                     }
                 } );
+
 
             // Multi
             ICswNbtFieldTypeRule fieldTypeRule = getFieldTypeRule( NewPropNode.FieldTypeValue );

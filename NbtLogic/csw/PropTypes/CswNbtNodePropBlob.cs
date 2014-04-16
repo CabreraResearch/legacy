@@ -26,9 +26,9 @@ namespace ChemSW.Nbt.PropTypes
             _DateModifiedSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).DateModifiedSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            //_SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = CswConvert.ToString( x ) ) );
-            //_SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = CswConvert.ToString( x ) ) );
-            //_SubFieldMethods.Add( _DateModifiedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateModified, x => DateModified = CswConvert.ToDateTime( x ) ) );
+            //_SubFieldMethods.Add( _FileNameSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = CswConvert.ToString( x ) ) );
+            //_SubFieldMethods.Add( _ContentTypeSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = CswConvert.ToString( x ) ) );
+            //_SubFieldMethods.Add( _DateModifiedSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateModified, x => DateModified = CswConvert.ToDateTime( x ) ) );
         }
 
         private CswNbtSubField _FileNameSubField;

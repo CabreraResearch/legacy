@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData.FieldTypeRules;
+﻿using ChemSW.Audit;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -36,7 +37,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
             CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
 
-            CswNbtMetaDataObjectClass MethodCharacteristicOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodCharacteristicClass, "barchart.png", true );
+            CswNbtMetaDataObjectClass MethodCharacteristicOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodCharacteristicClass, "barchart.png", CswEnumAuditLevel.PlainAudit );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MethodCharacteristicOC.ObjectClassId );
 
             CswNbtMetaDataObjectClassProp MethodOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodCharacteristicOC, new CswNbtWcfMetaDataModel.ObjectClassProp

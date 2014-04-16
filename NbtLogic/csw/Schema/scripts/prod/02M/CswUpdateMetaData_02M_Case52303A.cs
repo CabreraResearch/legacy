@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Audit;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
@@ -26,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass CertDefConditionOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.CertDefConditionClass, "check.png", true );
+            CswNbtMetaDataObjectClass CertDefConditionOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.CertDefConditionClass, "check.png", CswEnumAuditLevel.PlainAudit );
 
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, CertDefConditionOC.ObjectClassId );
 
