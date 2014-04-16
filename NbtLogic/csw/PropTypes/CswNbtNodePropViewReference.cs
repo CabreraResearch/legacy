@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.PropTypes
 
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId,
+            _SubFieldMethods.Add( _ViewIdSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId,
                                                                                               x =>
                                                                                                   {
                                                                                                       if( CswTools.IsInteger( x ) )
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.PropTypes
                                                                                                           throw new CswDniException( CswEnumErrorType.Error, "Invalid parameter", "CswNbtNodePropViewReference got an invalid parameter for setting ViewId: " + x.ToString() );
                                                                                                       }
                                                                                                   } ) );
-            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _CachedViewNameSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _ViewIdSubField;

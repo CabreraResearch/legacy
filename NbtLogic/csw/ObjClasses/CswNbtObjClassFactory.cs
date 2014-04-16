@@ -43,8 +43,20 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.CertDefCharacteristicLimitClass:
+                    ReturnVal = new CswNbtObjClassCertDefCharacteristicLimit( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.CertDefSpecClass:
+                    ReturnVal = new CswNbtObjClassCertDefSpec( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.CertificateDefinitionClass:
                     ReturnVal = new CswNbtObjClassCertificateDefinition( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.CertDefConditionClass:
+                    ReturnVal = new CswNbtObjClassCertDefCondition( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.CofADocumentClass:

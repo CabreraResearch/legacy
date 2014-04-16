@@ -67,9 +67,9 @@
                     case Csw.enums.subFieldsMap.LogicalSet.name:
                         Csw.properties.logicalSet(cswPublic);
                         break;
-                case Csw.enums.subFieldsMap.MetaDataList.name:
-                    Csw.properties.metaDataList(cswPublic);
-                    break;
+                    case Csw.enums.subFieldsMap.MetaDataList.name:
+                        Csw.properties.metaDataList(cswPublic);
+                        break;
                     case Csw.enums.subFieldsMap.Memo.name:
                         Csw.properties.memo(cswPublic);
                         break;
@@ -90,6 +90,9 @@
                         break;
                     case Csw.enums.subFieldsMap.Number.name:
                         Csw.properties.number(cswPublic);
+                        break;
+                    case Csw.enums.subFieldsMap.NumericRange.name:
+                        Csw.properties.numericRange(cswPublic);
                         break;
                     case Csw.enums.subFieldsMap.Password.name:
                         Csw.properties.password(cswPublic);

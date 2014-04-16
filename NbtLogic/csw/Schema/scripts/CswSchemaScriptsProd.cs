@@ -73,17 +73,13 @@ namespace ChemSW.Nbt.Schema
             #region Before Scripts
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
-
-            // case 29565 - no longer necessary
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
-
             #endregion Before Scripts
 
             #region After Script
             // After scripts that always run.
             _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_01() );
             _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_02AuditSql() );
-            _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_03() );
+            _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_DBViews() );
             #endregion After Script
 
         }//ctor

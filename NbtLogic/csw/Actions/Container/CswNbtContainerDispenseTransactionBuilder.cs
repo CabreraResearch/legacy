@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Actions
         /// <param name="SourceContainer"></param>
         /// <param name="DestinationContainer"></param>
         public void create( CswEnumNbtContainerDispenseType DispenseType, double Amount, CswPrimaryKey UnitId, CswPrimaryKey RequestItemId = null,
-                                                      CswNbtObjClassContainer SrcContainer = null, CswNbtObjClassContainer DestinationContainer = null )
+                                                      CswNbtObjClassContainer SrcContainer = null, CswNbtObjClassContainer DestinationContainer = null, bool IsImport = false )
         {
             CswNbtMetaDataObjectClass ContDispTransOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerDispenseTransactionClass );
             CswNbtMetaDataNodeType ContDispTransNT = ContDispTransOC.FirstNodeType;
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         ContDispTransNode.RequestItem.RelatedNodeId = RequestItemId;
                     }
-                } );
+                }, OverrideUniqueValidation: IsImport, OverrideMailReportEvents: IsImport );
             } // if( ContDispTransNT != null )
         }
 

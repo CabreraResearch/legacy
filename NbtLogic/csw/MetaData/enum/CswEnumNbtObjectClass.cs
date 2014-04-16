@@ -16,7 +16,10 @@ namespace ChemSW.Nbt.MetaData
             { BalanceConfigurationClass         , BalanceConfigurationClass          },
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
-            {CertificateDefinitionClass         , CertificateDefinitionClass         },
+            { CertDefCharacteristicLimitClass   , CertDefCharacteristicLimitClass    },
+            { CertDefConditionClass             , CertDefConditionClass              },
+            { CertificateDefinitionClass        , CertificateDefinitionClass         },
+            { CertDefSpecClass                  , CertDefSpecClass                   },
             { ChemicalClass                     , ChemicalClass                      },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
@@ -153,7 +156,10 @@ namespace ChemSW.Nbt.MetaData
         public const string BalanceConfigurationClass = "BalanceConfigurationClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
+        public const string CertDefCharacteristicLimitClass = "CertDefCharacteristicLimitClass";
+        public const string CertDefConditionClass = "CertDefConditionClass";
         public const string CertificateDefinitionClass = "CertificateDefinitionClass";
+        public const string CertDefSpecClass = "CertDefSpecClass";
         public const string ChemicalClass = "ChemicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
@@ -222,7 +228,7 @@ namespace ChemSW.Nbt.MetaData
         public const string RequestItemClass = "RequestItemClass";
         public const string RoleClass = "RoleClass";
         public const string SDSDocumentClass = "SDSDocumentClass";
-        public const string GHSSignalWordClass = "GHSSignalWord";
+        public const string GHSSignalWordClass = "GHSSignalWordClass";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
         public const string TestingLabClass = "TestingLabClass";

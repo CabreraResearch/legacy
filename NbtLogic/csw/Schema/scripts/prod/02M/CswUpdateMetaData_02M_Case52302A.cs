@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Audit;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02M_Case52302 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02M_Case52302A : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -26,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodConditionClass, "check.png", true );
+            CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.MethodConditionClass, "check.png", CswEnumAuditLevel.PlainAudit );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, MethodConditionOC.ObjectClassId );
 
             CswNbtMetaDataObjectClass UoMOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
@@ -46,8 +47,7 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Name,
                 FieldType = CswEnumNbtFieldType.List,
-                IsCompoundUnique = true,
-                ListOptions = "Temperature,Salinity"
+                IsCompoundUnique = true
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MethodConditionOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -55,6 +55,7 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassMethodCondition.PropertyName.Units,
                 FieldType = CswEnumNbtFieldType.Relationship,
                 IsFk = true,
+                IsCompoundUnique = false,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                 FkValue = UoMOC.ObjectClassId
             } );

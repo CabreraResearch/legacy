@@ -645,29 +645,44 @@ namespace ChemSW.Nbt.MetaData
         /// ***                  If you're the first one to use this, good luck!               ***
         /// **************************************************************************************
         /// </summary>
-        public void makeNewFieldType( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType )
+        public void makeNewFieldType( CswEnumNbtFieldType NewFieldType, CswEnumNbtFieldTypeDataType DataType )
         {
-            if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
+            if( NewFieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
             {
                 // Insert row in the field_types table
                 DataTable FieldTypeTable = _CswNbtMetaDataResources.FieldTypeTableUpdate.getEmptyTable();
                 DataRow Row = FieldTypeTable.NewRow();
                 Row["datatype"] = CswConvert.ToDbVal( DataType.ToString().ToLower() );
-                Row["fieldtype"] = FieldType.ToString();
+                Row["fieldtype"] = NewFieldType.ToString();
                 //Row["fieldprecision"] = CswConvert.ToDbVal( FieldPrecision );
                 //Row["mask"] = CswConvert.ToDbVal( Mask );
                 FieldTypeTable.Rows.Add( Row );
-                Int32 FieldTypeId = CswConvert.ToInt32( Row["fieldtypeid"] );
+                Int32 NewFieldTypeId = CswConvert.ToInt32( Row["fieldtypeid"] );
                 _CswNbtMetaDataResources.FieldTypeTableUpdate.update( FieldTypeTable );
 
                 refreshAll();
-                //CswNbtMetaDataFieldType MetaDataFieldType = getFieldType( FieldType );
+
+                // Create field_types_subfields records
+                CswTableUpdate FTSubUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "makeNewFieldType_subfield_update", "field_types_subfields" );
+                DataTable FTSubTable = FTSubUpdate.getEmptyTable();
+                ICswNbtFieldTypeRule NewFieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( NewFieldType );
+                foreach( CswNbtSubField newSubField in NewFieldTypeRule.SubFields )
+                {
+                    DataRow row = FTSubTable.NewRow();
+                    row["fieldtypeid"] = CswConvert.ToDbVal( NewFieldTypeId );
+                    row["propcolname"] = newSubField.Column.ToString();
+                    row["reportable"] = CswConvert.ToDbVal( newSubField.isReportable );
+                    row["is_default"] = CswConvert.ToDbVal( newSubField == NewFieldTypeRule.SubFields.Default );
+                    row["subfieldname"] = newSubField.Name.ToString();
+                    FTSubTable.Rows.Add( row );
+                }
+                FTSubUpdate.update( FTSubTable );
 
                 // Create a new "Design NodeTypeProp" nodetype node
                 CswNbtMetaDataObjectClass NodeTypePropOC = this.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
                 CswNbtMetaDataNodeType NodeTypePropNT = this.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
                     {
-                        NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FieldType ),
+                        NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( NewFieldType ),
                         Category = "Design"
                     } );
                 //NodeTypePropNT.setNameTemplateText( MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue ) + ": " +
@@ -761,11 +776,11 @@ namespace ChemSW.Nbt.MetaData
                 NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 4, DisplayColumn: 1 );
 
                 // Set default value of "Field Type" to this fieldtype
-                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Value = FieldTypeId.ToString();
-                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Text = FieldType.ToString();
+                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Value = NewFieldTypeId.ToString();
+                NTPFieldTypeNTP.getDefaultValue( true ).AsList.Text = NewFieldType.ToString();
                 //NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                 NTPFieldTypeNTP.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
-                 
+
 
                 //// Set display condition on QuestionNo and SubQuestionNo
                 //NTPQuestionNoNTP.DesignNode.DisplayConditionProperty.RelatedNodeId = NTPUseNumberingNTP.DesignNode.NodeId;
@@ -779,7 +794,7 @@ namespace ChemSW.Nbt.MetaData
                 //NTPSubQuestionNoNTP.DesignNode.DisplayConditionValue.Text = CswEnumTristate.True.ToString();
 
                 refreshAll();
-                ICswNbtFieldTypeRule Rule = getFieldTypeRule( FieldType );
+                ICswNbtFieldTypeRule Rule = getFieldTypeRule( NewFieldType );
 
                 // Configure the nodetype to synchronize with nodetype_props
                 NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
@@ -811,6 +826,14 @@ namespace ChemSW.Nbt.MetaData
                     }
                 }
                 jctUpdate.update( jctTable );
+
+                // special case for 'Default Value', which has the same fieldtype as what we're creating
+                // the design node for the Default Value property won't have sync'ed to the nodetype_props table because
+                // the jct records didn't exist yet
+                foreach( CswNbtMetaDataNodeTypeProp redundantNTP in NodeTypePropNT.getNodeTypeProps().Where( p => p.DesignNode.FieldTypeValue == NewFieldType ) )
+                {
+                    redundantNTP.DesignNode.postChanges( ForceUpdate: true );
+                }
 
             } // if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
         }//makeNewFieldType()

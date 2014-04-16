@@ -21,6 +21,7 @@ namespace ChemSW.Nbt
     {
         private CswNbtResources _CswNbtResources;
         private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules;
+        private Dictionary<int, CswEnumNbtModuleName> _ModuleIdToNameMapping; 
 
         public CswNbtModuleManager( CswNbtResources CswNbtResources )
         {
@@ -39,6 +40,8 @@ namespace ChemSW.Nbt
         private bool _RulesAreInitialized = false;
         private void initModules()
         {
+            _ModuleIdToNameMapping = new Dictionary<int, CswEnumNbtModuleName>();
+
             // Fetch modules from database
             if( _CswNbtResources.IsInitializedForDbAccess )
             {
@@ -51,6 +54,9 @@ namespace ChemSW.Nbt
                     {
                         CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
                         ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
+
+                        int ModuleID = CswConvert.ToInt32( ModuleRow["moduleid"] );
+                        _ModuleIdToNameMapping.Add( ModuleID, ModuleName.ToString() );
                     }
                 }
                 _RulesAreInitialized = true;
@@ -69,6 +75,15 @@ namespace ChemSW.Nbt
             return _ModuleRules[Module].Enabled;
         } // IsModuleEnabled()
 
+        public bool IsModuleEnabled( int ModuleID )
+        {
+            if( false == _RulesAreInitialized )
+            {
+                initModules();
+            }
+            return IsModuleEnabled( _ModuleIdToNameMapping[ModuleID] );
+        }
+
         public Int32 GetModuleId( CswEnumNbtModuleName Module )
         {
             return GetModuleId( Module.ToString() );
@@ -86,6 +101,27 @@ namespace ChemSW.Nbt
                 RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             }
             return RetModuleId;
+        }
+
+        /// <summary>
+        /// method to obtain a module's name from its id
+        /// </summary>
+        /// <param name="moduleID">module's id</param>
+        /// <returns>module's name</returns>
+        public string GetModuleName( int moduleID )
+        {
+            string moduleName = "";
+            
+            CswTableSelect ModulesTable = _CswNbtResources.makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where moduleid='" + moduleID.ToString() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
+            {
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                moduleName =  ModuleRow["name"].ToString() ;
+            }
+
+            return moduleName;
         }
 
         /// <summary>

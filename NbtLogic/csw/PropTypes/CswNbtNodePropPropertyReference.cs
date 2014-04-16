@@ -33,9 +33,9 @@ namespace ChemSW.Nbt.PropTypes
             _Sequence = CswNbtMetaDataNodeTypeProp.Sequence;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
-            _SubFieldMethods.Add( _SequenceSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( CswConvert.ToString( x ), true ) ) );
-            _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
+            _SubFieldMethods.Add( _CachedValueSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
+            _SubFieldMethods.Add( _SequenceSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( CswConvert.ToString( x ), true ) ) );
+            _SubFieldMethods.Add( _SequenceNumberSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
         }
 
         #region Generic Properties

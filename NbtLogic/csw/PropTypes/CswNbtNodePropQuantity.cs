@@ -43,11 +43,11 @@ namespace ChemSW.Nbt.PropTypes
             _UnitIdSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitIdSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _QuantitySubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _Val_kg_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_kg, x => Val_kg = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _Val_Liters_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_Liters, x => Val_Liters = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _UnitNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = CswConvert.ToString( x ) ) );
-            _SubFieldMethods.Add( _UnitIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = CswConvert.ToPrimaryKey( x ) ) );
+            _SubFieldMethods.Add( _QuantitySubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_kg_SubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_kg, x => Val_kg = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_Liters_SubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_Liters, x => Val_Liters = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _UnitNameSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _UnitIdSubField.Name, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = CswConvert.ToPrimaryKey( x ) ) );
         }
 
         #endregion

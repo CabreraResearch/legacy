@@ -45,7 +45,9 @@ namespace ChemSW.Nbt.csw.Schema.Import
                 {"Jurisdiction", 32},
                 {"GHS Phrase", 33},
                 {"GHS", 34},
-                {"Material Synonym", 35}
+                {"Material Synonym", 35},
+                {"Equipment Type", 36},
+                {"Equipment", 37}
             };
     }
 }

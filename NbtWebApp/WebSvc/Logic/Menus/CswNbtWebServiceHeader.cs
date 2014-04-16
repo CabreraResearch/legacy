@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["Admin"]["Current User List"] = new JObject();
                     Ret["Admin"]["Current User List"]["action"] = "Sessions";
                     Ret["Admin"]["Edit Config Vars"] = new JObject();
-                    Ret["Admin"]["Edit Config Vars"]["href"] = "ConfigVars.aspx";
+                    Ret["Admin"]["Edit Config Vars"]["action"] = "Config Vars";
                     //Ret["Admin"]["Statistics"] = new JObject();
                     //Ret["Admin"]["Statistics"]["href"] = "Statistics.aspx";
                     Ret["Admin"]["Quotas"] = new JObject();

@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.MetaData
                 {CswEnumNbtFieldType.NFPA, CswEnumNbtFieldType.NFPA},
                 {CswEnumNbtFieldType.NodeTypeSelect, CswEnumNbtFieldType.NodeTypeSelect},
                 {CswEnumNbtFieldType.Number, CswEnumNbtFieldType.Number},
+                {CswEnumNbtFieldType.NumericRange, CswEnumNbtFieldType.NumericRange},
                 {CswEnumNbtFieldType.Password, CswEnumNbtFieldType.Password},
                 {CswEnumNbtFieldType.PropertyReference, CswEnumNbtFieldType.PropertyReference},
                 {CswEnumNbtFieldType.Quantity, CswEnumNbtFieldType.Quantity},
@@ -108,6 +109,7 @@ namespace ChemSW.Nbt.MetaData
         public const string NFPA = "NFPA";
         public const string NodeTypeSelect = "NodeTypeSelect";
         public const string Number = "Number";
+        public const string NumericRange = "NumericRange"; 
         public const string Password = "Password";
         public const string PropertyReference = "PropertyReference";
         public const string Quantity = "Quantity";

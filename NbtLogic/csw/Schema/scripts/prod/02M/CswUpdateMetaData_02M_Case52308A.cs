@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Audit;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02M_Case52308 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02M_Case52308A : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -26,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass TestingLabUserAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabUserAssignmentClass, "check.png", true );
+            CswNbtMetaDataObjectClass TestingLabUserAssignmentOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.TestingLabUserAssignmentClass, "check.png", CswEnumAuditLevel.PlainAudit );
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClass TestingLabOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.TestingLabClass);
 
