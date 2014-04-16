@@ -90,29 +90,31 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, versions, true, VersionsTab.TabId );
                     versions.removeFromLayout( CswEnumNbtLayoutType.Add );
 
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, currentapproved, true, FirstTab.TabId );
-                    currentapproved.removeFromLayout( CswEnumNbtLayoutType.Add );
-
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, obsolete, true, FirstTab.TabId );
-                    obsolete.removeFromLayout( CswEnumNbtLayoutType.Add );
-
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, retaincount, true, FirstTab.TabId );
-                    retaincount.removeFromLayout( CswEnumNbtLayoutType.Add );
-
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, retainquantity, true, FirstTab.TabId );
-                    retainquantity.removeFromLayout( CswEnumNbtLayoutType.Add );
-
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, retainexpriation, true, FirstTab.TabId );
-                    retainexpriation.removeFromLayout( CswEnumNbtLayoutType.Add );
-
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, approved, true, FirstTab.TabId );
+                    // Property order: Approved, Current Approved, Approved Date, Qualified Manufacturer Only, Obsolete
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, approved, true, FirstTab.TabId, DisplayColumn: 1 );
                     approved.removeFromLayout( CswEnumNbtLayoutType.Add );
 
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, approveddate, true, FirstTab.TabId );
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, currentapproved, true, FirstTab.TabId, DisplayColumn: 1 );
+                    currentapproved.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, approveddate, true, FirstTab.TabId, DisplayColumn: 1 );
                     approveddate.removeFromLayout( CswEnumNbtLayoutType.Add );
 
-                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, qualifiedmanufonly, true, FirstTab.TabId );
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, qualifiedmanufonly, true, FirstTab.TabId, DisplayColumn: 1 );
                     qualifiedmanufonly.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, obsolete, true, FirstTab.TabId, DisplayColumn: 1 );
+                    obsolete.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                    // Retains group
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, retaincount, true, FirstTab.TabId, DisplayColumn: 2, DisplayRow: 1, TabGroup: "Retains" );
+                    retaincount.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, retainquantity, true, FirstTab.TabId, DisplayColumn: 2, DisplayRow: 1, TabGroup: "Retains" );
+                    retainquantity.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, nt.NodeTypeId, retainexpriation, true, FirstTab.TabId, DisplayColumn: 2, DisplayRow: 1, TabGroup: "Retains" );
+                    retainexpriation.removeFromLayout( CswEnumNbtLayoutType.Add );
                 }
                 else
                 {
