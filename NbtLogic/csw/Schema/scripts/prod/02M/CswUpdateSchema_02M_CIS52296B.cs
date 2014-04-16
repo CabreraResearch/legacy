@@ -31,21 +31,38 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass CertDefSpecLevelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecLevel );
+            CswNbtMetaDataObjectClass CertDefSpecLevelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecLevelClass );
             CswNbtMetaDataNodeType CertDefSpecLevelNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( CertDefSpecLevelOC )
                 {
                     Category = "MLM",
                     IconFileName = "barchart.png",
-                    NodeTypeName = "Cert Def Spec Level",                                                                //TODO: uncomment below when CIS-52297 is done
-                    NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefSpecLevel.PropertyName.Level ) //+ " " + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefSpecLevel.PropertyName.CertDefSpec )
+                    NodeTypeName = "Cert Def Spec Level",
+                    NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefSpecLevel.PropertyName.Level ) + " " + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefSpecLevel.PropertyName.CertDefSpec )
                 } );
             CswNbtMetaDataNodeTypeTab FirstTab = CertDefSpecLevelNT.getFirstNodeTypeTab();
 
             foreach( CswNbtMetaDataObjectClassProp ocp in CertDefSpecLevelOC.getObjectClassProps() )
             {
                 CswNbtMetaDataNodeTypeProp ntp = CertDefSpecLevelNT.getNodeTypePropByObjectClassProp( ocp );
+                ntp.removeFromAllLayouts();
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, CertDefSpecLevelNT.NodeTypeId, ntp, true, FirstTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, CertDefSpecLevelNT.NodeTypeId, ntp, true );
+
+                if( CswNbtObjClassCertDefSpecLevel.PropertyName.SampleSize != ocp.PropName )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, CertDefSpecLevelNT.NodeTypeId, ntp, true );
+                }
+
+                if( CswNbtObjClassCertDefSpecLevel.PropertyName.ApprovalPeriod == ocp.PropName )
+                {
+                    CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+                    CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+                    CswNbtView MonthsUnitView = _CswNbtSchemaModTrnsctn.makeNewView( "MonthsViewForCertDefSpecApprovvalPeriodProp", CswEnumNbtViewVisibility.Hidden );
+                    CswNbtViewRelationship parent = MonthsUnitView.AddViewRelationship( UnitOfMeasureOC, true );
+                    MonthsUnitView.AddViewPropertyAndFilter( parent, NameOCP, "Months" );
+                    MonthsUnitView.save();
+
+                    ntp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.UnitView].AsViewReference.ViewId = MonthsUnitView.ViewId;
+                }
             }
         }
     }

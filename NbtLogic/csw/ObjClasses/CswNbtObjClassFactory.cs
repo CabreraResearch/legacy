@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassCertDefCondition ( CswNbtResources, Node );
                     break;
 
-                case CswEnumNbtObjectClass.CertDefSpecLevel:
+                case CswEnumNbtObjectClass.CertDefSpecLevelClass:
                     ReturnVal = new CswNbtObjClassCertDefSpecLevel( CswNbtResources, Node );
                     break;
 

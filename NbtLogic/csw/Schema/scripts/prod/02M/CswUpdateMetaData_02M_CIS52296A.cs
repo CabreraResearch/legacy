@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass CertDefSpecLevelOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.CertDefSpecLevel, "barchart.png", false );
+            CswNbtMetaDataObjectClass CertDefSpecLevelOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.CertDefSpecLevelClass, "barchart.png", false );
 
             CswNbtMetaDataObjectClass LevelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.Level );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
@@ -45,18 +45,17 @@ namespace ChemSW.Nbt.Schema
                 FkValue = LevelOC.ObjectClassId
             } );
 
-            //TODO - uncomment when CIS-52297 (slated for Mag.2) is done
-            //CswNbtMetaDataObjectClass CertDefOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpec );
-            //_CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
-            //{
-            //    PropName = CswNbtObjClassCertDefSpecLevel.PropertyName.Level,
-            //    FieldType = CswEnumNbtFieldType.Relationship,
-            //    IsRequired = true,
-            //    IsCompoundUnique = true,
-            //    IsFk = true,
-            //    FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-            //    FkValue = CertDefOC.ObjectClassId
-            //} );
+            CswNbtMetaDataObjectClass CertDefOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
+            {
+                PropName = CswNbtObjClassCertDefSpecLevel.PropertyName.CertDefSpec,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsRequired = true,
+                IsCompoundUnique = true,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = CertDefOC.ObjectClassId
+            } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
             {
@@ -77,21 +76,27 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassCertDefSpecLevel.PropertyName.InitialSampleRegime,
                 FieldType = CswEnumNbtFieldType.List,
-                ListOptions = "" //TODO: get list opts from David/Steve
+                ListOptions = "None,Fixed,SqrtN,Every"
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
             {
                 PropName = CswNbtObjClassCertDefSpecLevel.PropertyName.RetestSampleRegime,
                 FieldType = CswEnumNbtFieldType.List,
-                ListOptions = "" //TODO: get list opts from David/Steve
+                ListOptions = "None,Fixed,SqrtN,Every"
             } );
 
-            //TODO: get more info on this prop, it's unclear on the case
+            //This property's options are controlled by business logic
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
             {
                 PropName = CswNbtObjClassCertDefSpecLevel.PropertyName.SampleSize,
                 FieldType = CswEnumNbtFieldType.Quantity
+            } );
+
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
+            {
+                PropName = CswNbtObjClassCertDefSpecLevel.PropertyName.SampleSizeNumber,
+                FieldType = CswEnumNbtFieldType.Number
             } );
             
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
@@ -101,7 +106,6 @@ namespace ChemSW.Nbt.Schema
                 ListOptions = "All Lots,First Lot Only,All Except First Lot"
             } );
 
-            //TODO: figure out how to set this
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecLevelOC, new CswNbtWcfMetaDataModel.ObjectClassProp( CertDefSpecLevelOC )
             {
                 PropName = CswNbtObjClassCertDefSpecLevel.PropertyName.ApprovalPeriod,
