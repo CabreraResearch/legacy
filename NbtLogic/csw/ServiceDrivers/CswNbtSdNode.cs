@@ -239,6 +239,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 ButtonData.Action = CswEnumNbtButtonAction.nothing;
             }
+            if( Node.NodeId == _CswNbtResources.CurrentNbtUser.UserId )
+            {
+                RetObj["updateDefaults"] = true;
+            }
             RetObj["action"] = ButtonData.Action.ToString();
             RetObj["actionData"] = ButtonData.Data;  //e.g. popup url
             RetObj["message"] = ButtonData.Message;
