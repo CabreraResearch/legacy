@@ -43,10 +43,6 @@ namespace ChemSW.Nbt.Schema
                     NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefSpec.PropertyName.NameForTestingConditions)
                 } );
 
-            CswNbtMetaDataNodeTypeProp ContainerGridPropOnCertDefSpecNTP = CertDefSpecDefaultNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefSpec.PropertyName.Conditions );
-            CswNbtView ContainerViewOnCertDefSpec = _CswNbtSchemaModTrnsctn.restoreView( "CertDefConditionsGridOnCertDefSpec" );
-            ContainerGridPropOnCertDefSpecNTP.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = ContainerViewOnCertDefSpec.ViewId;
-
         }
 
     }
