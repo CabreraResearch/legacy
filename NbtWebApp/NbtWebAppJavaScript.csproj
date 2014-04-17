@@ -69,6 +69,7 @@
     <Content Include="app\actions\csw.logindata.js" />
     <Content Include="app\actions\csw.scheduledRules.js" />
     <Content Include="app\actions\csw.tierIIReporting.js" />
+    <Content Include="app\composites\csw.permissionsGrid.js" />
     <Content Include="app\composites\csw.comboboxExt.js" />
     <Content Include="app\composites\csw.window.js" />
     <Content Include="app\designmode\csw.sidebar.js" />
@@ -132,6 +133,7 @@
     <Content Include="app\pagecmp\csw.dd.js" />
     <Content Include="app\layouts\csw.newlogin.js" />
     <Content Include="app\pagecmp\csw.draggablepanel.js" />
+    <Content Include="app\proptypes\csw.propTypePermission.js" />
     <Content Include="app\proptypes\csw.propTypeNumericRange.js" />
     <Content Include="app\proptypes\csw.propTypeMetaDataList.js" />
     <Content Include="app\main\csw.mainClear.js" />
