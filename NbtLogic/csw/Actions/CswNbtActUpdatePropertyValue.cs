@@ -77,14 +77,19 @@ namespace ChemSW.Nbt.Actions
                             MTBFProp.RefreshCachedValue();
                             break;
                         default:
-                            PropWrapper.setPendingUpdate( false );
+                            if( PropWrapper.PendingUpdate )
+                            {
+                                PropWrapper.setPendingUpdate( false );
+                            }
                             break;
                     } // switch (PropWrapper.FieldType.FieldType)
                 } // if(PropWrapper.PendingUpdate)
             } // foreach (CswNbtNodePropWrapper PropWrapper in Node.Properties)
 
-            Node.PendingUpdate = false;
-
+            if( Node.PendingUpdate )
+            {
+                Node.PendingUpdate = false;
+            }
         }// UpdateNode()
     } // public class CswNbtActUpdatePropertyValue
 } // namespace ChemSW.Nbt.Actions
