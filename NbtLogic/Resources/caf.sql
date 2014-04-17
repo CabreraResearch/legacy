@@ -1158,4 +1158,14 @@ AS
          join chemicals_props_view cpv 
            ON cpv.materialid = m.materialid 
          join containers_props_view contpv 
-           ON contpv.containerid = c.containerid; 
+           ON contpv.containerid = c.containerid; 		   
+
+--Equipment Type
+CREATE OR REPLACE VIEW EQUIPMENT_TYPE_VIEW AS
+SELECT ms.subclassname, 
+         ms.deleted, 
+         ms.materialsubclassid 
+  FROM   materials_subclass ms 
+         join materials_class mc 
+           ON mc.materialclassid = ms.materialclassid 
+  WHERE  mc.classname IN ( 'EQUIPMENT', 'ASSET' );
