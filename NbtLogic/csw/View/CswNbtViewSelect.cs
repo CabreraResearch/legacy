@@ -74,6 +74,10 @@ namespace ChemSW.Nbt
         public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility )
         {
             CswNbtView ReturnVal = null;
+            if( null == Visibility )
+            {
+                Visibility = CswEnumNbtViewVisibility.Unknown;
+            }
 
             List<CswNbtView> AllViews = restoreViews( ViewName, Visibility );
             if( 1 == AllViews.Count )
