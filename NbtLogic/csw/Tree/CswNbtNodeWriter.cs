@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
                 NewNodeRow["relationalid"] = Node.RelationalId.PrimaryKey;
                 NewNodeRow["relationaltable"] = Node.RelationalId.TableName;
             }
-            CswTableUpdateNodes.update( NewNodeTable );
+            CswTableUpdateNodes.update( NewNodeTable, ( false == Node.IsTemp ) );
 
         }//makeNewNodeEntry()
 

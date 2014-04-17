@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
             IsCopy = false;
             OverrideUniqueValidation = false;
             SkipEvents = false;
-            AllowAuditing = true;
+            AllowAuditing = false;
             Creating = false;
             OverrideMailReportEvents = false;
         }
@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
             }
 
+            // AllowAuditing should be false here, so that we record the audit event as an INSERT instead of an UPDATE
             Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
             if( null != Node.ObjClass && false == SkipEvents )
@@ -54,6 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );
 
+            // This audit will record as an INSERT
             Node.Audit();
         }
     }
