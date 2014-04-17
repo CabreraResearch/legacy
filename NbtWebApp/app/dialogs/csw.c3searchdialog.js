@@ -8,7 +8,7 @@
 
         (function _preCtor() {
             cswPrivate.title = 'ChemCatCentral Search';
-            cswPrivate.height = options.height || 300;
+            cswPrivate.height = options.height || 400;
             cswPrivate.width = options.width || 750;
             cswPrivate.c3searchterm = options.c3searchterm || '';
             cswPrivate.c3handleresults = options.c3handleresults; //is this a function?
@@ -162,7 +162,9 @@
                         molImageCell.empty();
                         if (data.molImgAsBase64String) {
                             molImageCell.img({
-                                src: "data:image/jpeg;base64," + data.molImgAsBase64String
+                                src: "data:image/jpeg;base64," + data.molImgAsBase64String,
+                                height: 250,
+                                width: 250
                             });
                         }
                     };

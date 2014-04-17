@@ -329,6 +329,17 @@
                                 },
                                 success: function(data) {
                                     Csw.clientChanges.unsetChanged();
+                                    //CIS-51918 - if the node being saved was the current user profile, reload the defaults
+                                    if (data.updateDefaults) {
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'Session/GetUserDefaults',
+                                            data: {},
+                                            watchGlobal: false,
+                                            success: function (data) {
+                                                Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
+                                            }
+                                        });
+                                    }
 
                                     var actionData = {
                                         data: data,

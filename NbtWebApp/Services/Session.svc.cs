@@ -44,6 +44,28 @@ namespace NbtWebApp
         }
 
         /// <summary>
+        /// Initiate a new session
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Gets the current user's default settings" )]
+        public CswNbtWebServiceSession.CswNbtAuthReturn GetUserDefaults()
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtWebServiceSession.CswNbtAuthReturn Ret = new CswNbtWebServiceSession.CswNbtAuthReturn();
+            var InitDriverType = new CswWebSvcDriver<CswNbtWebServiceSession.CswNbtAuthReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceSession.getUserDefaults,
+                ParamObj: null
+                );
+
+            InitDriverType.run();
+            return ( Ret );
+        }
+
+        /// <summary>
         /// Terminate the current session
         /// </summary>
         [OperationContract]

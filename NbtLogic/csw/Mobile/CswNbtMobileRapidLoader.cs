@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Mail;
 
 namespace ChemSW.Nbt.csw.Mobile
@@ -24,7 +26,7 @@ namespace ChemSW.Nbt.csw.Mobile
     #endregion Data Contract
 
     public class CswNbtMobileRapidLoader
-    {        
+    {
         #region Properties and ctor
 
         private CswNbtResources _CswNbtResources;
@@ -49,11 +51,66 @@ namespace ChemSW.Nbt.csw.Mobile
             sw.Flush();
             sw.Close();
 
+            // CIS-53216
+            // We need to hack the data coming from the client into the default 'CISPro' import format
+            DataTable CsvData = CswTools.CsvToDataTable( FullPathName, true );
+
+            // Add missing columns:
+            CsvData.Columns.Add( "Department" );
+            CsvData.Columns.Add( "Physical Description" );
+            CsvData.Columns.Add( "expirationdate" );
+            CsvData.Columns.Add( "manufacturerlotno" );
+            CsvData.Columns.Add( "inventorygroupname" );
+            CsvData.Columns.Add( "Unit_Weight" );
+            CsvData.Columns.Add( "Unit_Volume" );
+            CsvData.Columns.Add( "Unit_Each" );
+            CsvData.Columns.Add( "ConvFactBase" );
+            CsvData.Columns.Add( "ConvFactExp" );
+            CsvData.Columns.Add( "Rolename" );
+
+            // Rename existing columns:
+            CsvData.Columns["Chemical"].ColumnName = "MaterialName";
+            CsvData.Columns["Supplier"].ColumnName = "vendorname";
+            CsvData.Columns["CAS No"].ColumnName = "CasNo";
+            CsvData.Columns["Quantity"].ColumnName = "netquantity";
+            CsvData.Columns["Units"].ColumnName = "UnitOfMeasureName";
+            CsvData.Columns["Owner"].ColumnName = "responsible";
+            CsvData.Columns["Barcode"].ColumnName = "barcodeid";
+            CsvData.Columns["CatalogNo"].ColumnName = "catalogno";
+
+            // Massage data:
+            foreach( DataRow csvRow in CsvData.Rows )
+            {
+                csvRow["inventorygroupname"] = "Default Inventory Group";
+                switch( csvRow["UnitType"].ToString() )
+                {
+                    case "WEIGHT":
+                        csvRow["Unit_Weight"] = csvRow["UnitOfMeasureName"];
+                        break;
+                    case "VOLUME":
+                        csvRow["Unit_Volume"] = csvRow["UnitOfMeasureName"];
+                        break;
+                    case "EACH":
+                        csvRow["Unit_Each"] = csvRow["UnitOfMeasureName"];
+                        break;
+                }
+                csvRow["ConvFactBase"] = 1;
+                csvRow["ConvFactExp"] = 0;
+                csvRow["Rolename"] = "cispro_general";
+            }
+            
+            // Overwrite the existing CSV
+            FileStream fs2 = new FileStream( FullPathName, FileMode.Truncate );
+            StreamWriter sw2 = new StreamWriter( fs2, System.Text.Encoding.Default );
+            sw2.Write( CswDataTable.ToCsv( CsvData ) );
+            sw2.Flush();
+            sw2.Close();
+
             String EmailMessageSubject = "Your ChemSW Rapid Loader import is available for download";
-            String EmailMessageBody = String.Format( 
-                _EmailBodyTemplate, 
+            String EmailMessageBody = String.Format(
+                _EmailBodyTemplate,
                 _CswNbtResources.CurrentNbtUser.Username,
-                _makeLink( TempFileName ) 
+                _makeLink( TempFileName )
                 );
             if( false == String.IsNullOrEmpty( Request.EmailAddress ) )
             {
@@ -85,10 +142,10 @@ namespace ChemSW.Nbt.csw.Mobile
             CswMail _CswMail = _CswNbtResources.CswMail;
             CswMailMessage MailMessage = new CswMailMessage
                 {
-                    Recipient = EmailAddress, 
-                    RecipientDisplayName = UserName, 
-                    Subject = Subject, 
-                    Content = MessageBody, 
+                    Recipient = EmailAddress,
+                    RecipientDisplayName = UserName,
+                    Subject = Subject,
+                    Content = MessageBody,
                     Format = CswEnumMailMessageBodyFormat.HTML
                 };
 
