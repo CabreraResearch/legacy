@@ -292,25 +292,25 @@
     <None Include="Service References\ChemCatCentral\configuration.svcinfo" />
     <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
     <None Include="Service References\ChemCatCentral\Search1.wsdl" />
+    <None Include="Service References\ChemCatCentral\Search10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search12.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search13.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ChemCatCentral\Search7.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search71.xsd">
+    <None Include="Service References\ChemCatCentral\Search8.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChemCatCentral\Search72.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search73.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search74.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search75.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search76.xsd">
+    <None Include="Service References\ChemCatCentral\Search9.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ChemWatchMaterialServices\ChemSW.Nbt.ChemWatchMaterialServices.AutoCompleteData.datasource">
