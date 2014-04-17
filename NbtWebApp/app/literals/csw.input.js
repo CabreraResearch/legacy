@@ -31,6 +31,7 @@
             autocomplete: 'on',
             checked: false,
             canCheck: false, /* if this is a radio or checkbox */
+            disabled: false,
             onChange: null,
             onClick: null,
             onKeyEnter: null,
@@ -69,6 +70,11 @@
                     attr.add('checked', true);
                 }
             }
+            
+            if (cswPrivate.disabled) {
+                attr.add('disabled', true);
+            }
+            
             html += attr.get();
             html += style.get();
             html += ' />';
@@ -131,6 +137,16 @@
                 } else {
                     ret = cswPublic.$.is(':checked');
                 }
+            }
+            return ret;
+        };
+
+        cswPublic.disabled = function(value) {
+            var ret = cswPublic;
+            if (arguments.length === 1) {
+                cswPublic[0].disabled = value;
+            } else {
+                ret = cswPublic[0].disabled;
             }
             return ret;
         };

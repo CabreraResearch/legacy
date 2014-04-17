@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.MetaData
                 {CswEnumNbtFieldType.Number, CswEnumNbtFieldType.Number},
                 {CswEnumNbtFieldType.NumericRange, CswEnumNbtFieldType.NumericRange},
                 {CswEnumNbtFieldType.Password, CswEnumNbtFieldType.Password},
+                {CswEnumNbtFieldType.Permission, CswEnumNbtFieldType.Permission},
                 {CswEnumNbtFieldType.PropertyReference, CswEnumNbtFieldType.PropertyReference},
                 {CswEnumNbtFieldType.Quantity, CswEnumNbtFieldType.Quantity},
                 {CswEnumNbtFieldType.Question, CswEnumNbtFieldType.Question},
@@ -111,6 +112,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Number = "Number";
         public const string NumericRange = "NumericRange"; 
         public const string Password = "Password";
+        public const string Permission = "Permission";
         public const string PropertyReference = "PropertyReference";
         public const string Quantity = "Quantity";
         public const string Question = "Question";

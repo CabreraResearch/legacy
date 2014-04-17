@@ -108,7 +108,15 @@ namespace ChemSW.Nbt.PropTypes
                 //    InnerProperty = new CswNbtNodePropMultiRelationship( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                 //    break;
                 case CswEnumNbtFieldType.MultiList:
+                    //! As part of CIS-53434, remove this if statement.
+                    if( CswNbtMetaDataNodeTypeProp.PropName == CswNbtObjClassRole.PropertyName.NodeTypePermissions )
+                    {
+                        InnerProperty = new CswNbtNodePropPermission( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    }
+                    else
+                    {
                     InnerProperty = new CswNbtNodePropMultiList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    }
                     break;
                 case CswEnumNbtFieldType.NFPA:
                     InnerProperty = new CswNbtNodePropNFPA( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
@@ -124,6 +132,9 @@ namespace ChemSW.Nbt.PropTypes
                     break;
                 case CswEnumNbtFieldType.Password:
                     InnerProperty = new CswNbtNodePropPassword( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    break;
+                case CswEnumNbtFieldType.Permission:
+                    InnerProperty = new CswNbtNodePropPermission( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
                 case CswEnumNbtFieldType.PropertyReference:
                     InnerProperty = new CswNbtNodePropPropertyReference( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
