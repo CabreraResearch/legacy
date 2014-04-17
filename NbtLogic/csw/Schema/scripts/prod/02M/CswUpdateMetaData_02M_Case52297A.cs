@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02M_Case52297A : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02M_Case52297B : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -22,52 +22,40 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "A";
+            return "AF";
         }
 
         public override string Title
         {
-            get { return "MLM2: Create OC CertDef Spec"; }
+            get { return "MLM2: Create Grid Props on OC CertDef Spec"; }
         }
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass CertDefSpecOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.CertDefSpecClass, "doc.png", CswEnumAuditLevel.PlainAudit );
-            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.MLM, CertDefSpecOC.ObjectClassId );
+            CswNbtMetaDataObjectClass CertDefSpecOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecClass );
 
             CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
             CswNbtMetaDataObjectClass CertDefOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertificateDefinitionClass);
+            CswNbtMetaDataObjectClass CertDefCharacteristicOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefCharacteristicLimitClass);
+            CswNbtMetaDataObjectClass CertDefConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefConditionClass);
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.NameForTestingConditions,
-                FieldType = CswEnumNbtFieldType.Text
-            } );
+            ICswNbtMetaDataProp CertDefConditionCertDefOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( CertDefConditionOC.ObjectClassId,
+                                                                                                                  CswNbtObjClassCertDefCondition.PropertyName.CertDefSpec );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.Method,
-                FieldType = CswEnumNbtFieldType.Relationship,
-                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                IsRequired = true,
-                ReadOnly = true,
-                FkValue = MethodOC.ObjectClassId
-            } );
-
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassCertDefSpec.PropertyName.CertDef,
-                FieldType = CswEnumNbtFieldType.Relationship,
-                IsRequired = true,
-                ReadOnly = true,
-                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = CertDefOC.ObjectClassId
-            } );
+            CswNbtView ConditionsView = _CswNbtSchemaModTrnsctn.makeSafeView( "CertDefConditionsGridOnCertDefSpec",
+                                                                              CswEnumNbtViewVisibility.Property );
+            CswNbtViewRelationship ParentRelationship = ConditionsView.AddViewRelationship( CertDefSpecOC, true );
+            CswNbtViewRelationship ConditionsRelationship = ConditionsView.AddViewRelationship( ParentRelationship,
+                                                CswEnumNbtViewPropOwnerType.Second,
+                                                CertDefConditionCertDefOCP,
+                                                true);
+            ConditionsView.AddViewProperty( ConditionsRelationship, CertDefConditionOC.getObjectClassProp( CswNbtObjClassCertDefCondition.PropertyName.Value), 1 );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassCertDefSpec.PropertyName.Conditions,
-                FieldType = CswEnumNbtFieldType.Grid
+                FieldType = CswEnumNbtFieldType.Grid,
+                ViewXml = ConditionsView.ToString()
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp

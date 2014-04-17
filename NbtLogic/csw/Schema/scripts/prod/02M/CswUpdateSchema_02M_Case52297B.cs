@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02M_Case52297B : CswUpdateSchemaTo
+    public class CswUpdateSchema_02M_Case52297C : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -26,14 +26,14 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "B";
+            return "BF";
         }
 
         public override void update()
         {
             CswNbtMetaDataObjectClass CertDefSpecOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecClass );
 
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( CertDefSpecOC )
+            CswNbtMetaDataNodeType CertDefSpecDefaultNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( CertDefSpecOC )
                 {
                     Category = "MLM",
                     ObjectClass = CertDefSpecOC,
@@ -42,6 +42,11 @@ namespace ChemSW.Nbt.Schema
                     Searchable = true,
                     NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefSpec.PropertyName.NameForTestingConditions)
                 } );
+
+            CswNbtMetaDataNodeTypeProp ContainerGridPropOnCertDefSpecNTP = CertDefSpecDefaultNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefSpec.PropertyName.Conditions );
+            CswNbtView ContainerViewOnCertDefSpec = _CswNbtSchemaModTrnsctn.restoreView( "CertDefConditionsGridOnCertDefSpec" );
+            ContainerGridPropOnCertDefSpecNTP.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = ContainerViewOnCertDefSpec.ViewId;
+
         }
 
     }

@@ -1,5 +1,8 @@
-﻿using ChemSW.Core;
+﻿using System.Collections.ObjectModel;
+using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -36,6 +39,96 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
+
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
+        {
+            base.beforePromoteNodeLogic( OverrideUniqueValidation );
+            _createCertDefSpecsAndCharacteristics();
+        }
+
+        #endregion
+
+        #region private methods
+       
+        /// <summary>
+        /// for each method condition and method characteristic attached to this
+        /// certDef, this method created a corresponding certDef condition
+        /// and certDef characteristic. 
+        /// </summary>
+        private void _createCertDefSpecsAndCharacteristics()
+        {
+            
+            CswNbtMetaDataObjectClass MethodOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
+            CswNbtMetaDataObjectClass MethodConditionOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodConditionClass );
+            CswNbtMetaDataObjectClass MethodCharacteristicOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodCharacteristicClass);
+            CswNbtMetaDataObjectClass CertDefConditionOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefConditionClass );
+            CswNbtMetaDataObjectClass CertDefCharacteristicOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefCharacteristicLimitClass);
+
+            CswNbtMetaDataNodeType CertDefConditionDefaultNT = CertDefConditionOC.FirstNodeType;
+            CswNbtMetaDataNodeType CertDefCharacteristicDefaultNT = CertDefCharacteristicOC.FirstNodeType;
+
+            CswNbtMetaDataObjectClassProp MethodConditionMethodOCP = _CswNbtResources.MetaData.getObjectClassProp(MethodConditionOC.ObjectClassId, 
+                                                                                                                  CswNbtObjClassMethodCondition.PropertyName.Method);
+            CswNbtMetaDataObjectClassProp MethodCharacteristicMethodOCP = _CswNbtResources.MetaData.getObjectClassProp(MethodCharacteristicOC.ObjectClassId, 
+                                                                                                                  CswNbtObjClassMethodCharacteristic.PropertyName.Method);
+
+            //create a view of all methodcondition and methodcharacteristics
+            //attached to this method
+            CswNbtView MethodConditionAndCharacteristicsView = new CswNbtView( _CswNbtResources );
+            MethodConditionAndCharacteristicsView.ViewName = "View of all method characteristics and method conditions attached to a method";
+
+            CswNbtViewRelationship MethodAsRootRelationship = MethodConditionAndCharacteristicsView.AddViewRelationship( MethodOC, false );
+            MethodAsRootRelationship.NodeIdsToFilterIn.Add( Method.RelatedNodeId );
+
+            MethodConditionAndCharacteristicsView.AddViewRelationship( MethodAsRootRelationship,
+                                                                       CswEnumNbtViewPropOwnerType.Second,
+                                                                       MethodConditionMethodOCP,
+                                                                       false );
+            MethodConditionAndCharacteristicsView.AddViewRelationship( MethodAsRootRelationship,
+                                                                       CswEnumNbtViewPropOwnerType.Second,
+                                                                       MethodCharacteristicMethodOCP,
+                                                                       false );
+
+            ICswNbtTree MethodConditionAndCharacteristicsTree = _CswNbtResources.Trees.getTreeFromView( MethodConditionAndCharacteristicsView, false, true, true, true );
+            if( MethodConditionAndCharacteristicsTree.getChildNodeCount() > 0 )
+            {
+                MethodConditionAndCharacteristicsTree.goToNthChild( 0 );
+
+                for( int i = 0; i < MethodConditionAndCharacteristicsTree.getChildNodeCount(); i++ )
+                {
+                    MethodConditionAndCharacteristicsTree.goToNthChild( i );
+                    CswNbtNode thisNode = MethodConditionAndCharacteristicsTree.getNodeForCurrentPosition();
+
+                    CswEnumNbtObjectClass thisNodeOC = thisNode.getObjectClass().ObjectClass;
+
+                    if( thisNodeOC == CswEnumNbtObjectClass.MethodConditionClass)
+                    {
+                        CswNbtObjClassMethodCondition thisMethodCondition = thisNode;
+                        CswNbtObjClassCertDefCondition correspondingCertDefCondition = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CertDefConditionDefaultNT.NodeTypeId );
+
+                        correspondingCertDefCondition.MethodCondition.RelatedNodeId = thisMethodCondition.NodeId;
+                        correspondingCertDefCondition.CertDefSpec.RelatedNodeId = this.NodeId;
+                        
+                        correspondingCertDefCondition.postChanges( false );
+                    }
+
+                    else if( thisNodeOC == CswEnumNbtObjectClass.MethodCharacteristicClass)
+                    {
+                        CswNbtObjClassMethodCharacteristic thisMethodCharacteristic = thisNode;
+                        CswNbtObjClassCertDefCharacteristicLimit correspondingCertDefCharacteristic = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CertDefCharacteristicDefaultNT.NodeTypeId );
+
+                        correspondingCertDefCharacteristic.MethodCharacteristic.RelatedNodeId = thisMethodCharacteristic.NodeId;
+                        correspondingCertDefCharacteristic.CertDefSpec.RelatedNodeId = this.NodeId;
+
+                        correspondingCertDefCharacteristic.postChanges( false );
+                    }
+
+                    MethodConditionAndCharacteristicsTree.goToParentNode();
+
+                }
+            }
+           
+        }
 
         #endregion
 
