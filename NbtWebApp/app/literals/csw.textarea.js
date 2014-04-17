@@ -33,7 +33,8 @@
             readonly: false,
             form: '',
             wrap: '',
-            onChange: null //function () {}
+            onChange: null, //function () {}
+            onKeyUp: function () { }
         };
         var cswPublic = {};
 
@@ -84,6 +85,12 @@
 
             cswPublic.bind('change', function () {
                 Csw.tryExec(cswPrivate.onChange, cswPublic.val());
+            });
+
+            cswPublic.bind('keyup', function (event) {
+                if (false === Csw.isNullOrEmpty(event.keyCode)) {
+                    Csw.tryExec(cswPrivate.onKeyUp, cswPublic.val(), event.keyCode);
+                }
             });
 
         }());
