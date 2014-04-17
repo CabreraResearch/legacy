@@ -75,7 +75,8 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 // case 25444 - was it *really* modified?
                 CswNbtNodePropWrapper NodeTypePermissionsPropWrapper = Node.Properties[PropertyName.NodeTypePermissions];
-                string NodeTypePermissionsOriginalValueStr = NodeTypePermissionsPropWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleMultiList) _CswNbtResources.MetaData.getFieldTypeRule( NodeTypePermissionsPropWrapper.getFieldTypeValue() ) ).ValueSubField.Column );
+
+                string NodeTypePermissionsOriginalValueStr = NodeTypePermissionsPropWrapper.GetOriginalPropRowValue( CswEnumNbtPropColumn.ClobData );
                 CswCommaDelimitedString NodeTypePermissionsOriginalValue = new CswCommaDelimitedString();
                 NodeTypePermissionsOriginalValue.FromString( NodeTypePermissionsOriginalValueStr );
 
@@ -371,7 +372,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropLogical Administrator { get { return ( _CswNbtNode.Properties[PropertyName.Administrator] ); } }
         public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
-        public CswNbtNodePropMultiList NodeTypePermissions { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypePermissions] ); } }
+        public CswNbtNodePropPermission NodeTypePermissions { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypePermissions] ); } }
         public CswNbtNodePropMultiList ActionPermissions { get { return ( _CswNbtNode.Properties[PropertyName.ActionPermissions] ); } }
         public CswNbtNodePropNumber Timeout { get { return ( _CswNbtNode.Properties[PropertyName.Timeout] ); } }
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }

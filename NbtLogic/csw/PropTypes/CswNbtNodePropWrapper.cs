@@ -688,6 +688,18 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Password
 
+        public CswNbtNodePropPermission AsPermission
+        {
+            get
+            {
+                //! As part of CIS-53434, restore this conditional check 
+                //if( !( _CswNbtNodeProp is CswNbtNodePropPermission ) )
+                //    throw ( new CswDniException( _makeTypeErrorMessage( _CswNbtNodeProp, typeof( CswNbtNodePropPermission ) ) ) );
+                return ( (CswNbtNodePropPermission) _CswNbtNodeProp );
+            }
+
+        }//AsMultiList
+
         public CswNbtNodePropPropertyReference AsPropertyReference
         {
             get

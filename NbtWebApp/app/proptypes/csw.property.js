@@ -97,6 +97,9 @@
                     case Csw.enums.subFieldsMap.Password.name:
                         Csw.properties.password(cswPublic);
                         break;
+                    case Csw.enums.subFieldsMap.Permission.name:
+                        Csw.properties.permission(cswPublic);
+                        break;
                     case Csw.enums.subFieldsMap.PropertyReference.name:
                         Csw.properties.propertyReference(cswPublic);
                         break;
