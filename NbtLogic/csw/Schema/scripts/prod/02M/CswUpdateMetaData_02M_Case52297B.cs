@@ -34,13 +34,15 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass CertDefSpecOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefSpecClass );
 
-            CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
             CswNbtMetaDataObjectClass CertDefOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertificateDefinitionClass);
             CswNbtMetaDataObjectClass CertDefCharacteristicOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefCharacteristicLimitClass);
             CswNbtMetaDataObjectClass CertDefConditionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CertDefConditionClass);
 
             ICswNbtMetaDataProp CertDefConditionCertDefOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( CertDefConditionOC.ObjectClassId,
                                                                                                                   CswNbtObjClassCertDefCondition.PropertyName.CertDefSpec );
+
+            ICswNbtMetaDataProp CertDefCharacteristicCertDefOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( CertDefCharacteristicOC.ObjectClassId,
+                                                                                                                  CswNbtObjClassCertDefCharacteristicLimit.PropertyName.CertDefSpec );
 
             CswNbtView ConditionsView = _CswNbtSchemaModTrnsctn.makeSafeView( "CertDefConditionsGridOnCertDefSpec",
                                                                               CswEnumNbtViewVisibility.Property );
@@ -51,6 +53,7 @@ namespace ChemSW.Nbt.Schema
                                                 true);
 
             ConditionsView.AddViewProperty( ConditionsRelationship, CertDefConditionOC.getObjectClassProp( CswNbtObjClassCertDefCondition.PropertyName.Value), 1 );
+            ConditionsView.AddViewProperty( ConditionsRelationship, CertDefConditionOC.getObjectClassProp( CswNbtObjClassCertDefCondition.PropertyName.MethodCondition), 2 );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
@@ -59,10 +62,24 @@ namespace ChemSW.Nbt.Schema
                 ViewXml = ConditionsView.ToString()
             } );
 
+            CswNbtView CharacteristicsView = _CswNbtSchemaModTrnsctn.makeSafeView( "CertDefCharacteristicsGridOnCertDefSpec",
+                                                                              CswEnumNbtViewVisibility.Property );
+            ParentRelationship = CharacteristicsView.AddViewRelationship( CertDefSpecOC, true );
+            CswNbtViewRelationship CharacteristicsRelationship = CharacteristicsView.AddViewRelationship( ParentRelationship,
+                                                CswEnumNbtViewPropOwnerType.Second,
+                                                CertDefCharacteristicCertDefOCP,
+                                                true);
+
+            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.MethodCharacteristic), 1 );
+            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.ResultType), 2 );
+            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassOptions), 3 );
+            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassValue), 4 );
+
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassCertDefSpec.PropertyName.Characteristics,
-                FieldType = CswEnumNbtFieldType.Grid
+                FieldType = CswEnumNbtFieldType.Grid,
+                ViewXml = CharacteristicsView.ToString()
             } );
 
         } // update()

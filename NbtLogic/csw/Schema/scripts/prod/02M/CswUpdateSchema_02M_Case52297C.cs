@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "MLM2: Add default NT for CertDef Spec"; }
+            get { return "MLM2: Add default NT for CertDef Spec, and place conditions and characteristics in their own tabs"; }
         }
 
         public override string AppendToScriptName()
@@ -42,6 +42,20 @@ namespace ChemSW.Nbt.Schema
                     Searchable = true,
                     NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassCertDefSpec.PropertyName.NameForTestingConditions)
                 } );
+
+            CswNbtMetaDataNodeTypeTab ConditionsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( CertDefSpecDefaultNT,
+                                                                                                   "Conditions",
+                                                                                                   2 );
+
+            CswNbtMetaDataNodeTypeTab CharacteristicsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( CertDefSpecDefaultNT,
+                                                                                                        "Characteristics",
+                                                                                                        3 );
+
+            CswNbtMetaDataNodeTypeProp ConditionsNTP = CertDefSpecDefaultNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefSpec.PropertyName.Conditions);
+            ConditionsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, ConditionsTab.TabId, 1, 1 );
+
+            CswNbtMetaDataNodeTypeProp CharacteristicsNTP = CertDefSpecDefaultNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCertDefSpec.PropertyName.Characteristics);
+            CharacteristicsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, CharacteristicsTab.TabId, 1, 1 );
 
         }
 
