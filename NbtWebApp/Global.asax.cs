@@ -80,7 +80,7 @@ namespace NbtWebApp
             {
                 HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Methods", "GET, POST, DELETE, PUT" );
                 HttpContext.Current.Response.AddHeader( "Access-Control-Max-Age", "1728000" );
-                HttpContext.Current.Response.End();
+            //    HttpContext.Current.Response.End();
             }
         }
 
