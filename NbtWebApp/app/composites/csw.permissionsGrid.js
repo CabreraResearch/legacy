@@ -124,10 +124,7 @@
                 //The Ext.JS renderer requires we return raw HTML text to display the column... things are about to get ugly
                 var checkboxRenderer = function(value, styledata, record, rowIndex, colIndex, view) {
                     var field = record.fields.getAt(colIndex).name;
-                    var divId = 'ntperms' + sanitizeName(record.raw["itemname"]) + "_" + field;
-                    if (record.isLeaf()) {
-                        divId = sanitizeName(record.parentNode.get('itemname')) + '_' + divId;
-                    }
+                    var divId = 'ntperms' + sanitizeName(record.internalId) + "_" + field;
 
                     Csw.defer(Csw.method(function() {
 
