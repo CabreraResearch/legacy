@@ -216,6 +216,7 @@ namespace ChemSW.Nbt.WebServices
             public bool AllowDelete;
 
             public bool AllowImport;
+            public bool AllowRequest;
 
             public SortedList<Int32, TableProp> Props = new SortedList<Int32, TableProp>();
 
@@ -254,6 +255,7 @@ namespace ChemSW.Nbt.WebServices
                 NodeObj["allowdelete"] = AllowDelete;
 
                 NodeObj["allowimport"] = AllowImport;
+                NodeObj["allowrequest"] = AllowRequest;
 
                 // Props in the View
                 JArray PropsArray = new JArray();
@@ -456,6 +458,7 @@ namespace ChemSW.Nbt.WebServices
                     thisNode.AllowDelete = false;
                     //C3 results CAN however be imported into Nbt IF the user has Create Material Permissions
                     thisNode.AllowImport = _CswNbtResources.Permit.can( CswEnumNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser );
+                    thisNode.AllowRequest = _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request, _CswNbtResources.CurrentNbtUser );
 
                     // Properties
                     int propIndex = 0;
