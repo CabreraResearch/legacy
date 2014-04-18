@@ -125,6 +125,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\ChemCatCentral\CswNbtC3ClientManager.cs" />
+    <Compile Include="csw\ChemCatCentral\CswNbtSdC3.cs" />
     <Compile Include="csw\CswEnumNbtConfigurationVariables.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDataJob.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDataMap.cs" />

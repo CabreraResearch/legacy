@@ -3,6 +3,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.csw.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
@@ -270,6 +271,18 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string ReceiptLotsReceived = "Receipt Lots Received";
             #endregion MLM-Specific Props
+            #region C3 Properties
+            /// <summary>
+            /// The Product Id used when searching C3 for the product
+            /// <para>PropType: Text</para>
+            /// </summary>
+            public const string C3ProductId = "C3 Product Id";
+            /// <summary>
+            /// The CDB Reg No used when searching C3 for the product
+            /// <para>PropType: Text</para>
+            /// </summary>
+            public const string C3CdbRegNo = "C3 CdbRegNo";
+            #endregion
         }
 
         #endregion Properties
@@ -746,6 +759,35 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        private void _handleC3Request( NbtButtonData ButtonData )
+        {
+            C3CreateMaterialResponse searchResponse = CswNbtSdC3.importC3Product( _CswNbtResources, new CswNbtC3Import.Request()
+                {
+                    C3ProductId = (int) C3ProductId.Value,
+                    Cdbregno = (int) C3CDBRegNo.Value,
+                    NodeTypeId = 1,
+                    NodeTypeName = "Chemical",
+                    ObjectClass = "ChemicalClass"
+                } );
+
+            ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
+            Material.RelatedNodeId = CswConvert.ToPrimaryKey( searchResponse.state.materialId );
+            ButtonData.Data["state"] = new JObject();
+            ButtonData.Data["state"]["materialType"] = new JObject();
+            ButtonData.Data["state"]["materialType"]["name"] = searchResponse.state.materialType.name;
+            ButtonData.Data["state"]["materialType"]["val"] = searchResponse.state.materialType.val;
+            ButtonData.Data["state"]["materialId"] = searchResponse.state.materialId;
+            ButtonData.Data["state"]["tradeName"] = searchResponse.state.tradeName;
+            ButtonData.Data["state"]["addNewC3Supplier"] = true;
+            ButtonData.Data["state"]["supplier"] = new JObject();
+            ButtonData.Data["state"]["supplier"]["name"] = NewMaterialSupplier.Text;
+            ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
+            ButtonData.Data["state"]["request"] = new JObject();
+            ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
+            ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+            ButtonData.Data["success"] = true;
+        }
+
         #endregion Custom Logic
 
         #region ObjectClass-specific properties
@@ -907,6 +949,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
+
+        //Used when Requesting from C3
+        public CswNbtNodePropNumber C3ProductId { get { return _CswNbtNode.Properties[PropertyName.C3ProductId]; } }
+        public CswNbtNodePropNumber C3CDBRegNo { get { return _CswNbtNode.Properties[PropertyName.C3CdbRegNo]; } }
 
         #endregion ObjectClass-specific properties
 

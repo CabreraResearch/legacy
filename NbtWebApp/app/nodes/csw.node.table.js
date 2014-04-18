@@ -488,7 +488,16 @@
                             width: "Request Material Create".length * 7,
                             renderTo: btnTable.cell(1, btncol).getId(),
                             handler: Csw.method(function () {
-                                alert('todo: make this work');
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'ChemCatCentral/requestProduct',
+                                    data: {
+                                        C3ProductId: nodeObj.c3productid,
+                                        Cdbregno: nodeObj.acdcdbregno
+                                    },
+                                    success: function(requestProductResponse) {
+                                        
+                                    }
+                                });
                             })
                         }); //importButton
 
