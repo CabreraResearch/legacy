@@ -72,8 +72,9 @@ namespace ChemSW.Nbt.Schema
 
             CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.MethodCharacteristic), 1 );
             CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.ResultType), 2 );
-            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassOptions), 3 );
-            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassValue), 4 );
+            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.Limits), 3 );
+            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassOptions), 4 );
+            CharacteristicsView.AddViewProperty( CharacteristicsRelationship, CertDefCharacteristicOC.getObjectClassProp( CswNbtObjClassCertDefCharacteristicLimit.PropertyName.PassValue), 5 );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
