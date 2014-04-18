@@ -1871,7 +1871,10 @@ namespace ChemSW.Nbt.MetaData
 
             // Handle the object class prop's viewxml
             CswNbtViewId newViewId = CopyViewFromObjectClassProp( ObjectClassProp );
-            NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = newViewId;
+            if( null != newViewId )
+            {
+                NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = newViewId;
+            }
         }
 
 
