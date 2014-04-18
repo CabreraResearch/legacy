@@ -34,17 +34,23 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtView MethodView = _CswNbtSchemaModTrnsctn.restoreView( "Methods" );
 
-            CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
+            if( MethodView != null )
+            {
+                CswNbtMetaDataObjectClass MethodOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MethodClass );
 
-            CswNbtMetaDataObjectClassProp ObsoleteClassProp = MethodOC.getObjectClassProp( CswNbtObjClassMethod.PropertyName.Obsolete );
+                CswNbtMetaDataObjectClassProp ObsoleteClassProp = MethodOC.getObjectClassProp( CswNbtObjClassMethod.PropertyName.Obsolete );
 
-            CswNbtViewRelationship ParentViewRelationship = MethodView.getAllNbtViewRelationships()[0];
+                if( MethodView.Root.ChildRelationships.Count > 0 )
+                {
+                    CswNbtViewRelationship ParentViewRelationship = MethodView.Root.ChildRelationships[0];
 
-            MethodView.AddViewPropertyAndFilter( ParentViewRelationship,
-                                                 ObsoleteClassProp,
-                                                 Value: CswEnumTristate.True.ToString(),
-                                                 FilterMode: CswEnumNbtFilterMode.NotEquals);
-            MethodView.save();
+                    MethodView.AddViewPropertyAndFilter( ParentViewRelationship,
+                                                         ObsoleteClassProp,
+                                                         Value: CswEnumTristate.True.ToString(),
+                                                         FilterMode: CswEnumNbtFilterMode.NotEquals );
+                    MethodView.save();
+                }
+            }
         }
     }
 }
