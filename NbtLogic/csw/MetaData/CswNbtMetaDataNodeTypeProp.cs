@@ -286,8 +286,15 @@ namespace ChemSW.Nbt.MetaData
         private ICswNbtFieldTypeRule _FieldTypeRule = null;
         public ICswNbtFieldTypeRule getFieldTypeRule()
         {
-            if( _FieldTypeRule == null )
+            //! As part of CIS-53434 remove this. We should not have fieldtype-specific logic in the parent class. 
+            if( this.PropName == CswNbtObjClassRole.PropertyName.NodeTypePermissions )
+            {
+                _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( CswEnumNbtFieldType.Permission );
+            }
+            else if( _FieldTypeRule == null )
+            {
                 _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldTypeValue() );
+            }
             return _FieldTypeRule;
         }
 

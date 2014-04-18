@@ -266,6 +266,15 @@
                 return Csw.composites.numberTextBox(cswParent, opts);
             };
 
+            cswParent.permissionsGrid = function(opts) {
+                /// <summary>
+                /// Creates a Csw.permissionsGrid on this element
+                /// </summary>
+                /// <param name="opts"></param>
+                opts = cswPrivate.controlPreProcessing(opts, 'permissionsGrid');
+                return Csw.composites.permissionsGrid(cswParent, opts);
+            };
+            
             cswParent.quantity = function (opts) {
                 /// <summary> Creates a Csw.quantity on this element</summary>
                 /// <param name="opts" type="Object">Options to define the quantity.</param>

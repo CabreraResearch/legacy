@@ -120,6 +120,13 @@ namespace ChemSW.Nbt.WebServices
 
         public static void getDefaults( ICswResources CswResources, CswNbtAuthReturn Ret, CswWebSvcSessionAuthenticateData.Authentication.Request Request )
         {
+            getUserDefaults( CswResources, Ret, Request );
+            SchemaDetails SchemaDetails = _checkSchemaVersion( (CswNbtResources) CswResources );
+            Ret.Data.SchemaData = SchemaDetails;
+        }
+
+        public static void getUserDefaults( ICswResources CswResources, CswNbtAuthReturn Ret, object Request )
+        {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.DefaultLocationId ) )
             {
@@ -145,8 +152,6 @@ namespace ChemSW.Nbt.WebServices
             Ret.Data.TimeFormatDn = NbtResources.CurrentNbtUser.TimeFormat;
             Ret.Data.DateFormatJs = CswTools.ConvertNetToPHP( NbtResources.CurrentNbtUser.DateFormat );
             Ret.Data.TimeFormatJs = CswTools.ConvertNetToPHP( NbtResources.CurrentNbtUser.TimeFormat );
-            SchemaDetails SchemaDetails = _checkSchemaVersion( NbtResources );
-            Ret.Data.SchemaData = SchemaDetails;
         }
 
         public static void doNothing( ICswResources CswResources, object Ret, object Req )

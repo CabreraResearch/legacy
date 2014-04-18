@@ -1870,20 +1870,30 @@ namespace ChemSW.Nbt.MetaData
             ObjectClassProp.CopyPropToNewPropRow( NodeTypeProp );
 
             // Handle the object class prop's viewxml
+            CswNbtViewId newViewId = CopyViewFromObjectClassProp( ObjectClassProp );
+            NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = newViewId;
+        }
+
+
+        // Handle the object class prop's viewxml
+        public CswNbtViewId CopyViewFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        {
+            CswNbtViewId ret = null;
             if( ObjectClassProp.ViewXml != string.Empty )
             {
                 CswTableUpdate NodeViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "CopyNodeTypePropFromObjectClassProp_update", "node_views" );
                 DataTable NodeViewsTable = NodeViewsUpdate.getEmptyTable();
 
                 DataRow NewViewRow = NodeViewsTable.NewRow();
-                NewViewRow["viewname"] = NodeTypeProp.PropName;
+                NewViewRow["viewname"] = ObjectClassProp.PropName;
                 NewViewRow["viewxml"] = ObjectClassProp.ViewXml;
                 NewViewRow["visibility"] = CswEnumNbtViewVisibility.Property.ToString();
                 NodeViewsTable.Rows.Add( NewViewRow );
                 NodeViewsUpdate.update( NodeViewsTable );
 
-                NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.View].AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewViewRow["nodeviewid"] ) );
+                ret = new CswNbtViewId( CswConvert.ToInt32( NewViewRow["nodeviewid"] ) );
             }
+            return ret;
         }
 
         // Handle the object class prop's default value

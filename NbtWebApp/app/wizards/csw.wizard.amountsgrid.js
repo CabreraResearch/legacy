@@ -190,6 +190,9 @@
                                         anArray.splice(cswPublic.rows[rowid].quantityValues.containerNo, anArray.length - cswPublic.rows[rowid].quantityValues.containerNo);
                                     }
                                     value = anArray.join(',');
+                                    if (',' === value[value.length - 1]) { //string out trailing commas
+                                        value = value.substring(0, value.length - 1);
+                                    }
                                 };
                                 var barcodeToParse = Csw.delimitedString(Csw.string(value).trim(), { removeDuplicates: false }).array;
                                 parseBarcodes(barcodeToParse);
@@ -319,8 +322,16 @@
                                         name: 'containerBarcodes',
                                         rows: 1,
                                         cols: 14,
-                                        onChange: function (value) {
+                                        onKeyUp: function (value, keyVal) {
+                                            value = value.replace(/[\r\n]/g, ",");
+                                            cswPublic.rows[rowid].barcodeControl.val(value);
                                             updateBarcodes(value);
+                                            if (keyVal == 13) {
+                                                var newHeight = 7 + cswPublic.rows[rowid].barcodeControl[0].scrollHeight;
+                                                if (newHeight < 45) {
+                                                    cswPublic.rows[rowid].barcodeControl.css('height', newHeight + "px");
+                                                }
+                                            }
                                         }
                                     });
                                     break;

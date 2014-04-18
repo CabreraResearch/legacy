@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
@@ -31,11 +32,65 @@ namespace ChemSW.Nbt.Schema
             return "C";
         }
 
+        public const string oldLowPercentageValue = "Low % Value";
+        public const string oldTargetPercentageValue = "Target % Value";
+        public const string oldHighPercentageValue = "High % Value";
+        public const string oldPercentageValue = "Percentage";
+
         public override void update()
         {
-            // Set default value of Units to %
             CswNbtMetaDataObjectClass ComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
 
+            CswNbtMetaDataObjectClassProp oldLowOCP = ComponentOC.getObjectClassProp( oldLowPercentageValue );
+            CswNbtMetaDataObjectClassProp oldTargetOCP = ComponentOC.getObjectClassProp( oldTargetPercentageValue );
+            CswNbtMetaDataObjectClassProp oldHighOCP = ComponentOC.getObjectClassProp( oldHighPercentageValue );
+            CswNbtMetaDataObjectClassProp oldPercentageOCP = ComponentOC.getObjectClassProp( oldPercentageValue );
+
+            if( null != oldLowOCP )
+            {
+                // Copy values from existing Low/Target/High to new PercentageRange
+                CswNbtView CompFixView = _CswNbtSchemaModTrnsctn.makeView();
+                CompFixView.ViewName = "52299_compfixview";
+                CswNbtViewRelationship rel1 = CompFixView.AddViewRelationship( ComponentOC, false );
+                CompFixView.AddViewPropertyAndFilter( rel1, oldLowOCP, Conjunction: CswEnumNbtFilterConjunction.Or, FilterMode: CswEnumNbtFilterMode.NotNull );
+                CompFixView.AddViewPropertyAndFilter( rel1, oldTargetOCP, Conjunction: CswEnumNbtFilterConjunction.Or, FilterMode: CswEnumNbtFilterMode.NotNull );
+                CompFixView.AddViewPropertyAndFilter( rel1, oldHighOCP, Conjunction: CswEnumNbtFilterConjunction.Or, FilterMode: CswEnumNbtFilterMode.NotNull );
+
+                ICswNbtTree CompFixTree = _CswNbtSchemaModTrnsctn.getTreeFromView( CompFixView, IncludeSystemNodes: true );
+                while( CompFixTree.getChildNodeCount() > 0 )
+                {
+                    for( Int32 c = 0; c < CompFixTree.getChildNodeCount(); c++ )
+                    {
+                        CompFixTree.goToNthChild( c );
+
+                        CswNbtObjClassMaterialComponent CompNode = CompFixTree.getCurrentNode();
+                        CompNode.PercentageRange.Lower = CompNode.Node.Properties[oldLowPercentageValue].AsNumber.Value;
+                        CompNode.PercentageRange.Target = CompNode.Node.Properties[oldTargetPercentageValue].AsNumber.Value;
+                        CompNode.PercentageRange.Upper = CompNode.Node.Properties[oldHighPercentageValue].AsNumber.Value;
+                        CompNode.PercentageRange.Units = "%";
+
+                        CompNode.Node.Properties[oldLowPercentageValue].AsNumber.Value = Double.NaN;
+                        CompNode.Node.Properties[oldTargetPercentageValue].AsNumber.Value = Double.NaN;
+                        CompNode.Node.Properties[oldHighPercentageValue].AsNumber.Value = Double.NaN;
+
+                        CompNode.postChanges( false );
+
+                        CompFixTree.goToParentNode();
+                    } // for( Int32 c = 0; c < CompFixTree.getChildNodeCount(); c++ )
+
+                    // next iteration
+                    CompFixTree = _CswNbtSchemaModTrnsctn.getTreeFromView( CompFixView, IncludeSystemNodes: true );
+                } // while( CompFixTree.getChildNodeCount() > 0 )
+
+
+                // Delete existing Low/Target/High
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldLowOCP, true );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldTargetOCP, true );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldHighOCP, true );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldPercentageOCP, true );
+            }
+
+            // Set default value of Units to %
             foreach( CswNbtMetaDataNodeType NodeType in ComponentOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp PercentRangeNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.PercentageRange );

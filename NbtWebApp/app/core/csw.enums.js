@@ -501,6 +501,7 @@
                 ChangedDate: Csw.enums.subFieldNames.ChangedDate
             }
         },
+        Permission: { name: 'Permission', subfields: {} },
         PropertyReference: { name: 'PropertyReference', subfields: {} },
         Quantity: {
             name: 'Quantity',

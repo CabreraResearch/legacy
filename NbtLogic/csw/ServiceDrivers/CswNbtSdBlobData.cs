@@ -155,7 +155,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                     _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
                 }
 
-                SetLastModified( FileProp );
+                if( CswEnumNbtFieldType.File == FileProp.getFieldTypeValue() )
+                {
+                    SetLastModified( FileProp );
+                }
+
                 FileProp.SyncGestalt();
                 if( PostChanges )
                 {

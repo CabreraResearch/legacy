@@ -47,22 +47,26 @@ namespace ChemSW.Nbt.csw.ImportExport
             CswNbtMetaDataObjectClass UserOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             List<string> UserNts = UserOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
 
-            CswNbtMetaDataObjectClass EquipmentOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
-            List<string> EquipmentNTs = EquipmentOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
-
             CreateCafProps( NbtResources, ChemicalNts, "properties_values", "propertiesvaluesid", SetupMode );
             CreateCafProps( NbtResources, ContainerNts, "properties_values_cont", "contpropsvaluesid", SetupMode );
             CreateCafProps( NbtResources, ReceiptLotNts, "properties_values_lot", "lotpropsvaluesid", SetupMode );
             CreateCafProps( NbtResources, UserNts, "properties_values_user", "userpropsvaluesid", SetupMode );
 
-            //Equipment get both Container AND Material custom props
-            CreateCafProps( NbtResources, EquipmentNTs, "properties_values", "propertiesvaluesid", SetupMode );
-            CreateCafProps( NbtResources, EquipmentNTs, "properties_values_cont", "contpropsvaluesid", SetupMode );
+            // See CIS-53426: We only want to import Equipment if IMCS is enabled else EquipmentOC is null
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
+            {
+                CswNbtMetaDataObjectClass EquipmentOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
+                List<string> EquipmentNTs = EquipmentOC.getNodeTypes().Select( NodeType => NodeType.NodeTypeName ).ToList();
+
+                //Equipment get both Container AND Material custom props
+                CreateCafProps( NbtResources, EquipmentNTs, "properties_values", "propertiesvaluesid", SetupMode );
+                CreateCafProps( NbtResources, EquipmentNTs, "properties_values_cont", "contpropsvaluesid", SetupMode );
+            }
         }
 
         public static void CreateCafProps( CswNbtResources NbtResources, List<string> NodeTypes, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
         {
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode : SetupMode );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode: SetupMode );
 
             string sql = GetCAFPropertiesSQL( PropsValsTblName, NodeTypes );
             CswArbitrarySelect cafChemPropAS = NbtResources.makeCswArbitrarySelect( "cafProps_" + PropsValsPKName, sql );
@@ -99,10 +103,10 @@ namespace ChemSW.Nbt.csw.ImportExport
                     }
 
                     ImpMgr.importBinding( cafSourceCol, PropName, "", "CAF", NodeType.NodeTypeName,
-                                         ClobTableName : PropsValsTblName,
-                                         LobDataPkColOverride : cafColPropName,
-                                         LobDataPkColName : PropsValsPKName,
-                                         LegacyPropId : PropId );
+                                         ClobTableName: PropsValsTblName,
+                                         LobDataPkColOverride: cafColPropName,
+                                         LobDataPkColName: PropsValsPKName,
+                                         LegacyPropId: PropId );
                 }
             }
 
