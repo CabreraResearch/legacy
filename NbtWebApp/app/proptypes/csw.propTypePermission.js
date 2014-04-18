@@ -48,7 +48,7 @@
                 var validator = Csw.validator(errorDiv, permissionsGrid, {
                     cssOptions: { 'visibility': 'hidden', 'width': '20px' },
                     errorMsg: 'At least one value must be selected',
-                    className: 'multiListValidator' + nodeProperty.propData.id,
+                    className: 'permissionsValidator' + nodeProperty.propData.id,
                     onValidation: function (isValid) {
                         if (isValid || Csw.enums.editMode.Edit === nodeProperty.tabState.EditMode) {
                             errorDiv.hide();
@@ -59,12 +59,8 @@
                 });
 
                 cswPrivate.validatorCheckBox = validator.input;
-                cswPrivate.validatorCheckBox.val(true); //if this is a required property this will get set accordingly , for now set it to true
-                if (Csw.enums.editMode.Add === nodeProperty.tabState.EditMode) {
-                    doValidation(nodeProperty.propData.values.value);
-                } else {
-                    errorDiv.hide();
-                }
+                cswPrivate.validatorCheckBox.val(true); 
+                
 //            }
 
         };
