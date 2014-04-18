@@ -4,6 +4,7 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.ChemCatCentral;
+using ChemSW.Nbt.csw.ChemCatCentral;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 
@@ -203,15 +204,34 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "importProduct" )]
         [Description( "" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn importC3Product( CswNbtWebServiceC3Search.CswNbtC3Import.Request Request )
+        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn importC3Product( CswNbtC3Import.Request Request )
         {
             CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, CswNbtWebServiceC3Search.CswNbtC3Import.Request>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, CswNbtC3Import.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceC3Search.importC3Product,
                 ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "requestProduct" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn requestProduct( CswNbtC3Import.Request Request )
+        {
+            CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, CswNbtC3Import.Request>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceC3Search.CreateMaterialRequestFromC3,
+                ParamObj : Request
                 );
 
             SvcDriver.run();

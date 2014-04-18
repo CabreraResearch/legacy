@@ -24,6 +24,7 @@
             allowDelete: true,
             chemCatConfig: {
                 allowImport: true,
+                allowRequest: true,
                 importMenuItems: [],
                 importButtons: {}, // Store all buttons to disable them later
                 moreResultsBtns: {}, // Store all buttons to disable them later
@@ -277,6 +278,7 @@
                     var showFavoriteButton = cswPrivate.searchTarget != "chemcatcentral";
                     var showImportButton = false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport);
                     var showMoreAcdResultsButton = false;
+                    var showRequestButton = false;
 
                     //Button visibility behavoir when C3 is enabled
                     if (cswPrivate.searchTarget === "chemcatcentral") {
@@ -284,6 +286,7 @@
                         showDetailsButton = isFilteredSearch;
                         showImportButton = isFilteredSearch;
                         showMoreAcdResultsButton = 'ACD' === cswPrivate.chemCatConfig.dataservice && false == cswPrivate.chemCatConfig.filtered;
+                        showRequestButton = false === cswPrivate.suppressButtons && cswPrivate.chemCatConfig.allowRequest && nodeObj.allowrequest && isFilteredSearch;
                     }
 
                     // System Buttons
@@ -479,7 +482,34 @@
 
                     } //nodeObj.allowimport
 
+                    if (showRequestButton) {
+                        cswPrivate.chemCatConfig.importButtons['button' + cswPrivate.r] = window.Ext.create('Ext.Button', {
+                            text: "Request Material Create",
+                            width: "Request Material Create".length * 7,
+                            renderTo: btnTable.cell(1, btncol).getId(),
+                            handler: Csw.method(function () {
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'ChemCatCentral/requestProduct',
+                                    data: {
+                                        C3ProductId: nodeObj.c3productid,
+                                        Cdbregno: nodeObj.acdcdbregno
+                                    },
+                                    success: function(requestProductResponse) {
+                                        Csw.dialogs.addnode({
+                                            nodetypeid: requestProductResponse.state.materialType.val,
+                                            nodeid: requestProductResponse.state.materialId,
+                                            title: 'Request Create Material from C3',
+                                            onAddNode: function (nodeid, nodekey, nodename, nodelink, relationalid) {
+                                                alert('created!');
+                                            }
+                                        });
+                                    }
+                                });
+                            })
+                        }); //importButton
 
+                        btncol += 1;
+                    }
 
                     if (showExtraActionButton) {
                         Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');

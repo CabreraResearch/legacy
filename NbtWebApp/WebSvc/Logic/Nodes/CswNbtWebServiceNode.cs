@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.csw.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -69,10 +70,10 @@ namespace ChemSW.Nbt.WebServices
                 //(and make sure they're named the same as the expected CopyType/CswEnumNbtActionName value)
                 public CopyTypeData()
                 {
-                    Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse();
+                    Create_Material = new C3CreateMaterialResponse();
                 }
                 [DataMember]
-                public CswNbtWebServiceC3Search.C3CreateMaterialResponse Create_Material;
+                public C3CreateMaterialResponse Create_Material;
             }
         }
 
@@ -93,25 +94,25 @@ namespace ChemSW.Nbt.WebServices
                         #region Material Properties
 
                         CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
-                        Copy.Data.Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse
+                        Copy.Data.Create_Material = new C3CreateMaterialResponse
                         {
                             actionname = CswEnumNbtActionName.Create_Material,
-                            state = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State
+                            state = new C3CreateMaterialResponse.State
                             {
                                 materialId = MaterialCopy.NodeId.ToString(),
-                                materialType = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.MaterialType
+                                materialType = new C3CreateMaterialResponse.State.MaterialType
                                 {
                                     name = MaterialCopy.NodeType.NodeTypeName,
                                     val = CswConvert.ToInt32( MaterialCopy.NodeTypeId )
                                 },
                                 tradeName = OriginalMaterial.TradeName.Text,
                                 partNo = OriginalMaterial.PartNumber.Text,
-                                supplier = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.Supplier
+                                supplier = new C3CreateMaterialResponse.State.Supplier
                                 {
                                     name = OriginalMaterial.Supplier.CachedNodeName,
                                     val = OriginalMaterial.Supplier.RelatedNodeId.ToString()
                                 },
-                                sizes = new Collection<CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord>(),
+                                sizes = new Collection<C3CreateMaterialResponse.State.SizeRecord>(),
                                 showOriginalUoM = false
                             }
                         };
@@ -133,44 +134,44 @@ namespace ChemSW.Nbt.WebServices
                         {
                             SizesTree.goToNthChild( i );
                             CswNbtObjClassSize SizeNode = SizesTree.getNodeForCurrentPosition();
-                            Copy.Data.Create_Material.state.sizes.Add( new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord
+                            Copy.Data.Create_Material.state.sizes.Add( new C3CreateMaterialResponse.State.SizeRecord
                             {
-                                nodeTypeId = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                nodeTypeId = new C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
                                     value = SizeNode.NodeTypeId.ToString(),
                                     readOnly = true,
                                     hidden = true
                                 },
-                                unitCount = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                unitCount = new C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
                                     value = CswConvert.ToString( SizeNode.UnitCount.Value ),
                                     readOnly = true,
                                     hidden = false
                                 },
-                                quantity = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                quantity = new C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
                                     value = CswConvert.ToString( SizeNode.InitialQuantity.Quantity ),
                                     readOnly = true,
                                     hidden = false
                                 },
-                                uom = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                uom = new C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
                                     value = SizeNode.InitialQuantity.CachedUnitName,
                                     readOnly = false == string.IsNullOrEmpty( SizeNode.InitialQuantity.CachedUnitName ),
                                     hidden = false,
                                     id = SizeNode.InitialQuantity.UnitId.ToString()
                                 },
-                                catalogNo = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                catalogNo = new C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
                                     value = SizeNode.CatalogNo.Text,
                                     readOnly = true,
                                     hidden = false
                                 },
-                                quantityEditable = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                quantityEditable = new C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
                                     value = SizeNode.QuantityEditable.Checked,
                                 },
-                                dispensible = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                dispensible = new C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
                                     value = SizeNode.Dispensable.Checked
                                 }

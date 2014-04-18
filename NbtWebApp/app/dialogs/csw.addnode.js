@@ -10,7 +10,7 @@
             cswPrivate.name = cswPrivate.name || 'AddNode';
             cswPrivate.action = cswPrivate.action || 'AddNode';
             cswPrivate.title = cswPrivate.title || 'Add';
-            cswPrivate.nodeid = cswPrivate.nodeid || '';
+            cswPrivate.nodeid = cswPrivate.nodeid || 'newnode';
             cswPrivate.nodetypeid = cswPrivate.nodetypeid || '';
             cswPrivate.objectClassId = cswPrivate.objectClassId || '';
             cswPrivate.relatednodeid = cswPrivate.relatednodeid || '';
@@ -86,7 +86,7 @@
                                         NodeTypeId: Csw.string(cswPrivate.nodetypeid),
                                         Date: new Date().toDateString(),
                                         RelatedNodeId: Csw.string(cswPrivate.relatednodeid),
-                                        NodeId: 'newnode',
+                                        NodeId: cswPrivate.nodeid,
                                         SafeNodeKey: Csw.string(''),
                                         Multi: false,
                                         filterToPropId: Csw.string(''),
