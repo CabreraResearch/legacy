@@ -102,6 +102,8 @@ namespace ChemSW.Nbt.ObjClasses
 
                     if( thisNodeOC == CswEnumNbtObjectClass.MethodConditionClass)
                     {
+                        if( CertDefConditionDefaultNT != null )
+                        {
                         CswNbtObjClassMethodCondition thisMethodCondition = thisNode;
                         CswNbtObjClassCertDefCondition correspondingCertDefCondition = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CertDefConditionDefaultNT.NodeTypeId );
 
@@ -109,10 +111,22 @@ namespace ChemSW.Nbt.ObjClasses
                         correspondingCertDefCondition.CertDefSpec.RelatedNodeId = this.NodeId;
                         
                         correspondingCertDefCondition.postChanges( false );
+
+                           
+                        }
+
+                        else
+                        {
+                            throw new CswDniException(CswEnumErrorType.Error,
+                                                      "A CertDef Condition corresponding to an existing Method Condition could not be created because there is no CertDef Condition NodeType",
+                                                      "CertDef Condition NodeType not found, so CertDef Condition cannot be created");
+                        }
                     }
 
                     else if( thisNodeOC == CswEnumNbtObjectClass.MethodCharacteristicClass)
                     {
+                        if( CertDefConditionDefaultNT != null )
+                        {
                         CswNbtObjClassMethodCharacteristic thisMethodCharacteristic = thisNode;
                         CswNbtObjClassCertDefCharacteristicLimit correspondingCertDefCharacteristic = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CertDefCharacteristicDefaultNT.NodeTypeId );
 
@@ -120,6 +134,14 @@ namespace ChemSW.Nbt.ObjClasses
                         correspondingCertDefCharacteristic.CertDefSpec.RelatedNodeId = this.NodeId;
 
                         correspondingCertDefCharacteristic.postChanges( false );
+
+                        }
+                        else 
+                        {
+                            throw new CswDniException(CswEnumErrorType.Error,
+                                                      "A CertDef Characteristic Limit corresponding to an existing Method Characteristic Limit could not be created because there is no CertDef Characteristic Limit NodeType",
+                                                      "CertDef Characteristic Limit NodeType not found, so CertDef Characteristic Limit cannot be created");
+                        }
                     }
 
                     MethodConditionAndCharacteristicsTree.goToParentNode();
