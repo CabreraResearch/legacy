@@ -339,16 +339,29 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType FirstRequestItemNT = RequestItemOC.getNodeTypes().FirstOrDefault();
             if( null == FirstRequestItemNT )
             {
-                throw new CswDniException(CswEnumErrorType.Error, "Cannot create a Create Material Request because there are no Request Item Types", "Cannot create a Create Material Request when there are no Request Item Nodetypes");
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot create a Create Material Request because there are no Request Item Types", "Cannot create a Create Material Request when there are no Request Item Nodetypes" );
             }
 
-            CswNbtNode RequestNode = NbtResources.Nodes.makeNodeFromNodeTypeId( FirstRequestItemNT.NodeTypeId, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+            CswNbtObjClassRequestItem RequestItemNode = NbtResources.Nodes.makeNodeFromNodeTypeId( FirstRequestItemNT.NodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassRequestItem AsRequestItem = NewNode;
                     AsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.MaterialCreate;
                     AsRequestItem.C3CDBRegNo.Value = Request.Cdbregno;
                     AsRequestItem.C3ProductId.Value = Request.C3ProductId;
+
+                    AsRequestItem.NewMaterialTradename.Text = "TEST THING";
                 } );
+            //RequestItemNode.NewMaterialSupplier.setHidden( true, true );
+            //RequestItemNode.NewMaterialTradename.setHidden( true, true );
+            //RequestItemNode.NewMaterialPartNo.setHidden( true, true );
+            //RequestItemNode.Location.setHidden( true, true );
+            //RequestItemNode.postChanges( false );
+
+            Return.Data.state = new C3CreateMaterialResponse.State();
+            Return.Data.state.materialType = new C3CreateMaterialResponse.State.MaterialType();
+            Return.Data.state.materialId = RequestItemNode.NodeId.ToString();
+            Return.Data.state.materialType.name = FirstRequestItemNT.NodeTypeName;
+            Return.Data.state.materialType.val = FirstRequestItemNT.NodeTypeId;
         }
 
         #region Private Helper Methods

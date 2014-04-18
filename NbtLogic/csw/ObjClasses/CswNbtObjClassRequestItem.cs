@@ -1,5 +1,8 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -531,29 +534,14 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Create:
-                                ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
-                                // Create the temporary material node
-                                Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
-                                CswNbtPropertySetMaterial NewMaterial = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SelectedNodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
+                                if( C3ProductId.Empty )
                                 {
-                                    ( (CswNbtPropertySetMaterial) NewNode ).TradeName.Text = NewMaterialTradename.Text;
-                                    ( (CswNbtPropertySetMaterial) NewNode ).PartNumber.Text = NewMaterialPartNo.Text;
-                                } );
-                                Material.RelatedNodeId = NewMaterial.NodeId;
-                                ButtonData.Data["state"] = new JObject();
-                                ButtonData.Data["state"]["materialType"] = new JObject();
-                                ButtonData.Data["state"]["materialType"]["name"] = NewMaterial.NodeType.NodeTypeName;
-                                ButtonData.Data["state"]["materialType"]["val"] = NewMaterial.NodeType.NodeTypeId;
-                                ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
-                                ButtonData.Data["state"]["tradeName"] = NewMaterial.TradeName.Text;
-                                ButtonData.Data["state"]["addNewC3Supplier"] = true;
-                                ButtonData.Data["state"]["supplier"] = new JObject();
-                                ButtonData.Data["state"]["supplier"]["name"] = NewMaterialSupplier.Text;
-                                ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
-                                ButtonData.Data["state"]["request"] = new JObject();
-                                ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
-                                ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
-                                ButtonData.Data["success"] = true;
+                                    _handleNbtRequest( ButtonData );
+                                }
+                                else
+                                {
+                                    _handleC3Request( ButtonData );
+                                }
                                 break;
                             case FulfillMenu.Order://TODO - Case 31271 - Implement Ordering for Realz
                                 ButtonData.Action = CswEnumNbtButtonAction.editprop;
@@ -765,19 +753,41 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     C3ProductId = (int) C3ProductId.Value,
                     Cdbregno = (int) C3CDBRegNo.Value,
-                    NodeTypeId = 1,
-                    NodeTypeName = "Chemical",
-                    ObjectClass = "ChemicalClass"
+                    NodeTypeId = CswConvert.ToInt32( NewMaterialType.SelectedNodeTypeIds.First() ),
+                    NodeTypeName = NewMaterialType.SelectedNodeTypeNames().First(),
                 } );
 
             ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
             Material.RelatedNodeId = CswConvert.ToPrimaryKey( searchResponse.state.materialId );
+            string stateStr = string.Empty;
+            using( MemoryStream ms = new MemoryStream() )
+            {
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer( typeof( C3CreateMaterialResponse.State ) );
+                serializer.WriteObject( ms, searchResponse.state );
+                stateStr = Encoding.UTF8.GetString( ms.GetBuffer(), 0, CswConvert.ToInt32( ms.Length ) );
+            }
+            JObject stateJObj = CswConvert.ToJObject( stateStr );
+
+            ButtonData.Data["state"] = stateJObj;
+        }
+
+        private void _handleNbtRequest( NbtButtonData ButtonData )
+        {
+            ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
+            // Create the temporary material node
+            Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
+            CswNbtPropertySetMaterial NewMaterial = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SelectedNodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
+            {
+                ( (CswNbtPropertySetMaterial) NewNode ).TradeName.Text = NewMaterialTradename.Text;
+                ( (CswNbtPropertySetMaterial) NewNode ).PartNumber.Text = NewMaterialPartNo.Text;
+            } );
+            Material.RelatedNodeId = NewMaterial.NodeId;
             ButtonData.Data["state"] = new JObject();
             ButtonData.Data["state"]["materialType"] = new JObject();
-            ButtonData.Data["state"]["materialType"]["name"] = searchResponse.state.materialType.name;
-            ButtonData.Data["state"]["materialType"]["val"] = searchResponse.state.materialType.val;
-            ButtonData.Data["state"]["materialId"] = searchResponse.state.materialId;
-            ButtonData.Data["state"]["tradeName"] = searchResponse.state.tradeName;
+            ButtonData.Data["state"]["materialType"]["name"] = NewMaterial.NodeType.NodeTypeName;
+            ButtonData.Data["state"]["materialType"]["val"] = NewMaterial.NodeType.NodeTypeId;
+            ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
+            ButtonData.Data["state"]["tradeName"] = NewMaterial.TradeName.Text;
             ButtonData.Data["state"]["addNewC3Supplier"] = true;
             ButtonData.Data["state"]["supplier"] = new JObject();
             ButtonData.Data["state"]["supplier"]["name"] = NewMaterialSupplier.Text;

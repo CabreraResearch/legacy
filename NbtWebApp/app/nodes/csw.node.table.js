@@ -495,7 +495,14 @@
                                         Cdbregno: nodeObj.acdcdbregno
                                     },
                                     success: function(requestProductResponse) {
-                                        
+                                        Csw.dialogs.addnode({
+                                            nodetypeid: requestProductResponse.state.materialType.val,
+                                            nodeid: requestProductResponse.state.materialId,
+                                            title: 'Request Create Material from C3',
+                                            onAddNode: function (nodeid, nodekey, nodename, nodelink, relationalid) {
+                                                alert('created!');
+                                            }
+                                        });
                                     }
                                 });
                             })
