@@ -41,6 +41,11 @@ namespace ChemSW.Nbt
         dbformat,
 
         /// <summary>
+        /// If 1, display warning messages in the web interface.
+        /// </summary>
+        displaywarningsinui,
+
+        /// <summary>
         /// If 1, display error messages in the web interface.
         /// </summary>
         displayerrorsinui,

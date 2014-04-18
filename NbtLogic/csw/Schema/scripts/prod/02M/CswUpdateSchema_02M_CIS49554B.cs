@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Schema
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString(), Tuple.Create(MODULEID_CONTAINERS, INTTYPE, "0") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.total_comments_lines.ToString(), Tuple.Create<string, string, string>(null, INTTYPE, "0") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.custom_barcodes.ToString(), Tuple.Create(MODULEID_CONTAINERS, BOOLTYPE, "") );
-            rowsToUpdate.Add( CswEnumConfigurationVariableNames.Logging_Level.ToString().ToLower(), Tuple.Create<string, string, string>(null, LISTTYPE, "") );
+            rowsToUpdate.Add( CswEnumConfigurationVariableNames.Logging_Level.ToString().ToLower(), Tuple.Create<string, string, string>(null, LISTTYPE, "Info,Performance,Warn,Error,None") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.netquantity_enforced.ToString(), Tuple.Create(MODULEID_CONTAINERS, BOOLTYPE, "") );
             rowsToUpdate.Add( CswEnumConfigurationVariableNames.NodesProcessedPerCycle.ToString().ToLower(), Tuple.Create<string, string, string>(null, INTTYPE, "0") );
             rowsToUpdate.Add( CswEnumConfigurationVariableNames.container_max_depth.ToString(), Tuple.Create(MODULEID_CONTAINERS, INTTYPE, "0") );
@@ -84,6 +84,9 @@ namespace ChemSW.Nbt.Schema
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.arielmodules.ToString(), Tuple.Create<string, string, string>(null, STRINGTYPE, "") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.chemwatchdomain.ToString(), Tuple.Create(MODULEID_CHEMWATCH, STRINGTYPE, "") );
             rowsToUpdate.Add( CswEnumNbtConfigurationVariables.password_reuse_count.ToString(), Tuple.Create<string, string, string>(null, INTTYPE, "0") );
+            rowsToUpdate.Add( CswEnumNbtConfigurationVariables.displayerrorsinui.ToString(), Tuple.Create<string, string, string>(null, BOOLTYPE, "") );
+            rowsToUpdate.Add( CswEnumNbtConfigurationVariables.displaywarningsinui.ToString(), Tuple.Create<string, string, string>(null, BOOLTYPE, "") );
+            rowsToUpdate.Add( CswEnumNbtConfigurationVariables.loc_max_depth.ToString(), Tuple.Create<string, string, string>(null, INTTYPE, "0") );
 
             CswTableUpdate UpdateConfigVarsTable =  _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "populate moduleID, type and minvar columns in config_variables table CIS:49554B", "configuration_variables" );
 

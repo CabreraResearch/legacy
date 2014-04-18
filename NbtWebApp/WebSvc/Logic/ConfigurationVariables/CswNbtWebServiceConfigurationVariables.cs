@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.WebServices
                                 int configValueAsInt = CswConvert.ToInt32( updatedConfigVarValue );
                                 int configMinValue = CswConvert.ToInt32( thisRow[COL_CONSTRAINT] );
                                 //throw exception if the value is > minvalue
-                                if( configValueAsInt < configMinValue )
+                                if( configValueAsInt <= configMinValue )
                                 {
                                     throw new CswDniException( CswEnumErrorType.Warning,
                                                                "The value of " + configVarName + " must be greater than "
