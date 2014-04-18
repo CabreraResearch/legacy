@@ -1089,18 +1089,25 @@ namespace ChemSW.Nbt.ObjClasses
         private void _applyValToProperty( DataRow mapRow, CswNbtMetaDataObjectClassProp OCProp )
         {
             _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
-            if( OCProp._DataRow.Table.Columns.Contains( _CswNbtResources.DataDictionary.ColumnName ) &&
-                false == string.IsNullOrEmpty( OCProp._DataRow[_CswNbtResources.DataDictionary.ColumnName].ToString() ) )
+            CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
+            CswEnumNbtSubFieldName SubFieldName = (CswEnumNbtSubFieldName) mapRow["subfieldname"].ToString();
+            if( SubFieldName.ToString() == CswNbtResources.UnknownEnum &&
+                null != ntp.getFieldTypeRule().SubFields.Default )
             {
-                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
+                SubFieldName = ntp.getFieldTypeRule().SubFields.Default.Name;
+            }
+
+            // Special case: nodeviewid gets a view copied from the object_class_prop.viewxml column
+            if( _CswNbtResources.DataDictionary.ColumnName == "nodeviewid" )
+            {
+                CswNbtViewId NewViewId = _CswNbtResources.MetaData.CopyViewFromObjectClassProp( OCProp );
+                Node.Properties[ntp].SetSubFieldValue( SubFieldName, NewViewId );
+            }
+            else if( OCProp._DataRow.Table.Columns.Contains( _CswNbtResources.DataDictionary.ColumnName ) &&
+                     false == string.IsNullOrEmpty( OCProp._DataRow[_CswNbtResources.DataDictionary.ColumnName].ToString() ) )
+            {
                 if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
                 {
-                    CswEnumNbtSubFieldName SubFieldName = (CswEnumNbtSubFieldName) mapRow["subfieldname"].ToString();
-                    if( SubFieldName.ToString() == CswNbtResources.UnknownEnum &&
-                        null != ntp.getFieldTypeRule().SubFields.Default )
-                    {
-                        SubFieldName = ntp.getFieldTypeRule().SubFields.Default.Name;
-                    }
 
                     if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
                     {

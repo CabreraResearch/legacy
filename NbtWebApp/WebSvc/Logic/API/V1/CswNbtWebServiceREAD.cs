@@ -34,7 +34,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                 try
                 {
                     CswNbtNode Node = _CswNbtResources.Nodes.GetNode( GenericRequest.NodeId );
-                    if( null != Node && GenericRequest.MetaDataName == Node.getNodeType().NodeTypeName )
+                    if( null != Node && GenericRequest.MetaDataName.ToLower() == Node.getNodeType().NodeTypeName.ToLower() )
                     {
                         Return.NodeId = GenericRequest.NodeId;
                         Return.NodeName = Node.NodeName;
