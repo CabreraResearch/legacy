@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
         {
             _CswNbtSchemaModTrnsctn.addNumberColumn( "configuration_variables", "moduleid", "id of the module this config var is related to. Leave blank if common or system config var", false, "", false, "", false);
             _CswNbtSchemaModTrnsctn.addStringColumn( "configuration_variables", "datatype", "type of the data contained. values can be INT, BOOL, LIST or STRING", true, 20);
-            _CswNbtSchemaModTrnsctn.addClobColumn( "configuration_variables", "constraint", "Constraints on the config value, which are applied depending on the datatype",true);
+            _CswNbtSchemaModTrnsctn.addStringColumn( "configuration_variables", "constraint", "Constraints on the config value, which are applied depending on the datatype",true, 100);
         }
     }
 }
