@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "AF";
+            return "B";
         }
 
         public override string Title
@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.Schema
                                                 CswEnumNbtViewPropOwnerType.Second,
                                                 CertDefConditionCertDefOCP,
                                                 true);
+
             ConditionsView.AddViewProperty( ConditionsRelationship, CertDefConditionOC.getObjectClassProp( CswNbtObjClassCertDefCondition.PropertyName.Value), 1 );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CertDefSpecOC, new CswNbtWcfMetaDataModel.ObjectClassProp
