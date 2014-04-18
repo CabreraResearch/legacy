@@ -46,11 +46,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                             Return.PropertySet = propSet.Name;
                         }
                         Return.URI = BuildURI( Return.NodeType, Node.NodeId.PrimaryKey );
-
-                        CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-                        //TODO: better way to get property data - we're forcing it to be by tab...we should get ALL properties, regardless of what tab they're on
-                        Return.PropertyData = ConvertPropertyData( CswConvert.ToJObject( SdTabsAndProps.getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), null, CswEnumNbtLayoutType.Edit )["properties"] ) );
+                        Return.PropertyData = GetPropertyData( Node );
                     }
                     else
                     {
