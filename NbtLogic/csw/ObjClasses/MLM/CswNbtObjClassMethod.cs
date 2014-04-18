@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             base.afterPopulateProps();
             MethodNo.SetOnPropChange( _onAfterMethodNumberChange );
+            Obsolete.SetOnPropChange( _onAfterObsoleteChecked ); 
         }
 
         //Extend CswNbtObjClass events here
@@ -57,6 +58,18 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region ObjectClass-Specific Properties
+
+        /// <summary>
+        /// When obsolete checkbox is checked, marks the obsolete prop as servermanaged, preventing
+        /// further modification of obsolete status. This helps prevent having more than one obsolete
+        /// method at the same time
+        /// </summary>
+        /// <param name="NodeProp"></param>
+        /// <param name="Creating"></param>
+        private void _onAfterObsoleteChecked( CswNbtNodeProp NodeProp, bool Creating )
+        {
+            NodeProp.setReadOnly(true, true);
+        }
 
         /// <summary>
         /// Throws dni exception if other non-obsolete methods exist with the same prop number  CIS-52300
