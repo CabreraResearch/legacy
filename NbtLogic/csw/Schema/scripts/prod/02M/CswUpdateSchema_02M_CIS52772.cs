@@ -60,8 +60,14 @@ namespace ChemSW.Nbt.Schema
                     LocationNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 2, 1 );
                     LocationNTP.updateLayout( CswEnumNbtLayoutType.Add, true, firstTab.TabId, 2, 1 );
 
+                    CswNbtMetaDataNodeTypeProp OpenButtonNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Open);
+                    OpenButtonNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 4, 1 );
+
+                    CswNbtMetaDataNodeTypeProp OpenedDateNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.OpenedDate);
+                    OpenedDateNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 5, 1 );
+
                     CswNbtMetaDataNodeTypeProp DateCreatedNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
-                    DateCreatedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 4, 1 );
+                    DateCreatedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 6, 1 );
 
                     CswNbtMetaDataNodeTypeProp LabelFormatNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
                     LabelFormatNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, firstTab.TabId, 7, 1 );
