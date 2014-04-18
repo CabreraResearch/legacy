@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net;
 using System.ServiceModel;
@@ -31,10 +32,10 @@ namespace NbtWebApp.Services
             CswNbtResource Ret = new CswNbtResource();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceREAD.GetResource,
-                    ParamObj : Req
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceREAD.GetResource,
+                    ParamObj: Req
                     );
 
             SvcDriver.run();
@@ -61,10 +62,10 @@ namespace NbtWebApp.Services
             Req.PropertyFilters = _Context.Request.QueryString;
 
             var SvcDriver = new CswWebSvcDriver<CswNbtResourceCollection, CswNbtAPIGenericRequest>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceREAD.GetCollection,
-                    ParamObj : Req
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceREAD.GetCollection,
+                    ParamObj: Req
                     );
 
             SvcDriver.run();
@@ -93,10 +94,10 @@ namespace NbtWebApp.Services
             }
 
             var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceCREATE.Create,
-                    ParamObj : Req
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceCREATE.Create,
+                    ParamObj: Req
                     );
 
             SvcDriver.run();
@@ -124,7 +125,7 @@ namespace NbtWebApp.Services
 
             CswNbtAPIReturn Ret = new CswNbtAPIReturn();
             CswNbtAPIGenericRequest Req = new CswNbtAPIGenericRequest( metadataname, id );
-            
+
             bool idsMatch = true;
             if( null != ResourceToUpdate )
             {
@@ -165,10 +166,10 @@ namespace NbtWebApp.Services
             CswNbtResource Ret = new CswNbtResource();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtResource, CswNbtAPIGenericRequest>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceDELETE.Delete,
-                    ParamObj : Req
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceDELETE.Delete,
+                    ParamObj: Req
                     );
 
             SvcDriver.run();
@@ -198,10 +199,10 @@ namespace NbtWebApp.Services
             Req.NodeType = _Context.Request.Params["nodetype"] ?? string.Empty;
 
             var SvcDriver = new CswWebSvcDriver<CswNbtResourceCollection, CswNbtApiSearchRequest>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceApiSearch.Search,
-                    ParamObj : Req
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceApiSearch.Search,
+                    ParamObj: Req
                     );
 
             SvcDriver.run();
@@ -229,10 +230,10 @@ namespace NbtWebApp.Services
             CswNbtAPIGrid Ret = new CswNbtAPIGrid();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtAPIGrid, int>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceApiViews.RunGrid,
-                    ParamObj : CswConvert.ToInt32( viewid )
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceApiViews.RunGrid,
+                    ParamObj: CswConvert.ToInt32( viewid )
                     );
 
             SvcDriver.run();
@@ -256,10 +257,10 @@ namespace NbtWebApp.Services
             CswNbtAPITree Ret = new CswNbtAPITree();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtAPITree, int>(
-                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj : Ret,
-                    WebSvcMethodPtr : CswNbtWebServiceApiViews.RunTree,
-                    ParamObj : CswConvert.ToInt32( viewid )
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: Ret,
+                    WebSvcMethodPtr: CswNbtWebServiceApiViews.RunTree,
+                    ParamObj: CswConvert.ToInt32( viewid )
                     );
 
             SvcDriver.run();
@@ -277,5 +278,50 @@ namespace NbtWebApp.Services
 
         #endregion
 
+        #region Options
+
+        [OperationContract]
+        [WebInvoke( Method = "OPTIONS", UriTemplate = "/v1/*", ResponseFormat = WebMessageFormat.Json )]
+        public void GetOptions()
+        {
+
+            CswCommaDelimitedString Options = new CswCommaDelimitedString();
+
+            string Url = _Context.Request.Url.PathAndQuery;
+            Url = Url.Substring( Url.IndexOf( "/" ) + 1 );  // trim starting /
+            Url = Url.Substring( Url.IndexOf( "/" ) + 1 );  // trim /{webappname}
+            Url = Url.Substring( Url.IndexOf( "/" ) + 1 );  // trim /api
+
+            if( Url.StartsWith( "v1" ) )
+            {
+                if( Url.StartsWith( "v1/search" ) )
+                {
+                    Options = new CswCommaDelimitedString() { CswNbtWebServiceApiSearch.VERB };
+                }
+                else if( Url.StartsWith( "v1/grid" ) )
+                {
+                    Options = new CswCommaDelimitedString() { CswNbtWebServiceApiViews.VERB };
+                }
+                else if( Url.StartsWith( "v1/tree" ) )
+                {
+                    Options = new CswCommaDelimitedString() { CswNbtWebServiceApiViews.VERB };
+                }
+                else
+                {
+                    if( Url.Split( '/' ).Length > 2 ) // "v1/{metadataname}/{id}"
+                    {
+                        Options = new CswCommaDelimitedString() { CswNbtWebServiceREAD.VERB, CswNbtWebServiceUPDATE.VERB, CswNbtWebServiceDELETE.VERB };
+                    }
+                    else  // "v1/{metadataname}"
+                    {
+                        Options = new CswCommaDelimitedString() { CswNbtWebServiceREAD.VERB, CswNbtWebServiceCREATE.VERB };
+                    }
+                }
+            }
+            _Context.Response.Headers.Remove( "Access-Control-Allow-Methods" );    // Remove the header set in global.asax's EnableCrossDmainAjaxCall()
+            _Context.Response.Headers.Add( "Access-Control-Allow-Methods", Options.ToString() );
+        }
+
+        #endregion Options
     }
 }
