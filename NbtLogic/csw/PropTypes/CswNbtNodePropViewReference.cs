@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.PropTypes
                                                                                                       {
                                                                                                           ViewId = x;
                                                                                                       }
-                                                                                                      else if( string.IsNullOrEmpty( x.ToString() ) )
+                                                                                                      else if( string.IsNullOrEmpty( x ) )
                                                                                                       {
                                                                                                           ViewId = null;
                                                                                                       }
