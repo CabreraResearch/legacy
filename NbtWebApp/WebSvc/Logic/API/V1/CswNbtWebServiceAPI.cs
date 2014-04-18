@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Web;
 using ChemSW.Core;
@@ -30,7 +31,7 @@ namespace NbtWebApp.WebSvc.Logic.API
             CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( GenericRequest.MetaDataName );
             if( null != NodeType )
             {
-                if( NbtResources.Permit.canNodeType( Permission, NodeType, User : NbtResources.CurrentNbtUser ) )
+                if( NbtResources.Permit.canAnyTab( Permission, NodeType, User : NbtResources.CurrentNbtUser ) )
                 {
                     ret = true;
                 }
@@ -69,26 +70,45 @@ namespace NbtWebApp.WebSvc.Logic.API
         }
 
         /// <summary>
-        /// Converts property data from a JObject to WCF
-        /// See CIS-53051
+        /// Gets property data for a given Node and returns it in our WCF object format
+        /// <returns>All visible non-UI-specific properties on the Node's Edit layout for which the current user has view permissions</returns>
         /// </summary>
-        public CswNbtWcfPropCollection ConvertPropertyData( JObject PropData )
+        public CswNbtWcfPropCollection GetPropertyData( CswNbtNode Node )
         {
-            CswNbtWcfPropCollection ret = new CswNbtWcfPropCollection();
-
-            foreach( JProperty OldProp in PropData.Children() )
+            CswNbtWcfPropCollection PropCollection = new CswNbtWcfPropCollection();
+            List<Int32> PropIdsAdded = new List<Int32>();
+            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
             {
-                CswNbtWcfProperty NewProp = new CswNbtWcfProperty();
-                NewProp.PropId = OldProp.Value["id"].ToString();
-                NewProp.PropName = OldProp.Value["name"].ToString();
-                NewProp.OriginalPropName = OldProp.Value["ocpname"].ToString();
-                foreach( JProperty OldPropValue in OldProp.Value["values"].Children() )
+                if( _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, NodeType, Tab ) )
                 {
-                    NewProp.values[OldPropValue.Name] = OldPropValue.Value.ToString();
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, Tab.TabId, CswEnumNbtLayoutType.Edit );
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
+                    {
+                        if( false == PropIdsAdded.Contains( Prop.PropId ) && //Don't grab the same prop more than once
+                            Prop.getFieldTypeValue() != CswEnumNbtFieldType.Button && //Exclude these prop types
+                            Prop.getFieldTypeValue() != CswEnumNbtFieldType.Password && 
+                            false == Prop.Hidden ) //Don't grab hidden props
+                        {
+                            CswNbtWcfProperty WCFProp = new CswNbtWcfProperty
+                                {
+                                    PropId = Prop.PropId.ToString(),
+                                    PropName = Prop.PropName,
+                                    OriginalPropName = Prop.getObjectClassPropName()
+                                };
+                            JObject PropVals = new JObject();
+                            Node.Properties[Prop].ToJSON( PropVals );
+                            foreach( JProperty OldPropValue in PropVals["values"].Children() )
+                            {
+                                WCFProp.values[OldPropValue.Name] = OldPropValue.Value.ToString();
+                            }
+                            PropCollection.addProperty( WCFProp );
+                            PropIdsAdded.Add( Prop.PropId );
+                        }
+                    }
                 }
-                ret.addProperty( NewProp );
             }
-            return ret;
+            return PropCollection;
         }
 
         public JObject ConvertWcfPropertyData( CswNbtWcfProperty Prop )

@@ -124,10 +124,7 @@
                 //The Ext.JS renderer requires we return raw HTML text to display the column... things are about to get ugly
                 var checkboxRenderer = function(value, styledata, record, rowIndex, colIndex, view) {
                     var field = record.fields.getAt(colIndex).name;
-                    var divId = 'ntperms' + sanitizeName(record.raw["itemname"]) + "_" + field;
-                    if (record.isLeaf()) {
-                        divId = sanitizeName(record.parentNode.get('itemname')) + '_' + divId;
-                    }
+                    var divId = 'ntperms' + sanitizeName(record.internalId) + "_" + field;
 
                     Csw.defer(Csw.method(function() {
 
@@ -141,13 +138,20 @@
                             || (field != "create" && field != "delete")) {
                             record.checkboxes = record.checkboxes || {};
 
-                            //see if the permission is not on the top level, and if not, whether we should be rendering this checkbox disabled
-                            var parentIsChecked = (record.getDepth() > 1 && record.parentNode.get(field) == true);
+                            //see if the permission is a tab whose parent nodetype is already checked
+                            var emulateChecked = (record.getDepth() > 1 && 
+                                                     (record.parentNode.get(field) == true ||
+                                                          (field == "view" && record.parentNode.get("edit") == true)
+                                                     )
+                                                 );
+                            //see if the permission is View when Edit is already checked
+                            emulateChecked = emulateChecked || (field == "view" && record.get("edit") == true);
+                            
 
                             record.checkboxes[field] = div.input({
                                 type: Csw.enums.inputTypes.checkbox,
-                                checked: value || parentIsChecked,
-                                disabled: parentIsChecked,
+                                checked: value || emulateChecked,
+                                disabled: emulateChecked,
                                 onClick: function() {
                                     var newState = record.checkboxes[field].checked();
                                     record.set(field, newState);
@@ -155,12 +159,20 @@
                                     if (record.isLeaf() == false) {
                                         record.childNodes.forEach(function(tabPermission) {
                                             if (tabPermission.checkboxes != undefined && tabPermission.checkboxes[field] !== undefined) {
-                                                if (newState == true) {
+                                                if (newState == true ) {
                                                     tabPermission.checkboxes[field].checked(true);
                                                     tabPermission.checkboxes[field].disabled(true);
+                                                    if (field == "edit") {
+                                                        tabPermission.checkboxes["view"].checked(true);
+                                                        tabPermission.checkboxes["view"].disabled(true);
+                                                    }
                                                 } else {
                                                     tabPermission.checkboxes[field].checked(tabPermission.get(field));
                                                     tabPermission.checkboxes[field].disabled(false);
+                                                    if (field == "edit" && record.get("view") == false) {
+                                                        tabPermission.checkboxes["view"].checked(tabPermission.get("view"));
+                                                        tabPermission.checkboxes["view"].disabled(false);
+                                                    }
                                                 }
                                             }
                                         });

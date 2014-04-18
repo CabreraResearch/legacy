@@ -49,9 +49,7 @@ namespace NbtWebApp.WebSvc.Logic.API
                     Return.NodeType = NewNode.getNodeType().NodeTypeName;
                     Return.ObjectClass = NewNode.ObjClass.ObjectClass.ObjectClassName;
                     Return.URI = BuildURI( NodeType.NodeTypeName, NewNode.NodeId.PrimaryKey );
-
-                    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Return.PropertyData = ConvertPropertyData( CswConvert.ToJObject( SdTabsAndProps.getProps( NewNode, string.Empty, null, CswEnumNbtLayoutType.Add )["properties"] ) );
+                    Return.PropertyData = GetPropertyData( NewNode );
 
                     Return.Status = HttpStatusCode.Created;
                 }
